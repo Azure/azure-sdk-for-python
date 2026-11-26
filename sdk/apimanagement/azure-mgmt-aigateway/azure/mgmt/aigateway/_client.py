@@ -19,7 +19,21 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import AIGatewayMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import AiGatewayResourcesOperations, Operations
+from .operations import (
+    AiGatewayAliasResourcesOperations,
+    AiGatewayApiKeyResourcesOperations,
+    AiGatewayModelProviderResourcesOperations,
+    AiGatewayModelResourcesOperations,
+    AiGatewayNameAvailabilityOperationsOperations,
+    AiGatewayPrivateEndpointConnectionsOperations,
+    AiGatewayPrivateLinkResourcesOperations,
+    AiGatewayResourcesOperations,
+    AiGatewayTelemetryExporterResourcesOperations,
+    AiGatewayToolServerResourcesOperations,
+    AiGatewayWorkspaceModelOperationsOperations,
+    AiGatewayWorkspaceResourcesOperations,
+    Operations,
+)
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -31,13 +45,50 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIGatewayMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AIGatewayMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """AIGatewayMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.aigateway.operations.Operations
+    :ivar ai_gateway_name_availability_operations: AiGatewayNameAvailabilityOperationsOperations
+     operations
+    :vartype ai_gateway_name_availability_operations:
+     azure.mgmt.aigateway.operations.AiGatewayNameAvailabilityOperationsOperations
+    :ivar ai_gateway_telemetry_exporter_resources: AiGatewayTelemetryExporterResourcesOperations
+     operations
+    :vartype ai_gateway_telemetry_exporter_resources:
+     azure.mgmt.aigateway.operations.AiGatewayTelemetryExporterResourcesOperations
+    :ivar ai_gateway_alias_resources: AiGatewayAliasResourcesOperations operations
+    :vartype ai_gateway_alias_resources:
+     azure.mgmt.aigateway.operations.AiGatewayAliasResourcesOperations
     :ivar ai_gateway_resources: AiGatewayResourcesOperations operations
     :vartype ai_gateway_resources: azure.mgmt.aigateway.operations.AiGatewayResourcesOperations
+    :ivar ai_gateway_private_endpoint_connections: AiGatewayPrivateEndpointConnectionsOperations
+     operations
+    :vartype ai_gateway_private_endpoint_connections:
+     azure.mgmt.aigateway.operations.AiGatewayPrivateEndpointConnectionsOperations
+    :ivar ai_gateway_private_link_resources: AiGatewayPrivateLinkResourcesOperations operations
+    :vartype ai_gateway_private_link_resources:
+     azure.mgmt.aigateway.operations.AiGatewayPrivateLinkResourcesOperations
+    :ivar ai_gateway_workspace_resources: AiGatewayWorkspaceResourcesOperations operations
+    :vartype ai_gateway_workspace_resources:
+     azure.mgmt.aigateway.operations.AiGatewayWorkspaceResourcesOperations
+    :ivar ai_gateway_model_provider_resources: AiGatewayModelProviderResourcesOperations operations
+    :vartype ai_gateway_model_provider_resources:
+     azure.mgmt.aigateway.operations.AiGatewayModelProviderResourcesOperations
+    :ivar ai_gateway_model_resources: AiGatewayModelResourcesOperations operations
+    :vartype ai_gateway_model_resources:
+     azure.mgmt.aigateway.operations.AiGatewayModelResourcesOperations
+    :ivar ai_gateway_tool_server_resources: AiGatewayToolServerResourcesOperations operations
+    :vartype ai_gateway_tool_server_resources:
+     azure.mgmt.aigateway.operations.AiGatewayToolServerResourcesOperations
+    :ivar ai_gateway_api_key_resources: AiGatewayApiKeyResourcesOperations operations
+    :vartype ai_gateway_api_key_resources:
+     azure.mgmt.aigateway.operations.AiGatewayApiKeyResourcesOperations
+    :ivar ai_gateway_workspace_model_operations: AiGatewayWorkspaceModelOperationsOperations
+     operations
+    :vartype ai_gateway_workspace_model_operations:
+     azure.mgmt.aigateway.operations.AiGatewayWorkspaceModelOperationsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -47,10 +98,9 @@ class AIGatewayMgmtClient:  # pylint: disable=docstring-keyword-should-match-key
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-09-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-11-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -104,7 +154,40 @@ class AIGatewayMgmtClient:  # pylint: disable=docstring-keyword-should-match-key
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.ai_gateway_name_availability_operations = AiGatewayNameAvailabilityOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_telemetry_exporter_resources = AiGatewayTelemetryExporterResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_alias_resources = AiGatewayAliasResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.ai_gateway_resources = AiGatewayResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_private_endpoint_connections = AiGatewayPrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_private_link_resources = AiGatewayPrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_workspace_resources = AiGatewayWorkspaceResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_model_provider_resources = AiGatewayModelProviderResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_model_resources = AiGatewayModelResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_tool_server_resources = AiGatewayToolServerResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_api_key_resources = AiGatewayApiKeyResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateway_workspace_model_operations = AiGatewayWorkspaceModelOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

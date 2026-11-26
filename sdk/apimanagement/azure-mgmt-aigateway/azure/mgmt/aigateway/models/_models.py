@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,8 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
+import decimal
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -17,21 +18,45 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AiGatewayBackend(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Backend networking configuration of an AI Gateway.
+class AiGatewayAgentHook(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External hook settings; omitted fields inherit policy-level settings.
 
-    :ivar subnet: Subnet through which the AI Gateway reaches backends.
-    :vartype subnet: ~azure.mgmt.aigateway.models.AiGatewaySubnet
+    :ivar mode: Failure mode when the hook call fails. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: str or ~azure.mgmt.aigateway.models.AiGatewayFailureMode
+    :ivar endpoint: Hook destination URL.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar authentication: Hook authentication settings.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayAgentHookAuthentication
+    :ivar headers: Literal, non-secret HTTP headers, returned by read operations.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewayNameValuePair]
     """
 
-    subnet: Optional["_models.AiGatewaySubnet"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Subnet through which the AI Gateway reaches backends."""
+    mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Failure mode when the hook call fails. Known values are: \"failOpen\" and \"failClosed\"."""
+    endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook destination URL."""
+    authentication: Optional["_models.AiGatewayAgentHookAuthentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook authentication settings."""
+    headers: Optional[list["_models.AiGatewayNameValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Literal, non-secret HTTP headers, returned by read operations."""
 
     @overload
     def __init__(
         self,
         *,
-        subnet: Optional["_models.AiGatewaySubnet"] = None,
+        mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = None,
+        endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+        authentication: Optional["_models.AiGatewayAgentHookAuthentication"] = None,
+        headers: Optional[list["_models.AiGatewayNameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -45,45 +70,416 @@ class AiGatewayBackend(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class AiGatewayFrontend(_Model):
-    """Frontend configuration of an AI Gateway.
+class AiGatewayAgentHookAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Outbound authentication settings for an external agent hook.
 
-    :ivar default_hostname: Default hostname used to invoke the AI Gateway.
-    :vartype default_hostname: str
+    :ivar managed_identity: Managed identity configuration for the hook endpoint.
+    :vartype managed_identity: ~azure.mgmt.aigateway.models.AiGatewayManagedIdentityAuthentication
+    :ivar headers: Secret HTTP headers injected when calling the hook endpoint.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeader]
     """
 
-    default_hostname: Optional[str] = rest_field(name="defaultHostname", visibility=["read"])
-    """Default hostname used to invoke the AI Gateway."""
-
-
-class AiGatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of an AI Gateway.
-
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
-    :ivar frontend: Frontend configuration of the AI Gateway.
-    :vartype frontend: ~azure.mgmt.aigateway.models.AiGatewayFrontend
-    :ivar backend: Backend networking configuration. Can only be set when the AI Gateway is
-     created.
-    :vartype backend: ~azure.mgmt.aigateway.models.AiGatewayBackend
-    """
-
-    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
+    managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
-     \"Canceled\"."""
-    frontend: Optional["_models.AiGatewayFrontend"] = rest_field(visibility=["read"])
-    """Frontend configuration of the AI Gateway."""
-    backend: Optional["_models.AiGatewayBackend"] = rest_field(visibility=["read", "create"])
-    """Backend networking configuration. Can only be set when the AI Gateway is created."""
+    """Managed identity configuration for the hook endpoint."""
+    headers: Optional[list["_models.AiGatewaySecretHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secret HTTP headers injected when calling the hook endpoint."""
 
     @overload
     def __init__(
         self,
         *,
-        backend: Optional["_models.AiGatewayBackend"] = None,
+        managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = None,
+        headers: Optional[list["_models.AiGatewaySecretHeader"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAgentHookAuthenticationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Outbound authentication settings to update on an external agent hook.
+
+    :ivar managed_identity: Managed identity configuration for the hook endpoint.
+    :vartype managed_identity: ~azure.mgmt.aigateway.models.AiGatewayManagedIdentityAuthentication
+    :ivar headers: Secret HTTP headers injected when calling the hook endpoint.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeaderUpdate]
+    """
+
+    managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity configuration for the hook endpoint."""
+    headers: Optional[list["_models.AiGatewaySecretHeaderUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secret HTTP headers injected when calling the hook endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = None,
+        headers: Optional[list["_models.AiGatewaySecretHeaderUpdate"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAgentHooks(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Lifecycle hooks supported on models and tool servers.
+
+    :ivar pre_tool_call: Hook invoked before calling a tool.
+    :vartype pre_tool_call: ~azure.mgmt.aigateway.models.AiGatewayAgentHook
+    :ivar post_tool_call: Hook invoked after calling a tool.
+    :vartype post_tool_call: ~azure.mgmt.aigateway.models.AiGatewayAgentHook
+    :ivar pre_model_call: Hook invoked before calling a model.
+    :vartype pre_model_call: ~azure.mgmt.aigateway.models.AiGatewayAgentHook
+    :ivar post_model_call: Hook invoked after calling a model.
+    :vartype post_model_call: ~azure.mgmt.aigateway.models.AiGatewayAgentHook
+    """
+
+    pre_tool_call: Optional["_models.AiGatewayAgentHook"] = rest_field(
+        name="preToolCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook invoked before calling a tool."""
+    post_tool_call: Optional["_models.AiGatewayAgentHook"] = rest_field(
+        name="postToolCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook invoked after calling a tool."""
+    pre_model_call: Optional["_models.AiGatewayAgentHook"] = rest_field(
+        name="preModelCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook invoked before calling a model."""
+    post_model_call: Optional["_models.AiGatewayAgentHook"] = rest_field(
+        name="postModelCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook invoked after calling a model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pre_tool_call: Optional["_models.AiGatewayAgentHook"] = None,
+        post_tool_call: Optional["_models.AiGatewayAgentHook"] = None,
+        pre_model_call: Optional["_models.AiGatewayAgentHook"] = None,
+        post_model_call: Optional["_models.AiGatewayAgentHook"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAgentHooksUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Lifecycle hook settings to update.
+
+    :ivar pre_tool_call: Hook invoked before calling a tool.
+    :vartype pre_tool_call: ~azure.mgmt.aigateway.models.AiGatewayAgentHookUpdate
+    :ivar post_tool_call: Hook invoked after calling a tool.
+    :vartype post_tool_call: ~azure.mgmt.aigateway.models.AiGatewayAgentHookUpdate
+    :ivar pre_model_call: Hook invoked before calling a model.
+    :vartype pre_model_call: ~azure.mgmt.aigateway.models.AiGatewayAgentHookUpdate
+    :ivar post_model_call: Hook invoked after calling a model.
+    :vartype post_model_call: ~azure.mgmt.aigateway.models.AiGatewayAgentHookUpdate
+    """
+
+    pre_tool_call: Optional["_models.AiGatewayAgentHookUpdate"] = rest_field(
+        name="preToolCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook invoked before calling a tool."""
+    post_tool_call: Optional["_models.AiGatewayAgentHookUpdate"] = rest_field(
+        name="postToolCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook invoked after calling a tool."""
+    pre_model_call: Optional["_models.AiGatewayAgentHookUpdate"] = rest_field(
+        name="preModelCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook invoked before calling a model."""
+    post_model_call: Optional["_models.AiGatewayAgentHookUpdate"] = rest_field(
+        name="postModelCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook invoked after calling a model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pre_tool_call: Optional["_models.AiGatewayAgentHookUpdate"] = None,
+        post_tool_call: Optional["_models.AiGatewayAgentHookUpdate"] = None,
+        pre_model_call: Optional["_models.AiGatewayAgentHookUpdate"] = None,
+        post_model_call: Optional["_models.AiGatewayAgentHookUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAgentHookUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External hook settings to update.
+
+    :ivar mode: Failure mode when the hook call fails. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: str or ~azure.mgmt.aigateway.models.AiGatewayFailureMode
+    :ivar endpoint: Hook destination URL.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpointUpdate
+    :ivar authentication: Hook authentication settings.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayAgentHookAuthenticationUpdate
+    :ivar headers: Literal, non-secret HTTP headers.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewayNameValuePairUpdate]
+    """
+
+    mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Failure mode when the hook call fails. Known values are: \"failOpen\" and \"failClosed\"."""
+    endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook destination URL."""
+    authentication: Optional["_models.AiGatewayAgentHookAuthenticationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hook authentication settings."""
+    headers: Optional[list["_models.AiGatewayNameValuePairUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Literal, non-secret HTTP headers."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = None,
+        endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = None,
+        authentication: Optional["_models.AiGatewayAgentHookAuthenticationUpdate"] = None,
+        headers: Optional[list["_models.AiGatewayNameValuePairUpdate"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAliasFailureRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An ordered failure rule for an AI Gateway alias.
+
+    :ivar when: Boolean @cel(...) expression evaluated against the current routing failure.
+     Required.
+    :vartype when: str
+    :ivar retry_attempts: Maximum additional attempts on the same backend; defaults to zero.
+    :vartype retry_attempts: int
+    :ivar exclude_for: Optional ISO 8601 duration or duration-valued @cel(...) expression for
+     excluding the failed backend.
+    :vartype exclude_for: str
+    """
+
+    when: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Boolean @cel(...) expression evaluated against the current routing failure. Required."""
+    retry_attempts: Optional[int] = rest_field(
+        name="retryAttempts", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum additional attempts on the same backend; defaults to zero."""
+    exclude_for: Optional[str] = rest_field(
+        name="excludeFor", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional ISO 8601 duration or duration-valued @cel(...) expression for excluding the failed
+     backend."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        when: str,
+        retry_attempts: Optional[int] = None,
+        exclude_for: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAliasFailureRuleUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An ordered failure rule to update on an AI Gateway alias.
+
+    :ivar when: Boolean @cel(...) expression evaluated against the current routing failure.
+    :vartype when: str
+    :ivar retry_attempts: Maximum additional attempts on the same backend; defaults to zero.
+    :vartype retry_attempts: int
+    :ivar exclude_for: Optional ISO 8601 duration or duration-valued @cel(...) expression for
+     excluding the failed backend.
+    :vartype exclude_for: str
+    """
+
+    when: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Boolean @cel(...) expression evaluated against the current routing failure."""
+    retry_attempts: Optional[int] = rest_field(
+        name="retryAttempts", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum additional attempts on the same backend; defaults to zero."""
+    exclude_for: Optional[str] = rest_field(
+        name="excludeFor", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional ISO 8601 duration or duration-valued @cel(...) expression for excluding the failed
+     backend."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        when: Optional[str] = None,
+        retry_attempts: Optional[int] = None,
+        exclude_for: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAliasProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a stable client-facing model alias.
+
+    :ivar alias_name: Client-facing routing name sent in the request model field.
+    :vartype alias_name: str
+    :ivar description: Description of the alias.
+    :vartype description: str
+    :ivar backend_models: Ordered target models used for routing. Required.
+    :vartype backend_models: list[~azure.mgmt.aigateway.models.AiGatewayAliasTarget]
+    :ivar selection_order: Ordered routing stages.
+    :vartype selection_order: list[str or
+     ~azure.mgmt.aigateway.models.AiGatewayAliasSelectionStage]
+    :ivar session_backend_preference: Stateless backend preference using an existing caller session
+     key.
+    :vartype session_backend_preference:
+     ~azure.mgmt.aigateway.models.AiGatewaySessionBackendPreference
+    :ivar auto_model_selection: Automatic model selection settings used with the autoModelSelection
+     stage.
+    :vartype auto_model_selection: ~azure.mgmt.aigateway.models.AiGatewayModelSelection
+    :ivar failures: Ordered failure rules; only the first matching rule is applied.
+    :vartype failures: list[~azure.mgmt.aigateway.models.AiGatewayAliasFailureRule]
+    :ivar max_retry_attempts: Maximum additional backend attempts after the first request.
+    :vartype max_retry_attempts: int
+    :ivar supported_endpoints: Native endpoints common to every target model; translated endpoints
+     are excluded.
+    :vartype supported_endpoints: list[str]
+    :ivar gateway_endpoints: Invocation endpoints, when endpoint metadata is enabled for this
+     gateway.
+    :vartype gateway_endpoints: list[~azure.mgmt.aigateway.models.AiGatewayEndpoint]
+    :ivar policies: Inline policies applied to requests routed through the alias.
+    :vartype policies: list[~azure.mgmt.aigateway.models.AiGatewayPolicy]
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
+    """
+
+    alias_name: Optional[str] = rest_field(name="aliasName", visibility=["read", "create", "update", "delete", "query"])
+    """Client-facing routing name sent in the request model field."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the alias."""
+    backend_models: list["_models.AiGatewayAliasTarget"] = rest_field(
+        name="backendModels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered target models used for routing. Required."""
+    selection_order: Optional[list[Union[str, "_models.AiGatewayAliasSelectionStage"]]] = rest_field(
+        name="selectionOrder", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered routing stages."""
+    session_backend_preference: Optional["_models.AiGatewaySessionBackendPreference"] = rest_field(
+        name="sessionBackendPreference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stateless backend preference using an existing caller session key."""
+    auto_model_selection: Optional["_models.AiGatewayModelSelection"] = rest_field(
+        name="autoModelSelection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Automatic model selection settings used with the autoModelSelection stage."""
+    failures: Optional[list["_models.AiGatewayAliasFailureRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered failure rules; only the first matching rule is applied."""
+    max_retry_attempts: Optional[int] = rest_field(
+        name="maxRetryAttempts", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum additional backend attempts after the first request."""
+    supported_endpoints: Optional[list[str]] = rest_field(name="supportedEndpoints", visibility=["read"])
+    """Native endpoints common to every target model; translated endpoints are excluded."""
+    gateway_endpoints: Optional[list["_models.AiGatewayEndpoint"]] = rest_field(
+        name="gatewayEndpoints", visibility=["read"]
+    )
+    """Invocation endpoints, when endpoint metadata is enabled for this gateway."""
+    policies: Optional[list["_models.AiGatewayPolicy"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline policies applied to requests routed through the alias."""
+    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        backend_models: list["_models.AiGatewayAliasTarget"],
+        alias_name: Optional[str] = None,
+        description: Optional[str] = None,
+        selection_order: Optional[list[Union[str, "_models.AiGatewayAliasSelectionStage"]]] = None,
+        session_backend_preference: Optional["_models.AiGatewaySessionBackendPreference"] = None,
+        auto_model_selection: Optional["_models.AiGatewayModelSelection"] = None,
+        failures: Optional[list["_models.AiGatewayAliasFailureRule"]] = None,
+        max_retry_attempts: Optional[int] = None,
+        policies: Optional[list["_models.AiGatewayPolicy"]] = None,
     ) -> None: ...
 
     @overload
@@ -123,6 +519,2997 @@ class Resource(_Model):
      \"Microsoft.Storage/storageAccounts\"."""
     system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    """
+
+
+class AiGatewayAliasResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A stable client-facing model identity backed by an ordered pool of models.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayAliasProperties
+    """
+
+    properties: Optional["_models.AiGatewayAliasProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayAliasProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAliasTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A model targeted by an AI Gateway alias.
+
+    :ivar resource_id: Azure resource identifier of the target model in the default workspace.
+     Required.
+    :vartype resource_id: str
+    :ivar selector_model_name: Unversioned canonical model name grouping equivalent serving
+     deployments.
+    :vartype selector_model_name: str
+    :ivar when: Optional Boolean CEL expression wrapped in @cel(...) controlling eligibility for
+     new backend selections.
+    :vartype when: str
+    :ivar priority: Routing priority. Lower values are preferred; the effective default is zero.
+    :vartype priority: int
+    :ivar weight: Relative selection weight within a priority group. The effective default is one.
+    :vartype weight: int
+    """
+
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """Azure resource identifier of the target model in the default workspace. Required."""
+    selector_model_name: Optional[str] = rest_field(
+        name="selectorModelName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unversioned canonical model name grouping equivalent serving deployments."""
+    when: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional Boolean CEL expression wrapped in @cel(...) controlling eligibility for new backend
+     selections."""
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Routing priority. Lower values are preferred; the effective default is zero."""
+    weight: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Relative selection weight within a priority group. The effective default is one."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        selector_model_name: Optional[str] = None,
+        when: Optional[str] = None,
+        priority: Optional[int] = None,
+        weight: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAliasTargetUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A model target to update on an AI Gateway alias.
+
+    :ivar resource_id: Azure resource identifier of the target model in the default workspace.
+    :vartype resource_id: str
+    :ivar selector_model_name: Unversioned canonical model name grouping equivalent serving
+     deployments.
+    :vartype selector_model_name: str
+    :ivar when: Optional Boolean CEL expression wrapped in @cel(...) controlling eligibility for
+     new backend selections.
+    :vartype when: str
+    :ivar priority: Routing priority. Lower values are preferred; the effective default is zero.
+    :vartype priority: int
+    :ivar weight: Relative selection weight within a priority group. The effective default is one.
+    :vartype weight: int
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource identifier of the target model in the default workspace."""
+    selector_model_name: Optional[str] = rest_field(
+        name="selectorModelName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unversioned canonical model name grouping equivalent serving deployments."""
+    when: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional Boolean CEL expression wrapped in @cel(...) controlling eligibility for new backend
+     selections."""
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Routing priority. Lower values are preferred; the effective default is zero."""
+    weight: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Relative selection weight within a priority group. The effective default is one."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        selector_model_name: Optional[str] = None,
+        when: Optional[str] = None,
+        priority: Optional[int] = None,
+        weight: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAliasUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for updating an AI Gateway alias.
+
+    :ivar properties: Alias properties to update.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayAliasUpdateProperties
+    """
+
+    properties: Optional["_models.AiGatewayAliasUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Alias properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayAliasUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayAliasUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties to update on an AI Gateway alias.
+
+    :ivar alias_name: Client-facing routing name sent in the request model field.
+    :vartype alias_name: str
+    :ivar description: Description of the alias.
+    :vartype description: str
+    :ivar backend_models: Ordered target models used for routing.
+    :vartype backend_models: list[~azure.mgmt.aigateway.models.AiGatewayAliasTargetUpdate]
+    :ivar selection_order: Ordered routing stages.
+    :vartype selection_order: list[str or
+     ~azure.mgmt.aigateway.models.AiGatewayAliasSelectionStage]
+    :ivar session_backend_preference: Stateless backend preference using an existing caller session
+     key.
+    :vartype session_backend_preference:
+     ~azure.mgmt.aigateway.models.AiGatewaySessionBackendPreferenceUpdate
+    :ivar auto_model_selection: Automatic model selection settings used with the autoModelSelection
+     stage.
+    :vartype auto_model_selection: ~azure.mgmt.aigateway.models.AiGatewayModelSelectionUpdate
+    :ivar failures: Ordered failure rules; only the first matching rule is applied.
+    :vartype failures: list[~azure.mgmt.aigateway.models.AiGatewayAliasFailureRuleUpdate]
+    :ivar max_retry_attempts: Maximum additional backend attempts after the first request.
+    :vartype max_retry_attempts: int
+    :ivar policies: Inline policies applied to requests routed through the alias.
+    :vartype policies: list[~azure.mgmt.aigateway.models.AiGatewayPolicyUpdate]
+    """
+
+    alias_name: Optional[str] = rest_field(name="aliasName", visibility=["read", "create", "update", "delete", "query"])
+    """Client-facing routing name sent in the request model field."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the alias."""
+    backend_models: Optional[list["_models.AiGatewayAliasTargetUpdate"]] = rest_field(
+        name="backendModels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered target models used for routing."""
+    selection_order: Optional[list[Union[str, "_models.AiGatewayAliasSelectionStage"]]] = rest_field(
+        name="selectionOrder", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered routing stages."""
+    session_backend_preference: Optional["_models.AiGatewaySessionBackendPreferenceUpdate"] = rest_field(
+        name="sessionBackendPreference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stateless backend preference using an existing caller session key."""
+    auto_model_selection: Optional["_models.AiGatewayModelSelectionUpdate"] = rest_field(
+        name="autoModelSelection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Automatic model selection settings used with the autoModelSelection stage."""
+    failures: Optional[list["_models.AiGatewayAliasFailureRuleUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered failure rules; only the first matching rule is applied."""
+    max_retry_attempts: Optional[int] = rest_field(
+        name="maxRetryAttempts", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum additional backend attempts after the first request."""
+    policies: Optional[list["_models.AiGatewayPolicyUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline policies applied to requests routed through the alias."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        alias_name: Optional[str] = None,
+        description: Optional[str] = None,
+        backend_models: Optional[list["_models.AiGatewayAliasTargetUpdate"]] = None,
+        selection_order: Optional[list[Union[str, "_models.AiGatewayAliasSelectionStage"]]] = None,
+        session_backend_preference: Optional["_models.AiGatewaySessionBackendPreferenceUpdate"] = None,
+        auto_model_selection: Optional["_models.AiGatewayModelSelectionUpdate"] = None,
+        failures: Optional[list["_models.AiGatewayAliasFailureRuleUpdate"]] = None,
+        max_retry_attempts: Optional[int] = None,
+        policies: Optional[list["_models.AiGatewayPolicyUpdate"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayApiKeyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an AI Gateway API key.
+
+    :ivar display_name: Display name of the key.
+    :vartype display_name: str
+    :ivar state: Subscription state.
+    :vartype state: str
+    :ivar created_date: Creation time.
+    :vartype created_date: ~datetime.datetime
+    :ivar expiration_date: Optional expiration time.
+    :vartype expiration_date: ~datetime.datetime
+    :ivar primary_key: Primary key value. Omitted from ordinary read responses.
+    :vartype primary_key: str
+    :ivar secondary_key: Secondary key value. Omitted from ordinary read responses.
+    :vartype secondary_key: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the key."""
+    state: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Subscription state."""
+    created_date: Optional[datetime.datetime] = rest_field(name="createdDate", visibility=["read"], format="rfc3339")
+    """Creation time."""
+    expiration_date: Optional[datetime.datetime] = rest_field(
+        name="expirationDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Optional expiration time."""
+    primary_key: Optional[str] = rest_field(name="primaryKey", visibility=["create", "update"])
+    """Primary key value. Omitted from ordinary read responses."""
+    secondary_key: Optional[str] = rest_field(name="secondaryKey", visibility=["create", "update"])
+    """Secondary key value. Omitted from ordinary read responses."""
+    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        state: Optional[str] = None,
+        expiration_date: Optional[datetime.datetime] = None,
+        primary_key: Optional[str] = None,
+        secondary_key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayApiKeyResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An AI Gateway API key resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayApiKeyProperties
+    """
+
+    properties: Optional["_models.AiGatewayApiKeyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayApiKeyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayApiKeyUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for updating an AI Gateway API key.
+
+    :ivar properties: API key properties to update.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayApiKeyUpdateProperties
+    """
+
+    properties: Optional["_models.AiGatewayApiKeyUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """API key properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayApiKeyUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayApiKeyUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for updating an AI Gateway API key.
+
+    :ivar display_name: Display name of the key.
+    :vartype display_name: str
+    :ivar state: Subscription state.
+    :vartype state: str
+    :ivar expiration_date: Optional expiration time.
+    :vartype expiration_date: ~datetime.datetime
+    :ivar primary_key: Replacement primary key value.
+    :vartype primary_key: str
+    :ivar secondary_key: Replacement secondary key value.
+    :vartype secondary_key: str
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the key."""
+    state: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Subscription state."""
+    expiration_date: Optional[datetime.datetime] = rest_field(
+        name="expirationDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Optional expiration time."""
+    primary_key: Optional[str] = rest_field(name="primaryKey", visibility=["create", "update"])
+    """Replacement primary key value."""
+    secondary_key: Optional[str] = rest_field(name="secondaryKey", visibility=["create", "update"])
+    """Replacement secondary key value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        state: Optional[str] = None,
+        expiration_date: Optional[datetime.datetime] = None,
+        primary_key: Optional[str] = None,
+        secondary_key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayApiKeyValues(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Primary and secondary API key values.
+
+    :ivar primary_key: Primary API key value. Required.
+    :vartype primary_key: str
+    :ivar secondary_key: Secondary API key value. Required.
+    :vartype secondary_key: str
+    """
+
+    primary_key: str = rest_field(name="primaryKey", visibility=["read", "create", "update", "delete", "query"])
+    """Primary API key value. Required."""
+    secondary_key: str = rest_field(name="secondaryKey", visibility=["read", "create", "update", "delete", "query"])
+    """Secondary API key value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        primary_key: str,
+        secondary_key: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayApplicationInsightsConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Application Insights export destination.
+
+    :ivar connection_string: Application Insights connection string. Required when creating this
+     exporter kind.
+    :vartype connection_string: str
+    :ivar resource_id: Azure resource identifier of the Application Insights component.
+    :vartype resource_id: str
+    """
+
+    connection_string: Optional[str] = rest_field(name="connectionString", visibility=["create", "update"])
+    """Application Insights connection string. Required when creating this exporter kind."""
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource identifier of the Application Insights component."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_string: Optional[str] = None,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayBackend(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Backend networking configuration of an AI Gateway.
+
+    :ivar subnet: Subnet through which the AI Gateway reaches backends.
+    :vartype subnet: ~azure.mgmt.aigateway.models.AiGatewaySubnet
+    """
+
+    subnet: Optional["_models.AiGatewaySubnet"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Subnet through which the AI Gateway reaches backends."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subnet: Optional["_models.AiGatewaySubnet"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayBackendUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Backend networking configuration to update on an AI Gateway.
+
+    :ivar subnet: Subnet through which the AI Gateway reaches backends. Omit it to keep the current
+     subnet, or set it to null to remove it.
+    :vartype subnet: ~azure.mgmt.aigateway.models.AiGatewaySubnetUpdate
+    """
+
+    subnet: Optional["_models.AiGatewaySubnetUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Subnet through which the AI Gateway reaches backends. Omit it to keep the current subnet, or
+     set it to null to remove it."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subnet: Optional["_models.AiGatewaySubnetUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayCheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for checking an AI Gateway name in a location.
+
+    :ivar name: Name to validate and check for availability. Required.
+    :vartype name: str
+    :ivar type: Resource type to check. Required. Default value is
+     "Microsoft.ApiManagement/aigateways".
+    :vartype type: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name to validate and check for availability. Required."""
+    type: Literal["Microsoft.ApiManagement/aigateways"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource type to check. Required. Default value is \"Microsoft.ApiManagement/aigateways\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["Microsoft.ApiManagement/aigateways"] = "Microsoft.ApiManagement/aigateways"
+
+
+class AiGatewayCheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Availability of an AI Gateway name in a location.
+
+    :ivar name_available: Whether the name is valid and available. Required.
+    :vartype name_available: bool
+    :ivar reason: Reason for the availability result. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.aigateway.models.AiGatewayNameAvailabilityReason
+    :ivar message: Additional information about the availability result.
+    :vartype message: str
+    """
+
+    name_available: bool = rest_field(name="nameAvailable", visibility=["read", "create", "update", "delete", "query"])
+    """Whether the name is valid and available. Required."""
+    reason: Optional[Union[str, "_models.AiGatewayNameAvailabilityReason"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reason for the availability result. Known values are: \"Invalid\" and \"AlreadyExists\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional information about the availability result."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name_available: bool,
+        reason: Optional[Union[str, "_models.AiGatewayNameAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayCostLimitOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An ordered cost-budget override; exactly one selector must be specified.
+
+    :ivar claims: Authenticated token claims that must all match; claim names are case-sensitive.
+    :vartype claims: list[~azure.mgmt.aigateway.models.AiGatewayNameValuePair]
+    :ivar api_key_resource_id: Azure resource identifier of the API key selecting this override.
+    :vartype api_key_resource_id: str
+    :ivar amount: Override budget in US dollars. Required.
+    :vartype amount: ~decimal.Decimal
+    """
+
+    claims: Optional[list["_models.AiGatewayNameValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authenticated token claims that must all match; claim names are case-sensitive."""
+    api_key_resource_id: Optional[str] = rest_field(
+        name="apiKeyResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource identifier of the API key selecting this override."""
+    amount: decimal.Decimal = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Override budget in US dollars. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        amount: decimal.Decimal,
+        claims: Optional[list["_models.AiGatewayNameValuePair"]] = None,
+        api_key_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayCostLimitOverrideUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An ordered cost-budget override to update.
+
+    :ivar claims: Authenticated token claims that must all match; claim names are case-sensitive.
+    :vartype claims: list[~azure.mgmt.aigateway.models.AiGatewayNameValuePairUpdate]
+    :ivar api_key_resource_id: Azure resource identifier of the API key selecting this override.
+    :vartype api_key_resource_id: str
+    :ivar amount: Override budget in US dollars.
+    :vartype amount: ~decimal.Decimal
+    """
+
+    claims: Optional[list["_models.AiGatewayNameValuePairUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authenticated token claims that must all match; claim names are case-sensitive."""
+    api_key_resource_id: Optional[str] = rest_field(
+        name="apiKeyResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource identifier of the API key selecting this override."""
+    amount: Optional[decimal.Decimal] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Override budget in US dollars."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        claims: Optional[list["_models.AiGatewayNameValuePairUpdate"]] = None,
+        api_key_resource_id: Optional[str] = None,
+        amount: Optional[decimal.Decimal] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayCustomProviderConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Custom model provider configuration.
+
+    :ivar endpoint: Provider base endpoint. Required.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    """
+
+    endpoint: "_models.AiGatewayDestinationEndpoint" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provider base endpoint. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint: "_models.AiGatewayDestinationEndpoint",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayCustomProviderConfigurationUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Custom model provider settings to update.
+
+    :ivar endpoint: Provider base endpoint.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpointUpdate
+    """
+
+    endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provider base endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayDestinationEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An outbound service destination URL.
+
+    :ivar url: Destination HTTPS or HTTP URL. Required.
+    :vartype url: str
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Destination HTTPS or HTTP URL. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayDestinationEndpointUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An outbound service destination URL to update.
+
+    :ivar url: Destination HTTPS or HTTP URL.
+    :vartype url: str
+    """
+
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Destination HTTPS or HTTP URL."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayEndpoint(_Model):
+    """A client-facing endpoint for invoking an AI Gateway resource.
+
+    :ivar url: Complete HTTPS invocation URL. Required.
+    :vartype url: str
+    :ivar base_url: HTTPS base URL for SDKs that construct operation paths, when metadata is
+     enabled.
+    :vartype base_url: str
+    :ivar api: API identifier relative to the provider prefix, when metadata is enabled.
+    :vartype api: str
+    """
+
+    url: str = rest_field(visibility=["read"])
+    """Complete HTTPS invocation URL. Required."""
+    base_url: Optional[str] = rest_field(name="baseUrl", visibility=["read"])
+    """HTTPS base URL for SDKs that construct operation paths, when metadata is enabled."""
+    api: Optional[str] = rest_field(visibility=["read"])
+    """API identifier relative to the provider prefix, when metadata is enabled."""
+
+
+class AiGatewayFallbackTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A fallback target for a model policy.
+
+    :ivar model_id: Resource identifier of a model in the same workspace. Required.
+    :vartype model_id: str
+    """
+
+    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
+    """Resource identifier of a model in the same workspace. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayFallbackTargetUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A fallback target to update on a model policy.
+
+    :ivar model_id: Resource identifier of a model in the same workspace.
+    :vartype model_id: str
+    """
+
+    model_id: Optional[str] = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
+    """Resource identifier of a model in the same workspace."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayFoundryProviderConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Foundry model provider configuration.
+
+    :ivar endpoint: Foundry endpoint.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar resource_ids: Cognitive Services account resource identifiers available to this provider.
+     Required.
+    :vartype resource_ids: list[str]
+    """
+
+    endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Foundry endpoint."""
+    resource_ids: list[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
+    """Cognitive Services account resource identifiers available to this provider. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_ids: list[str],
+        endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayFoundryProviderConfigurationUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Foundry model provider settings to update.
+
+    :ivar endpoint: Foundry endpoint.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpointUpdate
+    :ivar resource_ids: Cognitive Services account resource identifiers available to this provider.
+    :vartype resource_ids: list[str]
+    """
+
+    endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Foundry endpoint."""
+    resource_ids: Optional[list[str]] = rest_field(
+        name="resourceIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cognitive Services account resource identifiers available to this provider."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = None,
+        resource_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayFrontend(_Model):
+    """Frontend configuration of an AI Gateway.
+
+    :ivar default_hostname: Default hostname used to invoke the AI Gateway.
+    :vartype default_hostname: str
+    """
+
+    default_hostname: Optional[str] = rest_field(name="defaultHostname", visibility=["read"])
+    """Default hostname used to invoke the AI Gateway."""
+
+
+class AiGatewayGitHubAppAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GitHub App credentials for a GitHub model provider.
+
+    :ivar app_id: GitHub App identifier.
+    :vartype app_id: str
+    :ivar installation_id: GitHub App installation identifier.
+    :vartype installation_id: str
+    :ivar private_key: GitHub App private key. Omitted from ordinary read responses.
+    :vartype private_key: str
+    """
+
+    app_id: Optional[str] = rest_field(name="appId", visibility=["read", "create", "update", "delete", "query"])
+    """GitHub App identifier."""
+    installation_id: Optional[str] = rest_field(
+        name="installationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GitHub App installation identifier."""
+    private_key: Optional[str] = rest_field(name="privateKey", visibility=["create", "update"])
+    """GitHub App private key. Omitted from ordinary read responses."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_id: Optional[str] = None,
+        installation_id: Optional[str] = None,
+        private_key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayManagedIdentityAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed identity settings for an outbound connection.
+
+    :ivar resource: Target Entra resource or audience URI requested for managed identity
+     authentication.
+    :vartype resource: str
+    :ivar client_id: Client ID of a user-assigned managed identity; omit for system-assigned
+     identity.
+    :vartype client_id: str
+    """
+
+    resource: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target Entra resource or audience URI requested for managed identity authentication."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """Client ID of a user-assigned managed identity; omit for system-assigned identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource: Optional[str] = None,
+        client_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayMcpUrlConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """MCP endpoint configuration.
+
+    :ivar endpoint: Backend MCP server endpoint. Required.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar transport: MCP transport. "streamableHttp"
+    :vartype transport: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerMcpTransport
+    """
+
+    endpoint: "_models.AiGatewayDestinationEndpoint" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend MCP server endpoint. Required."""
+    transport: Optional[Union[str, "_models.AiGatewayToolServerMcpTransport"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """MCP transport. \"streamableHttp\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint: "_models.AiGatewayDestinationEndpoint",
+        transport: Optional[Union[str, "_models.AiGatewayToolServerMcpTransport"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayMcpUrlConfigurationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """MCP endpoint settings to update.
+
+    :ivar endpoint: Backend MCP server endpoint.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpointUpdate
+    :ivar transport: MCP transport. "streamableHttp"
+    :vartype transport: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerMcpTransport
+    """
+
+    endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend MCP server endpoint."""
+    transport: Optional[Union[str, "_models.AiGatewayToolServerMcpTransport"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """MCP transport. \"streamableHttp\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = None,
+        transport: Optional[Union[str, "_models.AiGatewayToolServerMcpTransport"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Deployment details for an AI Gateway model.
+
+    :ivar resource_id: ARM resource identifier of the provider deployment.
+    :vartype resource_id: str
+    :ivar model_name: Provider-side model name. Required.
+    :vartype model_name: str
+    :ivar model_version: Provider-side model version.
+    :vartype model_version: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource identifier of the provider deployment."""
+    model_name: str = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
+    """Provider-side model name. Required."""
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provider-side model version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_name: str,
+        resource_id: Optional[str] = None,
+        model_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelDeploymentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Deployment details to update on an AI Gateway model.
+
+    :ivar resource_id: ARM resource identifier of the provider deployment.
+    :vartype resource_id: str
+    :ivar model_name: Provider-side model name.
+    :vartype model_name: str
+    :ivar model_version: Provider-side model version.
+    :vartype model_version: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource identifier of the provider deployment."""
+    model_name: Optional[str] = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
+    """Provider-side model name."""
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provider-side model version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Maps a canonical AI Gateway API identifier to a relative backend path served by the model
+    provider.
+
+    :ivar api: Canonical AI Gateway API identifier (for example, v1/chat/completions, v1/responses,
+     v1/messages, or v1/embeddings). Required.
+    :vartype api: str
+    :ivar path: Backend path relative to the model provider's base endpoint, starting with '/'.
+     Required.
+    :vartype path: str
+    """
+
+    api: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Canonical AI Gateway API identifier (for example, v1/chat/completions, v1/responses,
+     v1/messages, or v1/embeddings). Required."""
+    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Backend path relative to the model provider's base endpoint, starting with '/'. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        api: str,
+        path: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelEndpointUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A model endpoint mapping to update.
+
+    :ivar api: Canonical AI Gateway API identifier (for example, v1/chat/completions, v1/responses,
+     v1/messages, or v1/embeddings).
+    :vartype api: str
+    :ivar path: Backend path relative to the model provider's base endpoint, starting with '/'.
+    :vartype path: str
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Canonical AI Gateway API identifier (for example, v1/chat/completions, v1/responses,
+     v1/messages, or v1/embeddings)."""
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Backend path relative to the model provider's base endpoint, starting with '/'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        api: Optional[str] = None,
+        path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an AI Gateway model.
+
+    :ivar display_name: Display name of the model. Required.
+    :vartype display_name: str
+    :ivar description: Description of the model.
+    :vartype description: str
+    :ivar provider_kind: Parent model provider type. Known values are: "Foundry", "Custom", and
+     "GitHub".
+    :vartype provider_kind: str or ~azure.mgmt.aigateway.models.AiGatewayModelProviderKind
+    :ivar deployment: Provider deployment details. Required.
+    :vartype deployment: ~azure.mgmt.aigateway.models.AiGatewayModelDeployment
+    :ivar endpoints: API-to-backend-path mappings served by this model.
+    :vartype endpoints: list[~azure.mgmt.aigateway.models.AiGatewayModelEndpoint]
+    :ivar supported_endpoints: Runtime endpoints supported by this model.
+    :vartype supported_endpoints: list[str]
+    :ivar policies: Inline policies applied to this model.
+    :vartype policies: list[~azure.mgmt.aigateway.models.AiGatewayPolicy]
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
+    """
+
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """Display name of the model. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the model."""
+    provider_kind: Optional[Union[str, "_models.AiGatewayModelProviderKind"]] = rest_field(
+        name="providerKind", visibility=["read"]
+    )
+    """Parent model provider type. Known values are: \"Foundry\", \"Custom\", and \"GitHub\"."""
+    deployment: "_models.AiGatewayModelDeployment" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provider deployment details. Required."""
+    endpoints: Optional[list["_models.AiGatewayModelEndpoint"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """API-to-backend-path mappings served by this model."""
+    supported_endpoints: Optional[list[str]] = rest_field(
+        name="supportedEndpoints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Runtime endpoints supported by this model."""
+    policies: Optional[list["_models.AiGatewayPolicy"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline policies applied to this model."""
+    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        deployment: "_models.AiGatewayModelDeployment",
+        description: Optional[str] = None,
+        endpoints: Optional[list["_models.AiGatewayModelEndpoint"]] = None,
+        supported_endpoints: Optional[list[str]] = None,
+        policies: Optional[list["_models.AiGatewayPolicy"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Outbound authentication configuration for a model provider.
+
+    :ivar github_app: GitHub App credentials when modelProviderType is GitHub.
+    :vartype github_app: ~azure.mgmt.aigateway.models.AiGatewayGitHubAppAuthentication
+    :ivar managed_identity: Managed identity configuration when modelProviderType is Foundry.
+    :vartype managed_identity: ~azure.mgmt.aigateway.models.AiGatewayManagedIdentityAuthentication
+    :ivar headers: Secret HTTP headers injected when calling the model provider.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeader]
+    """
+
+    github_app: Optional["_models.AiGatewayGitHubAppAuthentication"] = rest_field(
+        name="githubApp", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GitHub App credentials when modelProviderType is GitHub."""
+    managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity configuration when modelProviderType is Foundry."""
+    headers: Optional[list["_models.AiGatewaySecretHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secret HTTP headers injected when calling the model provider."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        github_app: Optional["_models.AiGatewayGitHubAppAuthentication"] = None,
+        managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = None,
+        headers: Optional[list["_models.AiGatewaySecretHeader"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderAuthenticationUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Outbound authentication configuration to update on a model provider.
+
+    :ivar github_app: GitHub App credentials when modelProviderType is GitHub.
+    :vartype github_app: ~azure.mgmt.aigateway.models.AiGatewayGitHubAppAuthentication
+    :ivar managed_identity: Managed identity configuration when modelProviderType is Foundry.
+    :vartype managed_identity: ~azure.mgmt.aigateway.models.AiGatewayManagedIdentityAuthentication
+    :ivar headers: Secret HTTP headers injected when calling the model provider.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeaderUpdate]
+    """
+
+    github_app: Optional["_models.AiGatewayGitHubAppAuthentication"] = rest_field(
+        name="githubApp", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GitHub App credentials when modelProviderType is GitHub."""
+    managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity configuration when modelProviderType is Foundry."""
+    headers: Optional[list["_models.AiGatewaySecretHeaderUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secret HTTP headers injected when calling the model provider."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        github_app: Optional["_models.AiGatewayGitHubAppAuthentication"] = None,
+        managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = None,
+        headers: Optional[list["_models.AiGatewaySecretHeaderUpdate"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an AI Gateway model provider.
+
+    :ivar model_provider_type: Model provider type. This value cannot be changed after creation.
+     Required. Known values are: "Foundry", "Custom", and "GitHub".
+    :vartype model_provider_type: str or ~azure.mgmt.aigateway.models.AiGatewayModelProviderKind
+    :ivar display_name: Display name of the model provider. Required.
+    :vartype display_name: str
+    :ivar description: Description of the model provider.
+    :vartype description: str
+    :ivar foundry: Foundry configuration. Required when modelProviderType is Foundry.
+    :vartype foundry: ~azure.mgmt.aigateway.models.AiGatewayFoundryProviderConfiguration
+    :ivar custom: Custom provider configuration. Required when modelProviderType is Custom.
+    :vartype custom: ~azure.mgmt.aigateway.models.AiGatewayCustomProviderConfiguration
+    :ivar authentication: Outbound authentication configuration.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayModelProviderAuthentication
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
+    """
+
+    model_provider_type: Union[str, "_models.AiGatewayModelProviderKind"] = rest_field(
+        name="modelProviderType", visibility=["read", "create"]
+    )
+    """Model provider type. This value cannot be changed after creation. Required. Known values are:
+     \"Foundry\", \"Custom\", and \"GitHub\"."""
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """Display name of the model provider. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the model provider."""
+    foundry: Optional["_models.AiGatewayFoundryProviderConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Foundry configuration. Required when modelProviderType is Foundry."""
+    custom: Optional["_models.AiGatewayCustomProviderConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Custom provider configuration. Required when modelProviderType is Custom."""
+    authentication: Optional["_models.AiGatewayModelProviderAuthentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Outbound authentication configuration."""
+    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_provider_type: Union[str, "_models.AiGatewayModelProviderKind"],
+        display_name: str,
+        description: Optional[str] = None,
+        foundry: Optional["_models.AiGatewayFoundryProviderConfiguration"] = None,
+        custom: Optional["_models.AiGatewayCustomProviderConfiguration"] = None,
+        authentication: Optional["_models.AiGatewayModelProviderAuthentication"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An AI Gateway model provider resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayModelProviderProperties
+    """
+
+    properties: Optional["_models.AiGatewayModelProviderProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayModelProviderProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderSecretAuthentication(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Authentication settings returned by the model-provider secret retrieval action.
+
+    :ivar github_app: GitHub App credentials when modelProviderType is GitHub.
+    :vartype github_app:
+     ~azure.mgmt.aigateway.models.AiGatewayModelProviderSecretGitHubAppAuthentication
+    :ivar managed_identity: Managed identity configuration when modelProviderType is Foundry.
+    :vartype managed_identity: ~azure.mgmt.aigateway.models.AiGatewayManagedIdentityAuthentication
+    :ivar headers: Secret HTTP headers injected when calling the model provider.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeaderValue]
+    """
+
+    github_app: Optional["_models.AiGatewayModelProviderSecretGitHubAppAuthentication"] = rest_field(
+        name="githubApp", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GitHub App credentials when modelProviderType is GitHub."""
+    managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity configuration when modelProviderType is Foundry."""
+    headers: Optional[list["_models.AiGatewaySecretHeaderValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secret HTTP headers injected when calling the model provider."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        github_app: Optional["_models.AiGatewayModelProviderSecretGitHubAppAuthentication"] = None,
+        managed_identity: Optional["_models.AiGatewayManagedIdentityAuthentication"] = None,
+        headers: Optional[list["_models.AiGatewaySecretHeaderValue"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderSecretGitHubAppAuthentication(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """GitHub App credentials returned by the model-provider secret retrieval action.
+
+    :ivar app_id: GitHub App identifier.
+    :vartype app_id: str
+    :ivar installation_id: GitHub App installation identifier.
+    :vartype installation_id: str
+    :ivar private_key: GitHub App private key.
+    :vartype private_key: str
+    """
+
+    app_id: Optional[str] = rest_field(name="appId", visibility=["read", "create", "update", "delete", "query"])
+    """GitHub App identifier."""
+    installation_id: Optional[str] = rest_field(
+        name="installationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GitHub App installation identifier."""
+    private_key: Optional[str] = rest_field(
+        name="privateKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GitHub App private key."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_id: Optional[str] = None,
+        installation_id: Optional[str] = None,
+        private_key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderSecrets(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Secret values configured on a model provider.
+
+    :ivar authentication: Outbound authentication configuration including secret values.
+    :vartype authentication:
+     ~azure.mgmt.aigateway.models.AiGatewayModelProviderSecretAuthentication
+    """
+
+    authentication: Optional["_models.AiGatewayModelProviderSecretAuthentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Outbound authentication configuration including secret values."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authentication: Optional["_models.AiGatewayModelProviderSecretAuthentication"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for updating an AI Gateway model provider.
+
+    :ivar properties: Model provider properties to update.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayModelProviderUpdateProperties
+    """
+
+    properties: Optional["_models.AiGatewayModelProviderUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Model provider properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayModelProviderUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelProviderUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for updating an AI Gateway model provider.
+
+    :ivar display_name: Display name of the model provider.
+    :vartype display_name: str
+    :ivar description: Description of the model provider.
+    :vartype description: str
+    :ivar foundry: Foundry configuration.
+    :vartype foundry: ~azure.mgmt.aigateway.models.AiGatewayFoundryProviderConfigurationUpdate
+    :ivar custom: Custom provider configuration.
+    :vartype custom: ~azure.mgmt.aigateway.models.AiGatewayCustomProviderConfigurationUpdate
+    :ivar authentication: Outbound authentication configuration.
+    :vartype authentication:
+     ~azure.mgmt.aigateway.models.AiGatewayModelProviderAuthenticationUpdate
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the model provider."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the model provider."""
+    foundry: Optional["_models.AiGatewayFoundryProviderConfigurationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Foundry configuration."""
+    custom: Optional["_models.AiGatewayCustomProviderConfigurationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Custom provider configuration."""
+    authentication: Optional["_models.AiGatewayModelProviderAuthenticationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Outbound authentication configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        foundry: Optional["_models.AiGatewayFoundryProviderConfigurationUpdate"] = None,
+        custom: Optional["_models.AiGatewayCustomProviderConfigurationUpdate"] = None,
+        authentication: Optional["_models.AiGatewayModelProviderAuthenticationUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An AI Gateway model resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayModelProperties
+    """
+
+    properties: Optional["_models.AiGatewayModelProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayModelProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelSelection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Automatic model selection configuration for an AI Gateway alias.
+
+    :ivar objective: Configured quality/cost objective. Required. Known values are: "Balanced",
+     "Cost", and "Quality".
+    :vartype objective: str or ~azure.mgmt.aigateway.models.AiGatewayModelSelectionObjective
+    :ivar allowed_request_overrides: Allowed per-request behaviors. Omitting the property or
+     sending an empty array denies overrides and disables function-tool compatibility filtering.
+    :vartype allowed_request_overrides: list[str or
+     ~azure.mgmt.aigateway.models.AiGatewayAllowedRequestOverride]
+    """
+
+    objective: Union[str, "_models.AiGatewayModelSelectionObjective"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configured quality/cost objective. Required. Known values are: \"Balanced\", \"Cost\", and
+     \"Quality\"."""
+    allowed_request_overrides: Optional[list[Union[str, "_models.AiGatewayAllowedRequestOverride"]]] = rest_field(
+        name="allowedRequestOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allowed per-request behaviors. Omitting the property or sending an empty array denies overrides
+     and disables function-tool compatibility filtering."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        objective: Union[str, "_models.AiGatewayModelSelectionObjective"],
+        allowed_request_overrides: Optional[list[Union[str, "_models.AiGatewayAllowedRequestOverride"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelSelectionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Automatic model selection configuration to update.
+
+    :ivar objective: Configured quality/cost objective. Known values are: "Balanced", "Cost", and
+     "Quality".
+    :vartype objective: str or ~azure.mgmt.aigateway.models.AiGatewayModelSelectionObjective
+    :ivar allowed_request_overrides: Allowed per-request behaviors. Omitting the property or
+     sending an empty array denies overrides and disables function-tool compatibility filtering.
+    :vartype allowed_request_overrides: list[str or
+     ~azure.mgmt.aigateway.models.AiGatewayAllowedRequestOverride]
+    """
+
+    objective: Optional[Union[str, "_models.AiGatewayModelSelectionObjective"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configured quality/cost objective. Known values are: \"Balanced\", \"Cost\", and \"Quality\"."""
+    allowed_request_overrides: Optional[list[Union[str, "_models.AiGatewayAllowedRequestOverride"]]] = rest_field(
+        name="allowedRequestOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allowed per-request behaviors. Omitting the property or sending an empty array denies overrides
+     and disables function-tool compatibility filtering."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        objective: Optional[Union[str, "_models.AiGatewayModelSelectionObjective"]] = None,
+        allowed_request_overrides: Optional[list[Union[str, "_models.AiGatewayAllowedRequestOverride"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for updating an AI Gateway model.
+
+    :ivar properties: Model properties to update.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayModelUpdateProperties
+    """
+
+    properties: Optional["_models.AiGatewayModelUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Model properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayModelUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayModelUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for updating an AI Gateway model.
+
+    :ivar display_name: Display name of the model.
+    :vartype display_name: str
+    :ivar description: Description of the model.
+    :vartype description: str
+    :ivar deployment: Provider deployment details.
+    :vartype deployment: ~azure.mgmt.aigateway.models.AiGatewayModelDeploymentUpdate
+    :ivar endpoints: API-to-backend-path mappings served by this model.
+    :vartype endpoints: list[~azure.mgmt.aigateway.models.AiGatewayModelEndpointUpdate]
+    :ivar policies: Inline policies applied to this model.
+    :vartype policies: list[~azure.mgmt.aigateway.models.AiGatewayPolicyUpdate]
+    :ivar supported_endpoints: Runtime endpoints supported by this model.
+    :vartype supported_endpoints: list[str]
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the model."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the model."""
+    deployment: Optional["_models.AiGatewayModelDeploymentUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provider deployment details."""
+    endpoints: Optional[list["_models.AiGatewayModelEndpointUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """API-to-backend-path mappings served by this model."""
+    policies: Optional[list["_models.AiGatewayPolicyUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline policies applied to this model."""
+    supported_endpoints: Optional[list[str]] = rest_field(
+        name="supportedEndpoints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Runtime endpoints supported by this model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        deployment: Optional["_models.AiGatewayModelDeploymentUpdate"] = None,
+        endpoints: Optional[list["_models.AiGatewayModelEndpointUpdate"]] = None,
+        policies: Optional[list["_models.AiGatewayPolicyUpdate"]] = None,
+        supported_endpoints: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayNameValuePair(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A name/value pair entry.
+
+    :ivar name: Entry name. Required.
+    :vartype name: str
+    :ivar value: Entry value. Required.
+    :vartype value: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entry name. Required."""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entry value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayNameValuePairUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A name/value pair entry to update.
+
+    :ivar name: Entry name.
+    :vartype name: str
+    :ivar value: Entry value.
+    :vartype value: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entry name."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entry value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayOpenApiConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """OpenAPI-backed MCP endpoint configuration.
+
+    :ivar spec_source: OpenAPI document source. Required.
+    :vartype spec_source: ~azure.mgmt.aigateway.models.AiGatewayOpenApiSpecSource
+    """
+
+    spec_source: "_models.AiGatewayOpenApiSpecSource" = rest_field(
+        name="specSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OpenAPI document source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        spec_source: "_models.AiGatewayOpenApiSpecSource",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayOpenApiConfigurationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """OpenAPI-backed MCP endpoint settings to update.
+
+    :ivar spec_source: OpenAPI document source.
+    :vartype spec_source: ~azure.mgmt.aigateway.models.AiGatewayOpenApiSpecSourceUpdate
+    """
+
+    spec_source: Optional["_models.AiGatewayOpenApiSpecSourceUpdate"] = rest_field(
+        name="specSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OpenAPI document source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        spec_source: Optional["_models.AiGatewayOpenApiSpecSourceUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayOpenApiSpecSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Source of an OpenAPI document.
+
+    :ivar type: Source type. Required. Known values are: "inline" and "url".
+    :vartype type: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerOpenApiSourceType
+    :ivar content_base64: Base64-encoded OpenAPI document. Required when type is inline.
+    :vartype content_base64: bytes
+    :ivar url: URL of the OpenAPI document. Required when type is url.
+    :vartype url: str
+    """
+
+    type: Union[str, "_models.AiGatewayToolServerOpenApiSourceType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source type. Required. Known values are: \"inline\" and \"url\"."""
+    content_base64: Optional[bytes] = rest_field(name="contentBase64", visibility=["create", "update"], format="base64")
+    """Base64-encoded OpenAPI document. Required when type is inline."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """URL of the OpenAPI document. Required when type is url."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AiGatewayToolServerOpenApiSourceType"],
+        content_base64: Optional[bytes] = None,
+        url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayOpenApiSpecSourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """OpenAPI document source settings to update.
+
+    :ivar type: Source type. Known values are: "inline" and "url".
+    :vartype type: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerOpenApiSourceType
+    :ivar content_base64: Base64-encoded OpenAPI document.
+    :vartype content_base64: bytes
+    :ivar url: URL of the OpenAPI document.
+    :vartype url: str
+    """
+
+    type: Optional[Union[str, "_models.AiGatewayToolServerOpenApiSourceType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source type. Known values are: \"inline\" and \"url\"."""
+    content_base64: Optional[bytes] = rest_field(name="contentBase64", visibility=["create", "update"], format="base64")
+    """Base64-encoded OpenAPI document."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """URL of the OpenAPI document."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.AiGatewayToolServerOpenApiSourceType"]] = None,
+        content_base64: Optional[bytes] = None,
+        url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayOpenTelemetryConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """OpenTelemetry export signal destinations.
+
+    :ivar metrics_endpoint: Full OTLP metrics endpoint URL, used without appending a signal path.
+    :vartype metrics_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar logs_endpoint: Full OTLP logs endpoint URL, used without appending a signal path.
+    :vartype logs_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar traces_endpoint: Full OTLP traces endpoint URL, used without appending a signal path.
+    :vartype traces_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    """
+
+    metrics_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        name="metricsEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full OTLP metrics endpoint URL, used without appending a signal path."""
+    logs_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        name="logsEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full OTLP logs endpoint URL, used without appending a signal path."""
+    traces_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        name="tracesEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full OTLP traces endpoint URL, used without appending a signal path."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metrics_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+        logs_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+        traces_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayOpenTelemetryConfigurationUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """OpenTelemetry export signal destinations to update.
+
+    :ivar metrics_endpoint: Full OTLP metrics endpoint URL, used without appending a signal path.
+    :vartype metrics_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpointUpdate
+    :ivar logs_endpoint: Full OTLP logs endpoint URL, used without appending a signal path.
+    :vartype logs_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpointUpdate
+    :ivar traces_endpoint: Full OTLP traces endpoint URL, used without appending a signal path.
+    :vartype traces_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpointUpdate
+    """
+
+    metrics_endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = rest_field(
+        name="metricsEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full OTLP metrics endpoint URL, used without appending a signal path."""
+    logs_endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = rest_field(
+        name="logsEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full OTLP logs endpoint URL, used without appending a signal path."""
+    traces_endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = rest_field(
+        name="tracesEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full OTLP traces endpoint URL, used without appending a signal path."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metrics_endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = None,
+        logs_endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = None,
+        traces_endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An inline policy. Supported policy types and scopes depend on the parent resource.
+
+    :ivar type: Policy type. Required. Known values are: "tokenLimit", "contentSafety", "fallback",
+     "ipFilter", "requestRateLimit", "cors", "costLimit", "toolThreatProtection", and "agentHooks".
+    :vartype type: str or ~azure.mgmt.aigateway.models.AiGatewayPolicyType
+    :ivar scope: Policy scope. Workspace counter policies use workspace; other policies use
+     resource. Agent hooks require an explicit resource scope. Known values are: "resource" and
+     "workspace".
+    :vartype scope: str or ~azure.mgmt.aigateway.models.AiGatewayPolicyScope
+    :ivar id: Stable identifier, required for costLimit and agentHooks policies.
+    :vartype id: str
+    :ivar count: Token or request count allowed during a tokenLimit or requestRateLimit period.
+    :vartype count: int
+    :ivar period: Counter period. Token limits support minute/hour/day; request rate limits support
+     minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+     hour/day/week/month/year. Known values are: "minute", "hour", "day", "week", "month", and
+     "year".
+    :vartype period: str or ~azure.mgmt.aigateway.models.AiGatewayPolicyPeriod
+    :ivar counter_key: Unique public dimensions used to partition a token, cost, or request
+     counter.
+    :vartype counter_key: list[str or ~azure.mgmt.aigateway.models.AiGatewayCounterDimension]
+    :ivar amount: Cost budget in US dollars.
+    :vartype amount: ~decimal.Decimal
+    :ivar overrides: Ordered cost-budget overrides; supported only for counterKey [identity]. The
+     first match wins.
+    :vartype overrides: list[~azure.mgmt.aigateway.models.AiGatewayCostLimitOverride]
+    :ivar pre_invocation: Whether to check tool requests for threats.
+    :vartype pre_invocation: bool
+    :ivar post_invocation: Whether to check tool responses for threats.
+    :vartype post_invocation: bool
+    :ivar mode: Default failure mode for agent hooks. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: str or ~azure.mgmt.aigateway.models.AiGatewayFailureMode
+    :ivar endpoint: Default destination URL for agent hooks.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar authentication: Default outbound authentication for agent hooks.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayAgentHookAuthentication
+    :ivar headers: Literal non-secret default HTTP headers for agent hooks.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewayNameValuePair]
+    :ivar hooks: Lifecycle hooks; requires agent-hook authoring to be enabled on the gateway.
+    :vartype hooks: ~azure.mgmt.aigateway.models.AiGatewayAgentHooks
+    :ivar hate_severity: Hate-content severity threshold. Known values are: "Low", "Medium",
+     "High", and "None".
+    :vartype hate_severity: str or ~azure.mgmt.aigateway.models.AiGatewayContentSafetySeverity
+    :ivar violence_severity: Violence-content severity threshold. Known values are: "Low",
+     "Medium", "High", and "None".
+    :vartype violence_severity: str or ~azure.mgmt.aigateway.models.AiGatewayContentSafetySeverity
+    :ivar sexual_severity: Sexual-content severity threshold. Known values are: "Low", "Medium",
+     "High", and "None".
+    :vartype sexual_severity: str or ~azure.mgmt.aigateway.models.AiGatewayContentSafetySeverity
+    :ivar self_harm_severity: Self-harm-content severity threshold. Known values are: "Low",
+     "Medium", "High", and "None".
+    :vartype self_harm_severity: str or ~azure.mgmt.aigateway.models.AiGatewayContentSafetySeverity
+    :ivar threshold: Consecutive failure count that opens a fallback circuit.
+    :vartype threshold: int
+    :ivar trip_duration_seconds: Duration for which the fallback circuit remains open.
+    :vartype trip_duration_seconds: int
+    :ivar fallback_targets: Ordered fallback model targets.
+    :vartype fallback_targets: list[~azure.mgmt.aigateway.models.AiGatewayFallbackTarget]
+    :ivar action: IP filtering action. Known values are: "Allow" and "Deny".
+    :vartype action: str or ~azure.mgmt.aigateway.models.AiGatewayIpFilterAction
+    :ivar cidr_ranges: CIDR ranges to allow or deny.
+    :vartype cidr_ranges: list[str]
+    :ivar allowed_origins: Origins allowed by a CORS policy.
+    :vartype allowed_origins: list[str]
+    :ivar allowed_methods: HTTP methods allowed by a CORS policy.
+    :vartype allowed_methods: list[str]
+    :ivar allowed_headers: HTTP headers allowed by a CORS policy.
+    :vartype allowed_headers: list[str]
+    :ivar expose_headers: Response headers exposed to the browser.
+    :vartype expose_headers: list[str]
+    :ivar allow_credentials: Whether browsers may send credentials.
+    :vartype allow_credentials: bool
+    :ivar terminate_unmatched_request: Whether unmatched CORS requests are terminated.
+    :vartype terminate_unmatched_request: bool
+    :ivar preflight_result_max_age: Browser preflight cache duration in seconds.
+    :vartype preflight_result_max_age: int
+    """
+
+    type: Union[str, "_models.AiGatewayPolicyType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Policy type. Required. Known values are: \"tokenLimit\", \"contentSafety\", \"fallback\",
+     \"ipFilter\", \"requestRateLimit\", \"cors\", \"costLimit\", \"toolThreatProtection\", and
+     \"agentHooks\"."""
+    scope: Optional[Union[str, "_models.AiGatewayPolicyScope"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Policy scope. Workspace counter policies use workspace; other policies use resource. Agent
+     hooks require an explicit resource scope. Known values are: \"resource\" and \"workspace\"."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Stable identifier, required for costLimit and agentHooks policies."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Token or request count allowed during a tokenLimit or requestRateLimit period."""
+    period: Optional[Union[str, "_models.AiGatewayPolicyPeriod"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Counter period. Token limits support minute/hour/day; request rate limits support
+     minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+     hour/day/week/month/year. Known values are: \"minute\", \"hour\", \"day\", \"week\", \"month\",
+     and \"year\"."""
+    counter_key: Optional[list[Union[str, "_models.AiGatewayCounterDimension"]]] = rest_field(
+        name="counterKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique public dimensions used to partition a token, cost, or request counter."""
+    amount: Optional[decimal.Decimal] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Cost budget in US dollars."""
+    overrides: Optional[list["_models.AiGatewayCostLimitOverride"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered cost-budget overrides; supported only for counterKey [identity]. The first match wins."""
+    pre_invocation: Optional[bool] = rest_field(
+        name="preInvocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to check tool requests for threats."""
+    post_invocation: Optional[bool] = rest_field(
+        name="postInvocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to check tool responses for threats."""
+    mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default failure mode for agent hooks. Known values are: \"failOpen\" and \"failClosed\"."""
+    endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destination URL for agent hooks."""
+    authentication: Optional["_models.AiGatewayAgentHookAuthentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default outbound authentication for agent hooks."""
+    headers: Optional[list["_models.AiGatewayNameValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Literal non-secret default HTTP headers for agent hooks."""
+    hooks: Optional["_models.AiGatewayAgentHooks"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Lifecycle hooks; requires agent-hook authoring to be enabled on the gateway."""
+    hate_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = rest_field(
+        name="hateSeverity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hate-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and \"None\"."""
+    violence_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = rest_field(
+        name="violenceSeverity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Violence-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    sexual_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = rest_field(
+        name="sexualSeverity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sexual-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    self_harm_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = rest_field(
+        name="selfHarmSeverity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Self-harm-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    threshold: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Consecutive failure count that opens a fallback circuit."""
+    trip_duration_seconds: Optional[int] = rest_field(
+        name="tripDurationSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Duration for which the fallback circuit remains open."""
+    fallback_targets: Optional[list["_models.AiGatewayFallbackTarget"]] = rest_field(
+        name="fallbackTargets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered fallback model targets."""
+    action: Optional[Union[str, "_models.AiGatewayIpFilterAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP filtering action. Known values are: \"Allow\" and \"Deny\"."""
+    cidr_ranges: Optional[list[str]] = rest_field(
+        name="cidrRanges", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CIDR ranges to allow or deny."""
+    allowed_origins: Optional[list[str]] = rest_field(
+        name="allowedOrigins", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Origins allowed by a CORS policy."""
+    allowed_methods: Optional[list[str]] = rest_field(
+        name="allowedMethods", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """HTTP methods allowed by a CORS policy."""
+    allowed_headers: Optional[list[str]] = rest_field(
+        name="allowedHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """HTTP headers allowed by a CORS policy."""
+    expose_headers: Optional[list[str]] = rest_field(
+        name="exposeHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Response headers exposed to the browser."""
+    allow_credentials: Optional[bool] = rest_field(
+        name="allowCredentials", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether browsers may send credentials."""
+    terminate_unmatched_request: Optional[bool] = rest_field(
+        name="terminateUnmatchedRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether unmatched CORS requests are terminated."""
+    preflight_result_max_age: Optional[int] = rest_field(
+        name="preflightResultMaxAge", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Browser preflight cache duration in seconds."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        type: Union[str, "_models.AiGatewayPolicyType"],
+        scope: Optional[Union[str, "_models.AiGatewayPolicyScope"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        count: Optional[int] = None,
+        period: Optional[Union[str, "_models.AiGatewayPolicyPeriod"]] = None,
+        counter_key: Optional[list[Union[str, "_models.AiGatewayCounterDimension"]]] = None,
+        amount: Optional[decimal.Decimal] = None,
+        overrides: Optional[list["_models.AiGatewayCostLimitOverride"]] = None,
+        pre_invocation: Optional[bool] = None,
+        post_invocation: Optional[bool] = None,
+        mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = None,
+        endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+        authentication: Optional["_models.AiGatewayAgentHookAuthentication"] = None,
+        headers: Optional[list["_models.AiGatewayNameValuePair"]] = None,
+        hooks: Optional["_models.AiGatewayAgentHooks"] = None,
+        hate_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = None,
+        violence_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = None,
+        sexual_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = None,
+        self_harm_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = None,
+        threshold: Optional[int] = None,
+        trip_duration_seconds: Optional[int] = None,
+        fallback_targets: Optional[list["_models.AiGatewayFallbackTarget"]] = None,
+        action: Optional[Union[str, "_models.AiGatewayIpFilterAction"]] = None,
+        cidr_ranges: Optional[list[str]] = None,
+        allowed_origins: Optional[list[str]] = None,
+        allowed_methods: Optional[list[str]] = None,
+        allowed_headers: Optional[list[str]] = None,
+        expose_headers: Optional[list[str]] = None,
+        allow_credentials: Optional[bool] = None,
+        terminate_unmatched_request: Optional[bool] = None,
+        preflight_result_max_age: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayPolicyUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An inline policy to update on an AI Gateway model or tool server.
+
+    :ivar type: Policy type. Known values are: "tokenLimit", "contentSafety", "fallback",
+     "ipFilter", "requestRateLimit", "cors", "costLimit", "toolThreatProtection", and "agentHooks".
+    :vartype type: str or ~azure.mgmt.aigateway.models.AiGatewayPolicyType
+    :ivar scope: Aggregation scope supported by the policy and its parent resource. Known values
+     are: "resource" and "workspace".
+    :vartype scope: str or ~azure.mgmt.aigateway.models.AiGatewayPolicyScope
+    :ivar id: Stable identifier for costLimit or agentHooks.
+    :vartype id: str
+    :ivar count: Token or request count allowed during a tokenLimit or requestRateLimit period.
+    :vartype count: int
+    :ivar period: Counter period. Token limits support minute/hour/day; request rate limits support
+     minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+     hour/day/week/month/year. Known values are: "minute", "hour", "day", "week", "month", and
+     "year".
+    :vartype period: str or ~azure.mgmt.aigateway.models.AiGatewayPolicyPeriod
+    :ivar counter_key: Public dimensions used to partition a token, cost, or request counter.
+    :vartype counter_key: list[str or ~azure.mgmt.aigateway.models.AiGatewayCounterDimension]
+    :ivar amount: Cost budget in US dollars.
+    :vartype amount: ~decimal.Decimal
+    :ivar overrides: Ordered cost-budget overrides.
+    :vartype overrides: list[~azure.mgmt.aigateway.models.AiGatewayCostLimitOverrideUpdate]
+    :ivar pre_invocation: Whether to check tool requests for threats.
+    :vartype pre_invocation: bool
+    :ivar post_invocation: Whether to check tool responses for threats.
+    :vartype post_invocation: bool
+    :ivar mode: Default failure mode for agent hooks. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: str or ~azure.mgmt.aigateway.models.AiGatewayFailureMode
+    :ivar endpoint: Default destination URL for agent hooks.
+    :vartype endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpointUpdate
+    :ivar authentication: Default outbound authentication for agent hooks.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayAgentHookAuthenticationUpdate
+    :ivar headers: Literal non-secret default HTTP headers for agent hooks.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewayNameValuePairUpdate]
+    :ivar hooks: Lifecycle hooks to update.
+    :vartype hooks: ~azure.mgmt.aigateway.models.AiGatewayAgentHooksUpdate
+    :ivar hate_severity: Hate-content severity threshold. Known values are: "Low", "Medium",
+     "High", and "None".
+    :vartype hate_severity: str or ~azure.mgmt.aigateway.models.AiGatewayContentSafetySeverity
+    :ivar violence_severity: Violence-content severity threshold. Known values are: "Low",
+     "Medium", "High", and "None".
+    :vartype violence_severity: str or ~azure.mgmt.aigateway.models.AiGatewayContentSafetySeverity
+    :ivar sexual_severity: Sexual-content severity threshold. Known values are: "Low", "Medium",
+     "High", and "None".
+    :vartype sexual_severity: str or ~azure.mgmt.aigateway.models.AiGatewayContentSafetySeverity
+    :ivar self_harm_severity: Self-harm-content severity threshold. Known values are: "Low",
+     "Medium", "High", and "None".
+    :vartype self_harm_severity: str or ~azure.mgmt.aigateway.models.AiGatewayContentSafetySeverity
+    :ivar threshold: Consecutive failure count that opens a fallback circuit.
+    :vartype threshold: int
+    :ivar trip_duration_seconds: Duration for which the fallback circuit remains open.
+    :vartype trip_duration_seconds: int
+    :ivar fallback_targets: Ordered fallback model targets.
+    :vartype fallback_targets: list[~azure.mgmt.aigateway.models.AiGatewayFallbackTargetUpdate]
+    :ivar action: IP filtering action. Known values are: "Allow" and "Deny".
+    :vartype action: str or ~azure.mgmt.aigateway.models.AiGatewayIpFilterAction
+    :ivar cidr_ranges: CIDR ranges to allow or deny.
+    :vartype cidr_ranges: list[str]
+    :ivar allowed_origins: Origins allowed by a CORS policy.
+    :vartype allowed_origins: list[str]
+    :ivar allowed_methods: HTTP methods allowed by a CORS policy.
+    :vartype allowed_methods: list[str]
+    :ivar allowed_headers: HTTP headers allowed by a CORS policy.
+    :vartype allowed_headers: list[str]
+    :ivar expose_headers: Response headers exposed to the browser.
+    :vartype expose_headers: list[str]
+    :ivar allow_credentials: Whether browsers may send credentials.
+    :vartype allow_credentials: bool
+    :ivar terminate_unmatched_request: Whether unmatched CORS requests are terminated.
+    :vartype terminate_unmatched_request: bool
+    :ivar preflight_result_max_age: Browser preflight cache duration in seconds.
+    :vartype preflight_result_max_age: int
+    """
+
+    type: Optional[Union[str, "_models.AiGatewayPolicyType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Policy type. Known values are: \"tokenLimit\", \"contentSafety\", \"fallback\", \"ipFilter\",
+     \"requestRateLimit\", \"cors\", \"costLimit\", \"toolThreatProtection\", and \"agentHooks\"."""
+    scope: Optional[Union[str, "_models.AiGatewayPolicyScope"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Aggregation scope supported by the policy and its parent resource. Known values are:
+     \"resource\" and \"workspace\"."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Stable identifier for costLimit or agentHooks."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Token or request count allowed during a tokenLimit or requestRateLimit period."""
+    period: Optional[Union[str, "_models.AiGatewayPolicyPeriod"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Counter period. Token limits support minute/hour/day; request rate limits support
+     minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+     hour/day/week/month/year. Known values are: \"minute\", \"hour\", \"day\", \"week\", \"month\",
+     and \"year\"."""
+    counter_key: Optional[list[Union[str, "_models.AiGatewayCounterDimension"]]] = rest_field(
+        name="counterKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Public dimensions used to partition a token, cost, or request counter."""
+    amount: Optional[decimal.Decimal] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Cost budget in US dollars."""
+    overrides: Optional[list["_models.AiGatewayCostLimitOverrideUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered cost-budget overrides."""
+    pre_invocation: Optional[bool] = rest_field(
+        name="preInvocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to check tool requests for threats."""
+    post_invocation: Optional[bool] = rest_field(
+        name="postInvocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to check tool responses for threats."""
+    mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default failure mode for agent hooks. Known values are: \"failOpen\" and \"failClosed\"."""
+    endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destination URL for agent hooks."""
+    authentication: Optional["_models.AiGatewayAgentHookAuthenticationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default outbound authentication for agent hooks."""
+    headers: Optional[list["_models.AiGatewayNameValuePairUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Literal non-secret default HTTP headers for agent hooks."""
+    hooks: Optional["_models.AiGatewayAgentHooksUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Lifecycle hooks to update."""
+    hate_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = rest_field(
+        name="hateSeverity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hate-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and \"None\"."""
+    violence_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = rest_field(
+        name="violenceSeverity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Violence-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    sexual_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = rest_field(
+        name="sexualSeverity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sexual-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    self_harm_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = rest_field(
+        name="selfHarmSeverity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Self-harm-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    threshold: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Consecutive failure count that opens a fallback circuit."""
+    trip_duration_seconds: Optional[int] = rest_field(
+        name="tripDurationSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Duration for which the fallback circuit remains open."""
+    fallback_targets: Optional[list["_models.AiGatewayFallbackTargetUpdate"]] = rest_field(
+        name="fallbackTargets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered fallback model targets."""
+    action: Optional[Union[str, "_models.AiGatewayIpFilterAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP filtering action. Known values are: \"Allow\" and \"Deny\"."""
+    cidr_ranges: Optional[list[str]] = rest_field(
+        name="cidrRanges", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CIDR ranges to allow or deny."""
+    allowed_origins: Optional[list[str]] = rest_field(
+        name="allowedOrigins", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Origins allowed by a CORS policy."""
+    allowed_methods: Optional[list[str]] = rest_field(
+        name="allowedMethods", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """HTTP methods allowed by a CORS policy."""
+    allowed_headers: Optional[list[str]] = rest_field(
+        name="allowedHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """HTTP headers allowed by a CORS policy."""
+    expose_headers: Optional[list[str]] = rest_field(
+        name="exposeHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Response headers exposed to the browser."""
+    allow_credentials: Optional[bool] = rest_field(
+        name="allowCredentials", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether browsers may send credentials."""
+    terminate_unmatched_request: Optional[bool] = rest_field(
+        name="terminateUnmatchedRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether unmatched CORS requests are terminated."""
+    preflight_result_max_age: Optional[int] = rest_field(
+        name="preflightResultMaxAge", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Browser preflight cache duration in seconds."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        type: Optional[Union[str, "_models.AiGatewayPolicyType"]] = None,
+        scope: Optional[Union[str, "_models.AiGatewayPolicyScope"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        count: Optional[int] = None,
+        period: Optional[Union[str, "_models.AiGatewayPolicyPeriod"]] = None,
+        counter_key: Optional[list[Union[str, "_models.AiGatewayCounterDimension"]]] = None,
+        amount: Optional[decimal.Decimal] = None,
+        overrides: Optional[list["_models.AiGatewayCostLimitOverrideUpdate"]] = None,
+        pre_invocation: Optional[bool] = None,
+        post_invocation: Optional[bool] = None,
+        mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = None,
+        endpoint: Optional["_models.AiGatewayDestinationEndpointUpdate"] = None,
+        authentication: Optional["_models.AiGatewayAgentHookAuthenticationUpdate"] = None,
+        headers: Optional[list["_models.AiGatewayNameValuePairUpdate"]] = None,
+        hooks: Optional["_models.AiGatewayAgentHooksUpdate"] = None,
+        hate_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = None,
+        violence_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = None,
+        sexual_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = None,
+        self_harm_severity: Optional[Union[str, "_models.AiGatewayContentSafetySeverity"]] = None,
+        threshold: Optional[int] = None,
+        trip_duration_seconds: Optional[int] = None,
+        fallback_targets: Optional[list["_models.AiGatewayFallbackTargetUpdate"]] = None,
+        action: Optional[Union[str, "_models.AiGatewayIpFilterAction"]] = None,
+        cidr_ranges: Optional[list[str]] = None,
+        allowed_origins: Optional[list[str]] = None,
+        allowed_methods: Optional[list[str]] = None,
+        allowed_headers: Optional[list[str]] = None,
+        expose_headers: Optional[list[str]] = None,
+        allow_credentials: Optional[bool] = None,
+        terminate_unmatched_request: Optional[bool] = None,
+        preflight_result_max_age: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayPrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A private endpoint connection of an AI Gateway.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: The private endpoint connection properties.
+    :vartype properties: ~azure.mgmt.aigateway.models.PrivateEndpointConnectionProperties
+    """
+
+    properties: Optional["_models.PrivateEndpointConnectionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private endpoint connection properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateEndpointConnectionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayPrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A private link resource of an AI Gateway.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.aigateway.models.PrivateLinkResourceProperties
+    """
+
+    properties: Optional["_models.PrivateLinkResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateLinkResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an AI Gateway.
+
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
+    :ivar frontend: Frontend configuration of the AI Gateway.
+    :vartype frontend: ~azure.mgmt.aigateway.models.AiGatewayFrontend
+    :ivar backend: Backend networking configuration.
+    :vartype backend: ~azure.mgmt.aigateway.models.AiGatewayBackend
+    :ivar public_network_access: Whether public network access is allowed for the AI Gateway. Known
+     values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.aigateway.models.AiGatewayPublicNetworkAccess
+    :ivar private_endpoint_connections: Private endpoint connections associated with the AI
+     Gateway.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+    frontend: Optional["_models.AiGatewayFrontend"] = rest_field(visibility=["read"])
+    """Frontend configuration of the AI Gateway."""
+    backend: Optional["_models.AiGatewayBackend"] = rest_field(visibility=["read", "create", "update"])
+    """Backend networking configuration."""
+    public_network_access: Optional[Union[str, "_models.AiGatewayPublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether public network access is allowed for the AI Gateway. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    private_endpoint_connections: Optional[list["_models.AiGatewayPrivateEndpointConnection"]] = rest_field(
+        name="privateEndpointConnections", visibility=["read"]
+    )
+    """Private endpoint connections associated with the AI Gateway."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        backend: Optional["_models.AiGatewayBackend"] = None,
+        public_network_access: Optional[Union[str, "_models.AiGatewayPublicNetworkAccess"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -236,6 +3623,161 @@ class AiGatewayResource(TrackedResource):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
+class AiGatewaySecretHeader(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A secret HTTP header injected into an outbound request.
+
+    :ivar name: HTTP header name. Required.
+    :vartype name: str
+    :ivar value: Secret HTTP header value. Omitted from ordinary read responses.
+    :vartype value: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP header name. Required."""
+    value: Optional[str] = rest_field(visibility=["create", "update"])
+    """Secret HTTP header value. Omitted from ordinary read responses."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewaySecretHeaderUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A secret HTTP header to update.
+
+    :ivar name: HTTP header name.
+    :vartype name: str
+    :ivar value: Secret HTTP header value.
+    :vartype value: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP header name."""
+    value: Optional[str] = rest_field(visibility=["create", "update"])
+    """Secret HTTP header value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewaySecretHeaderValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A secret HTTP header returned by a secret-retrieval action.
+
+    :ivar name: HTTP header name. Required.
+    :vartype name: str
+    :ivar value: Secret HTTP header value.
+    :vartype value: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP header name. Required."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Secret HTTP header value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewaySessionBackendPreference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Stateless backend preference using an existing caller session key.
+
+    :ivar key: CEL expression returning the caller session key. Required.
+    :vartype key: str
+    """
+
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """CEL expression returning the caller session key. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewaySessionBackendPreferenceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Stateless backend preference settings to update.
+
+    :ivar key: CEL expression returning the caller session key.
+    :vartype key: str
+    """
+
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """CEL expression returning the caller session key."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AiGatewaySkuUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU fields to update on an AI Gateway.
 
@@ -326,6 +3868,1737 @@ class AiGatewaySubnet(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
+class AiGatewaySubnetUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Subnet fields to update on an AI Gateway.
+
+    :ivar id: Resource identifier of the subnet. The subnet must be delegated to
+     Microsoft.App/environments and be in the same region as the AI Gateway.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource identifier of the subnet. The subnet must be delegated to Microsoft.App/environments
+     and be in the same region as the AI Gateway."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryAttributeMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A claim mapping to azure.ai_gateway.identity.claims.{claim}.
+
+    :ivar source: Claim source. Source claim names must be unique across mappings. Required.
+    :vartype source: ~azure.mgmt.aigateway.models.AiGatewayTelemetryAttributeSource
+    :ivar signals: Distinct signals to enrich. Omit to select all configured signals.
+    :vartype signals: list[str or ~azure.mgmt.aigateway.models.AiGatewayTelemetrySignal]
+    """
+
+    source: "_models.AiGatewayTelemetryAttributeSource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Claim source. Source claim names must be unique across mappings. Required."""
+    signals: Optional[list[Union[str, "_models.AiGatewayTelemetrySignal"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Distinct signals to enrich. Omit to select all configured signals."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.AiGatewayTelemetryAttributeSource",
+        signals: Optional[list[Union[str, "_models.AiGatewayTelemetrySignal"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryAttributeMappingUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A claim mapping to update.
+
+    :ivar source: Claim source.
+    :vartype source: ~azure.mgmt.aigateway.models.AiGatewayTelemetryAttributeSourceUpdate
+    :ivar signals: Distinct signals to enrich.
+    :vartype signals: list[str or ~azure.mgmt.aigateway.models.AiGatewayTelemetrySignal]
+    """
+
+    source: Optional["_models.AiGatewayTelemetryAttributeSourceUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Claim source."""
+    signals: Optional[list[Union[str, "_models.AiGatewayTelemetrySignal"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Distinct signals to enrich."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: Optional["_models.AiGatewayTelemetryAttributeSourceUpdate"] = None,
+        signals: Optional[list[Union[str, "_models.AiGatewayTelemetrySignal"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryAttributeSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A request JWT claim observed for telemetry only, not authentication or billing.
+
+    :ivar kind: Source kind. Only claims is currently supported. Required. Default value is
+     "claims".
+    :vartype kind: str
+    :ivar value: Nonempty, case-sensitive claim name. Required.
+    :vartype value: str
+    """
+
+    kind: Literal["claims"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Source kind. Only claims is currently supported. Required. Default value is \"claims\"."""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Nonempty, case-sensitive claim name. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind: Literal["claims"] = "claims"
+
+
+class AiGatewayTelemetryAttributeSourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A claim source to update.
+
+    :ivar kind: Source kind. Only claims is currently supported. Default value is "claims".
+    :vartype kind: str
+    :ivar value: Nonempty, case-sensitive claim name.
+    :vartype value: str
+    """
+
+    kind: Optional[Literal["claims"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Source kind. Only claims is currently supported. Default value is \"claims\"."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Nonempty, case-sensitive claim name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: Optional[Literal["claims"]] = None,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Outbound authentication settings for an OpenTelemetry exporter.
+
+    :ivar managed_identity: Managed identity authentication for export requests.
+    :vartype managed_identity: ~azure.mgmt.aigateway.models.AiGatewayTelemetryManagedIdentity
+    :ivar headers: Secret HTTP headers sent with export requests.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeader]
+    """
+
+    managed_identity: Optional["_models.AiGatewayTelemetryManagedIdentity"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity authentication for export requests."""
+    headers: Optional[list["_models.AiGatewaySecretHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secret HTTP headers sent with export requests."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_identity: Optional["_models.AiGatewayTelemetryManagedIdentity"] = None,
+        headers: Optional[list["_models.AiGatewaySecretHeader"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryAuthenticationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Outbound authentication settings to update on an OpenTelemetry exporter.
+
+    :ivar managed_identity: Managed identity authentication for export requests.
+    :vartype managed_identity: ~azure.mgmt.aigateway.models.AiGatewayTelemetryManagedIdentity
+    :ivar headers: Secret HTTP headers sent with export requests.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeaderUpdate]
+    """
+
+    managed_identity: Optional["_models.AiGatewayTelemetryManagedIdentity"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity authentication for export requests."""
+    headers: Optional[list["_models.AiGatewaySecretHeaderUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secret HTTP headers sent with export requests."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_identity: Optional["_models.AiGatewayTelemetryManagedIdentity"] = None,
+        headers: Optional[list["_models.AiGatewaySecretHeaderUpdate"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Optional telemetry enrichment on a native AI Gateway OpenTelemetry exporter.
+
+    :ivar attributes: Observed-claim mappings; an empty array removes existing mappings.
+    :vartype attributes: list[~azure.mgmt.aigateway.models.AiGatewayTelemetryAttributeMapping]
+    """
+
+    attributes: Optional[list["_models.AiGatewayTelemetryAttributeMapping"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Observed-claim mappings; an empty array removes existing mappings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        attributes: Optional[list["_models.AiGatewayTelemetryAttributeMapping"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryConfigurationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Telemetry enrichment settings to update.
+
+    :ivar attributes: Observed-claim mappings; an empty array removes existing mappings.
+    :vartype attributes:
+     list[~azure.mgmt.aigateway.models.AiGatewayTelemetryAttributeMappingUpdate]
+    """
+
+    attributes: Optional[list["_models.AiGatewayTelemetryAttributeMappingUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Observed-claim mappings; an empty array removes existing mappings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        attributes: Optional[list["_models.AiGatewayTelemetryAttributeMappingUpdate"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryExporterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an AI Gateway telemetry exporter.
+
+    :ivar telemetry_exporter_type: Exporter type, which cannot change after creation. Required.
+     Known values are: "ApplicationInsights" and "OpenTelemetry".
+    :vartype telemetry_exporter_type: str or
+     ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterKind
+    :ivar payload_capture: Capture prompts, completions, and tool input/output; no built-in PII
+     redaction is applied.
+    :vartype payload_capture: bool
+    :ivar application_insights: Configuration required for the ApplicationInsights exporter type.
+    :vartype application_insights:
+     ~azure.mgmt.aigateway.models.AiGatewayApplicationInsightsConfiguration
+    :ivar open_telemetry: Configuration required for the OpenTelemetry exporter type. At least one
+     signal endpoint is required.
+    :vartype open_telemetry: ~azure.mgmt.aigateway.models.AiGatewayOpenTelemetryConfiguration
+    :ivar authentication: Outbound authentication for OpenTelemetry export requests.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayTelemetryAuthentication
+    :ivar telemetry: Optional observed-claim mappings, supported on native AI Gateway OpenTelemetry
+     exporters.
+    :vartype telemetry: ~azure.mgmt.aigateway.models.AiGatewayTelemetryConfiguration
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
+    """
+
+    telemetry_exporter_type: Union[str, "_models.AiGatewayTelemetryExporterKind"] = rest_field(
+        name="telemetryExporterType", visibility=["read", "create"]
+    )
+    """Exporter type, which cannot change after creation. Required. Known values are:
+     \"ApplicationInsights\" and \"OpenTelemetry\"."""
+    payload_capture: Optional[bool] = rest_field(
+        name="payloadCapture", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capture prompts, completions, and tool input/output; no built-in PII redaction is applied."""
+    application_insights: Optional["_models.AiGatewayApplicationInsightsConfiguration"] = rest_field(
+        name="applicationInsights", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration required for the ApplicationInsights exporter type."""
+    open_telemetry: Optional["_models.AiGatewayOpenTelemetryConfiguration"] = rest_field(
+        name="openTelemetry", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration required for the OpenTelemetry exporter type. At least one signal endpoint is
+     required."""
+    authentication: Optional["_models.AiGatewayTelemetryAuthentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Outbound authentication for OpenTelemetry export requests."""
+    telemetry: Optional["_models.AiGatewayTelemetryConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional observed-claim mappings, supported on native AI Gateway OpenTelemetry exporters."""
+    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        telemetry_exporter_type: Union[str, "_models.AiGatewayTelemetryExporterKind"],
+        payload_capture: Optional[bool] = None,
+        application_insights: Optional["_models.AiGatewayApplicationInsightsConfiguration"] = None,
+        open_telemetry: Optional["_models.AiGatewayOpenTelemetryConfiguration"] = None,
+        authentication: Optional["_models.AiGatewayTelemetryAuthentication"] = None,
+        telemetry: Optional["_models.AiGatewayTelemetryConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryExporterResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A telemetry export destination in the default AI Gateway workspace.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterProperties
+    """
+
+    properties: Optional["_models.AiGatewayTelemetryExporterProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayTelemetryExporterProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryExporterUpdateParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Parameters for updating an AI Gateway telemetry exporter.
+
+    :ivar properties: Exporter properties to update.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterUpdateProperties
+    """
+
+    properties: Optional["_models.AiGatewayTelemetryExporterUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Exporter properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayTelemetryExporterUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryExporterUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties to update on an AI Gateway telemetry exporter.
+
+    :ivar payload_capture: Capture prompts, completions, and tool input/output.
+    :vartype payload_capture: bool
+    :ivar application_insights: Application Insights configuration.
+    :vartype application_insights:
+     ~azure.mgmt.aigateway.models.AiGatewayApplicationInsightsConfiguration
+    :ivar open_telemetry: OpenTelemetry configuration.
+    :vartype open_telemetry: ~azure.mgmt.aigateway.models.AiGatewayOpenTelemetryConfigurationUpdate
+    :ivar authentication: Outbound authentication for OpenTelemetry export requests.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayTelemetryAuthenticationUpdate
+    :ivar telemetry: Observed-claim mappings to update.
+    :vartype telemetry: ~azure.mgmt.aigateway.models.AiGatewayTelemetryConfigurationUpdate
+    """
+
+    payload_capture: Optional[bool] = rest_field(
+        name="payloadCapture", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capture prompts, completions, and tool input/output."""
+    application_insights: Optional["_models.AiGatewayApplicationInsightsConfiguration"] = rest_field(
+        name="applicationInsights", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Application Insights configuration."""
+    open_telemetry: Optional["_models.AiGatewayOpenTelemetryConfigurationUpdate"] = rest_field(
+        name="openTelemetry", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OpenTelemetry configuration."""
+    authentication: Optional["_models.AiGatewayTelemetryAuthenticationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Outbound authentication for OpenTelemetry export requests."""
+    telemetry: Optional["_models.AiGatewayTelemetryConfigurationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Observed-claim mappings to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        payload_capture: Optional[bool] = None,
+        application_insights: Optional["_models.AiGatewayApplicationInsightsConfiguration"] = None,
+        open_telemetry: Optional["_models.AiGatewayOpenTelemetryConfigurationUpdate"] = None,
+        authentication: Optional["_models.AiGatewayTelemetryAuthenticationUpdate"] = None,
+        telemetry: Optional["_models.AiGatewayTelemetryConfigurationUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayTelemetryManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed identity used to authenticate telemetry export requests.
+
+    :ivar resource: Token audience requested for the managed identity.
+    :vartype resource: str
+    :ivar client_id: User-assigned managed identity client ID; omit for the system-assigned
+     identity.
+    :vartype client_id: str
+    """
+
+    resource: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Token audience requested for the managed identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """User-assigned managed identity client ID; omit for the system-assigned identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource: Optional[str] = None,
+        client_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Outbound authentication for a tool server endpoint.
+
+    :ivar headers: Static headers injected when calling the endpoint.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeader]
+    :ivar oauth2: OAuth 2.0 configuration.
+    :vartype oauth2: ~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2Authentication
+    :ivar managed_identity: Managed identity configuration.
+    :vartype managed_identity:
+     ~azure.mgmt.aigateway.models.AiGatewayToolServerManagedIdentityAuthentication
+    """
+
+    headers: Optional[list["_models.AiGatewaySecretHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Static headers injected when calling the endpoint."""
+    oauth2: Optional["_models.AiGatewayToolServerOauth2Authentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth 2.0 configuration."""
+    managed_identity: Optional["_models.AiGatewayToolServerManagedIdentityAuthentication"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        headers: Optional[list["_models.AiGatewaySecretHeader"]] = None,
+        oauth2: Optional["_models.AiGatewayToolServerOauth2Authentication"] = None,
+        managed_identity: Optional["_models.AiGatewayToolServerManagedIdentityAuthentication"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerAuthenticationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tool server authentication settings to update.
+
+    :ivar headers: Static headers injected when calling the endpoint.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeaderUpdate]
+    :ivar oauth2: OAuth 2.0 configuration.
+    :vartype oauth2: ~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2Authentication
+    :ivar managed_identity: Managed identity configuration.
+    :vartype managed_identity:
+     ~azure.mgmt.aigateway.models.AiGatewayToolServerManagedIdentityAuthentication
+    """
+
+    headers: Optional[list["_models.AiGatewaySecretHeaderUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Static headers injected when calling the endpoint."""
+    oauth2: Optional["_models.AiGatewayToolServerOauth2Authentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth 2.0 configuration."""
+    managed_identity: Optional["_models.AiGatewayToolServerManagedIdentityAuthentication"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        headers: Optional[list["_models.AiGatewaySecretHeaderUpdate"]] = None,
+        oauth2: Optional["_models.AiGatewayToolServerOauth2Authentication"] = None,
+        managed_identity: Optional["_models.AiGatewayToolServerManagedIdentityAuthentication"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A tool server endpoint.
+
+    :ivar id: Stable endpoint identifier. Up to 64 alphanumeric characters or hyphens, starting and
+     ending with an alphanumeric character. Generated when omitted.
+    :vartype id: str
+    :ivar namespace: Optional namespace used to prefix tool names.
+    :vartype namespace: str
+    :ivar kind: Endpoint type. Required. Known values are: "mcp" and "openApi".
+    :vartype kind: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerEndpointSourceKind
+    :ivar mcp: Backend MCP configuration. Required when kind is mcp.
+    :vartype mcp: ~azure.mgmt.aigateway.models.AiGatewayMcpUrlConfiguration
+    :ivar open_api: OpenAPI configuration. Required when kind is openApi.
+    :vartype open_api: ~azure.mgmt.aigateway.models.AiGatewayOpenApiConfiguration
+    :ivar authentication: Backend authentication configuration.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayToolServerAuthentication
+    :ivar tools: Upstream tool names or glob patterns to expose.
+    :vartype tools: list[str]
+    :ivar mode: Failure mode when the endpoint fails. Defaults to failOpen. Known values are:
+     "failOpen" and "failClosed".
+    :vartype mode: str or ~azure.mgmt.aigateway.models.AiGatewayFailureMode
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Stable endpoint identifier. Up to 64 alphanumeric characters or hyphens, starting and ending
+     with an alphanumeric character. Generated when omitted."""
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional namespace used to prefix tool names."""
+    kind: Union[str, "_models.AiGatewayToolServerEndpointSourceKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoint type. Required. Known values are: \"mcp\" and \"openApi\"."""
+    mcp: Optional["_models.AiGatewayMcpUrlConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend MCP configuration. Required when kind is mcp."""
+    open_api: Optional["_models.AiGatewayOpenApiConfiguration"] = rest_field(
+        name="openApi", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OpenAPI configuration. Required when kind is openApi."""
+    authentication: Optional["_models.AiGatewayToolServerAuthentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend authentication configuration."""
+    tools: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Upstream tool names or glob patterns to expose."""
+    mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Failure mode when the endpoint fails. Defaults to failOpen. Known values are: \"failOpen\" and
+     \"failClosed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: Union[str, "_models.AiGatewayToolServerEndpointSourceKind"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        namespace: Optional[str] = None,
+        mcp: Optional["_models.AiGatewayMcpUrlConfiguration"] = None,
+        open_api: Optional["_models.AiGatewayOpenApiConfiguration"] = None,
+        authentication: Optional["_models.AiGatewayToolServerAuthentication"] = None,
+        tools: Optional[list[str]] = None,
+        mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerEndpointUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A tool server endpoint to update.
+
+    :ivar id: Stable endpoint identifier.
+    :vartype id: str
+    :ivar namespace: Optional namespace used to prefix tool names.
+    :vartype namespace: str
+    :ivar kind: Endpoint type. Known values are: "mcp" and "openApi".
+    :vartype kind: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerEndpointSourceKind
+    :ivar mcp: Backend MCP configuration.
+    :vartype mcp: ~azure.mgmt.aigateway.models.AiGatewayMcpUrlConfigurationUpdate
+    :ivar open_api: OpenAPI configuration.
+    :vartype open_api: ~azure.mgmt.aigateway.models.AiGatewayOpenApiConfigurationUpdate
+    :ivar authentication: Backend authentication configuration.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayToolServerAuthenticationUpdate
+    :ivar tools: Upstream tool names or glob patterns to expose.
+    :vartype tools: list[str]
+    :ivar mode: Failure mode when the endpoint fails. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: str or ~azure.mgmt.aigateway.models.AiGatewayFailureMode
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Stable endpoint identifier."""
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional namespace used to prefix tool names."""
+    kind: Optional[Union[str, "_models.AiGatewayToolServerEndpointSourceKind"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoint type. Known values are: \"mcp\" and \"openApi\"."""
+    mcp: Optional["_models.AiGatewayMcpUrlConfigurationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend MCP configuration."""
+    open_api: Optional["_models.AiGatewayOpenApiConfigurationUpdate"] = rest_field(
+        name="openApi", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OpenAPI configuration."""
+    authentication: Optional["_models.AiGatewayToolServerAuthenticationUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend authentication configuration."""
+    tools: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Upstream tool names or glob patterns to expose."""
+    mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Failure mode when the endpoint fails. Known values are: \"failOpen\" and \"failClosed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        namespace: Optional[str] = None,
+        kind: Optional[Union[str, "_models.AiGatewayToolServerEndpointSourceKind"]] = None,
+        mcp: Optional["_models.AiGatewayMcpUrlConfigurationUpdate"] = None,
+        open_api: Optional["_models.AiGatewayOpenApiConfigurationUpdate"] = None,
+        authentication: Optional["_models.AiGatewayToolServerAuthenticationUpdate"] = None,
+        tools: Optional[list[str]] = None,
+        mode: Optional[Union[str, "_models.AiGatewayFailureMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerFederation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Customer-owned federation application identity for a tool server endpoint.
+
+    :ivar application_id: Application (client) ID of the customer-owned federation application.
+    :vartype application_id: str
+    :ivar app_credential: Credential used to authenticate the federation application.
+    :vartype app_credential:
+     ~azure.mgmt.aigateway.models.AiGatewayToolServerFederationAppCredential
+    """
+
+    application_id: Optional[str] = rest_field(
+        name="applicationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Application (client) ID of the customer-owned federation application."""
+    app_credential: Optional["_models.AiGatewayToolServerFederationAppCredential"] = rest_field(
+        name="appCredential", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Credential used to authenticate the federation application."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: Optional[str] = None,
+        app_credential: Optional["_models.AiGatewayToolServerFederationAppCredential"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerFederationAppCredential(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Credential used to authenticate a tool server endpoint federation application.
+
+    :ivar type: Federation application credential type. Required. "userAssignedManagedIdentity"
+    :vartype type: str or
+     ~azure.mgmt.aigateway.models.AiGatewayToolServerFederationAppCredentialType
+    :ivar client_id: Client ID of a user-assigned managed identity available to this AI Gateway.
+    :vartype client_id: str
+    """
+
+    type: Union[str, "_models.AiGatewayToolServerFederationAppCredentialType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Federation application credential type. Required. \"userAssignedManagedIdentity\""""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """Client ID of a user-assigned managed identity available to this AI Gateway."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AiGatewayToolServerFederationAppCredentialType"],
+        client_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerLoginLinksRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for getting OAuth consent links for a tool server endpoint.
+
+    :ivar endpoint_id: Identifier of the endpoint configured on the tool server. Required.
+    :vartype endpoint_id: str
+    """
+
+    endpoint_id: str = rest_field(name="endpointId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the endpoint configured on the tool server. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerManagedIdentityAuthentication(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Managed identity authentication for a tool server endpoint.
+
+    :ivar resource: Token audience for managed identity authentication.
+    :vartype resource: str
+    :ivar client_id: Client ID of a user-assigned managed identity.
+    :vartype client_id: str
+    """
+
+    resource: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Token audience for managed identity authentication."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """Client ID of a user-assigned managed identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource: Optional[str] = None,
+        client_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerOauth2Authentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """OAuth 2.0 authentication for a tool server endpoint.
+
+    :ivar issuer: Expected OAuth authorization-server issuer for remote MCP discovery.
+    :vartype issuer: str
+    :ivar authorization_endpoint: OAuth authorization endpoint.
+    :vartype authorization_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar token_endpoint: OAuth token endpoint.
+    :vartype token_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar client_id: OAuth client identifier.
+    :vartype client_id: str
+    :ivar client_secret: OAuth client secret.
+    :vartype client_secret: str
+    :ivar scopes: OAuth scopes to request.
+    :vartype scopes: list[str]
+    :ivar grant_type: OAuth grant type. Known values are: "clientCredentials" and
+     "authorizationCode".
+    :vartype grant_type: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2GrantType
+    :ivar token_exchange: Chained token-exchange configuration.
+    :vartype token_exchange: ~azure.mgmt.aigateway.models.AiGatewayToolServerTokenExchange
+    :ivar authorization_parameters: Additional authorization endpoint parameters.
+    :vartype authorization_parameters:
+     list[~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2Parameter]
+    :ivar token_parameters: Additional token endpoint parameters.
+    :vartype token_parameters:
+     list[~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2Parameter]
+    :ivar status: Current OAuth connection status.
+    :vartype status: str
+    :ivar login_link: Login link used to complete interactive authorization.
+    :vartype login_link: str
+    :ivar status_updated_utc: UTC timestamp of the last OAuth connection-status transition.
+    :vartype status_updated_utc: ~datetime.datetime
+    """
+
+    issuer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Expected OAuth authorization-server issuer for remote MCP discovery."""
+    authorization_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        name="authorizationEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth authorization endpoint."""
+    token_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        name="tokenEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth token endpoint."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """OAuth client identifier."""
+    client_secret: Optional[str] = rest_field(name="clientSecret", visibility=["create", "update"])
+    """OAuth client secret."""
+    scopes: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """OAuth scopes to request."""
+    grant_type: Optional[Union[str, "_models.AiGatewayToolServerOauth2GrantType"]] = rest_field(
+        name="grantType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth grant type. Known values are: \"clientCredentials\" and \"authorizationCode\"."""
+    token_exchange: Optional["_models.AiGatewayToolServerTokenExchange"] = rest_field(
+        name="tokenExchange", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Chained token-exchange configuration."""
+    authorization_parameters: Optional[list["_models.AiGatewayToolServerOauth2Parameter"]] = rest_field(
+        name="authorizationParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional authorization endpoint parameters."""
+    token_parameters: Optional[list["_models.AiGatewayToolServerOauth2Parameter"]] = rest_field(
+        name="tokenParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional token endpoint parameters."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Current OAuth connection status."""
+    login_link: Optional[str] = rest_field(name="loginLink", visibility=["read"])
+    """Login link used to complete interactive authorization."""
+    status_updated_utc: Optional[datetime.datetime] = rest_field(
+        name="statusUpdatedUtc", visibility=["read"], format="rfc3339"
+    )
+    """UTC timestamp of the last OAuth connection-status transition."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        issuer: Optional[str] = None,
+        authorization_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+        token_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        scopes: Optional[list[str]] = None,
+        grant_type: Optional[Union[str, "_models.AiGatewayToolServerOauth2GrantType"]] = None,
+        token_exchange: Optional["_models.AiGatewayToolServerTokenExchange"] = None,
+        authorization_parameters: Optional[list["_models.AiGatewayToolServerOauth2Parameter"]] = None,
+        token_parameters: Optional[list["_models.AiGatewayToolServerOauth2Parameter"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerOauth2LoginLinks(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Links for completing OAuth consent for a tool-server endpoint.
+
+    :ivar login_link: Gateway URL to open to begin consent; includes an expiring signed capability.
+    :vartype login_link: str
+    :ivar redirect_uri: Gateway callback URI to register with the identity provider.
+    :vartype redirect_uri: str
+    :ivar expires_utc: UTC expiry of the signed start capability. Required.
+    :vartype expires_utc: ~datetime.datetime
+    """
+
+    login_link: Optional[str] = rest_field(name="loginLink", visibility=["read", "create", "update", "delete", "query"])
+    """Gateway URL to open to begin consent; includes an expiring signed capability."""
+    redirect_uri: Optional[str] = rest_field(
+        name="redirectUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gateway callback URI to register with the identity provider."""
+    expires_utc: datetime.datetime = rest_field(
+        name="expiresUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """UTC expiry of the signed start capability. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expires_utc: datetime.datetime,
+        login_link: Optional[str] = None,
+        redirect_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerOauth2Parameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An additional parameter sent to an OAuth 2.0 endpoint.
+
+    :ivar name: OAuth parameter name. Required.
+    :vartype name: str
+    :ivar value: OAuth parameter value. Required.
+    :vartype value: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """OAuth parameter name. Required."""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """OAuth parameter value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an AI Gateway tool server.
+
+    :ivar display_name: Display name of the tool server.
+    :vartype display_name: str
+    :ivar description: Description of the tool server.
+    :vartype description: str
+    :ivar access_state: Whether the tool server is available to callers. Known values are: "active"
+     and "blocked".
+    :vartype access_state: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerAccessState
+    :ivar tool_server_type: Tool server type. Required. Known values are: "mcp", "openApi", and
+     "connector".
+    :vartype tool_server_type: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerType
+    :ivar versions: Runtime API versions exposed by this tool server.
+    :vartype versions: list[str]
+    :ivar allow_list: Tool names or patterns explicitly allowed.
+    :vartype allow_list: list[str]
+    :ivar block_list: Tool names or patterns explicitly blocked.
+    :vartype block_list: list[str]
+    :ivar endpoints: Endpoint configurations exposed by this tool server.
+    :vartype endpoints: list[~azure.mgmt.aigateway.models.AiGatewayToolServerEndpoint]
+    :ivar policies: Inline policies applied to this tool server.
+    :vartype policies: list[~azure.mgmt.aigateway.models.AiGatewayPolicy]
+    :ivar path: Runtime path for the tool server.
+    :vartype path: str
+    :ivar subscription_required: Whether a subscription is required to invoke the tool server.
+    :vartype subscription_required: bool
+    :ivar gateway_endpoints: Read-only invocation URLs, with optional SDK metadata when endpoint
+     enrichment is enabled.
+    :vartype gateway_endpoints: list[~azure.mgmt.aigateway.models.AiGatewayEndpoint]
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the tool server."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the tool server."""
+    access_state: Optional[Union[str, "_models.AiGatewayToolServerAccessState"]] = rest_field(
+        name="accessState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the tool server is available to callers. Known values are: \"active\" and \"blocked\"."""
+    tool_server_type: Union[str, "_models.AiGatewayToolServerType"] = rest_field(
+        name="toolServerType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool server type. Required. Known values are: \"mcp\", \"openApi\", and \"connector\"."""
+    versions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Runtime API versions exposed by this tool server."""
+    allow_list: Optional[list[str]] = rest_field(
+        name="allowList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool names or patterns explicitly allowed."""
+    block_list: Optional[list[str]] = rest_field(
+        name="blockList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool names or patterns explicitly blocked."""
+    endpoints: Optional[list["_models.AiGatewayToolServerEndpoint"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoint configurations exposed by this tool server."""
+    policies: Optional[list["_models.AiGatewayPolicy"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline policies applied to this tool server."""
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Runtime path for the tool server."""
+    subscription_required: Optional[bool] = rest_field(
+        name="subscriptionRequired", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether a subscription is required to invoke the tool server."""
+    gateway_endpoints: Optional[list["_models.AiGatewayEndpoint"]] = rest_field(
+        name="gatewayEndpoints", visibility=["read"]
+    )
+    """Read-only invocation URLs, with optional SDK metadata when endpoint enrichment is enabled."""
+    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tool_server_type: Union[str, "_models.AiGatewayToolServerType"],
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        access_state: Optional[Union[str, "_models.AiGatewayToolServerAccessState"]] = None,
+        versions: Optional[list[str]] = None,
+        allow_list: Optional[list[str]] = None,
+        block_list: Optional[list[str]] = None,
+        endpoints: Optional[list["_models.AiGatewayToolServerEndpoint"]] = None,
+        policies: Optional[list["_models.AiGatewayPolicy"]] = None,
+        path: Optional[str] = None,
+        subscription_required: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An AI Gateway tool server resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayToolServerProperties
+    """
+
+    properties: Optional["_models.AiGatewayToolServerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayToolServerProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerSecret(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Secret value configured on one tool server endpoint.
+
+    :ivar id: Stable endpoint identifier. Required.
+    :vartype id: str
+    :ivar authentication: Endpoint authentication including secret values.
+    :vartype authentication: ~azure.mgmt.aigateway.models.AiGatewayToolServerSecretAuthentication
+    :ivar open_api: OpenAPI configuration including inline content.
+    :vartype open_api: ~azure.mgmt.aigateway.models.AiGatewayToolServerSecretOpenApiConfiguration
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Stable endpoint identifier. Required."""
+    authentication: Optional["_models.AiGatewayToolServerSecretAuthentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoint authentication including secret values."""
+    open_api: Optional["_models.AiGatewayToolServerSecretOpenApiConfiguration"] = rest_field(
+        name="openApi", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OpenAPI configuration including inline content."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        authentication: Optional["_models.AiGatewayToolServerSecretAuthentication"] = None,
+        open_api: Optional["_models.AiGatewayToolServerSecretOpenApiConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerSecretAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Endpoint authentication returned by the secret retrieval action.
+
+    :ivar managed_identity: Managed identity configuration.
+    :vartype managed_identity:
+     ~azure.mgmt.aigateway.models.AiGatewayToolServerManagedIdentityAuthentication
+    :ivar headers: Static headers injected when calling the endpoint.
+    :vartype headers: list[~azure.mgmt.aigateway.models.AiGatewaySecretHeaderValue]
+    :ivar oauth2: OAuth 2.0 configuration.
+    :vartype oauth2: ~azure.mgmt.aigateway.models.AiGatewayToolServerSecretOauth2Authentication
+    """
+
+    managed_identity: Optional["_models.AiGatewayToolServerManagedIdentityAuthentication"] = rest_field(
+        name="managedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity configuration."""
+    headers: Optional[list["_models.AiGatewaySecretHeaderValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Static headers injected when calling the endpoint."""
+    oauth2: Optional["_models.AiGatewayToolServerSecretOauth2Authentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth 2.0 configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_identity: Optional["_models.AiGatewayToolServerManagedIdentityAuthentication"] = None,
+        headers: Optional[list["_models.AiGatewaySecretHeaderValue"]] = None,
+        oauth2: Optional["_models.AiGatewayToolServerSecretOauth2Authentication"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerSecretOauth2Authentication(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """OAuth settings returned by the secret retrieval action.
+
+    :ivar issuer: Expected OAuth authorization-server issuer for remote MCP discovery.
+    :vartype issuer: str
+    :ivar authorization_endpoint: OAuth authorization endpoint.
+    :vartype authorization_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar token_endpoint: OAuth token endpoint.
+    :vartype token_endpoint: ~azure.mgmt.aigateway.models.AiGatewayDestinationEndpoint
+    :ivar client_id: OAuth client identifier.
+    :vartype client_id: str
+    :ivar scopes: OAuth scopes to request.
+    :vartype scopes: list[str]
+    :ivar grant_type: OAuth grant type. Known values are: "clientCredentials" and
+     "authorizationCode".
+    :vartype grant_type: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2GrantType
+    :ivar token_exchange: Chained token-exchange configuration.
+    :vartype token_exchange: ~azure.mgmt.aigateway.models.AiGatewayToolServerTokenExchange
+    :ivar authorization_parameters: Additional authorization endpoint parameters.
+    :vartype authorization_parameters:
+     list[~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2Parameter]
+    :ivar token_parameters: Additional token endpoint parameters.
+    :vartype token_parameters:
+     list[~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2Parameter]
+    :ivar status: Current OAuth connection status.
+    :vartype status: str
+    :ivar login_link: Login link used to complete interactive authorization.
+    :vartype login_link: str
+    :ivar status_updated_utc: UTC timestamp of the last OAuth connection-status transition.
+    :vartype status_updated_utc: ~datetime.datetime
+    :ivar client_secret: OAuth client secret.
+    :vartype client_secret: str
+    """
+
+    issuer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Expected OAuth authorization-server issuer for remote MCP discovery."""
+    authorization_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        name="authorizationEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth authorization endpoint."""
+    token_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = rest_field(
+        name="tokenEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth token endpoint."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """OAuth client identifier."""
+    scopes: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """OAuth scopes to request."""
+    grant_type: Optional[Union[str, "_models.AiGatewayToolServerOauth2GrantType"]] = rest_field(
+        name="grantType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth grant type. Known values are: \"clientCredentials\" and \"authorizationCode\"."""
+    token_exchange: Optional["_models.AiGatewayToolServerTokenExchange"] = rest_field(
+        name="tokenExchange", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Chained token-exchange configuration."""
+    authorization_parameters: Optional[list["_models.AiGatewayToolServerOauth2Parameter"]] = rest_field(
+        name="authorizationParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional authorization endpoint parameters."""
+    token_parameters: Optional[list["_models.AiGatewayToolServerOauth2Parameter"]] = rest_field(
+        name="tokenParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional token endpoint parameters."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Current OAuth connection status."""
+    login_link: Optional[str] = rest_field(name="loginLink", visibility=["read"])
+    """Login link used to complete interactive authorization."""
+    status_updated_utc: Optional[datetime.datetime] = rest_field(
+        name="statusUpdatedUtc", visibility=["read"], format="rfc3339"
+    )
+    """UTC timestamp of the last OAuth connection-status transition."""
+    client_secret: Optional[str] = rest_field(
+        name="clientSecret", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth client secret."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        issuer: Optional[str] = None,
+        authorization_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+        token_endpoint: Optional["_models.AiGatewayDestinationEndpoint"] = None,
+        client_id: Optional[str] = None,
+        scopes: Optional[list[str]] = None,
+        grant_type: Optional[Union[str, "_models.AiGatewayToolServerOauth2GrantType"]] = None,
+        token_exchange: Optional["_models.AiGatewayToolServerTokenExchange"] = None,
+        authorization_parameters: Optional[list["_models.AiGatewayToolServerOauth2Parameter"]] = None,
+        token_parameters: Optional[list["_models.AiGatewayToolServerOauth2Parameter"]] = None,
+        client_secret: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerSecretOpenApiConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """OpenAPI settings returned by the secret retrieval action.
+
+    :ivar spec_source: OpenAPI document source. Required.
+    :vartype spec_source: ~azure.mgmt.aigateway.models.AiGatewayToolServerSecretOpenApiSpecSource
+    """
+
+    spec_source: "_models.AiGatewayToolServerSecretOpenApiSpecSource" = rest_field(
+        name="specSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OpenAPI document source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        spec_source: "_models.AiGatewayToolServerSecretOpenApiSpecSource",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerSecretOpenApiSpecSource(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """OpenAPI document source returned by the secret retrieval action.
+
+    :ivar type: Source type. Required. Known values are: "inline" and "url".
+    :vartype type: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerOpenApiSourceType
+    :ivar url: URL of the OpenAPI document. Required when type is url.
+    :vartype url: str
+    :ivar content_base64: Base64-encoded OpenAPI document. Required when type is inline.
+    :vartype content_base64: bytes
+    """
+
+    type: Union[str, "_models.AiGatewayToolServerOpenApiSourceType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source type. Required. Known values are: \"inline\" and \"url\"."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """URL of the OpenAPI document. Required when type is url."""
+    content_base64: Optional[bytes] = rest_field(
+        name="contentBase64", visibility=["read", "create", "update", "delete", "query"], format="base64"
+    )
+    """Base64-encoded OpenAPI document. Required when type is inline."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AiGatewayToolServerOpenApiSourceType"],
+        url: Optional[str] = None,
+        content_base64: Optional[bytes] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerSecrets(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Secret values configured on tool server endpoints.
+
+    :ivar endpoints: Endpoint secret values. Required.
+    :vartype endpoints: list[~azure.mgmt.aigateway.models.AiGatewayToolServerSecret]
+    """
+
+    endpoints: list["_models.AiGatewayToolServerSecret"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoint secret values. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoints: list["_models.AiGatewayToolServerSecret"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerTokenExchange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Chained token-exchange configuration for a tool server endpoint.
+
+    :ivar profile: Token-exchange profile. Required. "entraOnBehalfOf"
+    :vartype profile: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerTokenExchangeProfile
+    :ivar federated_client_application: Customer-owned federated client application identity.
+    :vartype federated_client_application:
+     ~azure.mgmt.aigateway.models.AiGatewayToolServerFederation
+    :ivar scopes: Delegated scopes requested from the target tool server resource.
+    :vartype scopes: list[str]
+    """
+
+    profile: Union[str, "_models.AiGatewayToolServerTokenExchangeProfile"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Token-exchange profile. Required. \"entraOnBehalfOf\""""
+    federated_client_application: Optional["_models.AiGatewayToolServerFederation"] = rest_field(
+        name="federatedClientApplication", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer-owned federated client application identity."""
+    scopes: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Delegated scopes requested from the target tool server resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        profile: Union[str, "_models.AiGatewayToolServerTokenExchangeProfile"],
+        federated_client_application: Optional["_models.AiGatewayToolServerFederation"] = None,
+        scopes: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for updating an AI Gateway tool server.
+
+    :ivar properties: Tool server properties to update.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayToolServerUpdateProperties
+    """
+
+    properties: Optional["_models.AiGatewayToolServerUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool server properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayToolServerUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayToolServerUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for updating an AI Gateway tool server.
+
+    :ivar display_name: Display name of the tool server.
+    :vartype display_name: str
+    :ivar description: Description of the tool server.
+    :vartype description: str
+    :ivar access_state: Whether the tool server is available to callers. Known values are: "active"
+     and "blocked".
+    :vartype access_state: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerAccessState
+    :ivar tool_server_type: Tool server type. Known values are: "mcp", "openApi", and "connector".
+    :vartype tool_server_type: str or ~azure.mgmt.aigateway.models.AiGatewayToolServerType
+    :ivar versions: Runtime API versions exposed by this tool server.
+    :vartype versions: list[str]
+    :ivar allow_list: Tool names or patterns explicitly allowed.
+    :vartype allow_list: list[str]
+    :ivar block_list: Tool names or patterns explicitly blocked.
+    :vartype block_list: list[str]
+    :ivar endpoints: Endpoint configurations exposed by this tool server.
+    :vartype endpoints: list[~azure.mgmt.aigateway.models.AiGatewayToolServerEndpointUpdate]
+    :ivar policies: Inline policies applied to this tool server.
+    :vartype policies: list[~azure.mgmt.aigateway.models.AiGatewayPolicyUpdate]
+    :ivar path: Runtime path for the tool server.
+    :vartype path: str
+    :ivar subscription_required: Whether a subscription is required to invoke the tool server.
+    :vartype subscription_required: bool
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the tool server."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the tool server."""
+    access_state: Optional[Union[str, "_models.AiGatewayToolServerAccessState"]] = rest_field(
+        name="accessState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the tool server is available to callers. Known values are: \"active\" and \"blocked\"."""
+    tool_server_type: Optional[Union[str, "_models.AiGatewayToolServerType"]] = rest_field(
+        name="toolServerType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool server type. Known values are: \"mcp\", \"openApi\", and \"connector\"."""
+    versions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Runtime API versions exposed by this tool server."""
+    allow_list: Optional[list[str]] = rest_field(
+        name="allowList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool names or patterns explicitly allowed."""
+    block_list: Optional[list[str]] = rest_field(
+        name="blockList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool names or patterns explicitly blocked."""
+    endpoints: Optional[list["_models.AiGatewayToolServerEndpointUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoint configurations exposed by this tool server."""
+    policies: Optional[list["_models.AiGatewayPolicyUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline policies applied to this tool server."""
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Runtime path for the tool server."""
+    subscription_required: Optional[bool] = rest_field(
+        name="subscriptionRequired", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether a subscription is required to invoke the tool server."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        access_state: Optional[Union[str, "_models.AiGatewayToolServerAccessState"]] = None,
+        tool_server_type: Optional[Union[str, "_models.AiGatewayToolServerType"]] = None,
+        versions: Optional[list[str]] = None,
+        allow_list: Optional[list[str]] = None,
+        block_list: Optional[list[str]] = None,
+        endpoints: Optional[list["_models.AiGatewayToolServerEndpointUpdate"]] = None,
+        policies: Optional[list["_models.AiGatewayPolicyUpdate"]] = None,
+        path: Optional[str] = None,
+        subscription_required: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AiGatewayUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating an AI Gateway.
 
@@ -335,6 +5608,8 @@ class AiGatewayUpdateParameters(_Model):  # pylint: disable=docstring-keyword-sh
     :vartype identity: ~azure.mgmt.aigateway.models.ManagedServiceIdentity
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
     :vartype sku: ~azure.mgmt.aigateway.models.AiGatewaySkuUpdate
+    :ivar properties: AI Gateway properties to update.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayUpdateProperties
     """
 
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -345,6 +5620,10 @@ class AiGatewayUpdateParameters(_Model):  # pylint: disable=docstring-keyword-sh
     """The managed service identities assigned to this resource."""
     sku: Optional["_models.AiGatewaySkuUpdate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU (Stock Keeping Unit) assigned to this resource."""
+    properties: Optional["_models.AiGatewayUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """AI Gateway properties to update."""
 
     @overload
     def __init__(
@@ -353,6 +5632,194 @@ class AiGatewayUpdateParameters(_Model):  # pylint: disable=docstring-keyword-sh
         tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         sku: Optional["_models.AiGatewaySkuUpdate"] = None,
+        properties: Optional["_models.AiGatewayUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for updating an AI Gateway.
+
+    :ivar public_network_access: Whether public network access is allowed for the AI Gateway. Known
+     values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.aigateway.models.AiGatewayPublicNetworkAccess
+    :ivar backend: Backend networking configuration.
+    :vartype backend: ~azure.mgmt.aigateway.models.AiGatewayBackendUpdate
+    """
+
+    public_network_access: Optional[Union[str, "_models.AiGatewayPublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether public network access is allowed for the AI Gateway. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    backend: Optional["_models.AiGatewayBackendUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend networking configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        public_network_access: Optional[Union[str, "_models.AiGatewayPublicNetworkAccess"]] = None,
+        backend: Optional["_models.AiGatewayBackendUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayWorkspaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an AI Gateway workspace.
+
+    :ivar display_name: Display name of the workspace. Required.
+    :vartype display_name: str
+    :ivar description: Description of the workspace. Required.
+    :vartype description: str
+    :ivar policies: Inline governance policies for the default workspace.
+    :vartype policies: list[~azure.mgmt.aigateway.models.AiGatewayPolicy]
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.aigateway.models.AiGatewayProvisioningState
+    """
+
+    display_name: str = rest_field(name="displayName", visibility=["read"])
+    """Display name of the workspace. Required."""
+    description: str = rest_field(visibility=["read"])
+    """Description of the workspace. Required."""
+    policies: Optional[list["_models.AiGatewayPolicy"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline governance policies for the default workspace."""
+    provisioning_state: Optional[Union[str, "_models.AiGatewayProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policies: Optional[list["_models.AiGatewayPolicy"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayWorkspaceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An AI Gateway workspace resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.aigateway.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceProperties
+    """
+
+    properties: Optional["_models.AiGatewayWorkspaceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayWorkspaceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayWorkspaceUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for updating an AI Gateway workspace.
+
+    :ivar properties: Workspace properties to update.
+    :vartype properties: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceUpdateProperties
+    """
+
+    properties: Optional["_models.AiGatewayWorkspaceUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Workspace properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AiGatewayWorkspaceUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayWorkspaceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for updating an AI Gateway workspace.
+
+    :ivar policies: Inline governance policies to replace on the default workspace.
+    :vartype policies: list[~azure.mgmt.aigateway.models.AiGatewayPolicyUpdate]
+    """
+
+    policies: Optional[list["_models.AiGatewayPolicyUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline governance policies to replace on the default workspace."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policies: Optional[list["_models.AiGatewayPolicyUpdate"]] = None,
     ) -> None: ...
 
     @overload
@@ -575,6 +6042,154 @@ class OperationDisplay(_Model):
     description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
+
+
+class PrivateEndpoint(_Model):
+    """The private endpoint resource.
+
+    :ivar id: The resource identifier of the private endpoint.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The resource identifier of the private endpoint."""
+
+
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of the private endpoint connection.
+
+    :ivar group_ids: The group ids for the private endpoint resource.
+    :vartype group_ids: list[str]
+    :ivar private_endpoint: The private endpoint resource.
+    :vartype private_endpoint: ~azure.mgmt.aigateway.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider. Required.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.aigateway.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.aigateway.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read"])
+    """The group ids for the private endpoint resource."""
+    private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
+        name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private endpoint resource."""
+    private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState" = rest_field(
+        name="privateLinkServiceConnectionState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A collection of information about the state of the connection between service consumer and
+     provider. Required."""
+    provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the private endpoint connection resource. Known values are:
+     \"Succeeded\", \"Creating\", \"Deleting\", and \"Failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a private link resource.
+
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource private link DNS zone name.
+    :vartype required_zone_names: list[str]
+    """
+
+    group_id: Optional[str] = rest_field(name="groupId", visibility=["read"])
+    """The private link resource group id."""
+    required_members: Optional[list[str]] = rest_field(name="requiredMembers", visibility=["read"])
+    """The private link resource required member names."""
+    required_zone_names: Optional[list[str]] = rest_field(
+        name="requiredZoneNames", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private link resource private link DNS zone name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        required_zone_names: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A collection of information about the state of the connection between service consumer and
+    provider.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype status: str or ~azure.mgmt.aigateway.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the connection has been Approved/Rejected/Removed by the owner of the
+     service. Known values are: \"Pending\", \"Approved\", and \"Rejected\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The reason for approval/rejection of the connection."""
+    actions_required: Optional[str] = rest_field(
+        name="actionsRequired", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A message indicating if changes on the service provider require any updates on the consumer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

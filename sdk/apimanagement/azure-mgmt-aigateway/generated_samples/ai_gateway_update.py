@@ -33,13 +33,17 @@ def main():
     response = client.ai_gateway_resources.begin_update(
         resource_group_name="example-rg",
         ai_gateway_name="example-gateway",
-        properties={"sku": {"name": "AIGateway"}, "tags": {"environment": "production"}},
+        properties={
+            "properties": {"publicNetworkAccess": "Disabled"},
+            "sku": {"name": "Standard"},
+            "tags": {"environment": "production"},
+        },
         etag="*",
         match_condition=~azure.core.MatchConditions,
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/AiGatewayUpdate.json
+# x-ms-original-file: 2026-11-01/AiGatewayUpdate.json
 if __name__ == "__main__":
     main()
