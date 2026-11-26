@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.event.get(
-        resource_group_name="rgswagger_2024-09-01",
-        vault_name="4",
-        event_name="231CIG",
+        resource_group_name="rgrecoveryservicesdatareplication",
+        vault_name="lftqijwwzmqhexnl",
+        event_name="0231CIG",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/Event_Get.json
+# x-ms-original-file: 2026-05-01/Event_Get.json
 if __name__ == "__main__":
     main()

@@ -32,12 +32,12 @@ def main():
 
     response = client.job.get(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
-        job_name="ZGH4y",
+        vault_name="nvaykjhxcvknsfk",
+        job_name="wxwboaazrfpanyjk",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/Job_Get.json
+# x-ms-original-file: 2026-05-01/Job_Get.json
 if __name__ == "__main__":
     main()

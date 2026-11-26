@@ -1,5 +1,77 @@
 # Release History
 
+## 2.0.0 (2026-10-28)
+
+### Features Added
+
+  - Client `RecoveryServicesDataReplicationMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` added property `convert_to_gen2`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` added property `migrate_as_arc_vm`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` added property `security_option`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate` added property `convert_to_gen2`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate` added property `migrate_as_arc_vm`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate` added property `security_option`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` added property `convert_to_gen2`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` added property `migrate_as_arc_vm`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` added property `security_option`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate` added property `convert_to_gen2`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate` added property `migrate_as_arc_vm`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate` added property `security_option`
+  - Model `VaultModelProperties` added property `private_endpoint_connections`
+  - Model `VaultModelProperties` added property `private_endpoint_state`
+  - Model `VaultModelProperties` added property `public_network_access`
+  - Added model `AffectedObjectDetails`
+  - Added enum `PublicNetworkAccess`
+  - Added enum `SecurityOption`
+  - Added enum `VaultPrivateEndpointState`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.private_endpoint_connection_proxies`
+  - Deleted or renamed model `ConnectionDetails`
+  - Deleted or renamed model `GroupConnectivityInformation`
+  - Deleted or renamed model `JobModelCustomPropertiesAffectedObjectDetails`
+  - Deleted or renamed model `PrivateEndpointConnectionProxy`
+  - Deleted or renamed model `PrivateEndpointConnectionProxyProperties`
+  - Deleted or renamed model `PrivateLinkServiceConnection`
+  - Deleted or renamed model `PrivateLinkServiceProxy`
+  - Deleted or renamed model `RemotePrivateEndpoint`
+  - Deleted or renamed model `RemotePrivateEndpointConnection`
+  - Method `EmailConfigurationOperations.create` inserted a `positional_or_keyword` parameter `body`
+  - Method `EmailConfigurationOperations.create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
+  - Method `FabricAgentOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
+  - Method `FabricAgentOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
+  - Method `FabricOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
+  - Method `FabricOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
+  - Method `FabricOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
+  - Method `FabricOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
+  - Method `PolicyOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
+  - Method `PolicyOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.update` inserted a `positional_or_keyword` parameter `body`
+  - Method `PrivateEndpointConnectionsOperations.update` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
+  - Method `ProtectedItemOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
+  - Method `ProtectedItemOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
+  - Method `ProtectedItemOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
+  - Method `ProtectedItemOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
+  - Method `ReplicationExtensionOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
+  - Method `ReplicationExtensionOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
+  - Method `VaultOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
+  - Method `VaultOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
+  - Method `VaultOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
+  - Method `VaultOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
+  - Deleted or renamed model `PrivateEndpointConnectionProxiesOperations`
+  - Method `PolicyOperations.begin_create` re-ordered its parameters from `['self', 'content_type', 'policy_name', 'resource', 'resource_group_name', 'vault_name', 'kwargs']` to `['self', 'body', 'content_type', 'policy_name', 'resource_group_name', 'vault_name', 'kwargs']`
+  - Method `FabricAgentOperations.begin_create` re-ordered its parameters from `['self', 'content_type', 'fabric_agent_name', 'fabric_name', 'resource', 'resource_group_name', 'kwargs']` to `['self', 'body', 'content_type', 'fabric_agent_name', 'fabric_name', 'resource_group_name', 'kwargs']`
+  - Method `ProtectedItemOperations.begin_create` re-ordered its parameters from `['self', 'content_type', 'protected_item_name', 'resource', 'resource_group_name', 'vault_name', 'kwargs']` to `['self', 'body', 'content_type', 'protected_item_name', 'resource_group_name', 'vault_name', 'kwargs']`
+  - Method `ProtectedItemOperations.begin_update` re-ordered its parameters from `['self', 'content_type', 'properties', 'protected_item_name', 'resource_group_name', 'vault_name', 'kwargs']` to `['self', 'body', 'content_type', 'protected_item_name', 'resource_group_name', 'vault_name', 'kwargs']`
+  - Method `FabricOperations.begin_create` re-ordered its parameters from `['self', 'content_type', 'fabric_name', 'resource', 'resource_group_name', 'kwargs']` to `['self', 'body', 'content_type', 'fabric_name', 'resource_group_name', 'kwargs']`
+  - Method `FabricOperations.begin_update` re-ordered its parameters from `['self', 'content_type', 'fabric_name', 'properties', 'resource_group_name', 'kwargs']` to `['self', 'body', 'content_type', 'fabric_name', 'resource_group_name', 'kwargs']`
+  - Method `VaultOperations.begin_create` re-ordered its parameters from `['self', 'content_type', 'resource', 'resource_group_name', 'vault_name', 'kwargs']` to `['self', 'body', 'content_type', 'resource_group_name', 'vault_name', 'kwargs']`
+  - Method `VaultOperations.begin_update` re-ordered its parameters from `['self', 'content_type', 'properties', 'resource_group_name', 'vault_name', 'kwargs']` to `['self', 'body', 'content_type', 'resource_group_name', 'vault_name', 'kwargs']`
+  - Method `PrivateEndpointConnectionsOperations.update` re-ordered its parameters from `['self', 'content_type', 'private_endpoint_connection_name', 'resource', 'resource_group_name', 'vault_name', 'kwargs']` to `['self', 'body', 'content_type', 'private_endpoint_connection_name', 'resource_group_name', 'vault_name', 'kwargs']`
+  - Method `ReplicationExtensionOperations.begin_create` re-ordered its parameters from `['self', 'content_type', 'replication_extension_name', 'resource', 'resource_group_name', 'vault_name', 'kwargs']` to `['self', 'body', 'content_type', 'replication_extension_name', 'resource_group_name', 'vault_name', 'kwargs']`
+  - Method `EmailConfigurationOperations.create` re-ordered its parameters from `['self', 'content_type', 'email_configuration_name', 'resource', 'resource_group_name', 'vault_name', 'kwargs']` to `['self', 'body', 'content_type', 'email_configuration_name', 'resource_group_name', 'vault_name', 'kwargs']`
+
 ## 1.0.0 (2025-05-12)
 
 ### Features Added

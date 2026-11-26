@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.location_based_operation_results.get(
-        resource_group_name="rgswagger_2024-09-01",
-        location="Central US EUAP",
-        operation_id="lghle",
+        resource_group_name="rgrecoveryservicesdatareplication",
+        location="tgdlwgzqcdcukhuxxgvodc",
+        operation_id="kisbnzxptzjces",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/LocationBasedOperationResults_Get.json
+# x-ms-original-file: 2026-05-01/LocationBasedOperationResults_Get.json
 if __name__ == "__main__":
     main()

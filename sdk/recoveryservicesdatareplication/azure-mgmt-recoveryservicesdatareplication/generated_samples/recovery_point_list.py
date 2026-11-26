@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservicesdatareplication import RecoveryServicesDataRepli
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesdatareplication
 # USAGE
-    python private_endpoint_connection_delete.py
+    python recovery_point_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.private_endpoint_connections.begin_delete(
-        resource_group_name="rgswagger_2024-09-01",
-        vault_name="4",
-        private_endpoint_connection_name="sdwqtfhigjirrzhpbmqtzgs",
-    ).result()
+    response = client.recovery_point.list(
+        resource_group_name="rgrecoveryservicesdatareplication",
+        vault_name="lftqijwwzmqhexnl",
+        protected_item_name="smdtmzmndqrppdnlivoyzgfek",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2024-09-01/PrivateEndpointConnection_Delete.json
+# x-ms-original-file: 2026-05-01/RecoveryPoint_List.json
 if __name__ == "__main__":
     main()

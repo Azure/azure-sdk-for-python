@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.email_configuration.list(
-        resource_group_name="rgswagger_2024-09-01",
-        vault_name="4",
+        resource_group_name="rgrecoveryservicesdatareplication",
+        vault_name="lftqijwwzmqhexnl",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2024-09-01/EmailConfiguration_List.json
+# x-ms-original-file: 2026-05-01/EmailConfiguration_List.json
 if __name__ == "__main__":
     main()

@@ -32,11 +32,11 @@ def main():
 
     client.protected_item.begin_delete(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
-        protected_item_name="d",
+        vault_name="lftqijwwzmqhexnl",
+        protected_item_name="ybdaqrrypdozdgxrvmvv",
     ).result()
 
 
-# x-ms-original-file: 2024-09-01/ProtectedItem_Delete.json
+# x-ms-original-file: 2026-05-01/ProtectedItem_Delete.json
 if __name__ == "__main__":
     main()

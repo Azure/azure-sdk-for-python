@@ -31,12 +31,12 @@ def main():
     )
 
     client.fabric_agent.begin_delete(
-        resource_group_name="rgswagger_2024-09-01",
-        fabric_name="wPR",
-        fabric_agent_name="M",
+        resource_group_name="rgrecoveryservicesdatareplication",
+        fabric_name="lftqijwwzmqhexnl",
+        fabric_agent_name="lftqijwwzmqhexnl",
     ).result()
 
 
-# x-ms-original-file: 2024-09-01/FabricAgent_Delete.json
+# x-ms-original-file: 2026-05-01/FabricAgent_Delete.json
 if __name__ == "__main__":
     main()

@@ -32,12 +32,12 @@ def main():
 
     response = client.protected_item.list(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
+        vault_name="ybdaqrrypdozdgxrvmvv",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2024-09-01/ProtectedItem_List.json
+# x-ms-original-file: 2026-05-01/ProtectedItem_List.json
 if __name__ == "__main__":
     main()

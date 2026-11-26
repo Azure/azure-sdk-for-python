@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.operation_results.get(
-        resource_group_name="rgswagger_2024-09-01",
-        operation_id="lghle",
+        resource_group_name="rgrecoveryservicesdatareplication",
+        operation_id="kisbnzxptzjces",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/OperationResults_Get.json
+# x-ms-original-file: 2026-05-01/OperationResults_Get.json
 if __name__ == "__main__":
     main()

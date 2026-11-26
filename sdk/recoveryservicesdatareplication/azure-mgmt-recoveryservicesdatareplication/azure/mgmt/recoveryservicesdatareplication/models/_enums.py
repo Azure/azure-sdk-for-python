@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -104,7 +104,7 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -251,7 +251,7 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the provisioning state of the email configuration."""
 
     CANCELED = "Canceled"
-    """Resource creation has been canceled"""
+    """Resource creation has been canceled."""
     CREATING = "Creating"
     """Resource is being created."""
     DELETING = "Deleting"
@@ -264,6 +264,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource creation/update succeeded."""
     UPDATING = "Updating"
     """Resource is being updated."""
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property to enable or disable resource provider inbound network traffic from public clients."""
+
+    ENABLED = "Enabled"
+    """Public network access is enabled."""
+    DISABLED = "Disabled"
+    """Public network access is disabled."""
 
 
 class RecoveryPointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -295,6 +304,19 @@ class ResynchronizationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resynchronization has been completed successfully."""
     RESYNCHRONIZATION_FAILED = "ResynchronizationFailed"
     """Resynchronization has failed and would need to be started again."""
+
+
+class SecurityOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the security options."""
+
+    NONE = "None"
+    """No security feature is enabled."""
+    SECURE_BOOT_ENABLED = "SecureBootEnabled"
+    """Secure boot is enabled."""
+    ENABLEV_TPM = "EnablevTPM"
+    """Enable vTPM."""
+    TRUSTED_LAUNCH = "TrustedLaunch"
+    """Trusted launch is enabled, including secure boot and vTPM."""
 
 
 class TaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -347,6 +369,23 @@ class VaultIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """System assigned identity."""
     USER_ASSIGNED = "UserAssigned"
     """User assigned identity."""
+
+
+class VaultPrivateEndpointState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Private endpoint state for the vault."""
+
+    NONE = "None"
+    """No private endpoint configured."""
+    IN_PROGRESS = "InProgress"
+    """Private endpoint is being enabled."""
+    SUCCEEDED = "Succeeded"
+    """Private endpoint has been successfully enabled."""
+    DELETING = "Deleting"
+    """Private endpoint is being deleted."""
+    FAILED = "Failed"
+    """Private endpoint has failed to be enabled."""
+    PENDING = "Pending"
+    """Private endpoint is pending."""
 
 
 class VMNicSelection(str, Enum, metaclass=CaseInsensitiveEnumMeta):

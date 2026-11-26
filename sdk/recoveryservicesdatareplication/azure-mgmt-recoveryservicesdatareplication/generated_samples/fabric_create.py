@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservicesdatareplication import RecoveryServicesDataRepli
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesdatareplication
 # USAGE
-    python private_endpoint_connection_get.py
+    python fabric_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,18 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_endpoint_connections.get(
-        resource_group_name="rgswagger_2024-09-01",
-        vault_name="4",
-        private_endpoint_connection_name="vbkm",
-    )
+    response = client.fabric.begin_create(
+        resource_group_name="rgrecoveryservicesdatareplication",
+        fabric_name="lftqijwwzmqhexnl",
+        body={
+            "location": "meoxqxugjhchdybmbjtbnayasnob",
+            "properties": {"customProperties": {"instanceType": "FabricModelCustomProperties"}},
+            "tags": {"key5101": "pxi"},
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/PrivateEndpointConnection_Get.json
+# x-ms-original-file: 2026-05-01/Fabric_Create.json
 if __name__ == "__main__":
     main()

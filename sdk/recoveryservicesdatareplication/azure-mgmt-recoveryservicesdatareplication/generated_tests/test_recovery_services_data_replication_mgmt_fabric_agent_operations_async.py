@@ -39,7 +39,7 @@ class TestRecoveryServicesDataReplicationMgmtFabricAgentOperationsAsync(AzureMgm
                 resource_group_name=resource_group.name,
                 fabric_name="str",
                 fabric_agent_name="str",
-                resource={
+                body={
                     "id": "str",
                     "name": "str",
                     "properties": {

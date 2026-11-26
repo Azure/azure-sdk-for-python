@@ -37,7 +37,7 @@ class TestRecoveryServicesDataReplicationMgmtVaultOperationsAsync(AzureMgmtRecor
             await self.client.vault.begin_create(
                 resource_group_name=resource_group.name,
                 vault_name="str",
-                resource={
+                body={
                     "location": "str",
                     "id": "str",
                     "identity": {
@@ -47,7 +47,37 @@ class TestRecoveryServicesDataReplicationMgmtVaultOperationsAsync(AzureMgmtRecor
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "name": "str",
-                    "properties": {"provisioningState": "str", "serviceResourceId": "str", "vaultType": "str"},
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateEndpoint": {"id": "str"},
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str",
+                                    },
+                                    "provisioningState": "str",
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str",
+                                },
+                                "type": "str",
+                            }
+                        ],
+                        "privateEndpointState": "str",
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceResourceId": "str",
+                        "vaultType": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -72,11 +102,41 @@ class TestRecoveryServicesDataReplicationMgmtVaultOperationsAsync(AzureMgmtRecor
             await self.client.vault.begin_update(
                 resource_group_name=resource_group.name,
                 vault_name="str",
-                properties={
+                body={
                     "id": "str",
                     "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
                     "name": "str",
-                    "properties": {"provisioningState": "str", "serviceResourceId": "str", "vaultType": "str"},
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateEndpoint": {"id": "str"},
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str",
+                                    },
+                                    "provisioningState": "str",
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str",
+                                },
+                                "type": "str",
+                            }
+                        ],
+                        "privateEndpointState": "str",
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceResourceId": "str",
+                        "vaultType": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
