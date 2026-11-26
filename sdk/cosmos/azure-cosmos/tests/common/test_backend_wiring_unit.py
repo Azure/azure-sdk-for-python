@@ -1959,10 +1959,14 @@ def test_async_acquisition_worker_preserves_context_rust(monkeypatch):
     assert observed[0][1] != caller
 
 
-def test_async_backend_retries_init_after_failure_rust(monkeypatch):
+@pytest.mark.parametrize("error_type", [RuntimeError, TimeoutError, asyncio.CancelledError])
+def test_async_backend_retries_init_after_failure_rust(monkeypatch, error_type):
     """A failed init is not cached on the shared future: the next operation retries
     ``acquire_driver_handle`` rather than handing back the first failure forever."""
     attempts = []
+    error = error_type("init boom")
+    original_cause = ValueError("credential cause")
+    error.__cause__ = original_cause
     fake_module = MagicMock()
     fake_module._DriverResponseError = type("_DriverResponseError", (RuntimeError,), {})
     fake_module._DriverTransportError = type("_DriverTransportError", (RuntimeError,), {})
@@ -1970,7 +1974,7 @@ def test_async_backend_retries_init_after_failure_rust(monkeypatch):
     def _flaky_init(*args):
         attempts.append(args)
         if len(attempts) == 1:
-            raise RuntimeError("init boom")
+            raise error
         return "handle-1"
 
     fake_module.acquire_driver_handle.side_effect = _flaky_init
@@ -1989,8 +1993,10 @@ def test_async_backend_retries_init_after_failure_rust(monkeypatch):
     async def _run():
         backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
         # First op: init fails and surfaces to the caller.
-        with pytest.raises(RuntimeError, match="init boom"):
+        with pytest.raises(error_type, match="init boom") as caught:
             await backend.execute(prepared)
+        assert caught.value is error
+        assert caught.value.__cause__ is original_cause
         # Second op: init is retried (not a cached failure) and succeeds.
         resp = await backend.execute(prepared)
         assert resp.status_code == 200

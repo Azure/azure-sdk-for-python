@@ -202,7 +202,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
 
         Each caller wraps the shared concurrent future for its customer event loop.
         Async credentials still require their original customer event loop.
-        Shielding makes cancellation stop only this caller's wait, not the
+        Waiting makes cancellation stop only this caller's wait, not the
         shared worker. A failed attempt can be retried; close releases late handles.
 
         :return: Shared owning driver handle.
@@ -229,7 +229,10 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             init_future = self._start_driver_acquisition(_rust_module, _LOGGER)
         waiter = asyncio.wrap_future(init_future, loop=loop)
         waiter.add_done_callback(self._driver_acquisition_finished)
-        return await asyncio.shield(waiter)
+        # Older asyncio versions recreate some exceptions when wrapping futures.
+        # Wait without cancelling shared work, then retrieve the original result.
+        await asyncio.wait((waiter,))
+        return init_future.result()
 
     @staticmethod
     def _driver_acquisition_finished(future: "asyncio.Future[_DriverHandle]") -> None:

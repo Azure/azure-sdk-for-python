@@ -6629,7 +6629,9 @@ def test_database_read_owns_diagnostics_through_hook_and_properties_rust(  # pyl
             assert not hooks
         assert trace.get_current_span() is parent
     assert len(harness.calls) == len(seen) == 1
-    assert harness.calls[0][0] is collect and 0 < harness.calls[0][1] <= 10
+    assert harness.calls[0][0] is collect
+    # Deadline addition/subtraction can round the remaining budget slightly upward.
+    assert 0 < harness.calls[0][1] <= 10 + 1e-9
     prepared = harness.prepared_requests[0]
     assert prepared.op == "read_database" and prepared.item_id == "sales"
     assert prepared.container_link == "" and prepared.body_bytes == b""

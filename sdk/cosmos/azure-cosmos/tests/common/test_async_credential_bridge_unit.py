@@ -116,6 +116,26 @@ def test_credential_resolution_and_bridge_agree_on_async_methods_rust(
         bridge._close_cosmos_async_bridge()
 
 
+@pytest.mark.parametrize("error_type", [TimeoutError, asyncio.CancelledError])
+def test_bridge_preserves_credential_exception_identity_rust(credential_owner_loop, error_type):
+    error = error_type("credential failed")
+    original_cause = ValueError("credential cause")
+    error.__cause__ = original_cause
+
+    class Credential:
+        async def get_token(self, *scopes):
+            raise error
+
+    bridge = AsyncTokenCredentialBridge(Credential(), loop=credential_owner_loop)
+    try:
+        with pytest.raises(error_type) as caught:
+            bridge._start_token_request("scope").result(timeout=2)
+        assert caught.value is error
+        assert caught.value.__cause__ is original_cause
+    finally:
+        bridge._close_cosmos_async_bridge()
+
+
 def test_native_result_cancellation_reaches_credential_coroutine_rust(credential_owner_loop):
     started = threading.Event()
     cancelled = threading.Event()

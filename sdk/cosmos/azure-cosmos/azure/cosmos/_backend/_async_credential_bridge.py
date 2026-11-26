@@ -115,11 +115,37 @@ class AsyncTokenCredentialBridge:
         :rtype: concurrent.futures.Future
         """
 
-        async def invoke() -> Any:
-            result = getattr(self._credential, self._token_method_name)(*scopes, **kwargs)
-            if inspect.isawaitable(result):
-                return await result
-            return result
+        async def invoke() -> tuple[bool, Any]:
+            # Carry failures as values so asyncio cannot recreate credential exceptions.
+            try:
+                result = getattr(self._credential, self._token_method_name)(*scopes, **kwargs)
+                if inspect.isawaitable(result):
+                    result = await result
+                return True, result
+            except BaseException as error:  # pylint: disable=broad-exception-caught
+                return False, error
+
+        future: concurrent.futures.Future = concurrent.futures.Future()
+
+        def publish(completed: concurrent.futures.Future) -> None:
+            if completed.cancelled():
+                future.cancel()
+                return
+            if not future.set_running_or_notify_cancel():
+                return
+            try:
+                succeeded, value = completed.result()
+            except BaseException as error:  # pylint: disable=broad-exception-caught
+                future.set_exception(error)
+            else:
+                if succeeded:
+                    future.set_result(value)
+                else:
+                    future.set_exception(value)
+
+        def cancel_request(completed: concurrent.futures.Future) -> None:
+            if completed.cancelled():
+                scheduled.cancel()
 
         with self._lock:
             if self._closed:
@@ -127,12 +153,15 @@ class AsyncTokenCredentialBridge:
             self._require_running_loop(self._loop)
             coroutine = invoke()
             try:
-                future = asyncio.run_coroutine_threadsafe(coroutine, self._loop)
+                scheduled = asyncio.run_coroutine_threadsafe(coroutine, self._loop)
             except BaseException:
-                coroutine.close()
+                # Pylint infers the awaited tuple instead of the coroutine object.
+                coroutine.close()  # pylint: disable=no-member
                 raise
             self._pending.add(future)
         future.add_done_callback(self._discard_pending)
+        future.add_done_callback(cancel_request)
+        scheduled.add_done_callback(publish)
         return future
 
     def _discard_pending(self, future: concurrent.futures.Future) -> None:
