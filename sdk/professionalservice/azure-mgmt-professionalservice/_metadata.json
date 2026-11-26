@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-05-01",
+  "apiVersions": {
+    "Microsoft.ProfessionalService": "2026-05-01"
+  },
+  "commit": "9fa4a09d309bcbcb4adfed7b1fe8c1bd4ad9f48d",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/professionalservice/resource-manager/Microsoft.ProfessionalService/ProfessionalService",
+  "emitterVersion": "0.63.12",
+  "httpClientPythonVersion": "0.40.1"
+}
