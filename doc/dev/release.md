@@ -1,7 +1,11 @@
 # Release process
 
+## Development builds - Azure Artifacts dev feed
+
+To publish a Python SDK development build to the Azure Artifacts dev feed, queue the service pipeline from the branch containing your changes. Set `SetDevVersion=true` and run the `Build` and `Integration` stages. The dev build publishes to the dev feed during `Integration`; skip the `Release` stage, which is for PyPI releases.
+
 ## Prerequisites
-First, ensure your code on `main` is ready to publish.
+For a PyPI release, first ensure your code on `main` is ready to publish.
 
 For management (control plane) packages, start with this page: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/mgmt_release.md
 
