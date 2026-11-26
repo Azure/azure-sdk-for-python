@@ -7,9 +7,11 @@ from collections import Counter
 from functools import lru_cache
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
 SPEC = importlib.util.spec_from_file_location(
     "batch_source_references",
     ROOT / "tests" / "create_item" / "test_assertion_correspondence_unit.py",

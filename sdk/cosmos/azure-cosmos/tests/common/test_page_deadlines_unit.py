@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 """Shared page arguments, results and errors preserve sync/async behavior."""
 import asyncio
+from common.async_test_helpers import run_async
 import time
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -122,7 +123,7 @@ def test_page_error_translation_preserves_cause_and_cancellation_rust(
 
     with pytest.raises(expected) as caught:
         if async_mode:
-            asyncio.run(collect())
+            run_async(collect())
         else:
             list(backend.execute_pages(prepared, deadline=deadline))
     if error_kind == "cancelled" or (error_kind == "timeout" and not has_deadline):

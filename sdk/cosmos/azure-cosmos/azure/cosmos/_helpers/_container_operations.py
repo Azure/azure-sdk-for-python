@@ -23,6 +23,8 @@ from .._backend.operations import (
 )
 from .._backend.cosmos_backend import CosmosBackend
 from .._cosmos_responses import CosmosDict
+from ..exceptions import CosmosResourceNotFoundError
+from ..http_constants import StatusCodes, SubStatusCodes
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
 from .._helpers._request_container import (
     build_create_container_prepared,
@@ -41,6 +43,33 @@ from .._helpers._response_parse import (
     with_response_header_snapshot,
 )
 from .._helpers._wire_encoding import serialize_body_to_bytes
+
+
+def container_creation_retry_delay(
+    error: CosmosResourceNotFoundError, retry_count: int, deadline: Optional[float]
+) -> Optional[float]:
+    """Bound follow-up reads while a concurrent container creation finishes.
+
+    Only 404/1013 after a create conflict permits up to nine additional reads.
+    Waits grow from 100 ms to one second and never exceed the remaining budget.
+
+    :param error: Failure from reading the concurrently created container.
+    :type error: ~azure.cosmos.exceptions.CosmosResourceNotFoundError
+    :param int retry_count: Number of additional reads already attempted.
+    :param float or None deadline: Original operation deadline, if supplied.
+    :return: Delay in seconds, or None to propagate the read failure.
+    :rtype: float or None
+    """
+    if (
+        error.status_code != StatusCodes.NOT_FOUND
+        or error.sub_status != SubStatusCodes.CONTAINER_CREATE_IN_PROGRESS
+    ):
+        return None
+    remaining = remaining_timeout(deadline)
+    if retry_count >= 9:
+        return None
+    delay = min(0.1 * 2 ** retry_count, 1.0)
+    return min(delay, remaining) if remaining is not None else delay
 
 
 class ContainerHelper:

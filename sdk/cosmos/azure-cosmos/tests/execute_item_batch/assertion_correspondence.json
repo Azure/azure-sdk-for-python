@@ -42145,8 +42145,8 @@
           "line": 27,
           "end_line": 27,
           "column": 0,
-          "ast_sha256": "b76939b6eadf64c01afdb7741508dde491cf12e30656f4c1b0bf78ad8f720ed8",
-          "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosAADLong, pytest.mark.asyncio]"
+          "ast_sha256": "b71478318e409b6dc65bc1380b77743cfeb89a6eeeae34eab373293d830d53f9",
+          "snippet": "pytestmark = [pytest.mark.cosmosSdkFaultInjection, pytest.mark.cosmosEmulator, pytest.mark.cosmosAADLong, pytest.mark.asyncio]"
         }
       ],
       "classes": [],
@@ -42170,8 +42170,8 @@
           "line": 27,
           "end_line": 27,
           "column": 0,
-          "ast_sha256": "b76939b6eadf64c01afdb7741508dde491cf12e30656f4c1b0bf78ad8f720ed8",
-          "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosAADLong, pytest.mark.asyncio]"
+          "ast_sha256": "b71478318e409b6dc65bc1380b77743cfeb89a6eeeae34eab373293d830d53f9",
+          "snippet": "pytestmark = [pytest.mark.cosmosSdkFaultInjection, pytest.mark.cosmosEmulator, pytest.mark.cosmosAADLong, pytest.mark.asyncio]"
         }
       },
       "local_fixtures": [
@@ -44164,14 +44164,14 @@
     "tests\\execute_item_batch\\aio\\test_transactional_batch_async.py": "076b1bf08557de9e918cfde6141fe2e599e6001c78da74d2dbf886878ed0aef5",
     "tests\\execute_item_batch\\sync\\test_transactional_batch.py": "caa7e5dd834a410ec2b53bcdfbe989981fbb9b2c4ac44ce76586e8f81761658f",
     "tests\\execute_item_batch\\test_serialization_compatibility_unit.py": "d489738387269b31742ea24ad023a6d34b92753a952efd8d733cd750ca2dd43d",
-    "tests\\execute_item_batch\\test_service_failures.py": "734e5ac15cae8ca038ce3e04c9bd8fab6003577ba4d97b0dfeb4007534add9b4",
+    "tests\\execute_item_batch\\test_service_failures.py": "4ce4fbe5c733d88c6dd30c2cf0c4d41ad267bbb96dd8c4bb1d01e60b0c9f36b9",
     "tests\\execute_item_batch\\test_shared_contracts.py": "b74baa8994526332bee16df20690e04bec142d00c293fce075ba285b618ed4c0",
     "tests\\response_hook\\aio\\test_query_response_headers_async.py": "ddfac49872a540c8a68adb0324e42373cbd488c26e9e1f33ee1efc3a4a55b6a2",
     "tests\\response_hook\\sync\\test_query_response_headers.py": "60c7105195900118c253035e6fc4259c81d862bbde578bd5b3b760f434f12958"
   },
   "fixture_boundary": {
     "path": "tests\\execute_item_batch\\test_service_failures.py",
-    "ast_sha256": "734e5ac15cae8ca038ce3e04c9bd8fab6003577ba4d97b0dfeb4007534add9b4",
+    "ast_sha256": "4ce4fbe5c733d88c6dd30c2cf0c4d41ad267bbb96dd8c4bb1d01e60b0c9f36b9",
     "meaning": "Shared replacements use configured key/AAD clients, key-owned resources, real native spies and legacy Batch failure guards. AAD collection is not execution."
   }
 }

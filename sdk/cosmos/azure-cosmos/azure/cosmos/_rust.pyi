@@ -170,7 +170,7 @@ def read_item_async(
     """
     ...
 
-# Remaining operations: (driver_handle, prepared, *, timeout_seconds, include_attempts).
+# Test-probes builds also accept include_fault_diagnostics for upsert.
 def upsert_item(
     driver_handle: _DriverHandle, prepared: PreparedRequest, *,
     timeout_seconds: float | None = None, include_attempts: bool = False,
@@ -179,6 +179,7 @@ def upsert_item_async(
     driver_handle: _DriverHandle, prepared: PreparedRequest, *,
     timeout_seconds: float | None = None, include_attempts: bool = False,
 ) -> Awaitable[tuple[Any, ...]]: ...
+# Remaining operations: (driver_handle, prepared, *, timeout_seconds, include_attempts).
 def replace_item(
     driver_handle: _DriverHandle, prepared: PreparedRequest, *,
     timeout_seconds: float | None = None, include_attempts: bool = False,

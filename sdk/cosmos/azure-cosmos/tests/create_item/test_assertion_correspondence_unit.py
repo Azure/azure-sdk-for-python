@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 
 import pytest
+from common.source_fingerprints import stable_ast_dump
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,7 +37,7 @@ LEVELS = {
 
 
 def _fingerprint(node):
-    return hashlib.sha256(ast.dump(node, include_attributes=False).encode("utf-8")).hexdigest()
+    return hashlib.sha256(stable_ast_dump(node).encode("utf-8")).hexdigest()
 
 
 def _functions(tree, prefix=""):

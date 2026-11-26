@@ -252,6 +252,12 @@ pub(crate) fn retry_count() -> u64 {
     BINDING_RETRY_COUNT.load(Ordering::Relaxed)
 }
 
+#[cfg(test)]
+std::thread_local! {
+    pub(super) static RECORD_DIAGNOSTICS_OBSERVER: std::cell::Cell<Option<fn()>> =
+        const { std::cell::Cell::new(None) };
+}
+
 /// Add one diagnostics context to the process-wide counters and format it.
 /// Call once per result path carrying diagnostics, including response-less errors
 /// when their diagnostics are available; this function does not deduplicate calls.
@@ -261,6 +267,12 @@ pub(crate) fn retry_count() -> u64 {
 /// describe every attempt. Iteration and string formatting add measurement work;
 /// their latency impact is not established by these counters.
 pub(super) fn record_diagnostics(diag: Arc<DiagnosticsContext>) -> String {
+    #[cfg(test)]
+    RECORD_DIAGNOSTICS_OBSERVER.with(|observer| {
+        if let Some(observe) = observer.take() {
+            observe();
+        }
+    });
     let requests = diag.requests();
     #[cfg(any(test, feature = "test-probes"))]
     {

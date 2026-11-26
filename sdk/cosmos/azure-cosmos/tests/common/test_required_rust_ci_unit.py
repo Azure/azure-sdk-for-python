@@ -248,6 +248,66 @@ def test_telemetry_dependencies_are_required_before_collection_rust(tmp_path, mo
         runner.main()
 
 
+@pytest.mark.parametrize("suite", ["offline", "telemetry"])
+@pytest.mark.parametrize("declared", [False, True])
+def test_telemetry_lane_rejects_offline_skip_allowances_rust(tmp_path, monkeypatch, suite, declared):
+    module = "telemetry/test_skip_unit.py"
+    test = tmp_path / "tests" / module
+    test.parent.mkdir(parents=True)
+    test.write_text(
+        "import pytest\n"
+        + (
+            "@pytest.mark.skip(reason='Async cancellation')\ndef test_skipped(): pass\n"
+            if declared
+            else "def test_skipped(): pytest.skip('Async cancellation')\n"
+        )
+        + "def test_control(): pass\n",
+        encoding="utf-8",
+    )
+    results = tmp_path / "results"
+    native = SimpleNamespace(
+        __file__=str(tmp_path / "_rust.pyd"),
+        **{probe: Mock() for probe in runner.DEBUG_PROBE_EXPORTS},
+    )
+    monkeypatch.setattr(runner, "PACKAGE", tmp_path)
+    monkeypatch.setattr(runner, "OFFLINE_SKIPS", {module: {"Async cancellation"}})
+    monkeypatch.setattr(runner, "discover_tests", lambda root, selected: [test])
+    monkeypatch.setattr(runner, "importlib", SimpleNamespace(import_module=Mock(return_value=native)))
+    monkeypatch.setattr(runner.sys, "argv", ["run_rust_ci.py", suite, "--results", str(results)])
+    monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+    monkeypatch.syspath_prepend(str(tmp_path))
+    monkeypatch.chdir(tmp_path)
+    pytest_main = pytest.main
+    monkeypatch.setattr(
+        runner.pytest,
+        "main",
+        lambda args, plugins: pytest_main([*args, "--noconftest", "-q"], plugins=plugins),
+    )
+
+    status = runner.main()
+    report = json.loads((results / "coverage.json").read_text(encoding="utf-8"))
+    assert status == (pytest.ExitCode.TESTS_FAILED if suite == "telemetry" else pytest.ExitCode.OK)
+    assert report["passed"] == 1
+    assert any("Unexpected skip" in error for error in report["errors"]) == (suite == "telemetry")
+
+
+def test_telemetry_without_eager_task_factory_runs_supported_cases_rust(pytester):
+    pytester.makepyfile(
+        "import asyncio\n"
+        "import sys\n"
+        f"sys.path.insert(0, {str(PACKAGE / 'tests')!r})\n"
+        "if hasattr(asyncio, 'eager_task_factory'):\n"
+        "    del asyncio.eager_task_factory\n"
+        "from telemetry.test_rust_telemetry_unit import (\n"
+        "    item_harness, recording_setup,\n"
+        "    test_patch_deadline_authorizes_only_its_worker_rust,\n"
+        ")\n"
+    )
+    result = pytester.runpytest_subprocess("--noconftest", "-q", "-o", "addopts=")
+    result.assert_outcomes(passed=2, skipped=0)
+    assert result.ret == pytest.ExitCode.OK
+
+
 def test_collection_only_is_explicit_not_execution_rust(pytester):
     outcome, report = run_guard(pytester, "def test_present(): pass", "--collect-only")
     assert outcome.ret == 0

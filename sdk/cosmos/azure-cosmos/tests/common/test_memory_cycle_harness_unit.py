@@ -150,7 +150,7 @@ def test_failed_cycles_drain_cleanup_and_do_not_claim_success(harness, mode):
                 await asyncio.sleep(0)
             task.cancel()
         expected = {
-            "failure": RuntimeError, "timeout": TimeoutError,
+            "failure": RuntimeError, "timeout": asyncio.TimeoutError,
             "cancellation": asyncio.CancelledError, "sink_failure": OSError,
         }[mode]
         with pytest.raises(expected):

@@ -32,30 +32,16 @@ from azure.cosmos.http_constants import ResourceType
 from config.clients import create_data_client_async, create_data_client_async_for_endpoint, create_setup_client
 from config.settings import TestSettings
 
+from common.fault_rule_adapters import FaultInjectionTransport as FaultInjectionTransportAsync, _GAP_10_PPAF_SKIP
+
 #cspell:ignore PPAF, ppaf
 
 _GAP_14_STEPS_SKIP = ("driver-gap: threshold_steps_ms is rejected by Rust-backed clients and requests "
                       "(known gap 14: progressive read hedging and write hedging are excluded).")
 _GAP_13_RETRY_WRITE_SKIP = ("driver-gap: per-call retry_write raises NotImplementedError on the Rust item backend "
                             "(known gap 13: Rust owns automatic write retries).")
-_GAP_10_PPAF_SKIP = ("driver-gap: Rust fault injection cannot transform the database-account response to enable "
-                     "PPAF (known gap 10: custom transports are excluded).")
 _GAP_33_LOG_SKIP = ("driver-gap: Rust requests emit no azure-core 'Request URL:' log records, so contacted regions "
                     "cannot be validated (known gap 33: legacy HTTP-log parity is not provided).")
-
-#: Rust fault-rule labels for the legacy operation types the transport predicates matched.
-# The single retry-safe patch below runs server-side (PatchItem); read_all_items is a Rust query.
-_RUST_OPERATION_TYPES = {
-    OperationType.Read: ("ReadItem",),
-    OperationType.SqlQuery: ("QueryItem",),
-    OperationType.ReadFeed: ("QueryItem", "ChangeFeedItem"),
-    OperationType.Create: ("CreateItem",),
-    OperationType.Upsert: ("UpsertItem",),
-    OperationType.Replace: ("ReplaceItem",),
-    OperationType.Delete: ("DeleteItem",),
-    OperationType.Patch: ("PatchItem",),
-    OperationType.Batch: ("BatchItem",),
-}
 
 
 def set_environment_variables(**variables):
@@ -81,84 +67,6 @@ def _configured_regions():
     write_locations = [loc for loc in [TestSettings.WRITE_LOCATION] if loc]
     read_locations = [loc for loc in [TestSettings.READ_LOCATION] if loc]
     return write_locations, read_locations
-
-
-class FaultInjectionTransportAsync(object):
-    """Rust stand-in for the legacy FaultInjectionTransportAsync.
-
-    Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport
-    options are excluded. The predicate and error lambdas
-    are evaluated once against a probe to record the operation type, target region, delay and error, which
-    become Rust ``_fault_injection_rules`` fixed when the client is built.
-    """
-
-    class _Probe(object):
-        def __init__(self):
-            self.operation_type = None
-            self.target_uri = None
-
-    class _DelayedError(object):
-        def __init__(self, delay_ms, error):
-            self.delay_ms = delay_ms
-            self.error = error
-
-    def __init__(self):
-        self.faults = []
-        self.response_transformations = []
-
-    def add_fault(self, predicate, error_lambda):
-        probe = self._Probe()
-        predicate(probe)
-        self.faults.append((probe, error_lambda(probe)))
-
-    def add_response_transformation(self, predicate, transformation):
-        self.response_transformations.append((predicate, transformation))
-
-    @staticmethod
-    def predicate_is_document_operation(r):
-        return True
-
-    @staticmethod
-    def predicate_is_operation_type(r, operation_type):
-        r.operation_type = operation_type
-        return True
-
-    @staticmethod
-    def predicate_targets_region(r, uri):
-        r.target_uri = uri
-        return True
-
-    @staticmethod
-    def predicate_is_database_account_call(r):
-        return True
-
-    @staticmethod
-    def error_after_delay(delay_ms, error):
-        return FaultInjectionTransportAsync._DelayedError(delay_ms, error)
-
-    @staticmethod
-    def transform_topology_ppaf_enabled(inner):
-        pytest.skip(_GAP_10_PPAF_SKIP)
-
-    def rules(self, region_by_uri):
-        rules = []
-        suffix = uuid.uuid4().hex
-        for index, (probe, fault) in enumerate(self.faults):
-            if isinstance(fault.error, CosmosHttpResponseError):
-                outcome = {"status_code": fault.error.status_code, "sub_status": fault.error.sub_status or 0}
-            elif isinstance(fault.error, ServiceResponseError):
-                # A failed response without an HTTP status maps to Rust's transport-level response failure.
-                outcome = {"error_type": "ResponseTimeout"}
-            else:
-                raise TypeError("unsupported injected error {!r}".format(fault.error))
-            for operation_type in _RUST_OPERATION_TYPES[probe.operation_type]:
-                rules.append(dict(
-                    id="{}-{}-{}".format(operation_type, index, suffix),
-                    operation_type=operation_type,
-                    region=region_by_uri[probe.target_uri],
-                    delay_ms=fault.delay_ms,
-                    **outcome))
-        return rules
 
 
 class MockHandler(logging.Handler):

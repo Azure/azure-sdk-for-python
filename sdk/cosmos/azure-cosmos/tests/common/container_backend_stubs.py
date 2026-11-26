@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 """Container backend stand-ins shared by maintained and temporary legacy tests."""
 
-import asyncio
 import inspect
 import json
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
+from common.async_test_helpers import run_async
 
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import PartitionKey
@@ -114,7 +114,7 @@ def _call_container_create(case, *args, method="create_container", **kwargs):
         case.client_context = CosmosClientContext(case.connection._backend)
         case.database._client_context = case.client_context
     result = getattr(case.database, method)(*args, **kwargs)
-    return asyncio.run(result) if inspect.isawaitable(result) else result
+    return run_async(result) if inspect.isawaitable(result) else result
 
 
 def make_container_get_or_create_case(case, missing):

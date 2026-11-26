@@ -325,9 +325,8 @@ def test_batch_does_not_export_item_body_or_partition_key_rust(batch, recording)
         assert "order-17" not in text and "customer-17" not in text
 
 
+@pytest.mark.parametrize("batch", ["sync"], indirect=True)
 def test_nested_hook_keeps_separate_completion_rust(batch, recording):
-    if batch.asynchronous:
-        pytest.skip("Synchronous nested batch inside a synchronous hook")
     batch.proxy._client_context = replace(
         batch.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(batch.seen.append, collect_attempts=True),),
@@ -344,11 +343,9 @@ def test_nested_hook_keeps_separate_completion_rust(batch, recording):
     assert all(s.closed for s in batch.states) and len(operation_spans(recording)) == 1
 
 
+@pytest.mark.parametrize("batch", ["async"], indirect=True)
 @pytest.mark.parametrize("timeout", [None, 10])
 def test_cancellation_drains_authorized_batch_rust(batch, recording, timeout):
-    if not batch.asynchronous:
-        pytest.skip("Async cancellation")
-
     async def run():
         batch.gate = asyncio.Event()
         hook = Mock()

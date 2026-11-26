@@ -3,6 +3,7 @@
 """Native diagnostic summaries use Python logging without HTTP-parity claims."""
 
 import asyncio
+from common.async_test_helpers import run_async
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 import json
@@ -397,7 +398,7 @@ def test_async_entry_without_summary_does_not_invent_logs_rust(async_setup, monk
         monkeypatch.setattr(async_setup.client._adapter, "_ensure_driver_handle", AsyncMock(side_effect=error))
         expected = type(error)
     with pytest.raises(expected) as caught:
-        asyncio.run(async_setup.enter())
+        run_async(async_setup.enter())
     if failure != "missing_summary":
         assert caught.value is error
     assert not async_setup.capture.records

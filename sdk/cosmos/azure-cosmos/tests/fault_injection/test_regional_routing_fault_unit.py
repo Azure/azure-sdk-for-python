@@ -219,7 +219,7 @@ def payload():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("asynchronous", [False, True])
-@pytest.mark.parametrize("operation", ["create_item", "read_item"])
+@pytest.mark.parametrize("operation", ["create_item", "upsert_item", "read_item"])
 @pytest.mark.parametrize("fails", [False, True])
 async def test_attempt_capture_excludes_independent_rust_verification_rust(
     monkeypatch, asynchronous, operation, fails,

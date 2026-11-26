@@ -234,7 +234,7 @@ pub(super) fn tuple_from_result<'py>(
                         "x-ms-request-charge",
                         diagnostics.total_request_charge().to_string(),
                     )?;
-                    Some(record_diagnostics(diagnostics))
+                    Some(record_response_diagnostics(py, diagnostics))
                 } else {
                     None
                 };
@@ -252,7 +252,7 @@ pub(super) fn tuple_from_result<'py>(
             } else {
                 // No wire response: combine any attached diagnostics into the
                 // process-wide counters when diagnostics are available.
-                record_diagnostics_for_responseless(&cosmos_error);
+                record_diagnostics_for_responseless(py, &cosmos_error);
                 // Report a typed transport error (Display preserves the
                 // Cosmos status) the Python wrapper maps to
                 // ServiceResponseError, rather than a bare RuntimeError.
@@ -269,8 +269,9 @@ pub(super) fn tuple_from_result<'py>(
 /// replaying through legacy. Other errors return attached response tuples,
 /// re-raise preserved Python credential exceptions, or synthesize error tuples
 /// for recognized 503 errors with a matching source response. Remaining errors
-/// raise `TimeoutError` for the typed client-operation deadline, `ValueError`
-/// for a response-less bad request, or `_DriverTransportError` otherwise.
+/// raise `TimeoutError` for the typed client-operation deadline. A generic
+/// client bad request uses the point-operation error tuple; specialized bad
+/// requests retain `ValueError`. Other errors become `_DriverTransportError`.
 pub(super) fn tuple_from_feed_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
@@ -293,10 +294,12 @@ pub(super) fn tuple_from_feed_result<'py>(
                 Ok(raw_http_error)
             } else if let Some(timeout) = client_operation_timeout_error(py, &cosmos_error)? {
                 Err(timeout)
-            } else if let Some(validation) = feed_validation_error(&cosmos_error) {
+            } else if cosmos_error.status() == status_codes::CLIENT_BAD_REQUEST {
+                tuple_from_result(py, Err(cosmos_error))
+            } else if let Some(validation) = feed_validation_error(py, &cosmos_error) {
                 Err(validation)
             } else {
-                record_diagnostics_for_responseless(&cosmos_error);
+                record_diagnostics_for_responseless(py, &cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
                     "Item feed request failed: {cosmos_error}"
                 )))
@@ -310,7 +313,8 @@ pub(super) fn tuple_from_feed_result<'py>(
 /// Wraps item-list bodies in `{"Databases":[...]}` and supplies an empty envelope
 /// for `None`; raw byte bodies pass through. Errors with attached responses use
 /// the feed-error converter. A response-less client-operation deadline becomes
-/// `TimeoutError`; a response-less bad request becomes `ValueError`.
+/// `TimeoutError`; a generic client bad request uses the point-operation error
+/// tuple, while specialized bad requests retain `ValueError`.
 /// Other response-less errors become `_DriverTransportError`.
 /// Matching the envelope does not establish full legacy response parity.
 pub(super) fn tuple_from_database_feed_result<'py>(
@@ -482,10 +486,12 @@ fn tuple_from_named_feed_result_for<'py>(
                 Ok(raw_http_error)
             } else if let Some(timeout) = client_operation_timeout_error(py, &cosmos_error)? {
                 Err(timeout)
-            } else if let Some(validation) = feed_validation_error(&cosmos_error) {
+            } else if cosmos_error.status() == status_codes::CLIENT_BAD_REQUEST {
+                tuple_from_result(py, Err(cosmos_error))
+            } else if let Some(validation) = feed_validation_error(py, &cosmos_error) {
                 Err(validation)
             } else {
-                record_diagnostics_for_responseless(&cosmos_error);
+                record_diagnostics_for_responseless(py, &cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
                     "{operation_description} failed: {cosmos_error}"
                 )))
@@ -523,7 +529,7 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
             {
                 Ok(raw_http_error)
             } else {
-                record_diagnostics_for_responseless(&cosmos_error);
+                record_diagnostics_for_responseless(py, &cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
                     "Reading feed ranges failed: {cosmos_error}"
                 )))
@@ -591,7 +597,7 @@ pub(super) fn tuple_from_feed_range_from_partition_key_result<'py>(
             {
                 Ok(raw_http_error)
             } else {
-                record_diagnostics_for_responseless(&cosmos_error);
+                record_diagnostics_for_responseless(py, &cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
                     "Resolving the feed range for the partition key failed: {cosmos_error}"
                 )))
@@ -618,7 +624,7 @@ pub(super) fn tuple_from_offer_feed_result<'py>(
             {
                 Ok(raw_http_error)
             } else {
-                record_diagnostics_for_responseless(&cosmos_error);
+                record_diagnostics_for_responseless(py, &cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
                     "Throughput lookup failed: {cosmos_error}"
                 )))
@@ -684,7 +690,7 @@ fn backend_response_tuple_from_success<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     let status = response.status();
     let (status_code, sub_status) = status_code_and_sub_status(status);
-    let diagnostics = record_diagnostics(response.diagnostics());
+    let diagnostics = record_response_diagnostics(py, response.diagnostics());
     // Convert the Rust driver's headers for Python response parsing, including
     // last_response_headers. This is not the original HTTP header collection.
     let driver_headers = response.headers();
@@ -776,7 +782,7 @@ fn backend_response_tuple_from_offer_feed_success<'py>(
     let mut body = OfferFeedBody { offers: Vec::new() };
     let mut diagnostics = String::new();
     for response in responses.into_iter().chain(std::iter::once(last)) {
-        diagnostics = record_diagnostics(response.diagnostics());
+        diagnostics = record_response_diagnostics(py, response.diagnostics());
         let bytes = named_feed_response_body_to_vec(response.into_body(), b"Offers")?;
         let page: OfferFeedBody = serde_json::from_slice(&bytes).map_err(|error| {
             PyValueError::new_err(format!("Invalid get_throughput page: {error}"))
@@ -809,7 +815,7 @@ fn backend_response_tuple_from_named_feed_success<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     let status = response.status();
     let (status_code, sub_status) = status_code_and_sub_status(status);
-    let diagnostics = record_diagnostics(response.diagnostics());
+    let diagnostics = record_response_diagnostics(py, response.diagnostics());
     let response_headers = response_headers_dict(py, response.headers())?;
     match response.into_body() {
         // Pass existing bytes straight to Python without allocating a Vec. The
@@ -939,11 +945,11 @@ fn feed_range_to_response_body(payload: &FeedRangeFromPartitionKeyPayload) -> Py
     })
 }
 
-fn feed_validation_error(error: &CosmosError) -> Option<PyErr> {
+fn feed_validation_error(py: Python<'_>, error: &CosmosError) -> Option<PyErr> {
     if error.response().is_none()
         && error.status().status_code() == azure_core::http::StatusCode::BadRequest
     {
-        record_diagnostics_for_responseless(error);
+        record_diagnostics_for_responseless(py, error);
         Some(PyValueError::new_err(error.to_string()))
     } else {
         None
@@ -955,7 +961,7 @@ fn client_operation_timeout_error(py: Python<'_>, error: &CosmosError) -> PyResu
         && error.status().status_code() == azure_core::http::StatusCode::RequestTimeout
         && error.status().sub_status() == Some(status_codes::substatus::CLIENT_OPERATION_TIMEOUT)
     {
-        record_diagnostics_for_responseless(error);
+        record_diagnostics_for_responseless(py, error);
         let timeout = PyTimeoutError::new_err(format!("Request timed out: {error}"));
         if let Some(diagnostics) = error.diagnostics() {
             // Compacted history cannot establish the last response before cancellation.
@@ -990,10 +996,14 @@ fn client_operation_timeout_error(py: Python<'_>, error: &CosmosError) -> PyResu
 /// exception. Do not call for wire-response errors -- those are already counted
 /// by `backend_response_tuple_from_cosmos_error` /
 /// `backend_response_tuple_from_cosmos_error_feed`.
-fn record_diagnostics_for_responseless(error: &CosmosError) {
+fn record_diagnostics_for_responseless(py: Python<'_>, error: &CosmosError) {
     if let Some(diag) = error.diagnostics() {
-        record_diagnostics(diag);
+        record_response_diagnostics(py, diag);
     }
+}
+
+fn record_response_diagnostics(py: Python<'_>, diagnostics: Arc<DiagnosticsContext>) -> String {
+    py.allow_threads(move || record_diagnostics(diagnostics))
 }
 
 fn exception_dict<'py>(py: Python<'py>, error: &PyErr) -> PyResult<Bound<'py, PyDict>> {
@@ -1028,7 +1038,7 @@ fn restore_credential_exception(py: Python<'_>, error: &CosmosError) -> PyResult
                     PyRuntimeWarning::new_err(MESSAGE).write_unraisable_bound(py, None);
                 }
             }
-            record_diagnostics_for_responseless(error);
+            record_diagnostics_for_responseless(py, error);
             return Err(original.clone_ref(py));
         }
         let Some(next) = source.source() else {
@@ -1055,7 +1065,7 @@ fn backend_response_tuple_from_cosmos_error<'py>(
 
     let status = response.status();
     let (status_code, sub_status) = status_code_and_sub_status(status);
-    let diagnostics = record_diagnostics(response.diagnostics());
+    let diagnostics = record_response_diagnostics(py, response.diagnostics());
 
     let response_headers = response_headers_dict(py, response.headers())?;
 
@@ -1083,7 +1093,7 @@ fn backend_response_tuple_from_cosmos_error_feed<'py>(
         None => return synthetic_terminal_error_tuple(py, error),
     };
 
-    let diagnostics = record_diagnostics(response.diagnostics());
+    let diagnostics = record_response_diagnostics(py, response.diagnostics());
     Ok(Some(backend_response_tuple_from_feed_error_parts(
         py,
         response.status(),
@@ -1121,7 +1131,8 @@ fn synthetic_terminal_error_tuple<'py>(
     let response_headers = response_headers_dict(py, original.headers())?;
     // Python reads the exception's sub-status from this header.
     response_headers.set_item("x-ms-substatus", sub_status.to_string())?;
-    let diagnostics = record_diagnostics(error.diagnostics().unwrap_or(original.diagnostics()));
+    let diagnostics =
+        record_response_diagnostics(py, error.diagnostics().unwrap_or(original.diagnostics()));
     let body = serde_json::to_vec(&serde_json::json!({"message": error.to_string()}))
         .map_err(|e| PyValueError::new_err(e.to_string()))?;
     Ok(Some(backend_response_tuple(
@@ -1173,8 +1184,9 @@ fn response_headers_dict<'py>(
     py: Python<'py>,
     h: &azure_data_cosmos_driver::models::CosmosResponseHeaders,
 ) -> PyResult<Bound<'py, PyDict>> {
+    let headers = py.allow_threads(|| h.to_raw_headers());
     let out = PyDict::new_bound(py);
-    for (name, value) in h.to_raw_headers().iter() {
+    for (name, value) in headers.iter() {
         out.set_item(name.as_str(), value.as_str())?;
     }
     Ok(out)
@@ -1383,22 +1395,15 @@ pub(crate) mod tests {
         (response, read, error)
     }
 
-    fn tuple_with_rust_preparation_released<'py>(
+    // Keep the pre-change conversion as the parity and microbenchmark baseline.
+    fn tuple_with_rust_preparation_locked<'py>(
         py: Python<'py>,
         response: CosmosResponse,
     ) -> PyResult<Bound<'py, pyo3::types::PyTuple>> {
-        let (status, sub_status, diagnostics, headers, body) = py.allow_threads(move || {
-            let (status, sub_status) = super::status_code_and_sub_status(response.status());
-            let diagnostics = super::record_diagnostics(response.diagnostics());
-            let headers = response.headers().to_raw_headers();
-            (
-                status,
-                sub_status,
-                diagnostics,
-                headers,
-                response.into_body(),
-            )
-        });
+        let (status, sub_status) = super::status_code_and_sub_status(response.status());
+        let diagnostics = super::record_diagnostics(response.diagnostics());
+        let headers = response.headers().to_raw_headers();
+        let body = response.into_body();
         let python_headers = PyDict::new_bound(py);
         for (name, value) in headers.iter() {
             python_headers.set_item(name.as_str(), value.as_str())?;
@@ -1428,20 +1433,107 @@ pub(crate) mod tests {
     }
 
     #[tokio::test]
-    async fn released_preparation_preserves_read_response_and_counters() {
+    async fn released_preparation_preserves_response_tuples_and_counters() {
         crate::test_support::prepare_python();
-        let (_, read, _) = create_read_and_conflict().await;
+        let (created, read, conflict) = create_read_and_conflict().await;
         Python::with_gil(|py| {
             assert_eq!(u16::from(read.status().status_code()), 200);
-            let before = BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed);
-            let current = super::backend_response_tuple_from_success(py, read.clone()).unwrap();
-            let proposed = tuple_with_rust_preparation_released(py, read.clone()).unwrap();
-            assert!(current.eq(&proposed).unwrap());
-            // Other native tests can update the process-wide counter concurrently.
-            assert!(
-                BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
-                    >= before + 2 * read.diagnostics().request_count() as u64
-            );
+            for response in [created, read, conflict.response().unwrap().clone()] {
+                let expected = tuple_with_rust_preparation_locked(py, response.clone()).unwrap();
+                for feed in [false, true] {
+                    let before = BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed);
+                    let actual = if feed {
+                        tuple_from_feed_result(py, Ok(Some(response.clone())))
+                    } else {
+                        tuple_from_result(py, Ok(response.clone()))
+                    }
+                    .unwrap();
+                    assert!(expected.eq(&actual).unwrap());
+                    // Other native tests can update the process-wide counter concurrently.
+                    assert!(
+                        BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
+                            >= before + response.diagnostics().request_count() as u64
+                    );
+                }
+            }
+            let expected =
+                tuple_with_rust_preparation_locked(py, conflict.response().unwrap().clone())
+                    .unwrap();
+            assert!(expected
+                .eq(tuple_from_result(py, Err(conflict.clone())).unwrap())
+                .unwrap());
+            assert!(expected
+                .eq(tuple_from_feed_result(py, Err(conflict)).unwrap())
+                .unwrap());
+        });
+    }
+
+    fn assert_other_python_thread_progress() {
+        let (sender, receiver) = std::sync::mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            Python::with_gil(|_| sender.send(()).unwrap());
+        });
+        let progress = receiver.recv_timeout(std::time::Duration::from_secs(5));
+        // Join with the GIL released even when testing a regressed, locked caller.
+        Python::with_gil(|py| py.allow_threads(|| worker.join().unwrap()));
+        assert!(progress.is_ok(), "diagnostics formatting retained the GIL");
+    }
+
+    fn observe_diagnostics<T>(convert: impl FnOnce() -> T) -> T {
+        use super::super::diagnostics::RECORD_DIAGNOSTICS_OBSERVER;
+        RECORD_DIAGNOSTICS_OBSERVER.with(|observer| {
+            observer.set(Some(assert_other_python_thread_progress));
+        });
+        let result = convert();
+        assert!(
+            RECORD_DIAGNOSTICS_OBSERVER.with(|observer| observer.take().is_none()),
+            "conversion did not reach diagnostics formatting"
+        );
+        result
+    }
+
+    #[tokio::test]
+    async fn response_diagnostics_allow_python_thread_progress() {
+        crate::test_support::prepare_python();
+        let (_, read, conflict) = create_read_and_conflict().await;
+        let synthetic = write_forbidden_create().await;
+        Python::with_gil(|py| {
+            observe_diagnostics(|| tuple_from_result(py, Ok(read.clone()))).unwrap();
+            observe_diagnostics(|| tuple_from_feed_result(py, Ok(Some(read.clone())))).unwrap();
+            for error in [conflict, synthetic] {
+                observe_diagnostics(|| tuple_from_result(py, Err(error.clone()))).unwrap();
+                observe_diagnostics(|| tuple_from_feed_result(py, Err(error))).unwrap();
+            }
+            for status in [
+                status_codes::CLIENT_BAD_REQUEST,
+                CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
+                    .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value()),
+                status_codes::AUTHENTICATION_TOKEN_ACQUISITION_FAILED,
+            ] {
+                let error = CosmosError::builder()
+                    .with_status(status)
+                    .with_diagnostics(read.diagnostics())
+                    .with_message("offline response conversion")
+                    .build();
+                for result in [
+                    observe_diagnostics(|| tuple_from_result(py, Err(error.clone()))),
+                    observe_diagnostics(|| tuple_from_feed_result(py, Err(error))),
+                ] {
+                    if status == status_codes::CLIENT_BAD_REQUEST {
+                        assert_eq!(
+                            result
+                                .unwrap()
+                                .get_item(0)
+                                .unwrap()
+                                .extract::<u16>()
+                                .unwrap(),
+                            400
+                        );
+                    } else {
+                        assert!(result.is_err());
+                    }
+                }
+            }
         });
     }
 
@@ -1463,12 +1555,12 @@ pub(crate) mod tests {
         let mut diagnostics_ns = Vec::new();
         let mut headers_ns = Vec::new();
         Python::with_gil(|py| {
-            let current = super::backend_response_tuple_from_success(py, read.clone()).unwrap();
-            let proposed = tuple_with_rust_preparation_released(py, read.clone()).unwrap();
-            assert!(current.eq(&proposed).unwrap());
+            let locked = tuple_with_rust_preparation_locked(py, read.clone()).unwrap();
+            let released = super::backend_response_tuple_from_success(py, read.clone()).unwrap();
+            assert!(locked.eq(&released).unwrap());
             for _ in 0..1_000 {
+                drop(tuple_with_rust_preparation_locked(py, read.clone()).unwrap());
                 drop(super::backend_response_tuple_from_success(py, read.clone()).unwrap());
-                drop(tuple_with_rust_preparation_released(py, read.clone()).unwrap());
             }
             let diag = read.diagnostics();
             for sample in 0..samples {
@@ -1481,9 +1573,9 @@ pub(crate) mod tests {
                     for _ in 0..iterations {
                         let response = black_box(read.clone());
                         let tuple = if released {
-                            tuple_with_rust_preparation_released(py, response)
-                        } else {
                             super::backend_response_tuple_from_success(py, response)
+                        } else {
+                            tuple_with_rust_preparation_locked(py, response)
                         }
                         .unwrap();
                         drop(black_box(tuple));
@@ -1522,7 +1614,7 @@ pub(crate) mod tests {
                     "header_count": read.headers().to_raw_headers().iter().count(),
                     "request_count": diag.request_count(),
                     "response_tuple_parity": true,
-                    "current_conversion_ns": current_ns,
+                    "locked_baseline_conversion_ns": current_ns,
                     "released_preparation_conversion_ns": released_ns,
                     "diag_to_string_ns": formatting_ns,
                     "record_diagnostics_ns": diagnostics_ns,
@@ -2476,6 +2568,7 @@ def record_unraisable(args):
 
     #[test]
     fn responseless_error_without_diagnostics_does_not_increment_counters() {
+        crate::test_support::prepare_python();
         // A pure synthetic error with no diagnostics attached.
         let error = CosmosError::builder()
             .with_status(CosmosStatus::new(
@@ -2496,7 +2589,7 @@ def record_unraisable(args):
         // that counts this error changes them on every try and still fails.
         let unchanged = (0..100).any(|_| {
             let before = counts();
-            record_diagnostics_for_responseless(&error);
+            Python::with_gil(|py| record_diagnostics_for_responseless(py, &error));
             let after = counts();
             std::thread::yield_now();
             before == after
@@ -2908,11 +3001,39 @@ def record_unraisable(args):
     }
 
     #[test]
-    fn responseless_feed_bad_requests_are_validation_errors() {
+    fn responseless_feed_bad_requests_preserve_http_status_and_message() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            for message in [
+                "ReadConsistencyStrategy::GlobalStrong is only valid against accounts whose \
+                 default consistency level is Strong",
+                "opaque detail, not used for classification",
+            ] {
+                let error = CosmosError::builder()
+                    .with_status(status_codes::CLIENT_BAD_REQUEST)
+                    .with_message(message)
+                    .build();
+                let expected = tuple_from_result(py, Err(error.clone())).unwrap();
+                for convert in [
+                    tuple_from_feed_result,
+                    tuple_from_database_feed_result,
+                    tuple_from_query_databases_result,
+                    tuple_from_container_feed_result,
+                    tuple_from_query_containers_result,
+                ] {
+                    let response = convert(py, Err(error.clone())).unwrap();
+                    assert!(response.eq(&expected).unwrap());
+                    assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), 400);
+                }
+            }
+        });
+    }
+
+    #[test]
+    fn specialized_feed_bad_requests_remain_validation_errors() {
         crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for status in [
-                CosmosStatus::new(azure_core::http::StatusCode::BadRequest),
                 status_codes::CLIENT_OPAQUE_TOKEN_INVALID_FOR_CROSS_PARTITION_QUERY,
                 status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW,
                 status_codes::TRANSPORT_CONNECTION_FAILED,
@@ -2976,6 +3097,42 @@ def record_unraisable(args):
                     .unwrap(),
                 diagnostics.request_count()
             );
+            let bad_request = CosmosError::builder()
+                .with_status(status_codes::CLIENT_BAD_REQUEST)
+                .with_diagnostics(diagnostics.clone())
+                .with_message("account consistency rejected")
+                .build();
+            let expected = tuple_from_result_with_attempts(py, Err(bad_request.clone())).unwrap();
+            for convert in [
+                tuple_from_database_feed_result_with_attempts,
+                tuple_from_query_databases_result_with_attempts,
+                tuple_from_container_feed_result_with_attempts,
+                tuple_from_query_containers_result_with_attempts,
+            ] {
+                let envelope = convert(py, Err(bad_request.clone())).unwrap();
+                assert!(envelope
+                    .get_item(0)
+                    .unwrap()
+                    .eq(expected.get_item(0).unwrap())
+                    .unwrap());
+                let payload = envelope.get_item(1).unwrap();
+                let expected_payload = expected.get_item(1).unwrap();
+                for field in [
+                    "request_count",
+                    "retained_request_count",
+                    "request_charge",
+                    "status_code",
+                    "sub_status_code",
+                    "complete",
+                    "incomplete_reasons",
+                ] {
+                    assert!(payload
+                        .get_item(field)
+                        .unwrap()
+                        .eq(expected_payload.get_item(field).unwrap())
+                        .unwrap());
+                }
+            }
         });
     }
 

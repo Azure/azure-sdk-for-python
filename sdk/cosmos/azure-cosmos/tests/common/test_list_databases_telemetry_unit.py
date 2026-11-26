@@ -445,10 +445,9 @@ def test_listing_page_telemetry_leaves_other_paths_unchanged(listing_telemetry, 
     assert not h.calls[0][1]
 
 
+@pytest.mark.parametrize("listing_client", ["sync"], indirect=True)
 def test_listing_page_telemetry_can_cross_threads(listing_telemetry, recording):
     h = listing_telemetry
-    if h.asynchronous:
-        pytest.skip("Sync thread handoff")
     pages = h.create_iterable().by_page()
 
     def consume():
@@ -463,10 +462,9 @@ def test_listing_page_telemetry_can_cross_threads(listing_telemetry, recording):
     assert telemetry._OPERATION.get() is None
 
 
+@pytest.mark.parametrize("listing_client", ["async"], indirect=True)
 def test_listing_page_telemetry_cancellation_and_concurrent_fetch(listing_telemetry, recording):
     h = listing_telemetry
-    if not h.asynchronous:
-        pytest.skip("Async cancellation")
 
     async def run():
         h.gate = asyncio.Event()

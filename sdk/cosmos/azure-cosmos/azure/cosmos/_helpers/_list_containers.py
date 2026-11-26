@@ -88,6 +88,9 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
     def binding_operation(self) -> str:
         return "list_containers" if self.query_payload is None else "query_containers"
 
+    def _page_query_payload(self) -> Optional[dict[str, Any]]:
+        return self.query_payload
+
     def bind_pager(self, pager: Any) -> None:
         hook = self.hook
         if hook is not None:
@@ -102,7 +105,7 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
         return started + self.timeout
 
     def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest:
-        query = self.query_payload
+        query = self._page_query_payload()
         eligible = (
             can_use_rust_list_containers(
                 path=self.path,
@@ -127,7 +130,7 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
             )
             reject_unknown_feed_kwargs(self.operation, remaining_kwargs)
             detail = f": {', '.join(repr(name) for name in sorted(remaining_kwargs))}" if remaining_kwargs else ""
-            raise NotImplementedError(
+            raise TypeError(
                 f"{self.operation} cannot honor these options on Rust{detail}; "
                 "the request will not be sent through legacy Python."
             )
@@ -168,7 +171,7 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
             self.resource_id,
             lambda body: body[self.response_key],
             lambda _, body: body,
-            self.query_payload,
+            self._page_query_payload(),
             options,
             _feed_backend=self.backend,
             response_headers=response_headers,
@@ -180,6 +183,11 @@ class QueryContainersConfig(ListContainersConfig):
     operation = "query_containers"
 
     def __init__(self, proxy: Any, query: Any, parameters: Any, kwargs: dict[str, Any]) -> None:
+        for options in (kwargs.get("request_options"), kwargs.get("feed_options")):
+            if isinstance(options, Mapping) and (
+                "enable_cross_partition_query" in options or "enableCrossPartitionQuery" in options
+            ):
+                raise TypeError(f"{self.operation}() does not support the 'enable_cross_partition_query' option")
         self._query: Optional[dict[str, Any]] = None
         modes = proxy.client_connection._QueryCompatibilityMode
         if query is not None or parameters is not None:
@@ -187,13 +195,20 @@ class QueryContainersConfig(ListContainersConfig):
                 raise SystemError("Unexpected query compatibility mode.")
             if query is not None and not isinstance(query, (str, dict)):
                 raise TypeError("query body must be a dict or string.")
-            text, values = normalize_query_specification(query, parameters, operation=self.operation)
-            self._query = {"query": text, "parameters": list(values)}
+            normalize_query_specification(query, parameters, operation=self.operation)
+            # Preserve caller edits until each fetch, as the original lazy query did.
+            self._query = query if isinstance(query, dict) else {"query": query, "parameters": parameters}
         super().__init__(proxy, kwargs)
 
     @property
     def query_payload(self) -> Optional[dict[str, Any]]:
         return self._query
+
+    def _page_query_payload(self) -> Optional[dict[str, Any]]:
+        if self._query is None:
+            return None
+        text, values = normalize_query_specification(self._query, None, operation=self.operation)
+        return {"query": text, "parameters": list(values)}
 
 
 def list_containers(proxy: Any, kwargs: dict[str, Any]) -> ItemPaged[dict[str, Any]]:

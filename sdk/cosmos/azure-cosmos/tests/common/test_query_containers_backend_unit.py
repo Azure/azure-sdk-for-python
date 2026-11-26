@@ -160,6 +160,67 @@ def test_query_payload_and_lazy_resumable_pages_rust(query_case, form):
         assert all(query.get("parameters", []) == expected_parameters for query in case.queries)
 
 
+@pytest.mark.parametrize("form", ["parameters", "dictionary"])
+@pytest.mark.parametrize("mutation", ["entry", "sequence", "nested"])
+def test_query_parameter_changes_reach_each_page_rust(query_case, form, mutation):
+    """Keep caller parameters live until each fetch, without changing an earlier request."""
+    case = query_case
+    parameters = [{"name": "@excluded", "value": {"id": "missing"} if mutation == "nested" else "missing"}]
+    query = {"query": SQL, "parameters": parameters} if form == "dictionary" else SQL
+    kwargs = {"parameters": parameters} if form == "parameters" else {}
+
+    def change(value):
+        if mutation == "entry":
+            parameters[0]["value"] = value
+        elif mutation == "sequence":
+            parameters[:] = [{"name": "@excluded", "value": value}]
+        else:
+            parameters[0]["value"]["id"] = value
+
+    def hook(_headers, _pager):
+        change("after-first-page")
+
+    pager = case.database.query_containers(query, response_hook=hook, **kwargs)
+    change("before-first-page")
+    first_parameters = copy.deepcopy(parameters)
+    assert case.requests == []
+    assert _drain(case, pager) == [{"id": "c1"}, {"id": "c2"}]
+    second_parameters = copy.deepcopy(parameters)
+    assert first_parameters != second_parameters
+    if case.rust:
+        assert [request.parameters for request in case.requests] == [
+            tuple(first_parameters), tuple(second_parameters),
+        ]
+    else:
+        assert [request["parameters"] for request in case.queries] == [first_parameters, second_parameters]
+
+
+def test_query_dictionary_changes_before_iteration_rust(query_case):
+    """Replacing query text and its parameter list must not leave the pager using old values."""
+    case = query_case
+    query = {"query": SQL, "parameters": copy.deepcopy(PARAMETERS)}
+    pager = case.database.query_containers(query)
+    query["query"] = "SELECT * FROM c WHERE c.id = @id"
+    query["parameters"] = [{"name": "@id", "value": "receipts"}]
+    expected = copy.deepcopy(query)
+    assert _drain(case, pager) == [{"id": "c1"}, {"id": "c2"}]
+    assert query == expected
+    if case.rust:
+        assert all(request.query == expected["query"] for request in case.requests)
+        assert all(request.parameters == tuple(expected["parameters"]) for request in case.requests)
+    else:
+        assert case.queries == [expected, expected]
+
+
+def test_invalid_parameter_mutation_fails_before_request_rust(query_case):
+    parameters = copy.deepcopy(PARAMETERS)
+    pager = query_case.database.query_containers(SQL, parameters=parameters)
+    del parameters[0]["value"]
+    with pytest.raises(ValueError, match="Query parameters"):
+        _drain(query_case, pager)
+    assert query_case.requests == []
+
+
 @pytest.mark.parametrize("empty", ["first", "all", "neither"])
 @pytest.mark.parametrize("timeout", [None, 10])
 def test_page_hooks_are_lazy_independent_and_honor_false_callables_rust(query_case, empty, timeout):
@@ -271,6 +332,30 @@ def test_retired_options_rejected_before_requests_rust(query_case, option, value
     assert query_case.requests == []
 
 
+@pytest.mark.parametrize("query", [SQL, None])
+@pytest.mark.parametrize("kwargs", [
+    {"request_options": {"enableCrossPartitionQuery": None}},
+    {"feed_options": {"enableCrossPartitionQuery": False}},
+    {"request_options": {"enableCrossPartitionQuery": True}},
+    {"request_options": {"enable_cross_partition_query": False}},
+    {"feed_options": {"enable_cross_partition_query": None}},
+    {"feed_options": {"enable_cross_partition_query": True}},
+    {"request_options": {}, "feed_options": {"enableCrossPartitionQuery": False}},
+    {"request_options": {"maxItemCount": 1}, "feed_options": {"enable_cross_partition_query": None}},
+])
+def test_nested_cross_partition_option_rejected_at_construction_rust(query_case, query, kwargs):
+    """Reject the query-only excluded option even in an overridden option mapping."""
+    original = copy.deepcopy(kwargs)
+    hook = MagicMock()
+    with pytest.raises(TypeError, match="query_containers.*enable_cross_partition_query"):
+        query_case.database.query_containers(query, response_hook=hook, **kwargs)
+    assert kwargs == original
+    assert query_case.requests == []
+    hook.assert_not_called()
+    query_case.legacy_get.assert_not_called()
+    query_case.legacy_post.assert_not_called()
+
+
 @pytest.mark.parametrize("args", [(), (SQL, []), (SQL, [], 1), (SQL, [], 1, False)])
 def test_query_required_and_only_positional_argument_rust(query_case, args):
     """The query is required, and it is the only argument that may be positional.
@@ -333,14 +418,14 @@ def test_unsupported_rust_options_never_fall_back_rust(query_case, kwargs):
     fixture's own check confirms the legacy query call was not used as a silent
     substitute.
 
-    Skipped on the legacy setups, where these options are genuinely supported.
+    Skipped on the legacy setups; these rejection checks are specific to Rust.
     """
     case = query_case
     if not case.rust:
         pytest.skip("Rust-specific option rejection")
     hook = MagicMock()
     pager = case.database.query_containers(SQL, response_hook=hook, **kwargs)
-    with pytest.raises((NotImplementedError, TypeError, exceptions.CosmosClientTimeoutError)):
+    with pytest.raises(TypeError, match="query_containers"):
         _drain(case, pager)
     assert case.requests == []
     hook.assert_not_called()

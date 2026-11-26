@@ -346,7 +346,7 @@ def _prepare_fault_injection_rules(
     A test-probes build is also required for any non-None input.
     With both enabled, an empty sequence produces no rules.
 
-    :param rules: Internal fault-rule mappings, or None to leave fault injection unconfigured.
+    :param rules: Internal fault-rule mappings, or None to leave fault injection disabled.
     :type rules: typing.Sequence[typing.Mapping[str, typing.Any]] or None
     :return: Validated immutable fault-rule records.
     :rtype: tuple[azure.cosmos._backend.contracts.PreparedFaultInjectionRule, ...]

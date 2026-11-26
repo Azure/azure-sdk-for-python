@@ -24,6 +24,7 @@ import azure.cosmos.exceptions as exceptions
 from azure.cosmos import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from common._rust_checks import run_on_rust
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -107,6 +108,88 @@ class TestCRUDContainerOperations(unittest.TestCase):
         created_container = created_db.get_container_client(created_collection.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
+
+    @pytest.mark.cosmosAADLong
+    def test_collection_crud_with_write_payload_disabled_rust(self):
+        """Disabling write response bodies must not suppress queried container properties."""
+        # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_collection_crud
+        client = CosmosClient(HOST, KEY, _backend="rust", no_response_on_write=True)
+        self.addCleanup(client.close)
+        created_db = client.get_database_client(self._database_id)
+        collections = list(created_db.list_containers())
+        before_create_collections_count = len(collections)
+        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
+        partition_key = PartitionKey(path="/pk", kind="Hash")
+        created_collection = created_db.create_container(
+            id=collection_id,
+            indexing_policy={'indexingMode': 'consistent'},
+            partition_key=partition_key,
+        )
+        self.assertEqual(collection_id, created_collection.id)
+
+        created_properties = created_collection.read()
+        self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
+        self.assertDictEqual(partition_key, created_properties['partitionKey'])
+        collections = list(created_db.list_containers())
+        self.assertEqual(len(collections),
+                         before_create_collections_count + 1,
+                         'create should increase the number of collections')
+
+        collections = run_on_rust(client, lambda: list(created_db.query_containers({
+            'query': 'SELECT * FROM root r WHERE r.id=@id',
+            'parameters': [{'name': '@id', 'value': collection_id}],
+        })))
+        self.assertTrue(collections)
+        self.assertEqual([collection['id'] for collection in collections], [collection_id])
+        self.assertDictEqual(partition_key, collections[0]['partitionKey'])
+
+        created_db.delete_container(created_collection.id)
+        created_container = created_db.get_container_client(created_collection.id)
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, created_container.read)
+
+    @pytest.mark.cosmosAADLong
+    def test_collection_crud_subpartition_rust(self):
+        """A three-level partition key must survive querying and recreating the container."""
+        # Source: tests/test_crud_subpartition.py::TestSubpartitionCrud.test_collection_crud_subpartition
+        created_db = self.databaseForTest
+        collections = list(created_db.list_containers())
+        before_create_collections_count = len(collections)
+        collection_id = 'test_collection_crud_MH ' + str(uuid.uuid4())
+        partition_key = PartitionKey(path=["/pk1", "/pk2", "/pk3"], kind="MultiHash")
+        created_collection = created_db.create_container(
+            id=collection_id,
+            indexing_policy={'indexingMode': 'consistent'},
+            partition_key=partition_key,
+        )
+        self.assertEqual(collection_id, created_collection.id)
+
+        created_properties = created_collection.read()
+        self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
+        collections = list(created_db.list_containers())
+        self.assertEqual(len(collections),
+                         before_create_collections_count + 1,
+                         'create should increase the number of collections')
+
+        collections = run_on_rust(self.key_client, lambda: list(created_db.query_containers({
+            'query': 'SELECT * FROM root r WHERE r.id=@id',
+            'parameters': [{'name': '@id', 'value': collection_id}],
+        })))
+        self.assertTrue(collections)
+        self.assertEqual([collection['id'] for collection in collections], [collection_id])
+        self.assertDictEqual(partition_key, collections[0]['partitionKey'])
+
+        created_db.delete_container(created_collection.id)
+        created_container = created_db.get_container_client(created_collection.id)
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, created_container.read)
+
+        recreated_partition_key = PartitionKey(path=["/id1", "/id2", "/id3"], kind="MultiHash")
+        container_proxy = created_db.create_container(
+            id=created_collection.id, partition_key=recreated_partition_key,
+        )
+        self.assertEqual(created_collection.id, container_proxy.id)
+        container_properties = container_proxy._get_properties()
+        self.assertDictEqual(recreated_partition_key, container_properties['partitionKey'])
+        created_db.delete_container(created_collection.id)
 
 
 if __name__ == "__main__":

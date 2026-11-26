@@ -159,6 +159,7 @@ fn create_item_impl<'py>(
 /// This selects the driver's upsert operation rather than implementing an
 /// existence check in the binding. Prepared `If-Match` / `If-None-Match`
 /// headers remain in `custom_headers`; their enforcement is not done here.
+#[cfg(not(feature = "test-probes"))]
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn upsert_item<'py>(
@@ -167,6 +168,33 @@ pub(crate) fn upsert_item<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    upsert_item_impl(py, driver_handle, prepared, timeout_seconds, include_attempts)
+}
+
+#[cfg(feature = "test-probes")]
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
+pub(crate) fn upsert_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    upsert_item_impl(
+        py, driver_handle, prepared, timeout_seconds, include_attempts, include_fault_diagnostics,
+    )
+}
+
+fn upsert_item_impl<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    #[cfg(feature = "test-probes")] include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "upsert_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -186,7 +214,7 @@ pub(crate) fn upsert_item<'py>(
         true,
         include_attempts,
         #[cfg(feature = "test-probes")]
-        false,
+        include_fault_diagnostics,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
 }
@@ -461,6 +489,7 @@ fn create_item_async_impl<'py>(
 
 /// Async twin of `upsert_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
+#[cfg(not(feature = "test-probes"))]
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn upsert_item_async<'py>(
@@ -469,6 +498,33 @@ pub(crate) fn upsert_item_async<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    upsert_item_async_impl(py, driver_handle, prepared, timeout_seconds, include_attempts)
+}
+
+#[cfg(feature = "test-probes")]
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
+pub(crate) fn upsert_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    upsert_item_async_impl(
+        py, driver_handle, prepared, timeout_seconds, include_attempts, include_fault_diagnostics,
+    )
+}
+
+fn upsert_item_async_impl<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    #[cfg(feature = "test-probes")] include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "upsert_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -488,7 +544,7 @@ pub(crate) fn upsert_item_async<'py>(
         true,
         include_attempts,
         #[cfg(feature = "test-probes")]
-        false,
+        include_fault_diagnostics,
         #[cfg(feature = "test-probes")]
         None,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),

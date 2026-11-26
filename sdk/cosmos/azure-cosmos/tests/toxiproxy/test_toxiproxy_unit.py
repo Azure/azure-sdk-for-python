@@ -40,7 +40,7 @@ def test_cutoff_counts_each_independent_rust_commit_check_rust(monkeypatch):
     @contextmanager
     def single_cutoff(identity):
         assert identity == "sdk-connection"
-        yield {"armed_at": time.monotonic()}
+        yield {"armed_at": time.perf_counter()}
 
     proxy = SimpleNamespace(
         observer=SimpleNamespace(forwarding_callback=forwarding_callback),
@@ -640,7 +640,7 @@ def test_single_cutoff_gates_replacements_and_surfaces_failures_rust(failure, mo
             return dict(body, stream="upstream") if failure == "configuration" else body
         if method == "DELETE":
             assert path == "/proxies/owned/toxics/single-cutoff" and timeout == 10
-            removed.append(time.monotonic())
+            removed.append(time.perf_counter())
             toxics.clear()
             if failure == "remove":
                 raise TimeoutError("cutoff removal failed")
@@ -655,7 +655,7 @@ def test_single_cutoff_gates_replacements_and_surfaces_failures_rust(failure, mo
             assert not gate.is_set()
             if failure == "close":
                 observed["end_reason"] = "ConnectionResetError"
-            observed["closed_at"] = time.monotonic()
+            observed["closed_at"] = time.perf_counter()
             if failure == "body":
                 raise RuntimeError("read failed")
         assert state["cutoff_at"] <= state["removed_at"]

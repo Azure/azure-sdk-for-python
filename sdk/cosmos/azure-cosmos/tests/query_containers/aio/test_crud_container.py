@@ -17,13 +17,16 @@ assertions with a Rust-selected client only.
 import os
 import unittest
 import uuid
+from typing import Mapping
 
 import pytest
 
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos.diagnostics import RecordDiagnostics  # pylint: disable=no-name-in-module
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from common._rust_checks import run_on_rust_async
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -106,6 +109,99 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         created_container = created_db.get_container_client(created_collection.id)
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      created_container.read)
+
+    async def test_collection_crud_with_write_payload_disabled_async_rust(self):
+        """Disabling write response bodies must not suppress queried container properties."""
+        # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_collection_crud_async
+        client = CosmosClient(HOST, KEY, _backend="rust", no_response_on_write=True)
+        self.addAsyncCleanup(client.close)
+        await client.__aenter__()
+        created_db = client.get_database_client(self._database_id)
+        collections = [collection async for collection in created_db.list_containers()]
+        before_create_collections_count = len(collections)
+        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
+        partition_key = PartitionKey(path="/pk", kind="Hash")
+        created_collection = await created_db.create_container(
+            id=collection_id,
+            indexing_policy={'indexingMode': 'consistent'},
+            partition_key=partition_key,
+        )
+        assert collection_id == created_collection.id
+
+        created_properties = await created_collection.read()
+        assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
+        assert partition_key == created_properties['partitionKey']
+        collections = [collection async for collection in created_db.list_containers()]
+        assert len(collections) == before_create_collections_count + 1
+
+        async def query():
+            return [collection async for collection in created_db.query_containers(
+                query='SELECT * FROM root r WHERE r.id=@id',
+                parameters=[{'name': '@id', 'value': collection_id}],
+            )]
+
+        collections = await run_on_rust_async(client, query)
+        assert len(collections) > 0
+        assert [collection['id'] for collection in collections] == [collection_id]
+        assert partition_key == collections[0]['partitionKey']
+
+        await created_db.delete_container(created_collection.id)
+        created_container = created_db.get_container_client(created_collection.id)
+        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, created_container.read)
+
+    async def test_collection_crud_subpartition_async_rust(self):
+        """Query a hierarchical container without requiring an excluded creation header.
+
+        Gap 12 accepts the missing generic success-header map. Retain the other
+        original lifecycle checks and verify the query returns this container.
+        """
+        # Source: tests/test_crud_subpartition_async.py::TestSubpartitionCrudAsync.test_collection_crud_subpartition_async
+        created_db = self.database_for_test
+        collections = [collection async for collection in created_db.list_containers()]
+        before_create_collections_count = len(collections)
+        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
+        partition_key = PartitionKey(path=["/pk1", "/pk2"], kind="MultiHash")
+        created_recorder = RecordDiagnostics()
+        created_collection = await created_db.create_container(
+            id=collection_id,
+            indexing_policy={'indexingMode': 'consistent'},
+            partition_key=partition_key,
+            response_hook=created_recorder,
+        )
+        assert collection_id == created_collection.id
+        assert isinstance(created_recorder.headers, Mapping)
+        # Gap 12: Content-Type is not required in the modeled success headers.
+        assert isinstance(created_recorder.body, Mapping)
+        assert 'id' in created_recorder.body
+
+        created_properties = await created_collection.read()
+        assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
+        collections = [collection async for collection in created_db.list_containers()]
+        assert len(collections) == before_create_collections_count + 1
+
+        async def query():
+            return [collection async for collection in created_db.query_containers(
+                query='SELECT * FROM root r WHERE r.id=@id',
+                parameters=[{'name': '@id', 'value': collection_id}],
+            )]
+
+        collections = await run_on_rust_async(self.key_client, query)
+        assert collections is not None
+        assert [collection['id'] for collection in collections] == [collection_id]
+        assert partition_key == collections[0]['partitionKey']
+
+        await created_db.delete_container(created_collection.id)
+        created_container = created_db.get_container_client(created_collection.id)
+        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, created_container.read)
+
+        recreated_partition_key = PartitionKey(path=["/id1", "/id2", "/id3"], kind="MultiHash")
+        container_proxy = await created_db.create_container(
+            id=created_collection.id, partition_key=recreated_partition_key,
+        )
+        assert created_collection.id == container_proxy.id
+        container_proxy_properties = await container_proxy._get_properties()
+        assert recreated_partition_key == container_proxy_properties['partitionKey']
+        await created_db.delete_container(created_collection.id)
 
 
 if __name__ == "__main__":

@@ -168,14 +168,14 @@ def response_fault(proxy, kind, attributes, active, **evidence):
         yield
     finally:
         # Pinned server buffer draining can wait five seconds on a closed consumer.
-        removal_started = time.monotonic()
+        removal_started = time.perf_counter()
         proxy.request(path + "/" + configuration["name"], method="DELETE", timeout=10)
         assert proxy.request(path) == []
         proxy.assert_enabled()
         emit(
             "proxy_" + kind + "_removed",
             name=proxy.name,
-            elapsed=time.monotonic() - removal_started,
+            elapsed=time.perf_counter() - removal_started,
             **evidence,
         )
 
@@ -307,7 +307,7 @@ class OwnedProxy:
             stdout=self.log,
             stderr=subprocess.STDOUT,
         )
-        deadline = time.monotonic() + 10
+        deadline = time.perf_counter() + 10
         while True:
             if self.process.poll() is not None:
                 raise RuntimeError(f"Toxiproxy exited at startup; see {self.directory / 'server.log'}")
@@ -315,7 +315,7 @@ class OwnedProxy:
                 version = self.request("/version")
                 break
             except URLError:
-                if time.monotonic() >= deadline:
+                if time.perf_counter() >= deadline:
                     raise
                 time.sleep(0.05)
         assert version == {"version": VERSION}
@@ -427,7 +427,7 @@ class OwnedProxy:
         self.request("/proxies/" + self.name + "/toxics/single-reset", method="DELETE")
         assert self.request("/proxies/" + self.name + "/toxics") == []
         self.assert_enabled()
-        removed = time.monotonic()
+        removed = time.perf_counter()
         emit("proxy_reset_removed", name=self.name, removed_at=removed)
         return removed
 
@@ -458,7 +458,7 @@ class OwnedProxy:
         )
         assert self.request("/proxies/" + self.name + "/toxics") == []
         self.assert_enabled()
-        removed = time.monotonic()
+        removed = time.perf_counter()
         emit("proxy_cutoff_removed", name=self.name, removed_at=removed)
         return removed
 
@@ -498,7 +498,7 @@ class OwnedProxy:
         observer.new_connections.clear()
 
         def restore():
-            deadline = time.monotonic() + READ_TIMEOUT
+            deadline = time.perf_counter() + READ_TIMEOUT
             while not stop.is_set():
                 connection = observer.snapshot()[identity]
                 if connection["closed_at"] is not None:
@@ -511,13 +511,13 @@ class OwnedProxy:
                     state["removed_at"] = remove()
                     observer.new_connections.set()
                     return
-                assert time.monotonic() < deadline, "No interruption observed on the warmed connection"
+                assert time.perf_counter() < deadline, "No interruption observed on the warmed connection"
                 stop.wait(0.001)
             raise AssertionError("Read finished before the interruption was observed")
 
         try:
             arm()
-            state["armed_at"] = time.monotonic()
+            state["armed_at"] = time.perf_counter()
             emit("proxy_" + kind + "_armed", name=self.name, connection=identity, **state)
             with ThreadPoolExecutor(max_workers=1, thread_name_prefix="cosmos-" + kind + "-removal") as executor:
                 removal = executor.submit(restore)
@@ -551,13 +551,13 @@ class OwnedProxy:
 
     def completed_transfers(self):
         # v2.13.0 updates counters when each copy loop exits, before logging link removal.
-        deadline = time.monotonic() + 5
+        deadline = time.perf_counter() + 5
         while True:
             state = self.connection_state()
             expected = {client + direction for client in state["accepted"] for direction in ("upstream", "downstream")}
             if expected and expected.issubset(state["closed_links"]):
                 break
-            assert time.monotonic() < deadline, "Stalled connections did not finish closing"
+            assert time.perf_counter() < deadline, "Stalled connections did not finish closing"
             time.sleep(0.02)
         request = Request(self.api + "/metrics", headers={"User-Agent": "CosmosToxiproxyTests/1.0"})
         with self.opener.open(request, timeout=2) as response:

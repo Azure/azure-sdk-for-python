@@ -359,11 +359,10 @@ def test_disabled_poll_does_not_import_opentelemetry(polling, monkeypatch):
     assert not h.calls[0][2] and not h.seen
 
 
+@pytest.mark.parametrize("base_feed", [True], ids=["async"], indirect=True)
 @pytest.mark.parametrize("timeout", [None, 10])
 def test_cancellation_drains_poll_before_completion(polling, recording, timeout):
     h, f = polling, polling.feed
-    if not f.async_mode:
-        pytest.skip("Async cancellation")
 
     async def run():
         pages = f.proxy.query_items_change_feed(timeout=timeout).by_page()
@@ -397,10 +396,9 @@ def test_poll_masks_outer_completion_state(polling, recording, enabled):
     assert not h.seen and len(fetch_spans(recording)) == int(enabled)
 
 
+@pytest.mark.parametrize("base_feed", [False], ids=["sync"], indirect=True)
 def test_nested_poll_hook_keeps_completion_state_separate(polling, recording):
     h, f = polling, polling.feed
-    if f.async_mode:
-        pytest.skip("Synchronous nested poll inside a synchronous hook")
     f.proxy._client_context = replace(
         f.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),

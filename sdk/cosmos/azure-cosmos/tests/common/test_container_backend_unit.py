@@ -18,6 +18,7 @@ from common.typed_requests import legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options
 
 import asyncio
+import ast
 import importlib
 import inspect
 import json
@@ -359,16 +360,20 @@ def test_container_get_or_create_overloads_match_keyword_only_contract_rust(prox
     settings as keyword-only, and must not still advertise the retired query
     metrics option. Sync and async are both checked.
     """
-    from typing import get_overloads
-
-    overloads = get_overloads(proxy_type.create_container_if_not_exists)
+    tree = ast.parse(inspect.getsource(proxy_type))
+    overloads = [
+        node for node in tree.body[0].body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and node.name == "create_container_if_not_exists"
+        and any(isinstance(decorator, ast.Name) and decorator.id == "overload"
+                for decorator in node.decorator_list)
+    ]
     assert len(overloads) == 2
     for overload in overloads:
-        parameters = inspect.signature(overload).parameters
-        positional = [name for name, param in parameters.items()
-                      if param.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD]
-        assert positional == ["self", "id", "partition_key"]
-        assert parameters["indexing_policy"].kind == inspect.Parameter.KEYWORD_ONLY
+        assert not overload.args.posonlyargs
+        assert [arg.arg for arg in overload.args.args] == ["self", "id", "partition_key"]
+        parameters = [arg.arg for arg in overload.args.kwonlyargs]
+        assert "indexing_policy" in parameters
         assert "populate_query_metrics" not in parameters
 
 

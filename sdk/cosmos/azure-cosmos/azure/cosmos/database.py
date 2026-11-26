@@ -59,7 +59,7 @@ from ._cosmos_responses import CosmosDict
 from ._operation_deadline import remaining_timeout
 from ._helpers._item_arguments import get_selected_backend
 from ._helpers._list_containers import list_containers as _list_containers, query_containers as _query_containers
-from ._helpers._container_operations import ContainerHelper
+from ._helpers._container_operations import ContainerHelper, container_creation_retry_delay
 from ._helpers._response_parse import (
     validate_response_hook_is_synchronous,
     with_response_header_snapshot,
@@ -606,9 +606,12 @@ class DatabaseProxy(object):
         The response hook receives copied headers and a deep copy of properties
         from the successful step; its exceptions propagate without triggering
         creation or another create attempt.
-        If creation conflicts with another caller, read the container once more
-        using the remaining timeout. A failed reread propagates without another
-        create. Conditional headers are forwarded; the workflow is not atomic.
+        If creation conflicts with another caller, read the container using the
+        remaining timeout. A 404/1013 response means creation is still in progress;
+        only that response permits up to nine additional reads, with waits of
+        100 ms growing to one second within the same timeout. Other read failures
+        propagate without another create. Conditional headers are forwarded;
+        the workflow is not atomic.
         A 304 existence read returns empty properties without fetching them again.
         For a successful creation response without properties, the hook receives
         empty properties and creation headers, not any later properties read.
@@ -705,9 +708,12 @@ class DatabaseProxy(object):
         The response hook receives copied headers and a deep copy of properties
         from the successful step; its exceptions propagate without triggering
         creation or another create attempt.
-        If creation conflicts with another caller, read the container once more
-        using the remaining timeout. A failed reread propagates without another
-        create. Conditional headers are forwarded; the workflow is not atomic.
+        If creation conflicts with another caller, read the container using the
+        remaining timeout. A 404/1013 response means creation is still in progress;
+        only that response permits up to nine additional reads, with waits of
+        100 ms growing to one second within the same timeout. Other read failures
+        propagate without another create. Conditional headers are forwarded;
+        the workflow is not atomic.
         A 304 existence read returns empty properties without fetching them again.
         For a successful creation response without properties, the hook receives
         empty properties and creation headers, not any later properties read.
@@ -790,9 +796,12 @@ class DatabaseProxy(object):
         The response hook receives copied headers and a deep copy of properties
         from the successful step; its exceptions propagate without triggering
         creation or another create attempt.
-        If creation conflicts with another caller, read the container once more
-        using the remaining timeout. A failed reread propagates without another
-        create. Conditional headers are forwarded; the workflow is not atomic.
+        If creation conflicts with another caller, read the container using the
+        remaining timeout. A 404/1013 response means creation is still in progress;
+        only that response permits up to nine additional reads, with waits of
+        100 ms growing to one second within the same timeout. Other read failures
+        propagate without another create. Conditional headers are forwarded;
+        the workflow is not atomic.
         A 304 existence read returns empty properties without fetching them again.
         For a successful creation response without properties, the hook receives
         empty properties and creation headers, not any later properties read.
@@ -920,7 +929,17 @@ class DatabaseProxy(object):
                 # A conflict raised by the customer's success hook is not a service race.
                 if create_succeeded:
                     raise
-                properties = read_container()
+                retry_count = 0
+                while True:
+                    try:
+                        properties = read_container()
+                        break
+                    except CosmosResourceNotFoundError as error:
+                        delay = container_creation_retry_delay(error, retry_count, deadline)
+                        if delay is None:
+                            raise
+                        time.sleep(delay)
+                        retry_count += 1
         _normalize_gsi_container_properties(properties)
         on_response = with_response_header_snapshot(response_hook, copy_body=True)
         if on_response is not None:
@@ -1128,10 +1147,13 @@ class DatabaseProxy(object):
         parameters: Optional[list[dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Any]], None]] = None,
         **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> ItemPaged[Any]:
         """Query container properties in the current database, not the items inside them.
+
+        ``SELECT * FROM c`` returns container property dictionaries.
+        ``SELECT VALUE c.id FROM c`` returns ID strings such as ``"orders"``.
 
         :param query: SQL text or a dictionary containing query text and optional parameters.
             Explicit ``None`` without parameters retains unfiltered listing behavior.
@@ -1147,19 +1169,29 @@ class DatabaseProxy(object):
             with that page's response headers and the same results iterator returned by this method.
             It is not called before iteration. Consume results outside the hook; the iterator is
             already being advanced when the hook runs.
-        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]
-        :returns: An Iterable of container properties (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Any]], None]
+        :returns: A paged iterable of values selected by the query, including dictionaries or scalars.
+        :rtype: ItemPaged[Any]
 
         ``query`` is required; all other settings are keyword-only. Use ``list_containers()``
         for an unfiltered inventory. ``session_token``, ``populate_query_metrics``,
-        ``availability_strategy``, and ``enable_cross_partition_query`` are rejected,
-        including explicit ``None`` or ``False``. Unsupported Rust options raise during iteration rather than
-        switching to legacy Python.
+        ``availability_strategy``, and ``enable_cross_partition_query`` raise ``TypeError``
+        when constructing the pager, including explicit ``None`` or ``False``.
+        The same rejection applies inside ``request_options`` and ``feed_options``,
+        including the aliases ``sessionToken``, ``populateQueryMetrics``,
+        ``availabilityStrategy``, and ``enableCrossPartitionQuery``. Both dictionaries
+        are checked even when one overrides the other. For example,
+        ``request_options={"sessionToken": None}`` is rejected before any request.
+        A ``connection_timeout`` or reserved-header override raises ``TypeError``
+        during iteration, before sending a request. The SDK never switches to legacy Python.
 
-        Query inputs and settings are copied at construction. Empty query text, malformed
-        parameters, invalid page sizes, and invalid timeouts raise ``ValueError`` before
-        iteration; non-callable hooks raise ``TypeError``. Page size must be ``None``,
+        Settings are copied at construction, but query dictionaries and parameters remain
+        live until each page fetch. For example, changing a parameter from ``"orders"`` to
+        ``"receipts"`` before iteration queries ``"receipts"``. Later edits are validated
+        before sending the next page request. At construction, empty query text, malformed
+        parameters, invalid page sizes, and invalid timeouts raise ``ValueError``;
+        non-callable hooks, coroutine hooks, and async-generator hooks raise ``TypeError``.
+        Page size must be ``None``,
         ``-1``, or a positive integer below ``2**63``; booleans are not accepted.
         Requests still begin only when the results are consumed. Each page iterator owns
         its bookmark; other operations cannot overwrite it. A final empty page clears

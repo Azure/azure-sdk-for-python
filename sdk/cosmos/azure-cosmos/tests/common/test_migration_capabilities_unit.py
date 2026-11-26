@@ -8,6 +8,7 @@ for comparisons, but a Rust call cannot switch to it at any stage.
 """
 
 import asyncio
+from common.async_test_helpers import run_async
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -104,7 +105,7 @@ def dispatch(request):
             process_response=state.process,
             legacy_call=state.legacy,
         )
-        return asyncio.run(result) if request.param else result
+        return run_async(result) if request.param else result
 
     state.run = run
     return state
@@ -143,6 +144,7 @@ def test_unsupported_requests_never_fall_back_for_any_operation_rust(dispatch, o
             "create_container",
             "create_container_if_not_exists",
             "delete_container",
+            "replace_container",
         }
         else NotImplementedError
     )

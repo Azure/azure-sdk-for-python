@@ -15,7 +15,8 @@ from common.sdk_subprocess import sdk_python_command
 from config.diagnostics import fault_rule_hit_count, fault_rule_hit_count_async
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.exceptions import CosmosClientTimeoutError
+from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceNotFoundError
+from azure.cosmos.http_constants import SubStatusCodes
 from common.test_client_timeout_defaults_unit import case as case, clock as clock
 
 
@@ -132,6 +133,77 @@ def test_conflict_reread_uses_remaining_budget_rust(case, clock, expires):
         assert _invoke(case, response_hook=hook).id == "orders"
         hook.assert_called_once()
     assert calls == [("read", 1), ("create", 0.75)] + ([] if expires else [("read", 0.5)])
+
+
+@pytest.mark.parametrize("outcome", ["ready", "deadline", "limit"])
+def test_conflict_reread_waits_for_container_creation_rust(case, clock, monkeypatch, outcome):
+    calls = []
+    waits = []
+    budget = 30 if outcome == "limit" else 1
+
+    def wait(delay):
+        waits.append(delay)
+        clock[0] += delay
+
+    async def wait_async(delay):
+        wait(delay)
+
+    monkeypatch.setattr(time, "sleep", wait)
+    monkeypatch.setattr(asyncio, "sleep", wait_async)
+
+    def read(*_args, **kwargs):
+        calls.append(kwargs["timeout_seconds"])
+        if len(calls) == 1:
+            return _response(404)
+        if outcome == "ready" and len(calls) == 4:
+            return _response(200)
+        return (
+            404, SubStatusCodes.CONTAINER_CREATE_IN_PROGRESS, {},
+            b'{"message":"Collection is not yet available for read. Please retry in some time."}', None,
+        )
+
+    case.install("read_container", side_effect=read)
+    create = case.install("create_container", result=_response(409))
+    hook = MagicMock()
+    if outcome == "ready":
+        proxy, properties = _invoke(case, response_hook=hook, return_properties=True, timeout=budget)
+        assert proxy.id == properties["id"] == "orders"
+        assert len(waits) == 2
+        hook.assert_called_once()
+    else:
+        expected = CosmosClientTimeoutError if outcome == "deadline" else CosmosResourceNotFoundError
+        with pytest.raises(expected) as caught:
+            _invoke(case, response_hook=hook, timeout=budget)
+        if outcome == "limit":
+            assert caught.value.sub_status == SubStatusCodes.CONTAINER_CREATE_IN_PROGRESS
+            assert 0 < sum(waits) < budget
+        else:
+            assert sum(waits) == pytest.approx(budget)
+        hook.assert_not_called()
+        assert not case.client.client_connection._container_properties_cache
+    create.assert_called_once()
+    assert 1 < len(calls) <= 11
+    assert all(0 < delay <= 1 for delay in waits)
+    assert all(0 < remaining <= budget for remaining in calls)
+    assert calls[-1] < calls[0]
+
+
+@pytest.mark.parametrize("case", [True], indirect=True, ids=["async"])
+def test_cancellation_stops_container_creation_wait_rust(case, monkeypatch):
+    transient = (404, SubStatusCodes.CONTAINER_CREATE_IN_PROGRESS, {}, b'{"message":"creating"}', None)
+    read = case.install("read_container", side_effect=[_response(404), transient])
+    create = case.install("create_container", result=_response(409))
+    hook = MagicMock()
+
+    async def cancel(_delay):
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(asyncio, "sleep", cancel)
+    with pytest.raises(asyncio.CancelledError):
+        _invoke(case, response_hook=hook)
+    assert read.call_count == 2
+    create.assert_called_once()
+    hook.assert_not_called()
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])

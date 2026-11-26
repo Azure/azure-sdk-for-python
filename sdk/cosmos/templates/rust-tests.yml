@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-# cspell:ignore msrust
+# cspell:ignore clippy msrust
 
 steps:
   # Run once per Python version in Standard jobs, not in dependency variations.

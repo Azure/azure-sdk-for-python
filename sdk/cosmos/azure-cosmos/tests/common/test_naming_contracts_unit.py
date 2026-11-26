@@ -769,44 +769,40 @@ def test_installed_native_cursor_exports_have_no_concept_aliases_rust():
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback_rust(
-    monkeypatch, async_mode
+@pytest.mark.parametrize("uses_cursor", [False, True], ids=["container-query", "item-cursor"])
+@pytest.mark.parametrize("export_state", ["missing", "none", "non-callable"])
+def test_invalid_page_export_is_a_rebuild_error_before_acquisition_rust(
+    monkeypatch, async_mode, uses_cursor, export_state
 ):
-    """An out-of-date Rust module says so, rather than quietly serving pages another way.
-
-    The resuming call is missing while the non-resuming one is present, which is exactly
-    what an older build looks like. The answer is an error telling the developer to
-    rebuild.
-
-    Falling back to the other form would be the tempting thing to do and would be wrong:
-    the caller is resuming from a position, and the non-resuming call would start from
-    the beginning and hand back items already seen, with nothing to indicate why. Both
-    the fallback and taking a driver are traps, so this proves neither happened.
-    """
+    """Malformed page exports fail with rebuild guidance before acquisition or fallback."""
     module = async_rust if async_mode else sync_rust
     backend_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = object.__new__(backend_type)
+    backend._client_config = None
     forbidden = MagicMock(
         side_effect=AssertionError("driver acquisition or stateless dispatch")
     )
     monkeypatch.setattr(backend, "_ensure_driver_handle", forbidden)
-    monkeypatch.setattr(
-        module,
-        "_rust_module",
-        SimpleNamespace(query_items=forbidden, query_items_async=forbidden),
+    binding = SimpleNamespace(query_items=forbidden, query_items_async=forbidden)
+    export_name = ("fetch_page_with_cursor" if uses_cursor else "query_containers") + (
+        "_async" if async_mode else ""
     )
+    if export_state != "missing":
+        setattr(binding, export_name, None if export_state == "none" else 42)
+    monkeypatch.setattr(module, "_rust_module", binding)
     prepared = PreparedPageRequest(
-        op="query_items",
-        container_link="dbs/d/colls/c",
+        op="query_items" if uses_cursor else "query_containers",
+        container_link="dbs/d/colls/c" if uses_cursor else "dbs/d",
         query="SELECT * FROM c",
-        cursor=SimpleNamespace(has_more=False, continuation_supported=True),
+        cursor=SimpleNamespace(has_more=False, continuation_supported=True) if uses_cursor else None,
     )
 
     async def collect():
         return [page async for page in backend.execute_pages(prepared)]
 
-    with pytest.raises(RuntimeError, match="rebuild"):
+    with pytest.raises(RuntimeError, match=export_name + ".*rebuild") as failure:
         asyncio.run(collect()) if async_mode else list(backend.execute_pages(prepared))
+    assert not isinstance(failure.value, PagePreflightError)
     forbidden.assert_not_called()
 
 

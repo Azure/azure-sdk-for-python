@@ -11,6 +11,7 @@ import subprocess
 import pytest
 
 from common.sdk_subprocess import sdk_python_command
+from common.source_fingerprints import stable_ast_dump
 from get_latest_session_token._fixtures import create_split_ranges
 
 
@@ -72,7 +73,7 @@ _NON_LANE_MARKERS = {"parametrize", "skipif", "usefixtures"}
 
 
 def _body_hash(node):
-    return hashlib.sha256(ast.dump(ast.Module(body=node.body, type_ignores=[])).encode()).hexdigest()
+    return hashlib.sha256(stable_ast_dump(ast.Module(body=node.body, type_ignores=[])).encode()).hexdigest()
 
 
 def _lane_markers(tree):

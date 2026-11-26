@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import socket
 import threading
 import time
+from types import SimpleNamespace
 
 import pytest
 
@@ -113,16 +114,22 @@ def test_rejects_changed_connection_history_rust():
 
 
 def wait_for_events(observer, count):
-    deadline = time.monotonic() + 2
+    deadline = time.perf_counter() + 2
     while True:
         snapshot = observer.snapshot()
         if sum(len(value["events"]) for value in snapshot.values()) >= count:
             return snapshot
-        assert time.monotonic() < deadline, "Observer did not record forwarded traffic"
+        assert time.perf_counter() < deadline, "Observer did not record forwarded traffic"
         time.sleep(0.01)
 
 
-def test_observer_forwards_counts_separate_connections_and_stops_rust():
+def test_observer_forwards_counts_separate_connections_and_stops_rust(monkeypatch):
+    from toxiproxy import _tcp_observer
+
+    # A coarse clock can return the same tick for an entire request on Windows.
+    monkeypatch.setattr(
+        _tcp_observer, "time", SimpleNamespace(monotonic=lambda: 0.0, perf_counter=time.perf_counter)
+    )
     with socket.socket() as server:
         server.bind(("127.0.0.1", 0))
         server.listen()
@@ -131,10 +138,13 @@ def test_observer_forwards_counts_separate_connections_and_stops_rust():
         try:
             observer.start()
             for index in range(2):
+                connected = time.perf_counter()
                 with socket.create_connection(("127.0.0.1", observer.port), timeout=2) as client:
                     upstream, _ = server.accept()
                     with upstream:
                         upstream.settimeout(2)
+                        before = observer.snapshot()
+                        started = time.perf_counter()
                         client.sendall(b"request")
                         assert upstream.recv(7) == b"request"
                         upstream.sendall(b"response")
@@ -146,6 +156,11 @@ def test_observer_forwards_counts_separate_connections_and_stops_rust():
                             ("downstream", 8),
                         ]
                         assert all(set(event) == {"direction", "bytes", "at"} for event in events)
+                        finished = time.perf_counter()
+                        identity = str(index + 1)
+                        assert connected <= snapshot[identity]["accepted_at"] <= started
+                        assert connected <= snapshot[identity]["forwarding_started_at"] <= finished
+                        assert_response_exchange(before, snapshot, identity, started, finished)
             assert len(observer.snapshot()) == 2
         finally:
             observer.close()
@@ -386,7 +401,7 @@ def test_observer_holds_new_connections_until_fault_is_removed_rust():
                 client.sendall(b"request")
                 with pytest.raises(socket.timeout):
                     server.accept()
-                released = time.monotonic()
+                released = time.perf_counter()
                 observer.new_connections.set()
                 server.settimeout(2)
                 upstream, _ = server.accept()

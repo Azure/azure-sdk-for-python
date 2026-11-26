@@ -26,6 +26,8 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 from config.clients import create_data_client_for_endpoint
 
+from common.fault_rule_adapters import _RustFaultInjection, _REGION_DOWN
+
 REGION_1 = os.getenv("WRITE_LOCATION", "")
 REGION_2 = os.getenv("READ_LOCATION", "West US")
 CHANGE_FEED = "changefeed"
@@ -43,12 +45,6 @@ REPLACE = "replace"
 PATCH = "patch"
 DELETE = "delete"
 PK_VALUE = "pk1"
-
-#: Rust driver labels for the document operations the original transport predicate matched.
-_DOCUMENT_OPERATION_TYPES = (
-    "ReadItem", "QueryItem", "ChangeFeedItem", "CreateItem", "UpsertItem", "ReplaceItem", "DeleteItem", "BatchItem",
-)
-_REGION_DOWN = "region_down"
 
 
 def _host():
@@ -71,42 +67,6 @@ def restore_environment_variables(previous):
             os.environ.pop(name, None)
         else:
             os.environ[name] = value
-
-
-class _RustFaultInjection(object):
-    """Rust stand-in for FaultInjectionTransport with one region-targeted document fault.
-
-    Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport
-    options are excluded. Faults become Rust
-    ``_fault_injection_rules`` fixed when the client is built, so the original's later
-    ``faults = []`` / ``add_fault`` on the live client cannot change that client's rules.
-    """
-
-    def __init__(self, error, region):
-        self.error = error
-        self.region = region or None
-
-    def rules(self):
-        suffix = uuid.uuid4().hex
-        if isinstance(self.error, CosmosHttpResponseError):
-            fault = {"status_code": self.error.status_code}
-        elif self.error == _REGION_DOWN:
-            fault = {"error_type": "ConnectionError"}
-        else:
-            fault = {"error_type": "ResponseTimeout"}
-        return [dict(id="{}-{}".format(op, suffix), operation_type=op, region=self.region, **fault)
-                for op in _DOCUMENT_OPERATION_TYPES]
-
-    @property
-    def faults(self):
-        return self.rules()
-
-    @faults.setter
-    def faults(self, value):
-        pytest.skip("driver-gap: Rust fault injection rules cannot be removed from a live client (known gap 10).")
-
-    def add_fault(self, predicate, error):
-        pytest.skip("driver-gap: Rust fault injection rules cannot be added to a live client (known gap 10).")
 
 
 def create_doc():

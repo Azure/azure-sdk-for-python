@@ -436,11 +436,10 @@ def test_container_listing_telemetry_masks_outer_state(listing, recording, enabl
     assert len(fetch_spans(recording)) == int(enabled)
 
 
+@pytest.mark.parametrize("listing", ["sync"], indirect=True)
 @pytest.mark.parametrize("collect_attempts", [False, True])
 def test_container_listing_telemetry_nested_hook_owns_separate_state(listing, recording, collect_attempts):
     h = listing
-    if h.asynchronous:
-        pytest.skip("Synchronous nested listing in a synchronous hook")
     h.database._client_context = replace(
         h.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=collect_attempts),),
@@ -466,10 +465,9 @@ def test_container_listing_telemetry_nested_hook_owns_separate_state(listing, re
     assert fetch_spans(recording)[0].attributes["azure.cosmosdb.operation.request_count"] == 5
 
 
+@pytest.mark.parametrize("listing", ["sync"], indirect=True)
 def test_container_listing_telemetry_cross_thread_consumption(listing, recording):
     h = listing
-    if h.asynchronous:
-        pytest.skip("Sync thread handoff")
     pages = h.create_iterable().by_page()
 
     def consume():
@@ -483,10 +481,9 @@ def test_container_listing_telemetry_cross_thread_consumption(listing, recording
     assert h.seen[0].diagnostics.request_count == 5
 
 
+@pytest.mark.parametrize("listing", ["async"], indirect=True)
 def test_container_listing_telemetry_cancellation_closes_state(listing, recording):
     h = listing
-    if not h.asynchronous:
-        pytest.skip("Async cancellation")
 
     async def run():
         h.gate = asyncio.Event()
@@ -511,6 +508,7 @@ def test_container_listing_telemetry_cancellation_closes_state(listing, recordin
 @pytest.mark.parametrize("container_operation", ["query_containers"], indirect=True)
 @pytest.mark.parametrize("shape", ["parameters", "specification", "projection", "none"])
 def test_container_query_telemetry_preserves_inputs_and_rows(listing, recording, shape):
+    """Caller edits before iteration must reach the traced page request."""
     h = listing
     parameters = [{"name": "@id", "value": {"nested": ["original"]}}]
     sql = "SELECT * FROM root r WHERE r.id=@id"
@@ -521,21 +519,23 @@ def test_container_query_telemetry_preserves_inputs_and_rows(listing, recording,
         h.pages[None] = (["orders", 17, None, False, {"nested": ["value"]}], None)
     elif shape == "none":
         query, kwargs = None, {}
-    original = deepcopy(parameters)
     iterable = h.database.query_containers(query, **kwargs)
     parameters[0]["value"]["nested"][0] = "mutated"
     if isinstance(query, dict):
         query["query"] = "SELECT * FROM another"
+    expected_query = query["query"] if isinstance(query, dict) else query
+    expected_parameters = deepcopy(parameters)
     assert not h.calls
     assert h.next(iterable.by_page()) == h.pages[None][0]
+    assert parameters == expected_parameters
     prepared = h.calls[0][0]
     if shape == "none":
         assert prepared.op == "list_containers" and prepared.body_bytes == b""
     else:
         assert prepared.op == "query_containers"
         body = json.loads(prepared.body_bytes)
-        assert body["query"] == (query if isinstance(query, str) else sql)
-        assert body["parameters"] == original
+        assert body["query"] == expected_query
+        assert body["parameters"] == expected_parameters
     assert h.calls[0][1]
     assert h.seen[0].operation == "query_containers" and h.seen[0].diagnostics.request_count == 5
     assert fetch_spans(recording)[0].name == "DatabaseProxy.query_containers.fetch"

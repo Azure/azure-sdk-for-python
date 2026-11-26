@@ -62,7 +62,7 @@ class TcpObserver:
                     identity = str(len(self.connections) + 1)
                     self.connections[identity] = {
                         "peer": f"{peer[0]}:{peer[1]}",
-                        "accepted_at": time.monotonic(),
+                        "accepted_at": time.perf_counter(),
                         "closed_at": None,
                         "end_reason": None,
                         "end_direction": None,
@@ -93,7 +93,7 @@ class TcpObserver:
             client.settimeout(2)
             upstream = self._open_upstream(identity, client)
             with self.lock:
-                self.connections[identity]["forwarding_started_at"] = time.monotonic()
+                self.connections[identity]["forwarding_started_at"] = time.perf_counter()
             while not self.stop.is_set():
                 readable, _, _ = select.select([client, upstream], [], [], 0.1)
                 for source in readable:
@@ -107,7 +107,7 @@ class TcpObserver:
                     event = {
                         "direction": direction,
                         "bytes": len(payload),
-                        "at": time.monotonic(),
+                        "at": time.perf_counter(),
                     }
                     with self.changed:
                         callback = self._callback
@@ -152,7 +152,7 @@ class TcpObserver:
             if upstream is not None:
                 upstream.close()
             with self.lock:
-                self.connections[identity]["closed_at"] = time.monotonic()
+                self.connections[identity]["closed_at"] = time.perf_counter()
                 self.connections[identity]["end_reason"] = reason
                 self.connections[identity]["end_direction"] = direction
                 self.connections[identity]["end_operation"] = operation

@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 """Deletion stand-ins with no dependency on the retiring legacy implementation."""
 
-import asyncio
 import inspect
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
+from common.async_test_helpers import run_async
 
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
@@ -46,7 +46,7 @@ def make_delete_case(is_async):
 
 def _delete(case, *args, **kwargs):
     result = case.database.delete_container(*args, **kwargs)
-    return asyncio.run(result) if inspect.isawaitable(result) else result
+    return run_async(result) if inspect.isawaitable(result) else result
 
 
 def _assert_no_dispatch(case):

@@ -16,6 +16,7 @@ review separates them. No Cosmos account is needed."""
 from __future__ import annotations
 
 import asyncio
+from common.async_test_helpers import run_async
 import inspect
 import json
 import warnings
@@ -765,7 +766,7 @@ def _call_create_database(client, *args, method_name="create_database", **kwargs
     ``create_database_if_not_exists``.
     """
     result = getattr(client, method_name)(*args, **kwargs)
-    return asyncio.run(result) if inspect.isawaitable(result) else result
+    return run_async(result) if inspect.isawaitable(result) else result
 
 
 def test_create_database_hedging_true_retains_client_threshold_rust(create_database_client):
@@ -2831,7 +2832,7 @@ def delete_database_client(request):
 def _call_delete_database(client, *args, **kwargs):
     """Call ``delete_database`` and wait for it if the client is async."""
     result = client.delete_database(*args, **kwargs)
-    return asyncio.run(result) if inspect.isawaitable(result) else result
+    return run_async(result) if inspect.isawaitable(result) else result
 
 
 @pytest.mark.parametrize("options,expected", [

@@ -7,6 +7,7 @@ from types import SimpleNamespace
 import xml.etree.ElementTree as ET
 
 import pytest
+from common.async_test_helpers import run_async
 
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos._backend.errors import UnsupportedQueryError
@@ -26,7 +27,7 @@ def asynchronous(request):
 
 def validate(collection, asynchronous):
     if asynchronous:
-        return asyncio.run(_QueryConfig._validate_distinct(collection, QUERY, [1], True, ["distinct_field"]))
+        return run_async(_QueryConfig._validate_distinct(collection, QUERY, [1], True, ["distinct_field"]))
     return sync_tests.TestQuery()._validate_distinct(collection, QUERY, [1], True, ["distinct_field"])
 
 

@@ -27,9 +27,10 @@ from .._constants import _Constants as Constants
 def _merge_explicit_item_kwargs(kwargs: Dict[str, Any], **values: Any) -> None:
     """Copy non-None options in caller order, validating hedging before assignment.
 
+    ``values`` contains explicit options; None values are skipped and hedging is validated.
+
     :param kwargs: Working options updated in place.
     :type kwargs: Dict[str, Any]
-    :keyword dict[str, Any] ``**values``: Explicit options; None values are skipped and hedging is validated.
     :return: None.
     :rtype: None
     """

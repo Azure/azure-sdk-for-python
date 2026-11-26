@@ -175,17 +175,19 @@ def test_sync_waiters_share_acquisition_but_not_deadlines_rust(cold_client, monk
     assert ensure() is case.handle
 
 
-def test_sync_completed_acquisition_leaves_only_remaining_time_for_dispatch_rust(cold_client):
+def test_sync_completed_acquisition_leaves_only_remaining_time_for_dispatch_rust(cold_client, monkeypatch):
     case = cold_client
+    clock = [100.0]
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
 
     def acquire(*_args, **_kwargs):
-        time.sleep(0.05)
+        clock[0] += 0.25
         return case.handle
 
     case.native.acquire_driver_handle.side_effect = acquire
     case.native.create_database = MagicMock(return_value=(201, 0, {}, b'{"id":"sales"}', None))
     assert case.client.create_database("sales").id == "sales"
-    assert 0 < case.native.create_database.call_args.kwargs["timeout_seconds"] <= 0.95
+    assert case.native.create_database.call_args.kwargs["timeout_seconds"] == pytest.approx(0.75)
     case.native.acquire_driver_handle.assert_called_once()
 
 

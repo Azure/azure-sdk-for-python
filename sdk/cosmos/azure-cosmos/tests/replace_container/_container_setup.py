@@ -3,7 +3,7 @@
 """Owned fixtures for unchanged replacement tests.
 
 The key client creates, replaces and deletes resources, as in the originals.
-Item checks use a core-Python data client with the configured data auth (AAD in
+Item checks use a Rust data client with the configured data auth (AAD in
 AAD lanes), matching the originals' ``create_data_client`` role.
 """
 
@@ -29,7 +29,7 @@ class SyncReplacementCase(unittest.TestCase):
         self.key = os.environ["ACCOUNT_KEY"]
         self.client = self.key_client = self._create_key_client()
         self.addCleanup(self.client.close)
-        self.data_client = create_data_client_for_endpoint(self.host, _backend="core-python")
+        self.data_client = create_data_client_for_endpoint(self.host, _backend="rust")
         self.addCleanup(self.data_client.close)
         self.database_id = "replace_legacy_" + uuid.uuid4().hex
         self.addCleanup(self._delete_owned_database)
@@ -62,7 +62,7 @@ class AsyncReplacementCase(unittest.IsolatedAsyncioTestCase):
         self.key = os.environ["ACCOUNT_KEY"]
         self.client = self.key_client = self._create_key_client()
         self.addAsyncCleanup(self.client.close)
-        self.data_client = create_data_client_async_for_endpoint(self.host, _backend="core-python")
+        self.data_client = create_data_client_async_for_endpoint(self.host, _backend="rust")
         self.addAsyncCleanup(self.data_client.close)
         await self.client.__aenter__()
         await self.data_client.__aenter__()

@@ -68,7 +68,7 @@ def cutoff_after_commit(proxy, observer, target, expected, identity, source_iden
             return
         assert_fields(stored, expected)
         state.update(
-            committed_at=time.monotonic(),
+            committed_at=time.perf_counter(),
             committed_counter=stored["refund_attempts"],
             before=proxy.sdk_observer.snapshot(),
         )
@@ -76,10 +76,10 @@ def cutoff_after_commit(proxy, observer, target, expected, identity, source_iden
         assert armed.wait(READ_TIMEOUT), "Committed response was not released after arming"
 
     def arm():
-        deadline = time.monotonic() + READ_TIMEOUT
+        deadline = time.perf_counter() + READ_TIMEOUT
         while not committed.wait(0.005):
             assert (
-                not done.is_set() and time.monotonic() < deadline
+                not done.is_set() and time.perf_counter() < deadline
             ), "No committed write observed before returning traffic"
         with proxy.single_cutoff(identity) as cutoff:
             state["cutoff"] = cutoff
@@ -211,7 +211,7 @@ async def test_lost_write_response_rust(proxy_route, proxy_target, monkeypatch, 
                 else proxy_route.single_cutoff(identity)
             )
         with fault as state:
-            started = time.monotonic()
+            started = time.perf_counter()
             try:
                 returned = await write()
             except (
@@ -220,7 +220,7 @@ async def test_lost_write_response_rust(proxy_route, proxy_target, monkeypatch, 
                 exceptions.CosmosHttpResponseError,
             ) as caught:
                 error = caught
-            finished = time.monotonic()
+            finished = time.perf_counter()
         after = proxy_route.sdk_observer.snapshot()
         after_counters = _binding_operation_count()
         verification_delta = state["verification_binding_delta"] if inject_fault and operation == "patch" else 0

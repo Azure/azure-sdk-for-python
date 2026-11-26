@@ -21,8 +21,8 @@ Third, that a failure never turns into a second attempt. A replace that is
 retried on the other engine could overwrite a definition twice, or overwrite one
 that a concurrent caller had already changed.
 
-Public-method tests run on both Rust and legacy, because the two build their
-requests through separate code. Optional native checks validate the binding
+Default and pipeline runs select Rust only. Local --include-legacy-tests runs
+also exercise legacy comparisons. Optional native checks validate the binding
 contract without acquiring a driver. No Cosmos account is needed.
 """
 from common.typed_requests import legacy_partition_key_from_request
@@ -31,6 +31,7 @@ from common.typed_requests import wire_headers, settings_options, legacy_setting
 # Licensed under the MIT License.
 
 import asyncio
+from common.async_test_helpers import run_async
 import copy
 import inspect
 import json
@@ -44,13 +45,10 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import exceptions
 from azure.cosmos._backend.contracts import BackendResponse
-from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import OP_REPLACE_CONTAINER, OP_TO_BINDING_FUNCTION_NAME
-from azure.cosmos._base import _validate_resource
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._request_container import build_replace_container_prepared
 from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from .test_delete_container_backend_unit import delete_case
 
 
@@ -100,22 +98,30 @@ def replace_case(delete_case, request):
         headers=case.headers.copy(), diagnostics="replacement trace",
     )
     if case.legacy:
+        from azure.cosmos._backend.legacy import LEGACY_BACKEND
+        from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
+        from azure.cosmos._base import _validate_resource
+
         case.connection._backend = ASYNC_LEGACY_BACKEND if case.is_async else LEGACY_BACKEND
 
-    def legacy_replace(link, collection, options, **kwargs):
-        _validate_resource(collection)
-        assert "response_hook" not in kwargs
-        case.connection.last_response_headers = case.headers
-        return CosmosDict(copy.deepcopy(case.properties), response_headers=case.headers)
+        def legacy_replace(link, collection, options, **kwargs):
+            _validate_resource(collection)
+            assert "response_hook" not in kwargs
+            case.connection.last_response_headers = case.headers
+            return CosmosDict(copy.deepcopy(case.properties), response_headers=case.headers)
 
-    case.connection.ReplaceContainer = (AsyncMock if case.is_async else MagicMock)(side_effect=legacy_replace)
+        replacement = legacy_replace
+    else:
+        replacement = AssertionError("Rust replacement entered legacy ReplaceContainer")
+
+    case.connection.ReplaceContainer = (AsyncMock if case.is_async else MagicMock)(side_effect=replacement)
     return case
 
 
 def _replace(case, *args, **kwargs):
     """Call ``database.replace_container`` and wait for it if the client is async."""
     result = case.database.replace_container(*args, **kwargs)
-    return asyncio.run(result) if inspect.isawaitable(result) else result
+    return run_async(result) if inspect.isawaitable(result) else result
 
 
 def _assert_no_dispatch(case):
@@ -282,12 +288,11 @@ def test_unsupported_rust_options_never_fall_back_rust(replace_case, kwargs):
 
     Nine unusable deadlines are covered -- too small, false, zero, negative, not
     a number, infinite, a string, and two past the range the engine can hold --
-    along with a connect timeout, both raw hooks, an unknown keyword, two
+    along with a connect timeout, an unknown keyword, two
     driver-owned headers, and a raw request-options dictionary.
 
-    Each raises ``NotImplementedError`` pointing at the legacy Python client,
-    except the bad deadlines, which raise ``ValueError`` because they are wrong
-    values rather than something Rust cannot do.
+    Unsupported inputs raise ``TypeError`` without legacy fallback.
+    Bad deadlines raise ``ValueError`` because their values are invalid.
     Nothing is sent, so a customer's
     container is never rewritten by an engine they did not choose.
 
@@ -299,7 +304,7 @@ def test_unsupported_rust_options_never_fall_back_rust(replace_case, kwargs):
         pytest.skip("Rust-specific eligibility")
     error, message = (
         (ValueError, "timeout must be") if "timeout" in kwargs
-        else (NotImplementedError, "replace_container.*legacy Python")
+        else (TypeError, "replace_container.*legacy Python")
     )
     with pytest.raises(error, match=message):
         _replace(case, "c1", PK, **kwargs)

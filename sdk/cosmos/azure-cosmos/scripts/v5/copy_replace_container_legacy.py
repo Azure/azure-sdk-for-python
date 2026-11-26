@@ -1,81 +1,103 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Copy the active v4 policy-replacement methods, preserving their bodies."""
+"""Append missing replacement tests from main without overwriting existing copies."""
 
 import argparse
 import ast
 from pathlib import Path
-
-from legacy_copy_generator import render_init_py
+import subprocess
 
 
 ROOT = Path(__file__).resolve().parents[2]
-FAMILIES = ("computed_properties", "full_text_policy", "vector_policy")
-HELPERS = ("computedPropertiesTestCases", "_assert_query_count_eventually")
+SOURCE_PREFIX = "sdk/cosmos/azure-cosmos/tests/"
+DATA_FIELDS = {"supported_languages", "language_abstracts", "search_terms"}
+
+
+def main_sources():
+    """Read the fetched main branch, never the checkout's legacy implementation."""
+    result = subprocess.run(
+        ["git", "grep", "--full-name", "-l", "-F", "replace_container(", "origin/main", "--",
+         ":(top)" + SOURCE_PREFIX + "*.py"],
+        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", check=False,
+    )
+    if result.returncode not in (0, 1):
+        raise RuntimeError("Fetch origin/main before checking replacement test migration: " + result.stderr)
+    if not result.stdout:
+        raise AssertionError("No replacement sources found on origin/main")
+    return {
+        ref.split(":" + SOURCE_PREFIX, 1)[1]: subprocess.check_output(
+            ["git", "show", ref], cwd=ROOT, text=True, encoding="utf-8-sig",
+        )
+        for ref in result.stdout.splitlines()
+    }
+
+
+def replacement_cases(source):
+    """Include skipped methods: their original markers must survive migration."""
+    for cls in ast.parse(source).body:
+        if not isinstance(cls, ast.ClassDef):
+            continue
+        for method in cls.body:
+            if (
+                isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and method.name.startswith("test_")
+                and any(
+                    isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute)
+                    and call.func.attr == "replace_container" for call in ast.walk(method)
+                )
+            ):
+                yield cls, method
+
+
+def destination(filename):
+    surface = "aio" if filename.endswith("_async.py") else "sync"
+    return ROOT / "tests" / "replace_container" / surface / filename.replace("_async.py", ".py")
 
 
 def generated_files():
-    for surface in ("sync", "aio"):
-        suffix = "_async" if surface == "aio" else ""
-        base = "AsyncReplacementCase" if surface == "aio" else "SyncReplacementCase"
-        for family in FAMILIES:
-            source_path = ROOT / "tests" / f"test_{family}{suffix}.py"
-            source = source_path.read_text(encoding="utf-8")
-            lines = source.splitlines()
-            tree = ast.parse(source)
-            cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
-            methods = [
-                node for node in cls.body
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-                and node.name.startswith("test_")
-                and not node.decorator_list
-                and any(
-                    isinstance(call, ast.Call)
-                    and isinstance(call.func, ast.Attribute)
-                    and call.func.attr == "replace_container"
-                    for call in ast.walk(node)
-                )
-            ]
-            imports = ["import uuid", "import pytest", "from azure.cosmos import PartitionKey, exceptions"]
-            if family == "computed_properties":
-                imports.append("import asyncio" if surface == "aio" else "import time")
-            imports.extend([
-                f"from azure.cosmos{'.aio' if surface == 'aio' else ''} import CosmosClient",
-                f"from replace_container._container_setup import {base}",
-            ])
-            chunks = [
-                render_init_py().rstrip(),
-                '"""Unchanged v4 policy-replacement methods with isolated Rust setup."""',
-                "\n".join(imports),
-                f"class {cls.name}({base}):\n"
-                "    def _create_key_client(self):\n"
-                "        return CosmosClient(self.host, self.key, _backend=\"rust\", read_timeout=30)",
-            ]
-            if family == "computed_properties":
-                setup = next(node for node in cls.body if getattr(node, "name", "") ==
-                             ("asyncSetUp" if surface == "aio" else "setUpClass"))
-                assignments = [
-                    node for node in setup.body if isinstance(node, ast.Assign)
-                    and isinstance(node.targets[0], ast.Attribute)
-                    and node.targets[0].attr in ("items", "computed_properties")
-                ]
-                assert len(assignments) == 2
-                data = ["    def _initialize_data(self):"]
-                for node in assignments:
-                    data.extend(line.replace("cls.items", "self.items").replace(
-                        "cls.computed_properties", "self.computed_properties")
-                        for line in lines[node.lineno - 1:node.end_lineno])
-                chunks.append("\n".join(data))
-                for node in cls.body:
-                    if getattr(node, "name", "") in HELPERS:
-                        chunks.append("\n".join(lines[node.lineno - 1:node.end_lineno]))
-            for method in methods:
-                copied = lines[method.lineno - 1:method.end_lineno]
-                copied[0] = copied[0].replace("def " + method.name + "(", "def " + method.name + "_rust(", 1)
-                copied.insert(1, f"        # Source: tests/{source_path.name}::{cls.name}.{method.name}")
-                chunks.append("\n".join(copied))
-            destination = ROOT / "tests" / "replace_container" / surface / f"test_{family}.py"
-            yield destination, "\n\n".join(chunks) + "\n"
+    for filename, source in main_sources().items():
+        cases = list(replacement_cases(source))
+        if not cases:
+            continue
+        path = destination(filename)
+        if not path.exists():
+            raise AssertionError(f"Add an API-scoped migration for {filename} before generating copies")
+        existing = path.read_text(encoding="utf-8")
+        tree = ast.parse(existing)
+        cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+        names = {node.name for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))}
+        lines = source.splitlines()
+        additions = []
+        if "full_text_policy" in filename:
+            fields = {
+                target.id for node in cls.body if isinstance(node, ast.Assign)
+                for target in node.targets if isinstance(target, ast.Name)
+            }
+            for node in cases[0][0].body:
+                if isinstance(node, ast.Assign) and any(
+                    isinstance(target, ast.Name) and target.id in DATA_FIELDS - fields
+                    for target in node.targets
+                ):
+                    additions.append("\n".join(lines[node.lineno - 1:node.end_lineno]))
+            if "import re\n" not in existing:
+                existing = existing.replace("import uuid\n", "import re\nimport uuid\n", 1)
+        for original_class, method in cases:
+            if method.name + "_rust" in names:
+                continue
+            start = min([method.lineno] + [decorator.lineno for decorator in method.decorator_list])
+            copied = lines[start - 1:method.end_lineno]
+            def_index = method.lineno - start
+            copied[def_index] = copied[def_index].replace(
+                "def " + method.name + "(", "def " + method.name + "_rust(", 1,
+            )
+            copied.insert(def_index + 1, f"        # Source: tests/{filename}::{original_class.name}.{method.name}")
+            additions.append("\n".join(copied))
+        text = existing.rstrip() + ("\n\n" + "\n\n".join(additions) if additions else "") + "\n"
+        text = text.replace(
+            "    @pytest.mark.skip\n",
+            '    @pytest.mark.skip(reason="environment-gap: the original main test is skipped; retain its disabled status.")\n',
+        )
+        yield path, text
 
 
 def main():
@@ -86,13 +108,9 @@ def main():
         ast.parse(text)
         if args.check:
             if path.read_text(encoding="utf-8") != text:
-                raise AssertionError(f"Generated copy differs: {path}")
+                raise AssertionError(f"Missing main test copies or fixture data: {path}")
         else:
-            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text, encoding="utf-8")
-            init = path.parent / "__init__.py"
-            if not init.exists():
-                init.write_text(render_init_py(), encoding="utf-8")
         print(path.relative_to(ROOT))
 
 

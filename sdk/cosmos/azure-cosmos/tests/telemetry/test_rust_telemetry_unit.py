@@ -1789,7 +1789,8 @@ def test_failed_logging_and_stderr_leave_a_reporting_failure_count_rust(monkeypa
     assert telemetry._REPORTING_FAILURES == before + 1
 
 
-def contribution_response(total, start, count=2):
+def contribution_response(total, start=None, count=2):
+    """Sample real timestamps unless a test supplies an explicit synthetic timeline."""
     payload = v2({
         "schema_version": 2,
         "complete": True,
@@ -1799,8 +1800,8 @@ def contribution_response(total, start, count=2):
         "error": None,
         "attempts": [
             {
-                "start_ns": start + index,
-                "end_ns": start + index + 1,
+                "start_ns": time.time_ns() if start is None else start + index,
+                "end_ns": time.time_ns() if start is None else start + index + 1,
                 "driver_status_code": 200,
                 "execution_context": "initial",
             }
@@ -1879,7 +1880,7 @@ def test_incomplete_contributions_do_not_publish_partial_counts_as_totals_rust(r
             ),
             collector=telemetry._DiagnosticCollector(contribution_limit=None if defect == "unbounded" else 2),
         )
-        state.begin_contribution().response(contribution_response(5, time.time_ns()))
+        state.begin_contribution().response(contribution_response(5))
         second = state.begin_contribution()
         if defect == "missing":
             second.response(((200, 0, {}, b"{}", None), None))
@@ -2076,7 +2077,7 @@ def test_public_identity_can_differ_from_binding_operation_rust(sync_create, rec
 
 def test_collector_snapshots_input_rust():
     collector = telemetry._DiagnosticCollector()
-    payload = contribution_response(5, time.time_ns(), count=4)
+    payload = contribution_response(5, count=4)
     contribution = collector.reserve()
     contribution.response(payload)
     payload[1]["attempts"].clear()
@@ -2093,7 +2094,7 @@ def test_contribution_cannot_be_completed_by_an_unrelated_collector_rust(caplog)
     other.accept(contribution, telemetry._Diagnostics(1, (), complete=True))
     assert not contribution.consumed
     assert other.diagnostics is None
-    contribution.response(contribution_response(5, time.time_ns()))
+    contribution.response(contribution_response(5))
     assert owner.close()[1].request_count == 5
     assert "different owner" in caplog.text
 
@@ -2306,7 +2307,7 @@ def test_feed_range_discovery_failure_preserves_attempts_and_public_error(range_
         harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
-    _, harness.payload = contribution_response(5, time.time_ns())
+    _, harness.payload = contribution_response(5)
     harness.payload["complete"] = False
     harness.payload["incomplete_reasons"] = ["metadata_diagnostics_unavailable"]
     expected = None
@@ -2426,10 +2427,9 @@ def test_feed_range_discovery_uses_recording_settings_at_consumption(range_disco
     assert telemetry._OPERATION.get() is None
 
 
+@pytest.mark.parametrize("item_runtime", ["sync"], indirect=True)
 def test_feed_range_discovery_can_move_to_another_thread(range_discovery, recording):
     harness = range_discovery
-    if harness.asynchronous:
-        pytest.skip("Synchronous cross-thread consumption")
     with trace.get_tracer("customer").start_as_current_span("producer"):
         pager = harness.container.read_feed_ranges()
 
@@ -2446,10 +2446,9 @@ def test_feed_range_discovery_can_move_to_another_thread(range_discovery, record
     assert harness.states[0].closed and telemetry._OPERATION.get() is None
 
 
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
 def test_feed_range_discovery_async_cancellation_allows_explicit_retry(range_discovery, recording):
     harness = range_discovery
-    if not harness.asynchronous:
-        pytest.skip("Async cancellation")
     seen = []
     harness.container._client_context = replace(
         harness.container._client_context,
@@ -2819,10 +2818,9 @@ def test_range_subset_disabled_needs_no_optional_imports(range_subset, monkeypat
     assert harness.calls == [(False, None)] and harness.states == [None]
 
 
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
 def test_range_subset_async_cancellation(range_subset):
     harness = range_subset
-    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
-        pytest.skip("Async cancellation")
     seen = []
     harness.container._client_context = replace(
         harness.container._client_context,
@@ -2883,7 +2881,7 @@ def partition_key_range_harness(item_runtime, monkeypatch):
 
     def complete(prepared, include_attempts):
         metadata = prepared.op == "read_container"
-        _, payload = contribution_response(5, time.time_ns())
+        _, payload = contribution_response(5)
         if not metadata:
             payload = deepcopy(harness.range_payload)
         if prepared.op == harness.failure_stage and harness.error is not None:
@@ -2990,7 +2988,7 @@ def test_partition_key_range_failure_keeps_prior_diagnostics(partition_key_range
     from azure.cosmos.partition_key import NonePartitionKeyValue
 
     harness = partition_key_range
-    _, payload = contribution_response(5, time.time_ns())
+    _, payload = contribution_response(5)
     payload["complete"] = False
     payload["incomplete_reasons"] = ["metadata_diagnostics_unavailable"]
     harness.range_payload = payload
@@ -3142,14 +3140,13 @@ def test_partition_key_range_preserves_read_override_and_signature(partition_key
     assert telemetry._OPERATION.get() is None
 
 
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
 def test_partition_key_range_cancellation_preserves_completed_metadata(
     partition_key_range,
 ):
     from azure.cosmos.partition_key import NonePartitionKeyValue
 
     harness = partition_key_range
-    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
-        pytest.skip("Async cancellation")
     seen = []
     harness.container._client_context = replace(
         harness.container._client_context,
@@ -3416,10 +3413,9 @@ def test_latest_session_token_disabled_needs_no_tracing_dependency(local_token, 
     assert telemetry._OPERATION.get() is None
 
 
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
 def test_async_latest_session_token_cancellation_preserves_identity(local_token, monkeypatch):
     harness = local_token
-    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
-        pytest.skip("Async cancellation")
     seen = []
     harness.container._client_context = replace(
         harness.container._client_context,
@@ -3544,7 +3540,7 @@ def database_throughput_harness(database_read, monkeypatch):  # pylint: disable=
         if prepared.op in harness.errors:
             raise harness.errors[prepared.op]
         status = harness.statuses[prepared.op]
-        _, payload = contribution_response(5, time.time_ns())
+        _, payload = contribution_response(5)
         payload["attempts"][-1]["driver_status_code"] = status
         body = harness.properties if prepared.op == "read_database" else {"Offers": harness.offers}
         if prepared.op == "replace_throughput":
@@ -3871,14 +3867,13 @@ def test_database_throughput_replace_reporting_never_replays_rust(
     harness.connection.ReplaceOffer.assert_not_called()
 
 
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
 @pytest.mark.parametrize("stage", ["read_database", "get_throughput", "replace_throughput"])
 @pytest.mark.parametrize("cancel", [False, True])
 def test_async_database_throughput_replace_drains_interrupted_step_rust(
     database_throughput_replace, recording, stage, cancel
 ):
     harness = database_throughput_replace
-    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
-        pytest.skip("Async interruption")
     seen = []
     harness.database._client_context = replace(
         harness.database._client_context,
@@ -4061,7 +4056,7 @@ def test_database_throughput_replace_sequence_is_bounded_and_owned_rust(database
                 assert telemetry.get_operation(object(), expected) is None
                 assert telemetry.get_operation(harness.backend, "delete_database") is None
                 assert telemetry.get_operation(harness.backend, expected) is state
-                state.begin_contribution().response(contribution_response(5, time.time_ns()))
+                state.begin_contribution().response(contribution_response(5))
             assert state.collector.contributions == state.collector.contribution_limit == len(path)
             assert telemetry.get_operation(harness.backend, "replace_throughput") is None
             state.finish()
@@ -4135,7 +4130,7 @@ def container_throughput_harness(item_runtime, monkeypatch, request):  # pylint:
         _, status, substatus, body = harness.plan[index]
         if harness.plan[index][0] == "replace_throughput" and status == 200:
             body = json.loads(harness.prepared_requests[index].body_bytes)
-        _, payload = contribution_response(5, time.time_ns())
+        _, payload = contribution_response(5)
         payload["attempts"][-1]["driver_status_code"] = status
         response = (
             status,
@@ -4381,7 +4376,14 @@ def test_container_throughput_owns_lookup_and_recovery_rust(  # pylint: disable=
     assert telemetry._OPERATION.get() is None and telemetry._DELEGATED_CALL.get() is None
 
 
-@pytest.mark.parametrize("stage", [0, 1, 2, 3, 4])
+CONTAINER_THROUGHPUT_STAGES = [
+    (operation, stage)
+    for operation, stage_count in (("get_throughput", 4), ("replace_throughput", 5))
+    for stage in range(stage_count)
+]
+
+
+@pytest.mark.parametrize("container_throughput,stage", CONTAINER_THROUGHPUT_STAGES, indirect=["container_throughput"])
 @pytest.mark.parametrize("returned", [False, True])
 @pytest.mark.parametrize("failure", ["timeout", "transport"])
 def test_container_throughput_failure_preserves_prior_attempts_rust(
@@ -4389,8 +4391,6 @@ def test_container_throughput_failure_preserves_prior_attempts_rust(
 ):
     harness = container_throughput
     configure_container_throughput(harness, flow="recreated")
-    if stage >= len(harness.plan):
-        pytest.skip("No replacement step in a read")
     error = TimeoutError("binding deadline") if failure == "timeout" else DriverTransportError("driver error")
     (harness.returned_errors if returned else harness.errors)[stage] = error
     expected = ServiceResponseError if failure == "transport" else CosmosClientTimeoutError
@@ -4462,15 +4462,12 @@ def test_container_throughput_reporting_does_not_replay_rust(container_throughpu
         assert seen[0].diagnostics is None and not attempt_spans(recording)
 
 
-@pytest.mark.parametrize("stage", [0, 1, 2, 3, 4])
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
+@pytest.mark.parametrize("container_throughput,stage", CONTAINER_THROUGHPUT_STAGES, indirect=["container_throughput"])
 @pytest.mark.parametrize("cancel", [False, True])
 def test_async_container_throughput_drains_interruption_rust(container_throughput, recording, stage, cancel):
     harness = container_throughput
-    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
-        pytest.skip("Async interruption")
     configure_container_throughput(harness, flow="recreated")
-    if stage >= len(harness.plan):
-        pytest.skip("No replacement step in a read")
     seen = []
     harness.container._client_context = replace(
         harness.container._client_context,
@@ -4525,15 +4522,20 @@ def test_container_throughput_preflight_precedes_lookup_rust(container_throughpu
     assert not container_throughput.calls
 
 
-@pytest.mark.parametrize("expire_stage", [None, 0, 1, 2, 3, 4, "after-result"])
+@pytest.mark.parametrize(
+    "container_throughput,expire_stage",
+    CONTAINER_THROUGHPUT_STAGES
+    + [
+        (operation, stage) for operation in ("get_throughput", "replace_throughput") for stage in (None, "after-result")
+    ],
+    indirect=["container_throughput"],
+)
 def test_container_throughput_preserves_shared_budget_rust(container_throughput, recording, monkeypatch, expire_stage):
     from azure.cosmos._backend import _binding_adapter_shared
     from azure.cosmos._helpers import _container_throughput
 
     harness = container_throughput
     configure_container_throughput(harness, flow="recreated")
-    if isinstance(expire_stage, int) and expire_stage >= len(harness.plan):
-        pytest.skip("No replacement step in a read")
     harness.container._client_context = replace(
         harness.container._client_context,
         defaults=replace(harness.container._client_context.defaults, operation_timeout_seconds=7),
@@ -4683,7 +4685,7 @@ def test_container_throughput_sequence_rejects_unrelated_execution_rust(containe
                 assert telemetry.get_operation(harness.backend, "delete_container") is None
                 assert state.binding_operation == previous
                 assert telemetry.get_operation(harness.backend, expected) is state
-                state.begin_contribution().response(contribution_response(5, time.time_ns()))
+                state.begin_contribution().response(contribution_response(5))
             assert state.collector.contributions == state.collector.contribution_limit == len(path)
             for operation in ("read_container", "get_throughput", "replace_throughput"):
                 assert telemetry.get_operation(harness.backend, operation) is None
@@ -4692,6 +4694,7 @@ def test_container_throughput_sequence_rejects_unrelated_execution_rust(containe
     asyncio.run(run())
 
 
+@pytest.mark.parametrize("container_throughput", ["replace_throughput"], indirect=True)
 @pytest.mark.parametrize("cached", [False, True])
 @pytest.mark.parametrize("recovered", [False, True])
 @pytest.mark.parametrize("failure", ["forbidden", "rid-mismatch", "body", "deserialize"])
@@ -4702,8 +4705,6 @@ def test_container_throughput_write_failure_never_replays_rust(
     from azure.cosmos.http_constants import SubStatusCodes
 
     harness = container_throughput
-    if harness.operation != "replace_throughput":
-        pytest.skip("Replacement boundary")
     configure_container_throughput(harness, cached, "recreated" if recovered else "success")
     original = ValueError("returned settings")
     if failure in ("forbidden", "rid-mismatch"):
@@ -4752,13 +4753,12 @@ def test_container_throughput_write_failure_never_replays_rust(
     )
 
 
+@pytest.mark.parametrize("container_throughput", ["replace_throughput"], indirect=True)
 @pytest.mark.parametrize("invalid", ["bad", None, "mixed-settings"])
 def test_container_throughput_replacement_validation_precedes_requests_rust(container_throughput, invalid):
     from azure.cosmos import ThroughputProperties
 
     harness = container_throughput
-    if harness.operation != "replace_throughput":
-        pytest.skip("Replacement inputs")
     harness.replacement = (
         ThroughputProperties(offer_throughput=800, auto_scale_max_throughput=6000)
         if invalid == "mixed-settings"
@@ -4788,7 +4788,7 @@ def test_binding_alternatives_shared_prefix_is_bounded_and_not_speculative_rust(
             assert telemetry.get_operation(harness.backend, operation) is state
             assert state.collector.contributions == index
             contribution = state.begin_contribution()
-            response = contribution_response(5, time.time_ns())
+            response = contribution_response(5)
             contribution.response(response)
             contribution.response(response)
             assert state.collector.contributions == index + 1
@@ -5042,12 +5042,11 @@ def test_database_throughput_retains_property_override_rust(database_throughput,
     assert len([s for s in recording.exporter.get_finished_spans() if s.name.startswith("DatabaseProxy.")]) == 1
 
 
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
 @pytest.mark.parametrize("stage", ["read_database", "get_throughput"])
 @pytest.mark.parametrize("cancel", [False, True])
 def test_async_database_throughput_drains_interrupted_step_rust(database_throughput, recording, stage, cancel):
     harness = database_throughput
-    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
-        pytest.skip("Async interruption")
     seen = []
     harness.database._client_context = replace(
         harness.database._client_context,
@@ -5116,7 +5115,7 @@ def test_database_throughput_alternatives_are_bounded_and_owned_rust(database_th
                 assert telemetry.get_operation(object(), expected) is None
                 assert telemetry.get_operation(harness.backend, "replace_throughput") is None
                 assert telemetry.get_operation(harness.backend, expected) is state
-                state.begin_contribution().response(contribution_response(5, time.time_ns()))
+                state.begin_contribution().response(contribution_response(5))
             assert state.collector.contributions == len(path)
             assert state.collector.contribution_limit == len(path)
             for operation in ("read_database", "get_throughput"):
@@ -5192,10 +5191,28 @@ def test_database_throughput_repeated_calls_select_actual_cache_path_rust(databa
     assert operations[0].context.span_id != operations[1].context.span_id
 
 
+@pytest.mark.parametrize("cached", [False, True])
+def test_database_throughput_attempts_fit_unchanged_clock_rust(
+    database_throughput, recording, monkeypatch, cached
+):
+    harness = database_throughput
+    if cached:
+        harness.database._properties = deepcopy(harness.properties)
+    stamp = time.time_ns()
+    monkeypatch.setattr(time, "time_ns", lambda: stamp)
+    monkeypatch.setattr("opentelemetry.sdk.trace.time_ns", lambda: stamp)
+    with trace.get_tracer("customer").start_as_current_span("read_budget") as parent:
+        assert harness.get_throughput().offer_throughput == 400
+    operation = assert_composed_attempts(
+        harness, recording, parent, owner="DatabaseProxy", operation_name="get_throughput"
+    )
+    assert operation.start_time == operation.end_time == stamp
+
+
 @pytest.mark.parametrize("value", [None, 0, 1, "false"])
 def test_invalid_completeness_rejects_payload_rust(value, caplog):
     collector = telemetry._DiagnosticCollector()
-    response, payload = contribution_response(5, time.time_ns())
+    response, payload = contribution_response(5)
     payload["complete"] = value
     collector.reserve().response((response, payload))
     assert collector.close()[1] is None
@@ -5206,7 +5223,7 @@ def test_invalid_completeness_rejects_payload_rust(value, caplog):
 def test_completeness_stays_partial_after_aggregation_rust(partial_first):
     collector = telemetry._DiagnosticCollector(contribution_limit=2)
     for partial in (partial_first, not partial_first):
-        response, payload = contribution_response(5, time.time_ns())
+        response, payload = contribution_response(5)
         payload["complete"] = not partial
         payload["incomplete_reasons"] = ["metadata_diagnostics_unavailable"] if partial else []
         collector.reserve().response((response, payload))
@@ -5218,7 +5235,7 @@ def test_completeness_stays_partial_after_aggregation_rust(partial_first):
 def test_rejected_duplicate_cannot_invalidate_an_accepted_contribution_rust(caplog):
     collector = telemetry._DiagnosticCollector()
     contribution = collector.reserve()
-    response = contribution_response(2, time.time_ns())
+    response = contribution_response(2)
     contribution.response(response)
     contribution.response((response[0], {"schema_version": 99}))
     _, diagnostics = collector.close()
@@ -5230,7 +5247,7 @@ def test_rejected_duplicate_cannot_invalidate_an_accepted_contribution_rust(capl
 @pytest.mark.parametrize("missing", ["complete", "incomplete_reasons"])
 def test_diagnostic_coverage_must_be_explicit_rust(missing, caplog):
     collector = telemetry._DiagnosticCollector()
-    response, payload = contribution_response(2, time.time_ns())
+    response, payload = contribution_response(2)
     payload.pop(missing)
     collector.reserve().response((response, payload))
     assert collector.close()[1] is None
@@ -5250,7 +5267,7 @@ def test_diagnostic_coverage_must_be_explicit_rust(missing, caplog):
 )
 def test_diagnostic_coverage_rejects_inconsistent_reasons_rust(complete, reasons, caplog):
     collector = telemetry._DiagnosticCollector()
-    response, payload = contribution_response(2, time.time_ns())
+    response, payload = contribution_response(2)
     payload.update(complete=complete, incomplete_reasons=reasons)
     collector.reserve().response((response, payload))
     assert collector.close()[1] is None
@@ -5282,7 +5299,7 @@ def test_unmatched_owned_work_invalidates_coverage_without_consuming_steps_rust(
         if unexpected_first:
             assert telemetry.get_operation(backend, "unexpected") is None
         assert telemetry.get_operation(backend, "read_item") is state
-        state.begin_contribution().response(contribution_response(2, time.time_ns()))
+        state.begin_contribution().response(contribution_response(2))
         if not unexpected_first:
             assert telemetry.get_operation(backend, "unexpected") is None
         assert state.collector.contributions == 1
@@ -5302,7 +5319,7 @@ def test_unmatched_owned_work_invalidates_coverage_without_consuming_steps_rust(
     ],
 )
 def test_expected_partial_coverage_emits_state_not_warning_rust(recording, caplog, reason):
-    response, payload = contribution_response(5, time.time_ns())
+    response, payload = contribution_response(5)
     payload.update(complete=False, incomplete_reasons=[reason])
     collector = telemetry._DiagnosticCollector()
     collector.reserve().response((response, payload))
@@ -5318,7 +5335,7 @@ def test_expected_partial_coverage_emits_state_not_warning_rust(recording, caplo
 
 
 def test_operation_span_uses_rust_sdk_attribute_names_rust(recording):
-    response, payload = contribution_response(2, time.time_ns())
+    response, payload = contribution_response(2)
     first, second = payload["attempts"]
     first.update(driver_status_code=503, sub_status_code=21008, failed=True, request_charge=0.5)
     second.update(execution_context="hedging", region="East US", request_charge=2.0, operation_name="ReadItem")
@@ -5479,7 +5496,7 @@ def test_completion_handler_start_failure_does_not_mask_operation_rust(caplog):
         ),
     )
     state.start()
-    state.begin_contribution().response(contribution_response(2, time.time_ns()))
+    state.begin_contribution().response(contribution_response(2))
     state.finish()
     failed.assert_not_called()
     assert seen[0].outcome == "success" and seen[0].diagnostics.complete
@@ -7105,14 +7122,13 @@ def test_database_get_or_create_telemetry_preserves_one_budget_rust(
     assert telemetry._OPERATION.get() is None
 
 
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
 @pytest.mark.parametrize("stage", [0, 1, 2])
 @pytest.mark.parametrize("cancel,deadline", [(True, False), (True, True), (False, True)])
 def test_async_database_get_or_create_drains_interrupted_step_rust(
     database_get_or_create, recording, monkeypatch, stage, cancel, deadline
 ):
     harness = database_get_or_create
-    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
-        pytest.skip("Async task cancellation")
     seen, drained = [], []
     harness.client._client_context = replace(
         harness.client._client_context,
@@ -7191,7 +7207,7 @@ def test_composed_binding_sequence_is_bounded_and_owned_rust(database_get_or_cre
                     is None
                 )
             assert telemetry.get_operation(harness.backend, expected) is state
-            state.begin_contribution().response(contribution_response(5, time.time_ns()))
+            state.begin_contribution().response(contribution_response(5))
         assert telemetry.get_operation(harness.backend, "read_database") is None
         assert telemetry.get_operation(harness.backend, "create_database") is None
         state.finish()
@@ -7221,7 +7237,7 @@ def test_composed_sequence_rejects_inherited_tasks_and_masks_nested_calls_rust(
             with telemetry._operation_scope(harness.client, "read", {}, "read_database"):
                 nested = telemetry._OPERATION.get()
                 assert nested is not state
-                nested.begin_contribution().response(contribution_response(1, time.time_ns()))
+                nested.begin_contribution().response(contribution_response(1))
                 nested.finish()
             assert telemetry.get_operation(harness.backend, "read_database") is state
             assert state.collector.contributions == 0
@@ -7233,7 +7249,7 @@ def test_composed_sequence_rejects_inherited_tasks_and_masks_nested_calls_rust(
 
 def test_composed_collector_rejects_excess_and_duplicate_results_rust(caplog):
     collector = telemetry._DiagnosticCollector(contribution_limit=3)
-    payload = contribution_response(5, time.time_ns())
+    payload = contribution_response(5)
     for _ in range(3):
         contribution = collector.reserve()
         contribution.response(payload)
@@ -7553,13 +7569,12 @@ def test_container_get_or_create_keeps_public_create_override_rust(container_get
     assert telemetry._DELEGATED_CALL.get() is None
 
 
+@pytest.mark.parametrize("item_runtime", ["async"], indirect=True)
 @pytest.mark.parametrize("stage", [0, 1])
 def test_async_container_get_or_create_cancellation_closes_outer_operation_rust(
     container_get_or_create, recording, monkeypatch, stage
 ):
     harness = container_get_or_create
-    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
-        pytest.skip("Async cancellation")
     seen, drained = [], []
     harness.database._client_context = replace(
         harness.database._client_context,
@@ -8341,7 +8356,7 @@ def test_patch_without_deadline_records_the_same_operation_rust(patch, recording
     assert_item_attempts(patch, recording, parent, 200, "patch_item")
 
 
-@pytest.mark.parametrize("eager", [False, True])
+@pytest.mark.parametrize("eager", [False, True] if hasattr(asyncio, "eager_task_factory") else [False])
 def test_patch_deadline_authorizes_only_its_worker_rust(create, monkeypatch, eager):
     states = []
 
@@ -8371,10 +8386,7 @@ def test_patch_deadline_authorizes_only_its_worker_rust(create, monkeypatch, eag
         loop = asyncio.get_running_loop()
         previous = loop.get_task_factory()
         if eager:
-            factory = getattr(asyncio, "eager_task_factory", None)
-            if factory is None:
-                pytest.skip("Eager task factories require Python 3.12.")
-            loop.set_task_factory(factory)
+            loop.set_task_factory(asyncio.eager_task_factory)
         try:
             assert (
                 await create.container.patch_item(

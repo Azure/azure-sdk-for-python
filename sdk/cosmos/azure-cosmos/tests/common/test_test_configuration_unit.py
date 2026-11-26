@@ -22,6 +22,35 @@ from config.settings import TestSettings, unique_database_id
 ROOT = Path(__file__).resolve().parents[2]
 
 
+@pytest.mark.parametrize("include_legacy", [False, True], ids=["pipeline", "local-parity"])
+def test_replacement_legacy_variants_require_local_opt_in_rust(include_legacy):
+    code = f"""
+import pytest
+
+class CheckSelection:
+    def pytest_collection_finish(self, session):
+        selected = {{
+            (item.callspec.params["delete_case"], item.callspec.params["replace_case"])
+            for item in session.items
+        }}
+        expected = {{("sync", False), ("async", False)}}
+        if {include_legacy!r}:
+            expected |= {{("sync", True), ("async", True)}}
+        assert selected == expected
+
+raise SystemExit(pytest.main([
+    "tests/common/test_replace_container_backend_unit.py",
+    "-k", "target_ownership_returns_and_rust_dispatch",
+    "-q", "-p", "no:cacheprovider",
+    *{["--include-legacy-tests"] if include_legacy else []!r},
+], plugins=[CheckSelection()]))
+"""
+    result = subprocess.run(
+        sdk_python_command(code), cwd=ROOT, capture_output=True, text=True, timeout=60, check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("signed_in", [False, True])
 def test_retained_aad_lazy_init_setup_checks_sign_in_rust(monkeypatch, async_mode, signed_in):

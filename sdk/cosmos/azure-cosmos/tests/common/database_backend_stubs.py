@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 """Database backend stand-ins shared by read, create, and delete unit tests."""
 
-import asyncio
 import inspect
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
+from common.async_test_helpers import run_async
 
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
@@ -98,4 +98,4 @@ def _call_database_read(case, *args, **kwargs):
     Lets one test body cover both the sync and the async proxy.
     """
     result = case.proxy.read(*args, **kwargs)
-    return asyncio.run(result) if inspect.isawaitable(result) else result
+    return run_async(result) if inspect.isawaitable(result) else result

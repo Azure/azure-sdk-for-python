@@ -3014,8 +3014,8 @@
             "line": 21,
             "end_line": 21,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         ],
         "classes": [],
@@ -3050,8 +3050,8 @@
             "line": 21,
             "end_line": 21,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         },
         "local_fixtures": [],
@@ -3077,8 +3077,8 @@
             "line": 24,
             "end_line": 24,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         ],
         "classes": [],
@@ -3113,8 +3113,8 @@
             "line": 24,
             "end_line": 24,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           },
           "REGIONAL_ROUTING_CASES": {
             "path": "tests\\fault_injection\\sync\\test_regional_routing_fault.py",
@@ -12708,9 +12708,9 @@
         "symbol": "exclude_parameters",
         "kind": "function",
         "line": 228,
-        "end_line": 231,
+        "end_line": 234,
         "column": 0,
-        "ast_sha256": "8d96ee288cbed7f0bad097545ebe7f2abe8cce675d5a145f61c2db9331293df8",
+        "ast_sha256": "abbfdd1b095833f6c0b8d08710e35a92af77cc1d743394242bb55a486db3cdd8",
         "snippet": "exclude_parameters"
       },
       {
@@ -12869,7 +12869,7 @@
     "configuration_files": [
       {
         "path": "pytest.ini",
-        "sha256": "81c7d746a7073e77c188214a2f1781b2edd09dd808c8ffc35d2fa56356bc3c6e"
+        "sha256": "af97a2506a49b8944aea20df32608c0c1281b285bdbdde40cde80b9122952157"
       }
     ],
     "reviews": [
@@ -16093,8 +16093,8 @@
                 "line": 24,
                 "end_line": 24,
                 "column": 0,
-                "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-                "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+                "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+                "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
               }
             ]
           }
@@ -16176,8 +16176,8 @@
                 "line": 21,
                 "end_line": 21,
                 "column": 0,
-                "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-                "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+                "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+                "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
               }
             ]
           }
@@ -29754,8 +29754,8 @@
                 "line": 21,
                 "end_line": 21,
                 "column": 0,
-                "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-                "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+                "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+                "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
               }
             ]
           }
@@ -29768,8 +29768,8 @@
             "line": 21,
             "end_line": 21,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           },
           {
             "path": "tests\\fault_injection\\sync\\test_delayed_create_fault.py",
@@ -29870,8 +29870,8 @@
                 "line": 24,
                 "end_line": 24,
                 "column": 0,
-                "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-                "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+                "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+                "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
               }
             ]
           }
@@ -29884,8 +29884,8 @@
             "line": 24,
             "end_line": 24,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           },
           {
             "path": "tests\\fault_injection\\sync\\test_regional_routing_fault.py",
@@ -30109,8 +30109,8 @@
                 "line": 21,
                 "end_line": 21,
                 "column": 0,
-                "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-                "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+                "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+                "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
               }
             ]
           },
@@ -30149,8 +30149,8 @@
             "line": 21,
             "end_line": 21,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           },
           {
             "path": "tests\\fault_injection\\aio\\test_delayed_create_fault_async.py",
@@ -30246,8 +30246,8 @@
                 "line": 22,
                 "end_line": 22,
                 "column": 0,
-                "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-                "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+                "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+                "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
               }
             ]
           },
@@ -30275,8 +30275,8 @@
             "line": 22,
             "end_line": 22,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           },
           {
             "path": "tests\\fault_injection\\aio\\test_regional_routing_fault_async.py",
@@ -43741,8 +43741,8 @@
             "line": 21,
             "end_line": 21,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         ],
         "classes": [],
@@ -43777,8 +43777,8 @@
             "line": 21,
             "end_line": 21,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         },
         "local_fixtures": [],
@@ -43892,8 +43892,8 @@
             "line": 24,
             "end_line": 24,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         ],
         "classes": [],
@@ -43928,8 +43928,8 @@
             "line": 24,
             "end_line": 24,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           },
           "REGIONAL_ROUTING_CASES": {
             "path": "tests\\fault_injection\\sync\\test_regional_routing_fault.py",
@@ -44211,8 +44211,8 @@
             "line": 21,
             "end_line": 21,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         ],
         "classes": [],
@@ -44257,8 +44257,8 @@
             "line": 21,
             "end_line": 21,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         },
         "local_fixtures": [],
@@ -44374,8 +44374,8 @@
             "line": 22,
             "end_line": 22,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           }
         ],
         "classes": [],
@@ -44410,8 +44410,8 @@
             "line": 22,
             "end_line": 22,
             "column": 0,
-            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
-            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+            "ast_sha256": "c441bfb0f1fe75ec7a40c02de00cdea3422715ed9f57d6c09a31e3db6b6950d8",
+            "snippet": "pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]"
           },
           "REGIONAL_ROUTING_CASES": {
             "path": "tests\\fault_injection\\aio\\test_regional_routing_fault_async.py",
@@ -63247,7 +63247,7 @@
           "line": 147,
           "end_line": 191,
           "column": 0,
-          "ast_sha256": "8018b5c3584d41428593d3f34add8fc7c2f5bbc0a5060213fe84bd044825d61d",
+          "ast_sha256": "5dd3fbaa945cf82acd88efbf8e700fe48670fd79a0ee9cd0497f8018798ba95e",
           "snippet": "capture_native"
         },
         {
@@ -63385,7 +63385,7 @@
           "line": 147,
           "end_line": 191,
           "column": 0,
-          "ast_sha256": "8018b5c3584d41428593d3f34add8fc7c2f5bbc0a5060213fe84bd044825d61d",
+          "ast_sha256": "5dd3fbaa945cf82acd88efbf8e700fe48670fd79a0ee9cd0497f8018798ba95e",
           "snippet": "capture_native"
         },
         {
@@ -63523,7 +63523,7 @@
           "line": 147,
           "end_line": 191,
           "column": 0,
-          "ast_sha256": "8018b5c3584d41428593d3f34add8fc7c2f5bbc0a5060213fe84bd044825d61d",
+          "ast_sha256": "5dd3fbaa945cf82acd88efbf8e700fe48670fd79a0ee9cd0497f8018798ba95e",
           "snippet": "capture_native"
         },
         {

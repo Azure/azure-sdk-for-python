@@ -121,7 +121,18 @@ async def run_with_deadline(operation: Callable[[], Awaitable[_T]], deadline: Op
     timeout = remaining_timeout(deadline)
     if timeout is None:
         return await operation()
-    task = asyncio.ensure_future(bind_operation_task(operation)())
+    cancellation: Optional[asyncio.CancelledError] = None
+
+    async def execute() -> _T:
+        nonlocal cancellation
+        try:
+            return await operation()
+        except asyncio.CancelledError as error:
+            # Older asyncio Tasks replace this object when result() is called.
+            cancellation = error
+            raise
+
+    task = asyncio.ensure_future(bind_operation_task(execute)())
     try:
         done, _ = await asyncio.wait({task}, timeout=timeout)
     except BaseException:
@@ -134,6 +145,8 @@ async def run_with_deadline(operation: Callable[[], Awaitable[_T]], deadline: Op
         raise CosmosClientTimeoutError()
     # A TimeoutError from the operation or response hook is not this timer
     # expiring. Raise that original error rather than replacing it.
+    if cancellation is not None:
+        raise cancellation
     return task.result()
 
 

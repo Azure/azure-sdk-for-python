@@ -51,6 +51,25 @@ def database_with_containers():
             client.close()
 
 
+@pytest.mark.parametrize("form", ["parameters", "dictionary"])
+def test_parameters_changed_before_iteration_rust(database_with_containers, form):
+    """The service receives the edited parameter, not its value when the pager was created."""
+    database_id, container_ids = database_with_containers
+    with _rust_client() as client:
+        database = client.get_database_client(database_id)
+        parameters = [{"name": "@id", "value": container_ids[0]}]
+        sql = "SELECT * FROM c WHERE c.id = @id"
+        query = {"query": sql, "parameters": parameters} if form == "dictionary" else sql
+        kwargs = {"parameters": parameters} if form == "parameters" else {}
+
+        def target():
+            containers = database.query_containers(query, **kwargs)
+            parameters[0]["value"] = container_ids[1]
+            return list(containers)
+
+        assert _ids(run_on_rust(client, target)) == [container_ids[1]]
+
+
 def test_one_container_per_page_resumes_from_continuation_token_rust(database_with_containers):
     """A parameterized query pages one container at a time and resumes from a token with no overlap or loss."""
     database_id, container_ids = database_with_containers

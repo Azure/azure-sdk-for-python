@@ -80,7 +80,7 @@ def test_connect_tunnel_requires_real_proxy_and_recovers_rust(tmp_path):
 
 
 def snapshot_after_exchange(observer, identity, count, response_bytes=0):
-    deadline = time.monotonic() + 2
+    deadline = time.perf_counter() + 2
     while True:
         state = observer.snapshot()
         if identity in state:
@@ -90,7 +90,7 @@ def snapshot_after_exchange(observer, identity, count, response_bytes=0):
                 and sum(event["bytes"] for event in events if event["direction"] == "downstream") >= response_bytes
             ):
                 return state
-        assert time.monotonic() < deadline, "Observer did not record the completed exchange"
+        assert time.perf_counter() < deadline, "Observer did not record the completed exchange"
         time.sleep(0.001)
 
 
@@ -119,16 +119,16 @@ def test_proxy_resets_established_socket_rust(tmp_path):
                     assert receive_exact(client, 5) == b"ready"
                     before = snapshot_after_exchange(proxy.observer, "1", 2)
                     with proxy.single_reset("1"):
-                        started = time.monotonic()
+                        started = time.perf_counter()
                         client.sendall(b"read")
                         assert receive_exact(upstream, 4) == b"read"
                         upstream.sendall(b"reply")
                         with pytest.raises(ConnectionResetError):
                             client.recv(5)
-                        finished = time.monotonic()
+                        finished = time.perf_counter()
                     after = proxy.observer.snapshot()
                     # The upstream-leg reset may be recorded just after the client observes its reset.
-                    evidence = assert_reset_connection(before, after, "1", started, time.monotonic())
+                    evidence = assert_reset_connection(before, after, "1", started, time.perf_counter())
                     emit(
                         "proxy_socket_reset_verified",
                         name=proxy.name,
@@ -175,13 +175,13 @@ def test_proxy_cuts_established_socket_rust(tmp_path, persistent):
                     before = snapshot_after_exchange(proxy.sdk_observer, "1", 2, len(payload))
                     fault = proxy.persistent_cutoff() if persistent else proxy.single_cutoff("1")
                     with fault as state:
-                        started = time.monotonic()
+                        started = time.perf_counter()
                         client.sendall(b"read")
                         assert receive_exact(upstream, 4) == b"read"
                         upstream.sendall(payload)
                         assert receive_exact(client, CUTOFF_BYTES) == payload[:CUTOFF_BYTES]
                         assert client.recv(1) == b"", "Expected EOF after the exact cutoff"
-                        eof_at = time.monotonic()
+                        eof_at = time.perf_counter()
                         if persistent:
                             for _ in range(2):
                                 with socket.create_connection(
@@ -196,19 +196,19 @@ def test_proxy_cuts_established_socket_rust(tmp_path, persistent):
                                         replacement_upstream.sendall(payload)
                                         assert receive_exact(replacement, CUTOFF_BYTES) == payload[:CUTOFF_BYTES]
                                         assert replacement.recv(1) == b""
-                            deadline = time.monotonic() + 2
+                            deadline = time.perf_counter() + 2
                             while True:
                                 observed = proxy.sdk_observer.snapshot()
                                 if len(observed) == 3 and all(c["closed_at"] is not None for c in observed.values()):
                                     break
-                                assert time.monotonic() < deadline, "Cutoff closures were not recorded"
+                                assert time.perf_counter() < deadline, "Cutoff closures were not recorded"
                                 time.sleep(0.001)
                             repeated = assert_persistent_cutoffs(
                                 before,
                                 observed,
                                 "1",
                                 started,
-                                time.monotonic(),
+                                time.perf_counter(),
                                 CUTOFF_BYTES,
                                 len(payload),
                             )
@@ -218,7 +218,7 @@ def test_proxy_cuts_established_socket_rust(tmp_path, persistent):
                         proxy.sdk_observer.snapshot(),
                         "1",
                         started,
-                        time.monotonic(),
+                        time.perf_counter(),
                         CUTOFF_BYTES,
                         len(payload),
                     )

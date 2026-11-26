@@ -13,10 +13,12 @@ from collections import Counter
 import importlib.util
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
 GUARD = ROOT / "tests" / "create_item" / "test_assertion_correspondence_unit.py"
 SPEC = importlib.util.spec_from_file_location("create_correspondence_guard", GUARD)
 GUARD_MODULE = importlib.util.module_from_spec(SPEC)

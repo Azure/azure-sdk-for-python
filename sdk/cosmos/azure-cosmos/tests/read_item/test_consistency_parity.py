@@ -187,6 +187,8 @@ def test_read_consistency_matches_v4(consistency_account, operation, source, lev
             }
         except CosmosHttpResponseError as error:
             assert error.status_code == 400, "Unexpected service failure, not a consistency comparison"
+            if level == "Strong":
+                assert "default consistency level is Strong" in error.message
             outcomes["rust"] = {"status": error.status_code, "message": error.message, "responses": snapshots}
     _compare(outcomes, account.item, record_property)
 
@@ -213,6 +215,8 @@ async def test_read_consistency_async_matches_v4(
             }
         except CosmosHttpResponseError as error:
             assert error.status_code == 400, "Unexpected service failure, not a consistency comparison"
+            if level == "Strong":
+                assert "default consistency level is Strong" in error.message
             outcomes["rust"] = {"status": error.status_code, "message": error.message, "responses": snapshots}
     _compare(outcomes, account.item, record_property)
 

@@ -3,9 +3,11 @@
 """Protect unchanged replacement assertions and distinct sync/aio collection."""
 
 import ast
+import importlib.util
 from pathlib import Path
 import subprocess
 
+import pytest
 from common.sdk_subprocess import sdk_python_command
 
 
@@ -13,13 +15,13 @@ ROOT = Path(__file__).resolve().parents[2]
 FAMILY = ROOT / "tests" / "replace_container"
 
 
-def _methods(path):
+def _methods(source):
     """Map every test method in a file to its parsed form, keyed by class and name.
 
     Parsing rather than importing means the comparison below does not need the
     test's dependencies or an account.
     """
-    tree = ast.parse(path.read_text(encoding="utf-8"))
+    tree = ast.parse(source)
     methods = {
         (cls.name, method.name): method
         for cls in tree.body if isinstance(cls, ast.ClassDef)
@@ -33,31 +35,69 @@ def _methods(path):
     return methods
 
 
-def test_replacement_methods_match_originals_rust():
-    """Every copied replace-container test is identical to the original it came from.
+@pytest.fixture(scope="module")
+def main_inventory():
+    spec = importlib.util.spec_from_file_location(
+        "replacement_copy_generator", ROOT / "scripts" / "v5" / "copy_replace_container_legacy.py",
+    )
+    generator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(generator)
+    inventory = {}
+    for filename, source in generator.main_sources().items():
+        methods = _methods(source)
+        for cls, method in generator.replacement_cases(source):
+            inventory[(generator.destination(filename), cls.name, method.name)] = (
+                methods[(cls.name, method.name)], cls.decorator_list,
+            )
+    return inventory
 
-    The copies exist to run the already-shipped legacy assertions against the
-    Rust path. Their value depends entirely on the assertions being unchanged:
-    if a copy is quietly edited to suit the new engine, it stops being evidence
-    that behavior was preserved and starts being evidence only that the new
-    engine agrees with itself.
 
-    The comparison excludes leading explanatory docstrings, formatting and
-    comments, but not executable code. The count is pinned at eighteen so that a copy
-    silently disappearing is a failure rather than a smaller, still-passing run.
-    """
-    count = 0
+def _replacement_assertions(method):
+    start = next(
+        index for index, node in enumerate(method.body)
+        if isinstance(node, ast.Assign)
+        and any(isinstance(target, ast.Name) and target.id == "replace_container" for target in node.targets)
+    )
+    return ast.dump(ast.Module(body=method.body[start:start + 5], type_ignores=[]))
+
+
+def test_replacement_methods_match_originals_rust(main_inventory):
+    """Keep main's complete inventory, bodies and markers, with explicit API adaptations."""
+    actual = set()
     for path in sorted(FAMILY.glob("*/test_*.py")):
-        if "# Source:" not in path.read_text(encoding="utf-8"):
+        source = path.read_text(encoding="utf-8")
+        if "# Source:" not in source:
             continue
-        suffix = "_async" if path.parent.name == "aio" else ""
-        original = _methods(ROOT / "tests" / f"{path.stem}{suffix}.py")
-        for key, method in _methods(path).items():
-            source_key = (key[0], key[1].removesuffix("_rust"))
-            method.name = source_key[1]
-            assert ast.dump(method) == ast.dump(original[source_key]), (path, key)
-            count += 1
-    assert count == 18
+        classes = {node.name: node for node in ast.parse(source).body if isinstance(node, ast.ClassDef)}
+        for (cls, name), method in _methods(source).items():
+            assert name.endswith("_rust"), (path, name)
+            key = (path, cls, name.removesuffix("_rust"))
+            actual.add(key)
+            original, markers = main_inventory[key]
+            assert [ast.dump(node) for node in classes[cls].decorator_list] == [
+                ast.dump(node) for node in markers
+            ], key
+            decorators = []
+            for decorator in method.decorator_list:
+                if isinstance(decorator, ast.Call) and ast.unparse(decorator.func) == "pytest.mark.skip":
+                    assert not decorator.args and len(decorator.keywords) == 1
+                    reason = decorator.keywords[0]
+                    assert reason.arg == "reason" and reason.value.value.startswith("environment-gap:")
+                    decorator = decorator.func
+                decorators.append(decorator)
+            assert [ast.dump(node) for node in decorators] == [
+                ast.dump(node) for node in original.decorator_list
+            ], key
+            method.decorator_list = decorators
+            method.name = original.name
+            if original.name.startswith("test_session_token_compatibility"):
+                # This removed argument must raise TypeError, not retain main's ignored-input behavior.
+                assert "Contract change:" in source
+            elif original.name.startswith("test_etag_match_condition_compatibility"):
+                assert _replacement_assertions(method) == _replacement_assertions(original), key
+            else:
+                assert ast.dump(method) == ast.dump(original), key
+    assert actual == set(main_inventory)
 
 
 def test_replacement_collection_keeps_both_surfaces_rust():
@@ -78,12 +118,12 @@ def test_replacement_collection_keeps_both_surfaces_rust():
     )
     expected = {
         f"{path.relative_to(ROOT).as_posix()}::{cls}::{method}"
-        for path in files for cls, method in _methods(path)
+        for path in files for cls, method in _methods(path.read_text(encoding="utf-8"))
     }
     result = subprocess.run(
         sdk_python_command(
             "import pytest; raise SystemExit(pytest.main(sys.argv[1:]))",
-            "--noconftest", "--import-mode=importlib", "--collect-only", "-q", *map(str, files),
+            "--import-mode=importlib", "--collect-only", "-q", *map(str, files),
         ),
         cwd=ROOT, capture_output=True, text=True, timeout=60, check=False,
     )

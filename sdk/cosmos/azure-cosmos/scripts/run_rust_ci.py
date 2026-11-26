@@ -75,12 +75,6 @@ OFFLINE_SKIPS = {
         "Rust-specific binding failure",
         "Legacy transport timeout checks are bypassed by the fake HTTP response",
     },
-    "common/test_list_databases_telemetry_unit.py": {"Sync thread handoff", "Async cancellation"},
-    "common/test_list_containers_telemetry_unit.py": {
-        "Sync thread handoff",
-        "Async cancellation",
-        "Synchronous nested listing in a synchronous hook",
-    },
     "common/test_query_containers_backend_unit.py": {
         "Rust-specific option rejection",
         "Rust-specific binding failures",
@@ -94,31 +88,6 @@ OFFLINE_SKIPS = {
         "Rust-specific eligibility",
         "Rust response mapping",
         "Rust binding failures",
-    },
-    "telemetry/test_rust_telemetry_unit.py": {
-        "Synchronous cross-thread consumption",
-        "Async cancellation",
-        "Async interruption",
-        "No replacement step in a read",
-        "Replacement boundary",
-        "Replacement inputs",
-        "Async task cancellation",
-    },
-    "execute_item_batch/test_batch_telemetry_unit.py": {
-        "Synchronous nested batch inside a synchronous hook",
-        "Async cancellation",
-    },
-    "read_all_items/test_read_all_items_telemetry_unit.py": {
-        "Synchronous nested fetch in a synchronous hook",
-        "Async cancellation",
-    },
-    "query_items/test_query_items_telemetry_unit.py": {
-        "Synchronous nested query inside a synchronous hook",
-        "Async cancellation",
-    },
-    "test_change_feed_telemetry_unit.py": {
-        "Synchronous nested poll inside a synchronous hook",
-        "Async cancellation",
     },
     "read_item/test_read_item_contract_unit.py": {"Legacy validates the address in its transport preparation."},
     "read_all_items/test_read_all_items_contract_unit.py": {"async cancellation"},
@@ -505,7 +474,7 @@ def main() -> int:
         options.append("--confcutdir=" + str(PACKAGE / "tests" / "fault_injection"))
     expected_skips = (
         {(PACKAGE / "tests" / name).resolve(): reasons for name, reasons in OFFLINE_SKIPS.items()}
-        if args.suite in ("offline", "telemetry")
+        if args.suite == "offline"
         else {}
     )
     results.mkdir(parents=True, exist_ok=True)

@@ -158,7 +158,7 @@ async def exercise_persistent_cutoff(
 ):
     before, sdk_before = proxy.observer.snapshot(), proxy.sdk_observer.snapshot()
     with proxy.persistent_cutoff(inject_fault):
-        armed_at = time.monotonic()
+        armed_at = time.perf_counter()
         try:
             error, elapsed, started, finished = await read(
                 "persistent_cutoff" if inject_fault else "control",
@@ -167,7 +167,7 @@ async def exercise_persistent_cutoff(
         finally:
             after, sdk_after = proxy.observer.snapshot(), proxy.sdk_observer.snapshot()
             configuration = proxy.request("/proxies/" + proxy.name + "/toxics")
-            checked_at = time.monotonic()
+            checked_at = time.perf_counter()
             emit(
                 "proxy_persistent_cutoff_observation",
                 name=proxy.name,
@@ -232,7 +232,7 @@ async def exercise_persistent_cutoff(
         finished=finished,
         armed_at=armed_at,
         fault_checked_at=checked_at,
-        removed_at=time.monotonic(),
+        removed_at=time.perf_counter(),
         baseline_bytes=baseline_bytes,
         cutoff_bytes=CUTOFF_BYTES,
         source=source,
@@ -528,7 +528,7 @@ async def exercise_read(
         async def read(phase, must_fail=False, transport_retry=False):
             records.clear()
             before = _binding_operation_count()
-            started = time.monotonic()
+            started = time.perf_counter()
             returned, error = None, None
             try:
                 returned = await invoke(
@@ -545,7 +545,7 @@ async def exercise_read(
                 exceptions.CosmosClientTimeoutError,
             ) as caught:
                 error = caught
-            finished = time.monotonic()
+            finished = time.perf_counter()
             elapsed = finished - started
             after = _binding_operation_count()
             emit(

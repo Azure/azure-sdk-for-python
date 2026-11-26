@@ -2149,7 +2149,7 @@ The pipeline must answer a larger question:
 > "Can we build the whole required set from the intended source and
 > publish only the approved results?"
 
-This section covers build preparation, packaging, and release processing.
+This section covers build preparation, packaging, SDK tests, and release processing.
 [Section 13](#13-how-the-pipeline-chooses-dependent-service-regression-tests)
 explains dependent-service test selection;
 [section 14](#14-how-sphinx-generates-the-sdk-documentation) follows the
@@ -2466,6 +2466,97 @@ Package-generation step limit
 
 Increasing one does not remove the other. The limits must allow time for setup,
 compilation, and the remaining job work.
+
+### How the pipeline organizes and runs the SDK tests
+
+Alpha Bank might run its customer app on Python 3.10 today and Python 3.14
+after an upgrade. Building a wheel successfully does not show that the SDK
+behaves correctly on both versions.
+
+The pipeline therefore has separate Windows test jobs for Python **3.10,
+3.11, 3.12, 3.13 and 3.14**. Each job uses its own Python environment and
+starts its own **emulator**, a local program that acts as the database for
+tests. The jobs do not share one emulator.
+
+The job name also says which installation arrangement it checks. For example:
+
+| Job name | What it checks |
+|---|---|
+| **Emulator Tests Python 3.13 Standard** | Install the ready-made wheel and test it. Separately install from source and test that installation too. |
+| **Emulator Tests Python 3.13 Special** | Check SDK imports. Separately install the wheel and remove `aiohttp`, an optional Python networking library, before running selected tests. |
+| **Emulator Tests Python 3.13 Dependency Checks** | Install the latest versions of the libraries the SDK depends on, then run selected tests to check that they still work together. |
+
+These are different ways to check the same SDK, not different SDK packages.
+The same three arrangements exist for every Python version above.
+
+For a **pull request**, a proposal to change the source code, the pipeline
+uses the five Standard jobs. Runs that are not for a pull request use the
+internal configuration: five Standard, five Special and five Dependency
+Checks jobs, making **15 test jobs**. These counts describe the Cosmos
+emulator tests; the package-build jobs described earlier are separate.
+
+#### Follow one Standard job
+
+Take **Emulator Tests Python 3.13 Standard**. The job first builds a separate
+SDK package with test-only controls for creating failures and observing Rust
+operations. The pipeline calls these controls **test probes**, and the step
+is named **Build and verify an isolated test-probes wheel**. This package
+stays separate from the files prepared for customers.
+
+After starting the emulator, the job runs the following steps in order.
+The other four Standard jobs use the same steps with their own Python
+versions.
+
+| Step name shown in the pipeline | What it does |
+|---|---|
+| **Run Tests** | Check that the customer package loads, performs basic operations, and does not expose the test-only controls. Central owns this step's name. |
+| **Emulator Functional Tests and Dependency Checks** | Check normal SDK operations against the emulator: creating, reading, querying, updating and deleting resources. The copied functional tests selected for emulator testing run here. |
+| **SDK Fault-Injection Tests** | Use SDK test controls to deliberately create failures, then check retries, timeouts, errors and recovery. Copied tests that inject failures belong here rather than in the normal functional group. |
+| **Prepare Supplemental Test Environment** | Check that the separate test package has the controls needed by the remaining tests. This step does not rebuild the package. |
+| **Rust Unit Tests - Default Features and Clippy** | Run Clippy, the Rust code checker, then test individual pieces of Rust code without the test-only controls enabled. |
+| **Rust Unit Tests - Test Probes** | Run the Rust tests with the test-only controls enabled. |
+| **Python Unit Tests** | Test individual pieces of Python behaviour without needing a database. |
+| **Native Cancellation Tests** | Cancel an operation and check that its Rust work stops and the client remains usable afterward. |
+| **Telemetry Unit Tests** | Check records of what operations did, along with counts and timings, without sending them to a live monitoring account. |
+| **Network Fault Tests - Toxiproxy** | Use Toxiproxy, a program placed between the SDK and emulator, to disrupt actual network connections and check how the SDK responds. |
+
+The normal functional group does not also run the SDK fault-injection,
+cancellation or Toxiproxy groups. They have their own selections.
+
+#### What runs twice, and what runs once?
+
+In a Standard job, **Run Tests**, **Emulator Functional Tests and Dependency
+Checks**, and **SDK Fault-Injection Tests** each check both installation
+methods:
+
+```text
+Install the wheel -> run that test group
+Install from source -> run that test group again
+```
+
+The remaining test groups run **once per Standard job**, not once per
+installation method. The Python groups reuse the separate test package;
+the Rust steps compile and run their selected Rust tests.
+
+So there are two reasons for repetition: checking five Python versions,
+and checking two installation methods. Testing source installation here
+does not mean source archives are published for customers; section 16
+explains that separate release decision.
+
+The Special and Dependency Checks jobs keep the customer-package,
+functional and SDK fault-injection checks, using their own installation
+arrangements. They skip the steps from **Prepare Supplemental Test
+Environment** onward in the table. The Special job's import check is not
+repeated in the SDK fault-injection step.
+
+Steps named **Publish ... Results** upload results already produced by
+the tests. They do not run the tests again. Rust test output is saved in
+separate logs.
+
+**This describes what the pipeline is configured to run, not proof that
+every test has passed.** Existing skips still apply. The expanded
+five-version test coverage still needs confirmation from a complete
+pipeline run.
 
 ### A saved pipeline output is not a published release
 
@@ -3097,15 +3188,18 @@ These paths start at the repository root. Cosmos owns the files under
 `sdk/cosmos/templates/`; `sdk/cosmos/ci.yml` has Central reviewers. A folder
 named `templates` is not automatically Central-owned.
 
+The [test-job explanation](#how-the-pipeline-organizes-and-runs-the-sdk-tests)
+describes which jobs run these checks and how often.
+
 | File | Current responsibility | Owner or reviewer |
 |---|---|---|
-| `sdk/cosmos/ci.yml` | Check that customer wheels omit probes, then rerun the existing emulator/dependency checks against a separate probe wheel through existing hooks. | Cosmos-specific configuration with Central review |
+| `sdk/cosmos/ci.yml` | Select the customer-package checks and add the SDK-owned test steps to the shared pipeline. | Cosmos-specific configuration with Central review |
 | `sdk/cosmos/tests.yml` | Reuse `prepare-test-probes.yml` to build a separate probe wheel for live-account tests, then pass that wheel to the shared test runner. | Cosmos SDK team |
 | `sdk/cosmos/templates/prepare-test-probes.yml` | Build and verify the probe wheel under the agent temporary directory, outside publish artifacts; retain packaged native sidecars from the downloaded customer wheel. | Cosmos SDK team |
-| `sdk/cosmos/templates/emulator-probe-tests.yml` | Preserve customer-wheel results, then reuse Central's check runner with the original emulator marker and matrix check settings. | Cosmos SDK team |
-| `sdk/cosmos/templates/rust-tests.yml` | Run Cargo, offline Python, and native cancellation checks once in an existing test job; publish offline and cancellation results and save Cargo output. | Cosmos SDK team |
-| `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the probe wheel and require their results. | Cosmos SDK team |
-| `sdk/cosmos/templates/toxiproxy-tests.yml` | Install the network-fault tool, run the failure scenarios, and require their results. | Cosmos SDK team |
+| `sdk/cosmos/templates/emulator-probe-tests.yml` | Keep customer-package results and run separate functional and SDK fault-injection groups for each configured installation check. | Cosmos SDK team |
+| `sdk/cosmos/templates/rust-tests.yml` | Run Rust unit tests, Python unit tests and cancellation tests once in each Standard job; save their results. | Cosmos SDK team |
+| `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the separate test package once in each Standard job; require their results. | Cosmos SDK team |
+| `sdk/cosmos/templates/toxiproxy-tests.yml` | Install the network-fault tool, run its tests once in each Standard job, and require their results. | Cosmos SDK team |
 
 <a id="only-microsoft-employees-can-build-the-package-today"></a>
 

@@ -614,6 +614,8 @@ or `False`. This also covers their internal forms in `request_options` and
 `feed_options`, such as `maxItemCount` and `populateQueryMetrics`.
 This public contract change likewise requires API Review Board approval.
 
+<a id="database-create-operation-timeout"></a>
+
 **Operation timeout: one budget for database creation**
 
 Alpha Bank wants to limit how long its customer app waits to create `sales`:
@@ -1144,6 +1146,8 @@ charge for creating `sales` instead.
 The proposal runs the hook after each successful service page. It also
 changes argument validation and how customers reuse settings.
 
+<a id="database-list-response-hooks"></a>
+
 **The response hook observes each fetched page**
 
 The customer supplies a response-hook function named `on_databases` below;
@@ -1189,6 +1193,8 @@ repeating the page request. Hook exceptions `StopIteration` and
 Use `None` to disable the hook. A callable object whose boolean value is
 `False` is now invoked rather than skipped.
 
+<a id="database-list-arguments"></a>
+
 **Argument changes and customer migration**
 
 | Proposed change | Previous behavior | Customer action |
@@ -1233,6 +1239,8 @@ databases = client.list_databases()
 
 This approval is limited to `list_databases`. It does not approve rejection
 on other database/container APIs.
+
+<a id="database-list-settings-dictionary"></a>
 
 **Use `request_options` for a settings dictionary**
 
@@ -1362,6 +1370,8 @@ therefore receive an unfiltered result instead of an error.
 The proposed changes reject invalid query inputs, align both clients'
 arguments and fix query parameters when the iterator is created.
 
+<a id="database-query-arguments"></a>
+
 **Require the query and name optional settings**
 
 Both clients must receive `query`, either positionally or by name. All
@@ -1381,6 +1391,8 @@ The proposed call names them:
 databases = client.query_databases(sql, parameters=parameters)
 ```
 
+<a id="database-query-unfiltered-results"></a>
+
 **Distinguish an invalid query from a request for all databases**
 
 | Customer input | Proposed behavior | Customer action |
@@ -1391,6 +1403,8 @@ databases = client.query_databases(sql, parameters=parameters)
 
 Passing `None` remains accepted so existing calls requesting all databases
 continue to work.
+
+<a id="database-query-parameters"></a>
 
 **Supply query parameters in one place**
 
@@ -1454,10 +1468,8 @@ Azure-account comparison.
 
 The page-size, timeout and settings-copying changes described in
 [`CosmosClient.list_databases`](#cosmosclientlist_databases) also apply here,
-as does the proposal to use `request_options` and deprecate the old dictionary
-name. Follow that section's response-hook guidance as well:
-`response_hook(headers)` runs after each successfully fetched service page,
-with no change to its arguments.
+as do its [settings-dictionary proposal](#database-list-settings-dictionary)
+and [response-hook contract](#database-list-response-hooks).
 
 The API also rejects `session_token`, `populate_query_metrics`,
 `availability_strategy`, `no_response` and `content_type`, including explicit
@@ -1752,6 +1764,8 @@ with an error naming the unsupported argument. For async callers, this is
 an earlier, clearer error, not the removal of a previously successful call.
 Remove the argument and use `await database.read()`.
 
+<a id="database-read-response-hooks"></a>
+
 **Response hooks must be synchronous on both clients**
 
 Alpha Bank wants to record the cost of reading `sales`. Its callback is an
@@ -1782,9 +1796,8 @@ its previously stored properties.
 **Timeout and unsupported settings**
 
 Pass the operation timeout directly, for example
-`await database.read(timeout=3.5)`. A supplied duration must be a finite
-`int` or `float`, measured in seconds, at least `1` and less than `2**64`.
-Booleans are not durations. Invalid durations raise `ValueError`.
+`await database.read(timeout=3.5)`. Supported durations follow the
+[operation-timeout rules](#database-create-operation-timeout);
 `None` leaves the per-call override unset.
 
 Do not use `request_options` or `feed_options` to set the operation timeout;
@@ -1902,6 +1915,8 @@ group orders by tenant.
 The changes below are Python wrapper argument cleanup, not changes required
 by a missing Rust-driver capability.
 
+<a id="container-create-arguments"></a>
+
 **Proposed breaking change: name optional settings**
 
 Previously, the synchronous API accepted these optional settings
@@ -1949,6 +1964,8 @@ the proposal does not remove the supported policies or throughput settings.
 |---|---|---|
 | `session_token`, on both clients | Accepted by name through `**kwargs` but ignored for container creation. A non-`None` value produced a warning. | Raise `TypeError` whenever supplied, including `None`. |
 | `populate_query_metrics`, on the synchronous client | Accepted positionally or by name but did not enable query metrics for creation. A non-`None` value produced a warning. | Raise `TypeError` whether supplied positionally or by name, including `False` or `None`. |
+
+<a id="container-create-ignored-argument-migration"></a>
 
 Both arguments are rejected under the proposal. Removing the argument is
 the customer's migration step; raising `TypeError` is what the SDK does if
@@ -2023,6 +2040,8 @@ Unsupported per-call settings and header overrides also raise `TypeError`
 before those requests. The Rust-backed SDK does not silently ignore them or
 switch to legacy Python to execute the call.
 
+<a id="container-create-operation-timeout"></a>
+
 **Approved: one operation timeout**
 
 When Alpha Bank creates a GSI container with `timeout=10`, the source-container
@@ -2031,12 +2050,11 @@ ten-second allowance after the lookup. If the lookup takes three seconds,
 at most seven remain for creation and any required properties read.
 If the budget expires before creation starts, the SDK does not send creation.
 
-A supplied timeout must be a finite, non-boolean number of seconds greater
-than or equal to one and less than `2**64`; invalid values raise `ValueError`.
-`None` leaves the per-call override unset. Expiry raises
-`CosmosClientTimeoutError`. If creation was already sent, the container may
-exist despite that error; a timeout is not confirmation that nothing was
-created.
+Supported durations and timeout errors follow the
+[database-creation timeout rules](#database-create-operation-timeout).
+The container-creation timeout decision is approved independently of that
+API's pending decision. If creation was already sent, the container may
+exist despite the timeout.
 
 **Asynchronous-client signature for review**
 
@@ -2116,35 +2134,10 @@ remains unchanged; this call does not replace it with 86,400 seconds.
 
 **Proposed breaking change: use the argument rules from `DatabaseProxy.create_container`**
 
-Both clients require `id` and `partition_key`. Only those two arguments may
-be positional; optional settings must be named.
-
-Previously, synchronous callers could write:
-
-```python
-container = database.create_container_if_not_exists(
-    "orders",
-    PartitionKey(path="/tenant"),
-    None,
-    86400,
-)
-```
-
-The proposed call is:
-
-```python
-container = database.create_container_if_not_exists(
-    "orders",
-    PartitionKey(path="/tenant"),
-    default_ttl=86400,
-)
-```
-
-The asynchronous client already required named optional settings.
-
-Missing required arguments now raise `TypeError` rather than `KeyError`.
-Supplying either required argument both positionally and by name also
-raises `TypeError`, as explained in `DatabaseProxy.create_container`.
+Apply the [required-argument and named-option rules](#container-create-arguments)
+from `create_container`, including its migration example and `TypeError`
+handling for missing or duplicate required arguments. Use
+`create_container_if_not_exists` in place of `create_container`.
 
 **Proposed breaking change: reject previously ignored arguments**
 
@@ -2153,31 +2146,13 @@ raises `TypeError`, as explained in `DatabaseProxy.create_container`.
 | `session_token`, on both clients | Ignored for the container-property read and creation. | Raise `TypeError` whenever supplied, including `None`. |
 | `populate_query_metrics`, on the synchronous client | Accepted positionally or by name but did not enable query metrics for either the preliminary read or creation. | Raise `TypeError` whether supplied positionally or by name, including `False` or `None`. |
 
-For example:
-
-```python
-# Previous synchronous call.
-container = database.create_container_if_not_exists(
-    "orders",
-    PartitionKey(path="/tenant"),
-    populate_query_metrics=False,
-)
-
-# Proposed call.
-container = database.create_container_if_not_exists(
-    "orders",
-    PartitionKey(path="/tenant"),
-)
-```
+Follow the [ignored-argument migration](#container-create-ignored-argument-migration)
+for `create_container`. Its unresolved asynchronous `populate_query_metrics`
+decision also applies here.
 
 **These argument checks happen before checking whether the container
 exists.** Customers must remove the ignored arguments even when `orders`
 already exists and no creation is needed.
-
-The asynchronous `populate_query_metrics` question remains the same as in
-`DatabaseProxy.create_container`: the current implementation rejects the keyword, but its legacy
-handling through `**kwargs` remains unverified. That rejection is not yet
-an approved removal decision.
 
 **Decision requested; approval is not recorded**
 
@@ -2193,6 +2168,8 @@ The retired `sessionToken` and `populateQueryMetrics` entries are checked in
 both `request_options` and `feed_options`, not just as top-level arguments.
 This closes the validation bypass; it does not resolve the approval questions
 above.
+
+<a id="container-write-retry-setting"></a>
 
 On the Rust-backed SDK, a non-`None` `retry_write` also raises `TypeError`
 before the first read, including `0` and `False`. This applies at the top
@@ -2220,11 +2197,8 @@ creation can return a conflict. The SDK then reads `orders` once more within
 the remaining timeout. If that read fails, its error propagates; the SDK
 does not start another create attempt.
 
-The timeout accepts the same values as `DatabaseProxy.create_container`:
-`None`, or finite, non-boolean numeric seconds greater than or equal to one
-and less than `2**64`. Invalid values raise `ValueError`; expiry raises
-`CosmosClientTimeoutError`. A timeout does not undo creation already performed
-by the service backend.
+Supported durations, errors and the possibility of creation completing despite
+a timeout follow [container creation](#container-create-operation-timeout).
 
 **Asynchronous-client signature for review**
 
@@ -2373,11 +2347,8 @@ and `populateQueryMetrics` in both `request_options` and `feed_options`,
 including entries whose value is `None` or `False`. This closes the validation
 bypass; it does not resolve the approval questions above.
 
-On the Rust-backed SDK, `retry_write=0` does not disable write retries.
-Any non-`None` value, including `0` and `False`, raises `TypeError` before
-sending a request. The rule applies at the top level and inside either
-options dictionary. Omit `retry_write` or pass `None`; write retries remain
-managed by the SDK.
+The [container write-retry setting rule](#container-write-retry-setting)
+also applies to deletion, with rejection before any request.
 
 Unsupported per-call settings and header overrides also raise `TypeError`.
 For example, `connection_timeout=2` cannot set a separate connection timeout
@@ -2400,9 +2371,8 @@ The SDK calls it once after a successful response, with copied headers and
 `None` as the body. Changing those headers does not change the SDK's recorded
 response. A failed service response does not call the hook.
 
-`response_hook` may be `None` or a synchronous callable. Non-callable values,
-such as `False`, and declared async hooks raise `TypeError` before a request.
-A callable object is still invoked if its Boolean value is false.
+Hook validation follows [database reads](#database-read-response-hooks),
+with rejection before any deletion request.
 
 If `record_delete` raises an exception, that same exception reaches the
 customer app. It does not undo the successful deletion or cause the SDK to
@@ -2414,12 +2384,10 @@ With `timeout=10`, any lookup needed to find `orders` and the deletion share
 one ten-second budget. If the lookup takes three seconds, at most seven
 remain for deletion; it does not receive a fresh ten seconds.
 
-The timeout accepts `None`, or finite, non-boolean numeric seconds greater
-than or equal to one and less than `2**64`. For example, `timeout=0.5`,
-`timeout=False`, and `timeout="10"` raise `ValueError` before a request.
-Expiry raises `CosmosClientTimeoutError`. A timeout is not confirmation that
-the container still exists; it does not roll back deletion already performed
-by the service backend.
+Supported durations and errors follow
+[container creation](#container-create-operation-timeout). For deletion, a
+timeout is not confirmation that the container still exists; it does not roll
+back deletion already performed by the service backend.
 
 **Asynchronous-client signature for review**
 
@@ -2492,9 +2460,9 @@ mapping without `id` still raises `KeyError`; a bare integer such as
 The customer wants to see the containers in `sales`, such as `orders` and
 `receipts`, and record the request charge for retrieving them.
 
-The customer supplies a response hook: a function the SDK calls with response
-information. The customer names that function `on_containers` in every example
-below. These examples use the synchronous client.
+The examples use the synchronous client and a response hook named
+`on_containers`, following the [page-hook timing explained for database
+listing](#database-list-response-hooks).
 
 ```python
 def on_containers(headers, results_iterator):
@@ -2510,8 +2478,10 @@ for properties in containers:
 ```
 
 `containers` is the results iterator. The loop fetches container properties,
-not orders stored inside them. A service page is a group of returned results;
-`max_item_count=1` requests one container per page, not one container in total.
+not orders stored inside them. The
+[page-size rules](#database-list-arguments) apply to containers here.
+
+<a id="container-list-response-hooks"></a>
 
 **Shared timing change: report each successful service page**
 
@@ -2528,44 +2498,9 @@ This timing decision covers both clients for these four APIs only:
 For container operations, `results_iterator` is the same iterator returned by
 the method, not a list of the current page's results.
 
-Assume `orders` and `receipts` arrive on separate pages. Previously:
-
-```text
-Customer app calls list_containers.
-    SDK creates the results iterator.
-    SDK calls on_containers before fetching any listing page.
-        Headers may describe an earlier operation.
-    on_containers returns.
-SDK returns the iterator; customer app assigns it to containers.
-
-Customer app starts the for loop.
-    Iterator fetches page 1 -> delivers properties for orders.
-    Iterator fetches page 2 -> delivers properties for receipts.
-```
-
-The proposed order is:
-
-```text
-Customer app calls list_containers.
-SDK creates and returns the iterator; customer app assigns it to containers.
-    No listing request has been sent and no hook has run.
-
-Customer app starts the for loop.
-    SDK receives page 1.
-    SDK calls on_containers with page 1's headers and containers.
-    on_containers returns.
-    Iterator delivers properties for orders.
-
-    SDK receives page 2.
-    SDK calls on_containers with page 2's headers and containers.
-    on_containers returns.
-    Iterator delivers properties for receipts.
-```
-
-Each successful service page invokes the hook, including empty pages. Clearing
-the old headers before an immediate invocation would avoid unrelated information,
-but could not supply the listing's actual request charge or activity ID.
-Per-page timing supplies that response information when available.
+The [database-listing explanation](#database-list-response-hooks) covers the
+old and proposed timing, empty pages and hook failures. The additional
+container-specific migration concerns the second argument.
 
 **Customer impact: start iteration outside the hook**
 
@@ -2599,10 +2534,9 @@ for properties in containers:
 ```
 
 Both arguments remain, but that previous use of the iterator requires migration.
-For all four APIs, customers must start iteration before expecting a hook
-invocation and account for multiple invocations instead of one per method call.
-On asynchronous clients the hook remains an ordinary `def` function; consume
-results outside it with `async for`.
+On asynchronous clients, consume results outside the hook with `async for`.
+
+<a id="container-list-arguments"></a>
 
 **Proposed argument changes**
 
@@ -2613,7 +2547,7 @@ results outside it with `async for`.
 | `populate_query_metrics`, on the synchronous client | Accepted positionally or by name but did not enable query metrics for listing. | Raise `TypeError` whenever supplied, including `False` or `None`; remove the argument. |
 
 The asynchronous client already required settings by name. The shared
-`request_options` proposal in `CosmosClient.list_databases` also applies here.
+[`request_options` proposal](#database-list-settings-dictionary) also applies here.
 
 **Decision requested; approval is not recorded**
 
@@ -2660,11 +2594,23 @@ async for properties in containers:
     print(properties["id"])
 ```
 
-As explained in `CosmosClient.query_databases`, `@id` supplies a value separately from the SQL
-text. This query returns container properties, not orders stored inside
+Query parameters follow the [database-query explanation](#database-query-parameters).
+This query returns container properties, not orders stored inside
 the container. If `orders` exists, the loop prints `orders` once; otherwise,
 it prints nothing. The query returns the matching container's properties;
 the example prints only its `id` property.
+
+If Alpha Bank needs only container names, it can select those values directly:
+
+```python
+async for container_id in database.query_containers("SELECT VALUE c.id FROM c"):
+    print(container_id)
+```
+
+Each result is an ID string such as `"orders"`, not a dictionary with an `id`
+property. Both the original and migrated SDK support this behavior. The result
+and response-hook iterator annotations allow the values selected by the query;
+they do not require every result to be a dictionary.
 
 **Why this needs API review**
 
@@ -2676,94 +2622,49 @@ are not approved removals.
 
 **Proposed breaking change: require the query and name optional settings**
 
-Previously, the synchronous API allowed the query to be omitted and
-accepted optional settings positionally. The asynchronous API already
-required a query and named optional settings.
-
-Both clients now require `query`, supplied positionally or by name. All
-optional settings must be named.
-
-```python
-# Previous synchronous call.
-containers = database.query_containers(sql, parameters, 2)
-
-# Proposed call.
-containers = database.query_containers(
-    sql,
-    parameters=parameters,
-    max_item_count=2,
-)
-```
-
-The page size still limits results per service page, not the total results.
+Apply the [required-query and named-option proposal](#database-query-arguments)
+to `database.query_containers` as well. The same sync/async distinction and
+parameter-migration example apply. Page-size rules follow
+[database listing](#database-list-arguments).
 
 **Requesting all containers remains available**
 
-Previously, a synchronous customer could omit the query:
+As with [database queries](#database-query-unfiltered-results), omitting
+`query` raises `TypeError`; use `database.list_containers()` for an unfiltered
+inventory. Explicit `database.query_containers(None)` remains accepted
+**without parameters**. Unlike database queries, accompanying parameters
+are not ignored.
+
+**Parameter edits preserve the original behavior**
+
+Alpha Bank may prepare a query before deciding which container it needs:
 
 ```python
-containers = database.query_containers()
+parameters = [{"name": "@id", "value": "orders"}]
+containers = database.query_containers(
+    "SELECT * FROM c WHERE c.id = @id", parameters=parameters,
+)
+parameters[0]["value"] = "receipts"
 ```
 
-That call now raises `TypeError`. Use the API that directly expresses the
-intention:
-
-```python
-containers = database.list_containers()
-```
-
-Explicitly passing `None`, without parameters, remains accepted:
-
-```python
-containers = database.query_containers(None)
-```
-
-This retrieves all containers without a SQL filter. It does not search for
-a container whose ID is null.
+When the customer app starts iterating, both the original and migrated SDK
+query `"receipts"`, not `"orders"`. The Python wrapper retains the customer's
+query dictionary and parameters, reading and validating them before each page
+request. Each prepared request gets its own copy. Settings such as page size
+remain copied when the pager is created. This preserves mutable query inputs;
+it does not approve the other breaking changes listed here.
 
 **Response-hook timing follows `DatabaseProxy.list_containers`**
 
-The SDK preserves both arguments:
-
-```python
-def on_containers(headers, results_iterator):
-    print(headers.get("x-ms-request-charge"))
-
-containers = database.query_containers(
-    "SELECT * FROM c WHERE c.id = @id",
-    parameters=[{"name": "@id", "value": "orders"}],
-    response_hook=on_containers,
-)
-
-async for properties in containers:
-    print(properties["id"])
-```
-
-The SDK calls the customer's `on_containers` function after each successful
-service page, including empty pages, not before `query_containers()` returns.
-
-`results_iterator` remains the same iterator returned by the method. Keep
-both arguments and consume results outside the hook. `DatabaseProxy.list_containers` explains
-the execution order and migration for customer code that previously consumed
-results inside the hook.
+Use the [container-listing response-hook contract and migration](#container-list-response-hooks)
+unchanged, including both hook arguments and consuming results outside the hook.
 
 **Proposed breaking change: reject previously ignored arguments**
 
-| Argument | Previous behavior | Proposed behavior |
-|---|---|---|
-| `session_token`, on both clients | Ignored for container queries. A non-`None` value produced a warning. | Raise `TypeError` whenever supplied, including `None`. |
-| `populate_query_metrics`, on the synchronous client | Accepted positionally or by name but did not enable query metrics for this operation. A non-`None` value produced a warning. | Raise `TypeError` whenever supplied, including `False` or `None`. |
-
-```python
-# Previous synchronous call.
-containers = database.query_containers(
-    sql,
-    populate_query_metrics=False,
-)
-
-# Proposed call.
-containers = database.query_containers(sql)
-```
+The [container-listing ignored-argument proposal](#container-list-arguments)
+also applies to `session_token` on both clients and `populate_query_metrics`
+on the synchronous client. Both were ignored for container queries; a
+non-`None` value produced a warning. Follow the same removal guidance.
 
 The current wrapper also rejects asynchronous `populate_query_metrics`,
 plus `availability_strategy` and `enable_cross_partition_query` on both
@@ -2773,9 +2674,9 @@ until their legacy behavior is established.
 **Decision requested; approval is not recorded**
 
 Approve or revise the required query argument, named optional settings,
-and verified ignored-argument removals. The shared response-hook timing
-decision in `DatabaseProxy.list_containers` and `request_options` proposal in `CosmosClient.list_databases` also
-apply here.
+and verified ignored-argument removals. The shared
+[response-hook timing decision](#container-list-response-hooks) and
+[`request_options` proposal](#database-list-settings-dictionary) also apply here.
 
 **Asynchronous-client signature for review**
 
@@ -2788,16 +2689,16 @@ def query_containers(
     max_item_count: Optional[int] = None,
     initial_headers: Optional[dict[str, str]] = None,
     response_hook: Optional[
-        Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]
+        Callable[[Mapping[str, Any], AsyncItemPaged[Any]], None]
     ] = None,
     **kwargs: Any,
-) -> AsyncItemPaged[dict[str, Any]]:
+) -> AsyncItemPaged[Any]:
     ...
 ```
 
 Use `async for`, without awaiting `query_containers()` itself. The synchronous
 client follows the same argument rules and returns, and supplies to the hook,
-an `ItemPaged[dict[str, Any]]`.
+an `ItemPaged[Any]`.
 
 <a id="14---replacing-container-settings"></a>
 <a id="databaseproxyreplace_container"></a>
@@ -2806,16 +2707,10 @@ an `ItemPaged[dict[str, Any]]`.
 
 **Why the customer calls this API**
 
-The customer wants to change settings on the existing `orders` container,
+Alpha Bank wants to change settings on the existing `orders` container,
 such as changing its default item lifetime from 3,600 to 86,400 seconds.
 This API submits replacement container settings; it does not replace the
 JSON contents of `order-42`.
-
-The customer must identify the target separately from supplying its
-replacement settings. For example, a target dictionary containing
-`{"id": "orders", "defaultTtl": 3600}` selects `orders`; it does not automatically
-carry that lifetime into the replacement. This distinction motivates explicit
-named settings and the migration guidance below.
 
 **Why the Python contract changes:** After `container` and `partition_key`, sync accepted
 `indexing_policy`, `default_ttl`, `conflict_resolution_policy`, and
@@ -2830,8 +2725,10 @@ positionally on both clients; they may also be supplied by keyword.
 All optional arguments must be passed by keyword (`name=value`). Raise
 `TypeError` for missing or duplicate required arguments or extra positional
 arguments. Reject `session_token` and `populate_query_metrics` whenever supplied,
-including `None` or `False`. Both clients should have the same calling rules
-and reject inapplicable settings before changing a resource.
+including `None` or `False`. Unsupported per-call settings and header overrides
+also raise `TypeError`, rather than `NotImplementedError`. These rules apply
+to both sync and async clients; the customer app must remove or correct an
+unsupported input.
 
 **Customer migration:** Pass optional arguments by keyword, such as
 `default_ttl=3600`, and remove retired keywords. Keep `etag`, `match_condition`,
@@ -2839,18 +2736,20 @@ and the existing two-argument response hook. The proxy result and `return_proper
 tuple remain unchanged. Include the policies the application wants to retain;
 passing a properties dictionary as the target still supplies only its ID.
 
-**Other public changes:** Removed `read_timeout` raises `TypeError` on both
-execution paths, including `None`. Runtime HTTP-attempt limits are distinct.
-`response_hook(headers, properties)` receives its own copies of the headers
-and properties, including nested values. Editing those copies no longer
-changes the returned properties or the SDK's saved headers. Valid response hook
-objects are no longer skipped because the object itself evaluates to `False`;
-this is not about a response hook returning `False`. A response hook error does not
-cause the SDK to repeat the replacement.
+**Shared settings:** For `timeout`, removed `read_timeout`, and connection
+settings, see the [shared timeout contract](#timeout-settings-are-explicit-about-their-scope).
+Invalid `timeout` values raise `ValueError`.
+The response hook follows the
+[database-creation snapshot and hook-error rules](#cosmosclientcreate_database),
+with container properties as its second argument. A callable hook that
+evaluates to `False` is still called; this does not refer to its return value.
 
 **Illustration - select the target separately from replacement settings:**
 
 ```python
+from azure.cosmos import PartitionKey
+
+database = client.get_database_client("sales")
 container, properties = database.replace_container(
     {"id": "orders", "defaultTtl": 3600},
     PartitionKey(path="/tenant"),
@@ -2863,18 +2762,40 @@ The target mapping selects `orders`; its `defaultTtl` is not used as the
 replacement policy. The named `default_ttl=86400` supplies that setting.
 Include the other policies the application wants to retain; do not treat a
 target dictionary as an automatic merge of old settings.
-Refer to creating a container (`DatabaseProxy.create_container`) for named policy
-arguments and database creation (`CosmosClient.create_database`) for independent
-callback copies and proxy/properties return forms. Unlike database creation,
-replacement keeps supported ETag conditions.
+See [container creation](#databaseproxycreate_container) for the policy settings.
+Unlike database creation, replacement keeps supported ETag conditions.
 
-**New contract (async-client signature):**
+**Public calling contract (async client):**
+
+The synchronous client accepts the same arguments without `await`.
+`return_properties=False` returns a `ContainerProxy`; `True` returns
+`(ContainerProxy, CosmosDict)`.
 
 ```python
 async def replace_container(
     self,
-    *args: Any,
-    **kwargs: Any
+    container: Union[str, ContainerProxy, Mapping[str, Any]],
+    partition_key: PartitionKey,
+    *,
+    indexing_policy: Optional[dict[str, Any]] = None,
+    default_ttl: Optional[int] = None,
+    conflict_resolution_policy: Optional[dict[str, Any]] = None,
+    initial_headers: Optional[dict[str, str]] = None,
+    analytical_storage_ttl: Optional[int] = None,
+    computed_properties: Optional[list[dict[str, str]]] = None,
+    full_text_policy: Optional[dict[str, Any]] = None,
+    global_secondary_index: Optional[
+        Union[GlobalSecondaryIndexDefinition, dict[str, Any]]
+    ] = None,
+    return_properties: bool = False,
+    vector_embedding_policy: Optional[dict[str, Any]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    timeout: Optional[float] = None,
+    response_hook: Optional[
+        Callable[[Mapping[str, Any], dict[str, Any]], None]
+    ] = None,
+    **kwargs: Any,
 ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
     ...
 ```

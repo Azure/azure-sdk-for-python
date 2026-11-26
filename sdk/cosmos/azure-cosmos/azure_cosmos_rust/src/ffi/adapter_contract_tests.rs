@@ -207,7 +207,7 @@ fn lifecycle_probe_exports_match_build_feature() {
             .extract()
             .unwrap();
         assert_eq!(signature.contains("_debug_lifecycle"), enabled);
-        for name in ["create_item", "create_item_async", "read_item", "read_item_async"] {
+        for name in ["create_item", "create_item_async", "upsert_item", "upsert_item_async", "read_item", "read_item_async"] {
             let function = exports.getattr(name).unwrap();
             let signature: String = function.getattr("__text_signature__").unwrap().extract().unwrap();
             assert_eq!(signature.contains("include_fault_diagnostics"), enabled, "{name}");
@@ -280,7 +280,7 @@ fn mapped_exports_enforce_subsecond_deadline_during_driver_metadata() {
 #[cfg(feature = "test-probes")]
 #[test]
 fn item_exports_preserve_fault_diagnostics_in_probe_builds() {
-    for operation in ["create_item", "read_item"] {
+    for operation in ["create_item", "upsert_item", "read_item"] {
         for asynchronous in [false, true] {
             exercise(operation, asynchronous, None, false, false, true);
         }

@@ -420,10 +420,9 @@ def test_query_fetch_masks_outer_state(querying, recording, enabled):
     assert not h.seen and len(fetch_spans(recording)) == int(enabled)
 
 
+@pytest.mark.parametrize("query", [False], ids=["sync"], indirect=True)
 def test_nested_query_hook_keeps_completion_state_separate(querying, recording):
     h, f = querying, querying.feed
-    if f.async_mode:
-        pytest.skip("Synchronous nested query inside a synchronous hook")
     f.proxy._client_context = replace(
         f.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),
@@ -446,11 +445,10 @@ def test_nested_query_hook_keeps_completion_state_separate(querying, recording):
     assert len(fetch_spans(recording)) == 1
 
 
+@pytest.mark.parametrize("query", [True], ids=["async"], indirect=True)
 @pytest.mark.parametrize("timeout", [None, 10])
 def test_cancellation_drains_query_fetch_and_preserves_bookmark(querying, recording, timeout):
     h, f = querying, querying.feed
-    if not f.async_mode:
-        pytest.skip("Async cancellation")
 
     async def run():
         pages = f.proxy.query_items("SELECT * FROM c", timeout=timeout).by_page()

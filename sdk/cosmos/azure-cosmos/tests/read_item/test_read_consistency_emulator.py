@@ -64,7 +64,10 @@ def test_rust_read_consistency_rust(consistency_order, source, level):
             )
 
         if level == "Strong" and not strong_account:
-            with pytest.raises(CosmosHttpResponseError) as caught:
+            with pytest.raises(
+                CosmosHttpResponseError,
+                match="only valid against accounts whose default consistency level is Strong",
+            ) as caught:
                 read(_read_options(source, level))
             assert caught.value.status_code == 400
         else:
@@ -91,7 +94,10 @@ async def test_rust_read_consistency_async_rust(consistency_order, source, level
             )
 
         if level == "Strong" and not strong_account:
-            with pytest.raises(CosmosHttpResponseError) as caught:
+            with pytest.raises(
+                CosmosHttpResponseError,
+                match="only valid against accounts whose default consistency level is Strong",
+            ) as caught:
                 await read(_read_options(source, level))
             assert caught.value.status_code == 400
         else:

@@ -257,7 +257,7 @@ def validate_page_request(
     This helper neither acquires a driver handle nor fetches results.
 
     An absent binding or unsupported page operation raises PagePreflightError.
-    A known feed-cursor operation whose required function is missing instead
+    A known page operation whose required export is missing or not callable
     raises RuntimeError: the binding must be rebuilt, not treated as an
     optional unsupported operation. Any permitted choice of the legacy path
     belongs to the caller's migration policy, not this check.
@@ -281,15 +281,15 @@ def validate_page_request(
         )
     uses_cursor = prepared.cursor is not None
     binding_function_name = get_page_binding_function_name(prepared.op, uses_cursor=uses_cursor)
-    binding_function = lookup_binding_function(binding_function_name)
-    if uses_cursor and binding_function_name is not None and binding_function is None:
-        raise RuntimeError(
-            f"The compiled azure.cosmos._rust binding does not export {binding_function_name}{suffix}; "
-            "rebuild it from the current source."
-        )
-    if binding_function is None:
+    if binding_function_name is None:
         raise PagePreflightError(
             f"{backend_name}.execute_pages does not yet support op={prepared.op!r}."
+        )
+    binding_function = lookup_binding_function(binding_function_name)
+    if not callable(binding_function):
+        raise RuntimeError(
+            f"The compiled azure.cosmos._rust binding does not export {binding_function_name}{suffix} "
+            "as a callable; rebuild it from the current source."
         )
 
 

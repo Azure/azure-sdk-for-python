@@ -157,7 +157,7 @@ def capture_native(monkeypatch, records, asynchronous=False, *, driver_handle):
 
     def select(operation):
         function = original(operation)
-        if operation not in ("create_item", "read_item"):
+        if operation not in ("create_item", "upsert_item", "read_item"):
             return function
 
         def capture(*args, **kwargs):
@@ -191,11 +191,13 @@ def capture_native(monkeypatch, records, asynchronous=False, *, driver_handle):
     monkeypatch.setattr(module, "_binding_function_for_op", select)
 
 
-def expected_regions(target_guard):
+def expected_regions(target_guard, multi_write=False):
+    if multi_write:
+        return (["eastus", "westus"], ["eastus", "westus"])
     return (["westus" if target_guard else "eastus"], ["eastus", "westus"])
 
 
-def wait_topology(client, rule_id, target_guard):
+def wait_topology(client, rule_id, target_guard, *, multi_write=False):
     from azure.cosmos import _rust
 
     handle = client._adapter._ensure_driver_handle()
@@ -203,14 +205,14 @@ def wait_topology(client, rule_id, target_guard):
     while True:
         cached = _rust._debug_cached_account_regions(handle)
         hits = _rust._debug_fault_injection_rule_hit_count(handle, rule_id + "-topology")
-        if cached == expected_regions(target_guard) and hits > 0:
+        if cached == expected_regions(target_guard, multi_write) and hits > 0:
             emit("regional_topology", writable=cached[0], readable=cached[1], hits=hits)
             return
         assert time.monotonic() < deadline, f"Rust did not observe simulated topology: {cached!r}; hits={hits}"
         time.sleep(0.05)
 
 
-async def wait_topology_async(client, rule_id, target_guard):
+async def wait_topology_async(client, rule_id, target_guard, *, multi_write=False):
     from azure.cosmos import _rust
 
     handle = await client._adapter._ensure_driver_handle()
@@ -218,7 +220,7 @@ async def wait_topology_async(client, rule_id, target_guard):
     while True:
         cached = await asyncio.to_thread(_rust._debug_cached_account_regions, handle)
         hits = await fault_rule_hit_count_async(client._adapter, rule_id + "-topology")
-        if cached == expected_regions(target_guard) and hits > 0:
+        if cached == expected_regions(target_guard, multi_write) and hits > 0:
             emit("regional_topology", writable=cached[0], readable=cached[1], hits=hits)
             return
         assert time.monotonic() < deadline, f"Rust did not observe simulated topology: {cached!r}; hits={hits}"

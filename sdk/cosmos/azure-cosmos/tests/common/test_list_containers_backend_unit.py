@@ -27,6 +27,7 @@ from common.typed_requests import wire_headers, settings_options, legacy_setting
 # Licensed under the MIT License.
 
 import asyncio
+from common.async_test_helpers import run_async
 import inspect
 import json
 import time
@@ -130,7 +131,7 @@ def listing_case(request):
 
 def _run(case, sync_call, async_call):
     """Run whichever of the two versions matches the client under test."""
-    return asyncio.run(async_call()) if case.is_async else sync_call()
+    return run_async(async_call()) if case.is_async else sync_call()
 
 
 def _drain(case, pager):
@@ -364,23 +365,23 @@ def test_unsupported_rust_options_do_not_dispatch_rust(listing_case, kwargs):
     hook = MagicMock()
     pager = case.database.list_containers(response_hook=hook, **kwargs)
     assert case.requests == []
-    with pytest.raises((NotImplementedError, TypeError, exceptions.CosmosClientTimeoutError)):
+    with pytest.raises(TypeError, match="list_containers"):
         _drain(case, pager)
     assert case.requests == []
     hook.assert_not_called()
 
 
 @pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
-@pytest.mark.parametrize("name,value,error", [
-    ("max_itm_count", 10, TypeError),
-    ("unknown_option", None, TypeError),
-    ("connection_timeout", None, NotImplementedError),
-    ("retry_total", 0, NotImplementedError),
+@pytest.mark.parametrize("name,value", [
+    ("max_itm_count", 10),
+    ("unknown_option", None),
+    ("connection_timeout", None),
+    ("retry_total", 0),
 ])
 def test_rejected_container_feed_keywords_are_named_before_dispatch_rust(
-    listing_case, operation, name, value, error,
+    listing_case, operation, name, value,
 ):
-    """Keep unknown-keyword errors distinct from recognized settings unavailable on Rust."""
+    """Unknown and unsupported keywords raise TypeError naming the option before dispatch."""
     case = listing_case
     if not case.rust:
         pytest.skip("Rust-specific option rejection")
@@ -388,7 +389,7 @@ def test_rejected_container_feed_keywords_are_named_before_dispatch_rust(
     if operation == "query_containers":
         kwargs["query"] = "SELECT * FROM c"
     pager = getattr(case.database, operation)(**kwargs)
-    with pytest.raises(error, match=name):
+    with pytest.raises(TypeError, match=name):
         _drain(case, pager)
     assert case.requests == []
     case.legacy_get.assert_not_called()

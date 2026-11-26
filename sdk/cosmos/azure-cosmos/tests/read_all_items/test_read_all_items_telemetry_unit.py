@@ -390,10 +390,9 @@ def test_read_all_requires_retained_binding(reading):
     binding.assert_not_called()
 
 
+@pytest.mark.parametrize("feed", [False], ids=["sync"], indirect=True)
 def test_nested_hook_does_not_contribute_to_outer_fetch(reading, recording):
     h, f = reading, reading.feed
-    if f.async_mode:
-        pytest.skip("Synchronous nested fetch in a synchronous hook")
     f.proxy._client_context = replace(
         f.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),
@@ -434,11 +433,10 @@ def test_fetch_masks_unrelated_outer_operation(reading, recording, enabled):
     assert len(fetch_spans(recording)) == int(enabled)
 
 
+@pytest.mark.parametrize("feed", [True], ids=["async"], indirect=True)
 @pytest.mark.parametrize("timeout", [None, 10])
 def test_cancellation_drains_authorized_fetch_and_invalidates_cursor(reading, recording, timeout):
     h, f = reading, reading.feed
-    if not f.async_mode:
-        pytest.skip("Async cancellation")
 
     async def run():
         h.gate = asyncio.Event()
