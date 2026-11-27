@@ -1,5 +1,5 @@
-from ci_tools.parsing import parse_require, ParsedSetup
-from ci_tools.parsing.parse_functions import has_cibuildwheel_config
+from ci_tools.parsing import parse_require, ParsedSetup, parse_cargo_toml, get_cargo_toml
+from ci_tools.parsing.parse_functions import has_cibuildwheel_config, parse_pyproject, parse_setup_py
 from packaging.specifiers import SpecifierSet
 import os
 import shutil
@@ -384,3 +384,84 @@ def test_cibuildwheel_config_requires_a_table(tmp_path, value):
     (tmp_path / "pyproject.toml").write_text(f"[tool]\ncibuildwheel = {value}\n")
     with pytest.raises(ValueError, match=r"Expected a \[tool.cibuildwheel\] table"):
         has_cibuildwheel_config(str(tmp_path))
+
+
+def test_parse_cargo_toml_direct(tmp_path):
+    cargo_file = tmp_path / "Cargo.toml"
+    cargo_file.write_text('[package]\nname = "azure-native-ext"\nversion = "1.2.3"\n')
+    assert parse_cargo_toml(str(cargo_file)) == "1.2.3"
+    assert parse_cargo_toml(str(tmp_path)) == "1.2.3"
+    assert get_cargo_toml(str(tmp_path)) == str(cargo_file)
+
+
+def test_parse_cargo_toml_workspace_internal(tmp_path):
+    cargo_file = tmp_path / "Cargo.toml"
+    cargo_file.write_text('[workspace.package]\nversion = "2.0.0-beta.1"\n[package]\nname = "my-crate"\nversion.workspace = true\n')
+    assert parse_cargo_toml(str(cargo_file)) == "2.0.0-beta.1"
+
+
+def test_parse_cargo_toml_workspace_parent(tmp_path):
+    workspace_root = tmp_path / "workspace"
+    workspace_root.mkdir()
+    (workspace_root / "Cargo.toml").write_text('[workspace.package]\nversion = "3.1.4"\n')
+    crate_dir = workspace_root / "crates" / "native_crate"
+    crate_dir.mkdir(parents=True)
+    crate_cargo = crate_dir / "Cargo.toml"
+    crate_cargo.write_text('[package]\nname = "native_crate"\nversion = { workspace = true }\n')
+    assert parse_cargo_toml(str(crate_cargo)) == "3.1.4"
+    assert parse_cargo_toml(str(crate_dir)) == "3.1.4"
+
+
+def test_parse_pyproject_with_cargo_toml(tmp_path):
+    package_dir = tmp_path / "azure-rust-ext"
+    package_dir.mkdir()
+    (package_dir / "Cargo.toml").write_text('[package]\nname = "azure-rust-ext"\nversion = "0.4.2"\n')
+    (package_dir / "pyproject.toml").write_text("""[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "azure-rust-ext"
+description = "Native Rust extension for Azure SDK"
+requires-python = ">=3.8"
+dependencies = ["azure-core>=1.24.0"]
+dynamic = ["version"]
+""")
+    parsed = ParsedSetup.from_path(str(package_dir))
+    assert parsed.name == "azure-rust-ext"
+    assert parsed.version == "0.4.2"
+    assert parsed.python_requires == ">=3.8"
+    assert parsed.requires == ["azure-core>=1.24.0"]
+    assert parsed.is_new_sdk is True
+
+
+def test_parse_setup_py_with_cargo_toml(tmp_path):
+    package_dir = tmp_path / "legacy-rust-ext"
+    package_dir.mkdir()
+    (package_dir / "Cargo.toml").write_text('[package]\nname = "legacy-rust-ext"\nversion = "0.9.1"\n')
+    (package_dir / "setup.py").write_text("""
+from setuptools import setup
+
+setup(
+    name="legacy-rust-ext",
+    install_requires=["requests"],
+)
+""")
+    parsed = ParsedSetup.from_path(str(package_dir))
+    assert parsed.name == "legacy-rust-ext"
+    # Also test parse_setup_py directly
+    result = parse_setup_py(str(package_dir / "setup.py"))
+    assert result[0] == "legacy-rust-ext"
+    assert result[1] == "0.9.1"
+
+
+def test_parse_pyproject_missing_version_raises_value_error(tmp_path):
+    package_dir = tmp_path / "no-version-pkg"
+    package_dir.mkdir()
+    pyproject = package_dir / "pyproject.toml"
+    pyproject.write_text("""[project]
+name = "no-version-pkg"
+""")
+    with pytest.raises(ValueError, match=r'Unable to find a version value.*"Cargo.toml"'):
+        parse_pyproject(str(pyproject))
+

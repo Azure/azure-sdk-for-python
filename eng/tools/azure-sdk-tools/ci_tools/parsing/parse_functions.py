@@ -21,6 +21,8 @@ from setuptools import Extension
 
 from ci_tools.variables import str_to_bool
 
+CARGO_TOML = "Cargo.toml"
+ALT_CARGO_TOML = "cargo.toml"
 VERSION_PY = "_version.py"
 # Auto generated code has version maintained in version.py.
 # We need to handle this old file name until generated code creates _version.py for all packages
@@ -48,6 +50,8 @@ EXCLUDE = {
     "scripts",
     "images",
     ".tox",
+    "target",
+    ".cargo",
 }
 
 
@@ -582,6 +586,10 @@ def parse_setup_py(
         python_requires = ">=2.7"
 
     version = kwargs.get("version")
+    if not version:
+        cargo_version = parse_cargo_toml(setup_filename)
+        if cargo_version:
+            version = cargo_version
     name = kwargs.get("name")
     name_space = name.replace("-", ".") if name else ""
     packages = kwargs.get("packages", [])
@@ -674,10 +682,15 @@ def parse_pyproject(
                     parsed_version = parsed_version.group(1)
                 else:
                     parsed_version = "0.0.0"
-        else:
-            raise ValueError(
-                f'Unable to find a version value directly set in "{pyproject_filename}", nor is it available in a "version.py" or "_version.py."'
-            )
+
+        if not parsed_version or parsed_version == "0.0.0":
+            cargo_version = parse_cargo_toml(pyproject_filename)
+            if cargo_version:
+                parsed_version = cargo_version
+            elif not parsed_version:
+                raise ValueError(
+                    f'Unable to find a version value directly set in "{pyproject_filename}", nor is it available in a "version.py", "_version.py", or "Cargo.toml".'
+                )
 
     name = project_config.get("name")
     version = parsed_version
@@ -758,6 +771,105 @@ def get_version_py(setup_path: str) -> Optional[str]:
             return os.path.join(root, VERSION_PY)
         elif OLD_VERSION_PY in files:
             return os.path.join(root, OLD_VERSION_PY)
+
+    return None
+
+
+def get_cargo_toml(setup_path_or_folder: str) -> Optional[str]:
+    """
+    Given the path to a pyproject.toml, setup.py, Cargo.toml, or directory,
+    attempts to find a Cargo.toml file and return its location.
+    """
+    if os.path.isfile(setup_path_or_folder):
+        basename = os.path.basename(setup_path_or_folder)
+        if basename in (CARGO_TOML, ALT_CARGO_TOML):
+            return setup_path_or_folder
+        search_dir = os.path.dirname(setup_path_or_folder)
+    else:
+        search_dir = setup_path_or_folder
+
+    if not os.path.exists(search_dir):
+        return None
+
+    # Check directly in search directory first
+    for name in (CARGO_TOML, ALT_CARGO_TOML):
+        candidate = os.path.join(search_dir, name)
+        if os.path.exists(candidate):
+            return candidate
+
+    # Search subdirectories recursively
+    for root, dirs, files in os.walk(search_dir):
+        dirs_to_skip = get_dirs_to_skip(dirs)
+        dirs[:] = [d for d in dirs if d not in dirs_to_skip]
+
+        for name in (CARGO_TOML, ALT_CARGO_TOML):
+            if name in files:
+                return os.path.join(root, name)
+
+    return None
+
+
+def parse_cargo_toml(cargo_path_or_folder: str) -> Optional[str]:
+    """
+    Given the path to a Cargo.toml, pyproject.toml, setup.py, or directory containing a Cargo.toml,
+    parses and returns the package version string.
+    """
+    cargo_file = get_cargo_toml(cargo_path_or_folder)
+    if not cargo_file or not os.path.exists(cargo_file):
+        return None
+
+    try:
+        with open(cargo_file, "rb") as f:
+            cargo_dict = toml.load(f)
+
+        # 1. Check [package].version
+        package_config = cargo_dict.get("package", {})
+        if isinstance(package_config, dict):
+            version = package_config.get("version")
+            if isinstance(version, str):
+                return version
+            # If version is { workspace = true }, check [workspace.package].version
+            if isinstance(version, dict) and version.get("workspace"):
+                workspace_version = cargo_dict.get("workspace", {}).get("package", {}).get("version")
+                if isinstance(workspace_version, str):
+                    return workspace_version
+
+                # Check parent directories for workspace Cargo.toml
+                current_dir = os.path.dirname(os.path.abspath(cargo_file))
+                parent_dir = os.path.dirname(current_dir)
+                while parent_dir and parent_dir != current_dir:
+                    for name in (CARGO_TOML, ALT_CARGO_TOML):
+                        parent_cargo = os.path.join(parent_dir, name)
+                        if os.path.exists(parent_cargo):
+                            try:
+                                with open(parent_cargo, "rb") as pf:
+                                    parent_dict = toml.load(pf)
+                                parent_ver = parent_dict.get("workspace", {}).get("package", {}).get("version")
+                                if isinstance(parent_ver, str):
+                                    return parent_ver
+                            except Exception:
+                                pass
+                    parent_dir, current_dir = os.path.dirname(parent_dir), parent_dir
+
+        # 2. Check [workspace.package].version directly in this file
+        workspace_pkg = cargo_dict.get("workspace", {}).get("package", {})
+        if isinstance(workspace_pkg, dict):
+            version = workspace_pkg.get("version")
+            if isinstance(version, str):
+                return version
+
+    except Exception as e:
+        logging.warning(f"Error parsing {cargo_file} with TOML parser: {e}")
+
+    # Fallback to regex in case of non-standard or malformed TOML
+    try:
+        with open(cargo_file, "r", encoding="utf-8") as f:
+            content = f.read()
+            match = re.search(r'^\s*version\s*=\s*[\'"]([^\'"]*)[\'"]', content, re.MULTILINE)
+            if match:
+                return match.group(1)
+    except Exception as e:
+        logging.warning(f"Error reading {cargo_file} for regex version search: {e}")
 
     return None
 
