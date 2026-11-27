@@ -347,3 +347,58 @@ def test_event_stream_builder__constructor_accepts_request_seed_fields() -> None
     assert created["response"]["background"] is True
     assert created["response"]["previous_response_id"] == "resp_prev_seed"
     assert created["response"]["metadata"] == {"tag": "seeded"}
+
+
+def test_event_stream_builder__emit_completed_sets_model() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_model_1")
+    stream.emit_created()
+    event = stream.emit_completed(model="gpt-4o")
+    assert event["response"]["model"] == "gpt-4o"
+    assert stream.response["model"] == "gpt-4o"
+
+
+def test_event_stream_builder__emit_failed_sets_model() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_model_2")
+    stream.emit_created()
+    event = stream.emit_failed(model="claude-3-5-sonnet")
+    assert event["response"]["model"] == "claude-3-5-sonnet"
+    assert stream.response["model"] == "claude-3-5-sonnet"
+
+
+def test_event_stream_builder__emit_incomplete_sets_model() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_model_3")
+    stream.emit_created()
+    event = stream.emit_incomplete(model="o3-mini")
+    assert event["response"]["model"] == "o3-mini"
+    assert stream.response["model"] == "o3-mini"
+
+
+def test_event_stream_builder__emit_completed_auto_populates_model_from_active_span() -> None:
+    from unittest.mock import MagicMock, patch
+
+    mock_span = MagicMock()
+    mock_span.is_recording.return_value = True
+    mock_span.attributes = {"gen_ai.response.model": "gpt-4o-2024-08-06"}
+
+    with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+        stream = ResponseEventStream(response_id="resp_builder_model_span")
+        stream.emit_created()
+        event = stream.emit_completed()
+        assert event["response"]["model"] == "gpt-4o-2024-08-06"
+        assert stream.response["model"] == "gpt-4o-2024-08-06"
+
+
+def test_event_stream_builder__emit_completed_explicit_model_overrides_span() -> None:
+    from unittest.mock import MagicMock, patch
+
+    mock_span = MagicMock()
+    mock_span.is_recording.return_value = True
+    mock_span.attributes = {"gen_ai.response.model": "gpt-4o-from-span"}
+
+    with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+        stream = ResponseEventStream(response_id="resp_builder_model_override")
+        stream.emit_created()
+        event = stream.emit_completed(model="explicit-override-model")
+        assert event["response"]["model"] == "explicit-override-model"
+        assert stream.response["model"] == "explicit-override-model"
+

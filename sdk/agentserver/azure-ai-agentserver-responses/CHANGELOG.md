@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added optional `model` parameter to terminal helpers on `ResponseEventStream` (`emit_completed`, `emit_failed`, `emit_incomplete`) and support best-effort auto-population of `response["model"]` from `gen_ai.response.model` on the active OpenTelemetry span when omitted. (#50068)
+
 ### Breaking Changes
 
 ### Bugs Fixed

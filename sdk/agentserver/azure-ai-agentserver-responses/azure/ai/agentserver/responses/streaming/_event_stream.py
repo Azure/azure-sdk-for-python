@@ -347,19 +347,24 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         )
 
     def emit_completed(
-        self, *, usage: response_models.ResponseUsage | None = None
+        self,
+        *,
+        usage: response_models.ResponseUsage | None = None,
+        model: str | None = None,
     ) -> response_models.ResponseCompletedEvent:
         """Emit a ``response.completed`` terminal lifecycle event.
 
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
+        :keyword model: Optional model identifier to attach to the terminal response.
+        :keyword type model: str | None
         :returns: The emitted event model instance.
         :rtype: ~azure.ai.agentserver.responses.models.ResponseCompletedEvent
         """
         self._response["status"] = "completed"
         self._response["error"] = None
         self._response["incomplete_details"] = None
-        self._set_terminal_fields(usage=usage)
+        self._set_terminal_fields(usage=usage, model=model)
         return cast(
             "response_models.ResponseCompletedEvent",
             self._emit_event(
@@ -377,6 +382,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         message: str = "An internal server error occurred.",
         metadata: Mapping[str, str] | None = None,
         usage: response_models.ResponseUsage | None = None,
+        model: str | None = None,
     ) -> response_models.ResponseFailedEvent:
         """Emit a ``response.failed`` terminal lifecycle event.
 
@@ -389,6 +395,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword type metadata: ~collections.abc.Mapping[str, str] | None
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
+        :keyword model: Optional model identifier to attach to the terminal response.
+        :keyword type model: str | None
         :returns: The emitted event model instance.
         :rtype: ~azure.ai.agentserver.responses.models.ResponseFailedEvent
         """
@@ -407,7 +415,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                     "without it: %s",
                     exc,
                 )
-        self._set_terminal_fields(usage=usage)
+        self._set_terminal_fields(usage=usage, model=model)
         return cast(
             "response_models.ResponseFailedEvent",
             self._emit_event(
@@ -423,6 +431,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         *,
         reason: str | None = None,
         usage: response_models.ResponseUsage | None = None,
+        model: str | None = None,
     ) -> response_models.ResponseIncompleteEvent:
         """Emit a ``response.incomplete`` terminal lifecycle event.
 
@@ -431,6 +440,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                                 | None
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
+        :keyword model: Optional model identifier to attach to the terminal response.
+        :keyword type model: str | None
         :returns: The emitted event model instance.
         :rtype: ~azure.ai.agentserver.responses.models.ResponseIncompleteEvent
         """
@@ -440,7 +451,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             self._response["incomplete_details"] = None
         else:
             self._response["incomplete_details"] = {"reason": _internals.enum_value(reason)}
-        self._set_terminal_fields(usage=usage)
+        self._set_terminal_fields(usage=usage, model=model)
         return cast(
             "response_models.ResponseIncompleteEvent",
             self._emit_event(
@@ -1332,11 +1343,18 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             stamped["agent_reference"] = self._agent_reference
         return stamped
 
-    def _set_terminal_fields(self, *, usage: response_models.ResponseUsage | None) -> None:
-        """Set terminal fields on the response envelope (completed_at, usage).
+    def _set_terminal_fields(
+        self,
+        *,
+        usage: response_models.ResponseUsage | None,
+        model: str | None = None,
+    ) -> None:
+        """Set terminal fields on the response envelope (completed_at, usage, model).
 
         :keyword usage: Optional usage statistics to attach.
         :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
+        :keyword model: Optional model identifier to attach or update on the terminal response.
+        :keyword type model: str | None
         :rtype: None
         """
         # B6: completed_at is non-null only for completed status
@@ -1345,3 +1363,11 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         else:
             self._response["completed_at"] = None
         self._response["usage"] = _internals.coerce_usage(usage)
+        if model is not None:
+            self._response["model"] = model
+            self._model = model
+        elif not self._response.get("model"):
+            discovered = _internals.resolve_model_from_active_span()
+            if discovered:
+                self._response["model"] = discovered
+                self._model = discovered

@@ -13,6 +13,7 @@ from typing import Any, cast
 from ..models.runtime import ResponseExecution
 from .._response_context import ResponseContext
 from ..streaming._helpers import strip_nulls
+from ..streaming import _internals
 from .. import models as _public_models
 
 
@@ -524,6 +525,10 @@ class _RuntimeState:
                 result["agent_session_id"] = execution.agent_session_id
             if execution.conversation_id is not None:
                 result["conversation"] = {"id": execution.conversation_id}
+            if not result.get("model"):
+                discovered = _internals.resolve_model_from_active_span()
+                if discovered:
+                    result["model"] = discovered
             return strip_nulls(result)
         snapshot: dict[str, Any] = {
             "id": execution.response_id,
@@ -532,7 +537,7 @@ class _RuntimeState:
             "status": execution.status,
             "created_at": int(execution.created_at.timestamp()),
             "output": [],
-            "model": execution.initial_model,
+            "model": execution.initial_model or (_internals.resolve_model_from_active_span() or ""),
             "agent_reference": _json_safe_agent_reference(execution.initial_agent_reference),
         }
         # S-038 / S-040: forcibly stamp session & conversation on fallback path
