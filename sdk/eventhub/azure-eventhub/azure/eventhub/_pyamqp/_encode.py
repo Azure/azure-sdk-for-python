@@ -161,6 +161,8 @@ def encode_uint(output: bytearray, value: int, with_constructor: bool = True, us
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     value = int(value)
+    if value < 0:
+        raise ValueError("Value supplied for unsigned int invalid: {}".format(value))
     if value == 0:
         output.extend(ConstructorBytes.uint_0)
         return
@@ -188,6 +190,8 @@ def encode_ulong(output: bytearray, value: int, with_constructor: bool = True, u
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     value = int(value)
+    if value < 0:
+        raise ValueError("Value supplied for unsigned long invalid: {}".format(value))
     if value == 0:
         output.extend(ConstructorBytes.ulong_0)
         return
