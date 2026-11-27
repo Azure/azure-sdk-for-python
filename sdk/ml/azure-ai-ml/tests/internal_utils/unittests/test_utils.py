@@ -2,7 +2,7 @@ import json
 import os
 import tempfile
 from collections import OrderedDict
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pytest
 
@@ -18,7 +18,7 @@ from azure.ai.ml._utils.utils import (
     map_single_brackets_and_warn,
     write_to_shared_file,
 )
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, WorkspaceDiscoveryUrlKey
+from azure.ai.ml.constants._common import WorkspaceDiscoveryUrlKey
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, get_type_from_spec
@@ -51,21 +51,21 @@ class TestUtils:
             endpoint
         )
 
-    @patch.dict(os.environ, {AZUREML_CLOUD_ENV_NAME: AzureEnvironments.ENV_DEFAULT})
     @pytest.mark.parametrize(
         "api_url", ["https://eastus.api.azureml.ms", "https://0a1b2c3d.workspace.eastus.api.azureml.ms"]
     )
     def test_get_base_urls_from_discovery_service(self, api_url: str) -> None:
         workspace_operations, requests_pipeline = _mock_discovery("https://eastus.api.azureml.ms/discovery", api_url)
 
-        urls = _get_base_urls_from_discovery_service(workspace_operations, "ws", requests_pipeline)
+        urls = _get_base_urls_from_discovery_service(
+            workspace_operations, "ws", requests_pipeline, cloud_name=AzureEnvironments.ENV_DEFAULT
+        )
 
         assert urls[WorkspaceDiscoveryUrlKey.API] == api_url
         requests_pipeline.with_policies.return_value.get.assert_called_once_with(
-            "https://eastus.api.azureml.ms/discovery"
+            "https://eastus.api.azureml.ms/discovery", permit_redirects=False
         )
 
-    @patch.dict(os.environ, {AZUREML_CLOUD_ENV_NAME: AzureEnvironments.ENV_DEFAULT})
     @pytest.mark.parametrize(
         "discovery_url, api_url, discovery_requested",
         [
@@ -81,9 +81,24 @@ class TestUtils:
         workspace_operations, requests_pipeline = _mock_discovery(discovery_url, api_url)
 
         with pytest.raises(ValidationException, match="not trusted"):
-            _get_base_urls_from_discovery_service(workspace_operations, "ws", requests_pipeline)
+            _get_base_urls_from_discovery_service(
+                workspace_operations, "ws", requests_pipeline, cloud_name=AzureEnvironments.ENV_DEFAULT
+            )
 
         assert requests_pipeline.with_policies.return_value.get.called is discovery_requested
+
+    def test_get_base_urls_from_discovery_service_error_shows_only_host(self) -> None:
+        workspace_operations, requests_pipeline = _mock_discovery(
+            "https://user:secret@untrusted.invalid/discovery?sig=secret", "https://eastus.api.azureml.ms"
+        )
+
+        with pytest.raises(ValidationException) as error:
+            _get_base_urls_from_discovery_service(
+                workspace_operations, "ws", requests_pipeline, cloud_name=AzureEnvironments.ENV_DEFAULT
+            )
+
+        assert "untrusted.invalid" in error.value.message
+        assert "secret" not in error.value.message
 
     def test_legacy_command_substitution(self) -> None:
         input_string = "test {inputs.val1} ${{inputs.val2}} {search_space.val3} ${{search_space.val4}} {non-captured}"

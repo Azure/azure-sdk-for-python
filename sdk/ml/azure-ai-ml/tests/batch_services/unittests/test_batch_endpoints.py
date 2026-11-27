@@ -1,5 +1,4 @@
 import json
-import os
 from pathlib import Path
 from typing import Callable
 from unittest.mock import Mock, patch
@@ -13,7 +12,7 @@ from azure.ai.ml._azure_environments import AzureEnvironments
 from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
 from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, AssetTypes, AzureMLResourceType
+from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -339,7 +338,6 @@ class TestBatchEndpointOperations:
         mock_batch_endpoint_operations.list_jobs(endpoint_name="ept")
         mock_batch_endpoint_operations._requests_pipeline.get.assert_called_once()
 
-    @patch.dict(os.environ, {AZUREML_CLOUD_ENV_NAME: AzureEnvironments.ENV_DEFAULT})
     def test_list_jobs_rejects_untrusted_discovery_url(
         self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture
     ) -> None:
@@ -358,6 +356,7 @@ class TestBatchEndpointOperations:
         )
         mock_batch_endpoint_operations._requests_pipeline = requests_pipeline
         mock_batch_endpoint_operations._credentials = Mock()
+        mock_batch_endpoint_operations._cloud = AzureEnvironments.ENV_DEFAULT
 
         with pytest.raises(ValidationException):
             mock_batch_endpoint_operations.list_jobs(endpoint_name="ept")

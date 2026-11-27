@@ -27,7 +27,7 @@ from azure.ai.ml._azure_environments import AzureEnvironments, _get_default_clou
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._telemetry import configure_appinsights_logging
 from azure.ai.ml._user_agent import USER_AGENT
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, WorkspaceDiscoveryUrlKey
 from azure.ai.ml.exceptions import ValidationException
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
@@ -531,6 +531,47 @@ class TestMachineLearningClient:
         assert ml_client._cloud == "test_cloud"
         assert ml_client._base_url == "https://test.management.azure.com"
         assert _get_default_cloud_name() == "test_cloud"
+
+    @pytest.mark.parametrize(
+        "run_discovery",
+        [
+            lambda client: client._jobs._get_workspace_url(WorkspaceDiscoveryUrlKey.API),
+            lambda client: client._indexes._azure_ai_assets,
+            lambda client: client._batch_endpoints.list_jobs(endpoint_name="ept"),
+        ],
+        ids=["jobs", "indexes", "batch_endpoints"],
+    )
+    def test_workspace_discovery_uses_client_cloud(self, mock_credential, run_discovery) -> None:
+        with patch.dict(os.environ):
+            public_client = MLClient(
+                credential=mock_credential,
+                subscription_id=Test_Subscription,
+                resource_group_name=Test_Resource_Group,
+                workspace_name="test-ws1",
+                cloud=AzureEnvironments.ENV_DEFAULT,
+            )
+            MLClient(
+                credential=mock_credential,
+                subscription_id=Test_Subscription,
+                resource_group_name=Test_Resource_Group,
+                workspace_name="test-ws2",
+                cloud=AzureEnvironments.ENV_US_GOVERNMENT,
+            )
+            discovery_response = Mock(status_code=200)
+            discovery_response.text.return_value = '{"api": "https://eastus.api.azureml.ms"}'
+            list_response = Mock(status_code=200)
+            list_response.text.return_value = '{"value": [], "nextLink": null}'
+            workspace = Mock(discovery_url="https://eastus.api.azureml.ms/discovery")
+            requests_pipeline = public_client._requests_pipeline
+            with patch.object(public_client._workspaces, "get", return_value=workspace), patch.object(
+                requests_pipeline, "with_policies"
+            ) as with_policies, patch.object(requests_pipeline, "get", return_value=list_response):
+                with_policies.return_value.get.return_value = discovery_response
+                run_discovery(public_client)
+
+        with_policies.return_value.get.assert_called_once_with(
+            "https://eastus.api.azureml.ms/discovery", permit_redirects=False
+        )
 
     @patch("azure.ai.ml._telemetry.logging_handler.setup_azure_monitor")
     def test_enable_telemetry(self, mock_setup_azure_monitor) -> None:

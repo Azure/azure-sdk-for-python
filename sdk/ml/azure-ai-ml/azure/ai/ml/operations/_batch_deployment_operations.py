@@ -8,7 +8,11 @@ import json
 import re
 from typing import Any, Optional, TypeVar, Union
 
-from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml._azure_environments import (
+    _get_aml_resource_id_from_metadata,
+    _get_default_cloud_name,
+    _resource_to_scopes,
+)
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -79,6 +83,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._component_operations = service_client_02_2023_preview.component_versions
         self._all_operations = all_operations
         self._credentials = credentials
+        self._cloud = kwargs.pop("cloud", None) or _get_default_cloud_name()
         self._init_kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -299,7 +304,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
         mfe_base_uri = _get_mfe_base_url_from_discovery_service(
-            workspace_operations, self._workspace_name, self._requests_pipeline
+            workspace_operations, self._workspace_name, self._requests_pipeline, cloud_name=self._cloud
         )
 
         # The v2020_09 ``batch_job_deployment`` dataplane op has no arm_ml_service equivalent; list the jobs

@@ -7,6 +7,7 @@ from mock import MagicMock, patch
 from azure.ai.ml._azure_environments import (
     AzureEnvironments,
     EndpointURLS,
+    _environments,
     _get_azure_portal_id_from_metadata,
     _get_base_url_from_metadata,
     _get_cloud_details,
@@ -183,10 +184,38 @@ class TestCloudEnvironments:
         assert _is_trusted_aml_api_url(url, cloud_name) is trusted
 
     @mock.patch.dict(os.environ, {}, clear=True)
-    @mock.patch("azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get)
-    def test_is_trusted_aml_api_url_for_custom_cloud(self, mock_get):
-        assert _is_trusted_aml_api_url("https://westus.api.ml.azure.windows.net/discovery", "TEST_ENV2")
-        assert not _is_trusted_aml_api_url("https://eastus.api.azureml.ms/discovery", "TEST_ENV2")
+    @pytest.mark.parametrize(
+        "registry_discovery_url, trusted_url, untrusted_url",
+        [
+            (None, "https://westus.api.ml.azure.windows.net/discovery", "https://eastus.api.azureml.ms/discovery"),
+            (
+                "https://master.api.azureml-test.ms/",
+                "https://master.api.azureml-test.ms/discovery",
+                "https://eastus.api.azureml.ms/discovery",
+            ),
+            (
+                "https://registry.westeurope.cloudapp.azure.com/",
+                "https://registry.westeurope.cloudapp.azure.com/discovery",
+                "https://other.westeurope.cloudapp.azure.com/discovery",
+            ),
+        ],
+    )
+    def test_is_trusted_aml_api_url_for_custom_cloud(self, registry_discovery_url, trusted_url, untrusted_url):
+        if registry_discovery_url:
+            os.environ[ArmConstants.REGISTRY_ENV_URL] = registry_discovery_url
+        with mock.patch.dict(_environments), mock.patch(
+            "azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get
+        ):
+            _environments.pop("TEST_ENV2", None)
+            assert _is_trusted_aml_api_url(trusted_url, "TEST_ENV2")
+            assert not _is_trusted_aml_api_url(untrusted_url, "TEST_ENV2")
 
-        with mock.patch.dict(os.environ, {ArmConstants.REGISTRY_ENV_URL: "https://master.api.azureml-test.ms/"}):
-            assert _is_trusted_aml_api_url("https://master.api.azureml-test.ms/discovery", "TEST_ENV2")
+    @mock.patch.dict(os.environ, {}, clear=True)
+    def test_custom_cloud_metadata_is_cached(self):
+        with mock.patch.dict(_environments), mock.patch(
+            "azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get
+        ) as mock_send_request:
+            _environments.pop("TEST_ENV2", None)
+            cloud_details = _get_cloud_details("TEST_ENV2")
+            assert _get_cloud_details("TEST_ENV2") == cloud_details
+            assert mock_send_request.call_count == 1

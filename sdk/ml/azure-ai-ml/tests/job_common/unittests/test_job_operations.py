@@ -12,7 +12,6 @@ from azure.ai.ml._azure_environments import AzureEnvironments, _get_aml_resource
 from azure.ai.ml._restclient.arm_ml_service import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import (
-    AZUREML_CLOUD_ENV_NAME,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     AzureMLResourceType,
     GitProperties,
@@ -213,7 +212,6 @@ class TestJobOperations:
         mock_job_operation._stream_logs_until_completion.assert_called_once()
         assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
 
-    @patch.dict(os.environ, {AZUREML_CLOUD_ENV_NAME: AzureEnvironments.ENV_DEFAULT})
     def test_get_workspace_url_rejects_untrusted_discovery_url(self) -> None:
         workspace_operations = Mock()
         workspace_operations.get.return_value.discovery_url = "http://untrusted.invalid/discovery"
@@ -224,6 +222,7 @@ class TestJobOperations:
         job_operations = Mock(
             _all_operations=Mock(all_operations={AzureMLResourceType.WORKSPACE: workspace_operations}),
             _requests_pipeline=requests_pipeline,
+            _cloud=AzureEnvironments.ENV_DEFAULT,
         )
 
         with pytest.raises(ValidationException):
