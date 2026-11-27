@@ -69,6 +69,20 @@ class TestIndexDocumentsBatch:
             {"@search.action": METHOD_MAP[method_name], "id": "2"},
         ]
 
+    @pytest.mark.parametrize("method_name", METHOD_NAMES)
+    @pytest.mark.parametrize("document_action", ["upload", "delete", "merge", "mergeOrUpload"])
+    def test_add_method_ignores_document_supplied_action(self, method_name, document_action):
+        batch = IndexDocumentsBatch()
+        document = {"id": "1", "@search.action": document_action}
+
+        added_actions = getattr(batch, method_name)(document)
+
+        expected = {"value": [{"@search.action": METHOD_MAP[method_name], "id": "1"}]}
+        assert [action.as_dict() for action in added_actions] == expected["value"]
+        assert json.loads(json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)) == expected
+        assert list(json.loads(json.dumps(added_actions[0], cls=SdkJSONEncoder)))[0] == "@search.action"
+        assert document == {"id": "1", "@search.action": document_action}
+
     def test_add_merge_or_upload_actions_is_public_helper(self):
         batch = IndexDocumentsBatch()
 
