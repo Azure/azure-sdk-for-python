@@ -121,6 +121,8 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
     :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
      connection_verify will be ignored.
     :paramtype ssl_context: ssl.SSLContext or None
+    :keyword meter_provider: An optional OpenTelemetry meter provider for Event Hubs client metrics.
+    :paramtype meter_provider: ~opentelemetry.metrics.MeterProvider
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
@@ -417,6 +419,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         **kwargs: Any,
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
+        Pass the constructor option ``meter_provider`` to enable OpenTelemetry client metrics.
 
         :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
@@ -594,15 +597,17 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         input_pid = partition_id
         pid = input_pid or ALL_PARTITIONS
         try:
-            try:
-                await cast(EventHubProducer, self._producers[pid]).send(
-                    event_data, partition_key=partition_key, timeout=timeout
-                )
-            except (KeyError, AttributeError, EventHubError):
-                await self._start_producer(pid, timeout)
-                await cast(EventHubProducer, self._producers[pid]).send(
-                    event_data, partition_key=partition_key, timeout=timeout
-                )
+            with self._start_operation("send") as operation:
+                try:
+                    await cast(EventHubProducer, self._producers[pid]).send(
+                        event_data, partition_key=partition_key, timeout=timeout
+                    )
+                except (KeyError, AttributeError, EventHubError):
+                    await self._start_producer(pid, timeout)
+                    await cast(EventHubProducer, self._producers[pid]).send(
+                        event_data, partition_key=partition_key, timeout=timeout
+                    )
+                operation.finish(1)
             if self._on_success:
                 await self._on_success([event_data], input_pid)
         except Exception as exc:  # pylint: disable=broad-except
@@ -688,33 +693,37 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
                 :caption: Asynchronously sends event data
 
         """
-        batch, pid, pkey = await self._batch_preparer(
-            event_data_batch, partition_id=partition_id, partition_key=partition_key
-        )
+        with self._start_operation("send") as operation:
+            batch, pid, pkey = await self._batch_preparer(
+                event_data_batch, partition_id=partition_id, partition_key=partition_key
+            )
 
-        if len(batch) == 0:
-            return
+            if len(batch) == 0:
+                return
 
-        partition_id = pid or ALL_PARTITIONS
-        try:
+            partition_id = pid or ALL_PARTITIONS
             try:
-                await cast(EventHubProducer, self._producers[partition_id]).send(
-                    batch, partition_key=pkey, timeout=timeout
-                )
-                if self._on_success:
-                    await self._on_success(batch._internal_events, pid)
-            except (KeyError, AttributeError, EventHubError):
-                await self._start_producer(partition_id, timeout)
-                await cast(EventHubProducer, self._producers[partition_id]).send(
-                    batch, partition_key=pkey, timeout=timeout
-                )
-                if self._on_success:
-                    await self._on_success(batch._internal_events, pid)
-        except Exception as exc:  # pylint: disable=broad-except
-            if self._on_error:
-                await self._on_error(batch._internal_events, pid, exc)
-            else:
-                raise
+                try:
+                    await cast(EventHubProducer, self._producers[partition_id]).send(
+                        batch, partition_key=pkey, timeout=timeout
+                    )
+                    operation.finish(len(batch))
+                    if self._on_success:
+                        await self._on_success(batch._internal_events, pid)
+                except (KeyError, AttributeError, EventHubError):
+                    await self._start_producer(partition_id, timeout)
+                    await cast(EventHubProducer, self._producers[partition_id]).send(
+                        batch, partition_key=pkey, timeout=timeout
+                    )
+                    operation.finish(len(batch))
+                    if self._on_success:
+                        await self._on_success(batch._internal_events, pid)
+            except Exception as exc:  # pylint: disable=broad-except
+                operation.finish(error=exc)
+                if self._on_error:
+                    await self._on_error(batch._internal_events, pid, exc)
+                else:
+                    raise
 
     async def create_batch(
         self,

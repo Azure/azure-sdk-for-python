@@ -16,6 +16,8 @@ from azure.core.credentials import (
     AzureNamedKeyCredential,
 )
 
+from .._metrics import Operation
+from .._tracing import LinkOpen, record_link_transition
 from .._client_base import (
     ClientBase,
     _generate_sas_token,
@@ -414,6 +416,9 @@ class ClientBaseAsync(ClientBase):
 
 
 class ConsumerProducerMixin(_MIXIN_BASE):
+    _link_component: str
+    _receive_operation: Optional[Operation] = None
+
     async def __aenter__(self) -> ConsumerProducerMixin:
         return self
 
@@ -433,17 +438,18 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         """
         # pylint: disable=protected-access
         if not self.running:
-            if self._handler:
-                await self._handler.close_async()
-            auth = await self._client._create_auth_async(auth_uri=self._client._auth_uri)
-            self._create_handler(auth)
-            conn = await self._client._conn_manager_async.get_connection(
-                endpoint=self._client._address.hostname, auth=auth
-            )
-            await self._handler.open_async(connection=conn)
-            while not await self._handler.client_ready_async():
-                await asyncio.sleep(0.05, **self._internal_kwargs)
-            # pylint: disable=protected-access
+            parent = self._receive_operation.span if self._receive_operation is not None else None
+            with LinkOpen(self._client._metrics, self._link_component, parent=parent):
+                if self._handler:
+                    await self._handler.close_async()
+                auth = await self._client._create_auth_async(auth_uri=self._client._auth_uri)
+                self._create_handler(auth)
+                conn = await self._client._conn_manager_async.get_connection(
+                    endpoint=self._client._address.hostname, auth=auth
+                )
+                await self._handler.open_async(connection=conn)
+                while not await self._handler.client_ready_async():
+                    await asyncio.sleep(0.05, **self._internal_kwargs)
             self._max_message_size_on_link = (
                 self._client._amqp_transport.get_remote_max_message_size(self._handler)
                 or self._client._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
@@ -463,7 +469,12 @@ class ConsumerProducerMixin(_MIXIN_BASE):
     async def _handle_exception(self, exception: Exception, *, is_consumer: bool = False) -> Exception:
         # pylint: disable=protected-access
         exception = self._client._amqp_transport.check_timeout_exception(self, exception)
-        return await self._client._amqp_transport._handle_exception_async(exception, self, is_consumer=is_consumer)
+        was_running = self.running
+        try:
+            return await self._client._amqp_transport._handle_exception_async(exception, self, is_consumer=is_consumer)
+        finally:
+            if was_running and not self.running:
+                record_link_transition(self._client._metrics, self._link_component, "invalidated")
 
     async def _do_retryable_operation(
         self, operation: Callable[..., Any], timeout: Optional[float] = None, **kwargs: Any

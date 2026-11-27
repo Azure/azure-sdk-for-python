@@ -70,6 +70,8 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
      Default value is `True`.
     """
 
+    _link_component = "sender"
+
     def __init__(self, client: EventHubProducerClient, target: str, **kwargs: Any) -> None:
         super().__init__()
         self._amqp_transport = kwargs.pop("amqp_transport")

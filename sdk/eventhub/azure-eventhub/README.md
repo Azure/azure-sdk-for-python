@@ -533,6 +533,42 @@ producer = EventHubProducerClient(..., logging_enable=True)
 consumer = EventHubConsumerClient(..., logging_enable=True)
 ```
 
+### OpenTelemetry
+
+To collect Event Hubs metrics, install `opentelemetry-sdk>=1.30,<2` and pass your application's
+`MeterProvider` to a producer or consumer. This also works with async clients and buffered producers.
+
+```python
+from azure.eventhub import EventHubProducerClient
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import ConsoleMetricExporter, PeriodicExportingMetricReader
+
+reader = PeriodicExportingMetricReader(ConsoleMetricExporter())
+provider = MeterProvider(metric_readers=[reader])
+try:
+    with EventHubProducerClient.from_connection_string(
+        connection_string, eventhub_name=eventhub_name, meter_provider=provider
+    ) as producer:
+        producer.send_event(event)
+finally:
+    provider.shutdown()
+```
+
+| Instrument | Measurement |
+| --- | --- |
+| `az.eventhubs.operations` | Completed send operations and receive deliveries, including empty receive timeouts, errors, and cancellations. |
+| `az.eventhubs.events` | Events accepted on send or delivered on receive. |
+| `az.eventhubs.operation.duration` | Time in seconds spent sending or waiting for a delivery, including retries. Buffered sends are measured when the worker flushes. Application callbacks are excluded. |
+| `az.eventhubs.amqp.lifecycle` | Sender and receiver link open outcomes and invalidations during recovery. |
+
+For distributed tracing, configure your OpenTelemetry tracer provider, install
+`azure-core-tracing-opentelemetry`, and set `AZURE_SDK_TRACING_IMPLEMENTATION=opentelemetry`.
+For logs, attach your OpenTelemetry logging handler to the standard `azure.eventhub` logger.
+Logical send and receive operation spans include AMQP link opening. The existing message, send, receive, and
+processing spans retain message-context propagation and links. AMQP link lifecycle records use the `DEBUG` level
+and include `component` and `outcome`.
+All three signals can be configured independently. The default installation requires only the existing SDK dependencies.
+
 ## Next steps
 
 ### More sample code

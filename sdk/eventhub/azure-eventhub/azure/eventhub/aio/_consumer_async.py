@@ -14,6 +14,7 @@ from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
 from .._common import EventData
 from .._utils import create_properties, event_position_selector
+from .._metrics import DISABLED_OPERATION, Operation
 from .._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -78,6 +79,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         It is set to `False` by default.
     """
 
+    _link_component = "receiver"
+
     def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs: Any) -> None:
         super().__init__()
         event_position = kwargs.get("event_position", None)
@@ -96,6 +99,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             "on_event_received"
         ]
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
+        self._receive_operation: Optional[Operation] = None
+        self._callback = self._on_event_received
+        self._on_event_received = self._deliver_events
         self._client = client
         self._source = source
         self._offset = event_position
@@ -181,10 +187,42 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._last_received_event = event_data
         return event_data
 
+    async def _deliver_events(self, events):
+        # pylint: disable=protected-access
+        if self._receive_operation is None or self._receive_operation is DISABLED_OPERATION:
+            await self._callback(events)
+            return
+        count = len(events) if isinstance(events, list) else int(events is not None)
+        self._receive_operation.finish(count)
+        pending = self._client._start_operation("receive", paused=True)
+        self._receive_operation = pending
+        try:
+            await self._callback(events)
+        except BaseException:
+            if self._receive_operation is pending:
+                pending.discard()
+                self._receive_operation = None
+            raise
+        if self._receive_operation is pending:
+            pending.resume()
+
     async def receive(
         self,
         batch: Union[Optional[int], bool] = False,
         max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
     ) -> None:
-        await self._amqp_transport.receive_messages_async(self, batch, max_batch_size, max_wait_time)
+        # pylint: disable=protected-access
+        if self._receive_operation is None:
+            self._receive_operation = self._client._start_operation("receive")
+        try:
+            await self._amqp_transport.receive_messages_async(self, batch, max_batch_size, max_wait_time)
+        except BaseException as exc:
+            if self._receive_operation is not None:
+                self._receive_operation.finish(error=exc)
+                self._receive_operation = None
+            raise
+        finally:
+            if self._receive_operation is not None:
+                self._receive_operation.discard()
+                self._receive_operation = None

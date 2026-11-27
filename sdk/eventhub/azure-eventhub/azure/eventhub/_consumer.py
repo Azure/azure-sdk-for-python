@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from asyncio import CancelledError  # pylint: disable=do-not-import-asyncio
 import logging
 from collections import deque
 from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union, cast
@@ -13,6 +14,8 @@ from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union, c
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
 from ._utils import create_properties, event_position_selector
+from ._metrics import Operation
+from ._tracing import LinkOpen
 from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -76,6 +79,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         It is set to `False` by default.
     """
 
+    _link_component = "receiver"
+
     def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs: Any) -> None:
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
@@ -92,6 +97,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         self._amqp_transport: "AmqpTransport" = kwargs.pop("amqp_transport")
         self._on_event_received: Callable[[EventData], None] = kwargs["on_event_received"]
+        self._receive_operation: Optional[Operation] = None
+        self._opening: Optional[LinkOpen] = None
         self._client = client
         self._source = source
         self._offset = event_position
@@ -189,26 +196,67 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :rtype: bool
         """
         # pylint: disable=protected-access
-        if not self.running:
-            if self._handler:
-                self._handler.close()
-            auth = self._client._create_auth(auth_uri=self._client._auth_uri)
-            self._create_handler(auth)
-            conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                endpoint=self._client._address.hostname, auth=auth
-            )
-            self._handler = cast("ReceiveClient", self._handler)
-            self._handler.open(connection=conn)
-            self.handler_ready = False
-            self.running = True
-
-        if not self.handler_ready:
+        if self.running and self.handler_ready:
+            return True
+        if self._opening is None:
+            parent = self._receive_operation.span if self._receive_operation is not None else None
+            self._opening = LinkOpen(self._client._metrics, self._link_component, detached=True, parent=parent)
+        try:
+            if not self.running:
+                if self._handler:
+                    self._handler.close()
+                auth = self._client._create_auth(auth_uri=self._client._auth_uri)
+                self._create_handler(auth)
+                conn = self._client._conn_manager.get_connection(endpoint=self._client._address.hostname, auth=auth)
+                self._handler = cast("ReceiveClient", self._handler)
+                self._handler.open(connection=conn)
+                self.handler_ready = False
+                self.running = True
             if self._handler.client_ready():  # type: ignore
                 self.handler_ready = True
-
+                self._opening.finish()
+                self._opening = None
+        except BaseException as exc:
+            if self._opening is not None:
+                self._opening.finish(exc)
+                self._opening = None
+            raise
         return self.handler_ready
 
+    def close(self) -> None:
+        if self._opening is not None:
+            self._opening.finish(CancelledError())
+            self._opening = None
+        if self._receive_operation is not None:
+            self._receive_operation.finish(error=CancelledError())
+            self._receive_operation = None
+        super().close()
+
+    def _deliver_events(self, events):
+        if self._receive_operation is not None:
+            count = len(events) if isinstance(events, list) else int(events is not None)
+            self._receive_operation.finish(count)
+            self._receive_operation = None
+        self._on_event_received(events)
+
     def receive(self, batch=False, max_batch_size=300, max_wait_time=None):
+        # pylint: disable=protected-access
+        if self._receive_operation is None:
+            self._receive_operation = self._client._start_operation("receive")
+        else:
+            self._receive_operation.resume()
+        try:
+            self._receive(batch, max_batch_size, max_wait_time)
+        except BaseException as exc:
+            if self._receive_operation is not None:
+                self._receive_operation.finish(error=exc)
+                self._receive_operation = None
+            raise
+        finally:
+            if self._receive_operation is not None:
+                self._receive_operation.pause()
+
+    def _receive(self, batch=False, max_batch_size=300, max_wait_time=None):
         retried_times = 0
         max_retries = self._client._config.max_retries  # pylint:disable=protected-access
         self._receive_start_time = self._receive_start_time or time.time()
@@ -251,7 +299,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 events_for_callback = []
                 for _ in range(min(max_batch_size, len(self._message_buffer))):
                     events_for_callback.append(self._next_message_in_buffer())
-                self._on_event_received(events_for_callback)
+                self._deliver_events(events_for_callback)
             else:
-                self._on_event_received(self._next_message_in_buffer() if self._message_buffer else None)
+                self._deliver_events(self._next_message_in_buffer() if self._message_buffer else None)
             self._receive_start_time = None

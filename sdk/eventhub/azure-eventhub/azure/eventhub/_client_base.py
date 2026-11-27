@@ -26,6 +26,8 @@ try:
     from ._transport._uamqp_transport import UamqpTransport
 except ImportError:
     UamqpTransport = None  # type: ignore
+from ._metrics import DISABLED_OPERATION, EventHubMetrics, Operation
+from ._tracing import LinkOpen, is_tracing_enabled, record_link_transition
 from ._transport._pyamqp_transport import PyamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
@@ -304,6 +306,8 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             raise ValueError("The eventhub name can not be None or empty.")
         path = "/" + eventhub_name if eventhub_name else ""
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
+        provider = kwargs.pop("meter_provider", None)
+        self._metrics = EventHubMetrics(provider) if provider is not None else None
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredential(credential)
@@ -323,6 +327,11 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         kwargs["custom_endpoint_address"] = self._config.custom_endpoint_address
         self._conn_manager = get_connection_manager(amqp_transport=self._amqp_transport, **kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
+
+    def _start_operation(self, name: str, *, paused: bool = False) -> Operation:
+        if self._metrics is None and not is_tracing_enabled():
+            return DISABLED_OPERATION
+        return Operation(self._metrics, name, self._address.hostname, self.eventhub_name, paused=paused)
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
@@ -505,6 +514,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
 
 
 class ConsumerProducerMixin:
+    _link_component: str
 
     def __init__(self) -> None:
         self._handler: Union[
@@ -535,16 +545,17 @@ class ConsumerProducerMixin:
         """
         # pylint: disable=protected-access
         if not self.running:
-            if self._handler:
-                self._handler.close()
-            auth = self._client._create_auth(auth_uri=self._client._auth_uri)
-            self._create_handler(auth)
-            conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                endpoint=self._client._address.hostname, auth=auth
-            )
-            self._handler.open(connection=conn)
-            while not self._handler.client_ready():
-                time.sleep(0.05)
+            with LinkOpen(self._client._metrics, self._link_component):
+                if self._handler:
+                    self._handler.close()
+                auth = self._client._create_auth(auth_uri=self._client._auth_uri)
+                self._create_handler(auth)
+                conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
+                    endpoint=self._client._address.hostname, auth=auth
+                )
+                self._handler.open(connection=conn)
+                while not self._handler.client_ready():
+                    time.sleep(0.05)
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler)
                 or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
@@ -563,10 +574,16 @@ class ConsumerProducerMixin:
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception, *, is_consumer=False):
+        # pylint: disable=protected-access
         exception = self._amqp_transport.check_timeout_exception(self, exception)
-        return self._amqp_transport._handle_exception(  # pylint: disable=protected-access
-            exception, self, is_consumer=is_consumer
-        )
+        was_running = self.running
+        try:
+            return self._amqp_transport._handle_exception(  # pylint: disable=protected-access
+                exception, self, is_consumer=is_consumer
+            )
+        finally:
+            if was_running and not self.running:
+                record_link_transition(self._client._metrics, self._link_component, "invalidated")
 
     def _do_retryable_operation(  # pylint:disable=inconsistent-return-statements
         self, operation, timeout=None, **kwargs
