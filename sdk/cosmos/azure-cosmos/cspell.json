@@ -109,7 +109,8 @@
         "/\\\\u[0-9a-fA-F]{4}/g",
         "/\\\\u\\{[0-9a-fA-F]+\\}/g",
         "/\\bAQAAAIABAAA=/g",
-        "/\\bAQAAAIABAAABAAAAAAAAAA==/g"
+        "/\\bAQAAAIABAAABAAAAAAAAAA==/g",
+        "/\\bAQAAAAEAAAA/g"
       ]
     },
     {

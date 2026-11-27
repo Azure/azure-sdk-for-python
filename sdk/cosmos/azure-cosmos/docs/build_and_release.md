@@ -1476,8 +1476,7 @@ The package builder rejects wheels without exactly one nonempty compiled
 `_rust` extension, but file presence does not prove that the extension loads
 or that SDK operations work.
 
-Validate wheels locally and in the pipeline. The steps are in
-[Validating the wheel](wheel_validation.md):
+Validate wheels locally and in the pipeline. The steps are:
 
 - Local validation follows
   one exact wheel through archive inspection, clean installation, import
