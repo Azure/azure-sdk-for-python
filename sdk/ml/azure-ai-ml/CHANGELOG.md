@@ -11,6 +11,7 @@
 - Validated datastore storage account names before creating storage clients.
 - Fixed artifact cache path validation for component `additional_includes` on Python 3.15.
 - Fixed online and batch endpoint `invoke()` to build request headers for each call.
+- Changed component and artifact on-disk caches to use a directory that only the current user can access. On Windows, the caches are now in the local application data folder.
 
 ## 1.35.1 (2026-09-30)
 

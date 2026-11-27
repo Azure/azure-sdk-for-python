@@ -26,7 +26,7 @@ from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.core.exceptions import AzureError, HttpResponseError
 
 from ._http_utils import HttpPipeline
-from .utils import get_base_directory_for_cache
+from .utils import ensure_private_directory, get_base_directory_for_cache, is_path_inside_directory
 
 _logger = logging.getLogger(__name__)
 
@@ -48,7 +48,8 @@ class ArtifactCache:
     """
 
     # artifact cache is shared across SDK versions and across workspaces/registries
-    DEFAULT_DISK_CACHE_DIRECTORY = get_base_directory_for_cache().joinpath(
+    _DEFAULT_CACHE_ROOT = get_base_directory_for_cache()
+    DEFAULT_DISK_CACHE_DIRECTORY = _DEFAULT_CACHE_ROOT.joinpath(
         "components",
         "additional_includes",
         "artifacts",
@@ -88,6 +89,18 @@ class ArtifactCache:
 
     def __init__(self, cache_directory=None):
         self._cache_directory = Path(cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY)
+        # The default path is built when this module is imported, and the base directory can change after that,
+        # for example when the temporary directory changes. Check every base directory that holds the cache.
+        for cache_root in dict.fromkeys((self._DEFAULT_CACHE_ROOT, get_base_directory_for_cache())):
+            if cache_root in self._cache_directory.parents and not (
+                ensure_private_directory(cache_root) and is_path_inside_directory(self._cache_directory, cache_root)
+            ):
+                setting = "LOCALAPPDATA" if os.name == "nt" else "TMPDIR"
+                raise RuntimeError(
+                    f"The artifact cache can't use {cache_root.as_posix()} because other users might be able to "
+                    "access it. Remove that folder, or make sure it is owned by the current user and no other user "
+                    f"can access it, or set {setting} to a folder that only the current user can access."
+                )
         self._cache_directory.mkdir(exist_ok=True, parents=True)
         self._artifacts_tool_path = None
         self._download_locks = defaultdict(Lock)

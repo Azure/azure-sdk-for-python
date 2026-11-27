@@ -282,6 +282,54 @@ def test_constructor_reports_missing_azure_cli(tmp_path, monkeypatch, mocker):
     assert not cache_directory.exists()
 
 
+def test_constructor_rejects_cache_root_other_users_can_access(tmp_path, monkeypatch, mocker):
+    cache_root = tmp_path / "azure-ai-ml"
+    monkeypatch.setattr(ArtifactCache, "_instance", None)
+    monkeypatch.setattr(ArtifactCache, "DEFAULT_DISK_CACHE_DIRECTORY", cache_root / "components" / "artifacts")
+    mocker.patch.object(ArtifactCache, "check_artifact_extension")
+    mocker.patch(f"{_MODULE}.get_base_directory_for_cache", return_value=cache_root)
+    mocker.patch(f"{_MODULE}.ensure_private_directory", return_value=False)
+
+    with pytest.raises(RuntimeError, match="only the current user can access") as error:
+        ArtifactCache()
+    assert cache_root.as_posix() in str(error.value)
+    assert ("LOCALAPPDATA" if os.name == "nt" else "TMPDIR") in str(error.value)
+    assert not (cache_root / "components").exists()
+
+
+def test_constructor_checks_cache_root_the_default_directory_was_built_from(tmp_path, monkeypatch, mocker):
+    default_root = tmp_path / "default"
+    monkeypatch.setattr(ArtifactCache, "_instance", None)
+    monkeypatch.setattr(ArtifactCache, "_DEFAULT_CACHE_ROOT", default_root)
+    monkeypatch.setattr(ArtifactCache, "DEFAULT_DISK_CACHE_DIRECTORY", default_root / "components" / "artifacts")
+    mocker.patch.object(ArtifactCache, "check_artifact_extension")
+    # The base directory changed after import, for example because the temporary directory changed.
+    mocker.patch(f"{_MODULE}.get_base_directory_for_cache", return_value=tmp_path / "current")
+    ensure_private_directory = mocker.patch(f"{_MODULE}.ensure_private_directory", return_value=False)
+
+    with pytest.raises(RuntimeError, match="only the current user can access"):
+        ArtifactCache()
+    ensure_private_directory.assert_called_once_with(default_root)
+    assert not (default_root / "components").exists()
+
+
+def test_constructor_rejects_cache_directory_redirected_outside_cache_root(tmp_path, monkeypatch, mocker):
+    cache_root = tmp_path / "azure-ai-ml"
+    shared_directory = tmp_path / "shared"
+    cache_root.mkdir()
+    shared_directory.mkdir()
+    _directory_link(cache_root / "components", shared_directory)
+    monkeypatch.setattr(ArtifactCache, "_instance", None)
+    monkeypatch.setattr(ArtifactCache, "DEFAULT_DISK_CACHE_DIRECTORY", cache_root / "components" / "artifacts")
+    mocker.patch.object(ArtifactCache, "check_artifact_extension")
+    mocker.patch(f"{_MODULE}.get_base_directory_for_cache", return_value=cache_root)
+    mocker.patch(f"{_MODULE}.ensure_private_directory", return_value=True)
+
+    with pytest.raises(RuntimeError, match="only the current user can access"):
+        ArtifactCache()
+    assert not list(shared_directory.iterdir())
+
+
 def test_constructor_retries_extension_check_after_failure(tmp_path, monkeypatch, mocker):
     monkeypatch.setattr(ArtifactCache, "_instance", None)
     monkeypatch.setattr(ArtifactCache, "DEFAULT_DISK_CACHE_DIRECTORY", tmp_path / "cache")

@@ -11,6 +11,7 @@ import logging
 import os
 import random
 import re
+import stat
 import string
 import sys
 import tempfile
@@ -1273,24 +1274,75 @@ def get_all_enum_values_iter(enum_type: type) -> Iterable[Any]:
             yield getattr(enum_type, key)
 
 
-def write_to_shared_file(file_path: Union[str, PathLike], content: str):
-    """Open file with specific mode and return the file object.
+def write_to_private_file(file_path: Union[str, PathLike], content: str) -> None:
+    """Write content to a file that only the current user can read or write.
 
     :param file_path: Path to the file.
     :type file_path: Union[str, os.PathLike]
     :param content: Content to write to the file.
     :type content: str
     """
-    with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, "O_NOFOLLOW", 0)  # cspell:ignore WRONLY CREAT fchmod
+    with os.fdopen(os.open(file_path, flags, 0o600), "w", encoding=DefaultOpenEncoding.WRITE) as f:
+        # The mode passed to os.open only applies to new files, so also restrict a file that already exists.
+        fchmod = getattr(os, "fchmod", None)
+        if fchmod is not None:
+            fchmod(f.fileno(), 0o600)
         f.write(content)
 
-    # share_mode means read/write for owner, group and others
-    share_mode, mode_mask = 0o666, 0o777
-    if os.stat(file_path).st_mode & mode_mask != share_mode:
-        try:
-            os.chmod(file_path, share_mode)
-        except PermissionError:
-            pass
+
+def _get_current_uid() -> Optional[int]:
+    get_uid = getattr(os, "getuid", None)
+    return None if get_uid is None else get_uid()
+
+
+def ensure_private_directory(path: Union[str, PathLike]) -> bool:
+    """Create a directory if needed and check that other users cannot access it.
+
+    Windows has no owner ID or mode bits to check, so only directories in the user's local application data folder,
+    which other users cannot access, are trusted there.
+
+    :param path: Path to the directory.
+    :type path: Union[str, os.PathLike]
+    :return: True if the path is a directory owned by the current user that no other user can access,
+        False otherwise.
+    :rtype: bool
+    """
+    uid = _get_current_uid()
+    if uid is None:
+        local_app_data = os.environ.get("LOCALAPPDATA")
+        if not local_app_data or not is_path_inside_directory(path, local_app_data):
+            return False
+    try:
+        os.makedirs(path, mode=0o700, exist_ok=True)
+        status = os.lstat(path)
+        if not stat.S_ISDIR(status.st_mode):
+            return False
+        if uid is None:
+            return True
+        # If other users could enter the directory, they may already have added entries through a subdirectory
+        # they can write to, so restricting access now would not make it safe.
+        mode = stat.S_IMODE(status.st_mode)
+        return status.st_uid == uid and mode & 0o077 == 0
+    except OSError:
+        return False
+
+
+def is_path_inside_directory(path: Union[str, PathLike], directory: Union[str, PathLike]) -> bool:
+    """Check that a path stays inside a directory after following symlinks.
+
+    :param path: The path to check. It doesn't need to exist.
+    :type path: Union[str, os.PathLike]
+    :param directory: The directory that should contain the path.
+    :type directory: Union[str, os.PathLike]
+    :return: True if the resolved path is inside the resolved directory, False otherwise.
+    :rtype: bool
+    """
+    try:
+        return Path(directory).resolve() in Path(path).resolve().parents
+    except (OSError, RuntimeError):
+        # RuntimeError is raised for symlink loops before Python 3.13.
+        return False
 
 
 def _get_valid_dot_keys_with_wildcard_impl(
@@ -1369,9 +1421,19 @@ def get_valid_dot_keys_with_wildcard(
 def get_base_directory_for_cache() -> Path:
     """Get the base directory for cache files.
 
+    The directory is specific to the current user. On POSIX systems, it is in the temporary directory, which can be
+    shared by all users. On Windows, it is in the user's local application data folder, because the temporary
+    directory can be changed to a folder that other users can access.
+
     :return: The base directory for cache files.
     :rtype: Path
     """
+    uid = _get_current_uid()
+    if uid is not None:
+        return Path(tempfile.gettempdir()).joinpath(f"azure-ai-ml-{uid}")
+    local_app_data = os.environ.get("LOCALAPPDATA")
+    if local_app_data:
+        return Path(local_app_data).joinpath("azure-ai-ml", "cache")
     return Path(tempfile.gettempdir()).joinpath("azure-ai-ml")
 
 
