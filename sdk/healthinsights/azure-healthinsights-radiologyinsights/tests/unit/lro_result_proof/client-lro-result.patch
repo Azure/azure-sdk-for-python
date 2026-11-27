@@ -1,0 +1,19 @@
+--- a/specification/ai/HealthInsights/HealthInsights.RadiologyInsights/client.tsp
++++ b/specification/ai/HealthInsights/HealthInsights.RadiologyInsights/client.tsp
+@@ -18,5 +18,6 @@
+   #suppress "@azure-tools/typespec-azure-core/long-running-polling-operation-required" "Polling through operation-location"
+   #suppress "@azure-tools/typespec-azure-core/use-standard-operations" "https://github.com/microsoft/typespec/issues/2037"
+   #suppress "@azure-tools/typespec-azure-core/use-standard-names" "Legacy name"
++  #suppress "@azure-tools/typespec-client-generator-core/use-valid-client-lro-result" "Preserve the existing Python SDK inference-result return contract."
+   inferRadiologyInsights is AzureHealthInsights.RadiologyInsights.createJob;
+ }
+@@ -308,3 +309,9 @@
+   "FraxScore",
+   "csharp"
+ );
++
++@@clientLroResult(
++  ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights,
++  AzureHealthInsights.RadiologyInsightsJob.result,
++  "python"
++);

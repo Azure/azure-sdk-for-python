@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class RadiologyInsightsInference(_Model):
+class RadiologyInsightsInference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An inference made by the Radiology Insights model regarding a patient.
 
     * AgeMismatch
@@ -52,14 +52,14 @@ class RadiologyInsightsInference(_Model):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind")
     """Discriminator property for RadiologyInsightsInference. Required. Known values are:
      \"ageMismatch\", \"lateralityDiscrepancy\", \"sexMismatch\", \"completeOrderDiscrepancy\",
      \"limitedOrderDiscrepancy\", \"finding\", \"criticalResult\", \"followupRecommendation\",
      \"followupCommunication\", \"radiologyProcedure\", \"scoringAndAssessment\", \"guidance\", and
      \"qualityMeasure\"."""
-    extension: Optional[List["_models.Extension"]] = rest_field(
+    extension: Optional[list["_models.Extension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional Content defined by implementations."""
@@ -69,7 +69,7 @@ class RadiologyInsightsInference(_Model):
         self,
         *,
         kind: str,
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -83,24 +83,26 @@ class RadiologyInsightsInference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatch"):
+class AgeMismatchInference(
+    RadiologyInsightsInference, discriminator="ageMismatch"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A notification for age mismatch is displayed when the age mentioned in a document for a
     specific patient does not match the age specified in the patient information.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Age mismatch inference type
+    :ivar kind: Inference type. Required. Age mismatch inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.AGE_MISMATCH
     """
 
     kind: Literal[RadiologyInsightsInferenceType.AGE_MISMATCH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Age mismatch inference type"""
+    """Inference type. Required. Age mismatch inference type."""
 
     @overload
     def __init__(
         self,
         *,
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -111,12 +113,13 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.AGE_MISMATCH, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.AGE_MISMATCH  # type: ignore
 
 
-class Element(_Model):
-    """The base definition for all elements contained inside a resource.
-    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
+class Element(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The base definition for all elements contained inside a resource. Based on `FHIR Element
+    <https://www.hl7.org/fhir/R4/element.html>`_.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -126,7 +129,7 @@ class Element(_Model):
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique id for inter-element referencing."""
-    extension: Optional[List["_models.Extension"]] = rest_field(
+    extension: Optional[list["_models.Extension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional Content defined by implementations."""
@@ -136,7 +139,7 @@ class Element(_Model):
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -150,9 +153,9 @@ class Element(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Annotation(Element):
-    """A text note which also  contains information about who made the statement and when
-    Based on `FHIR Annotation <https://www.hl7.org/fhir/R4/datatypes.html#Annotation>`_.
+class Annotation(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A text note which also  contains information about who made the statement and when Based on
+    `FHIR Annotation <https://www.hl7.org/fhir/R4/datatypes.html#Annotation>`_.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -181,7 +184,7 @@ class Annotation(Element):
         *,
         text: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
         author_string: Optional[str] = None,
         time: Optional[str] = None,
     ) -> None: ...
@@ -197,7 +200,7 @@ class Annotation(Element):
         super().__init__(*args, **kwargs)
 
 
-class AssessmentValueRange(_Model):
+class AssessmentValueRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A range of values.
 
     :ivar minimum: The minimum value. Required.
@@ -230,17 +233,21 @@ class AssessmentValueRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodeableConcept(Element):
-    """Concept - reference to a terminology or just text
-    Based on `FHIR CodeableConcept <https://www.hl7.org/fhir/R4/datatypes.html#CodeableConcept>`_.
+class CodeableConcept(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Concept - reference to a terminology or just text Based on `FHIR CodeableConcept
+    <https://www.hl7.org/fhir/R4/datatypes.html#CodeableConcept>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar coding: Code defined by a terminology system.
     :vartype coding: list[~azure.healthinsights.radiologyinsights.models.Coding]
     :ivar text: Plain text representation of the concept.
     :vartype text: str
     """
 
-    coding: Optional[List["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coding: Optional[list["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Code defined by a terminology system."""
     text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Plain text representation of the concept."""
@@ -249,7 +256,9 @@ class CodeableConcept(Element):
     def __init__(
         self,
         *,
-        coding: Optional[List["_models.Coding"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
+        coding: Optional[list["_models.Coding"]] = None,
         text: Optional[str] = None,
     ) -> None: ...
 
@@ -264,7 +273,7 @@ class CodeableConcept(Element):
         super().__init__(*args, **kwargs)
 
 
-class Coding(Element):
+class Coding(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Coding is a representation of a defined concept using a symbol from a defined "code system".
     Based on `FHIR Coding <https://www.hl7.org/fhir/R4/datatypes.html#Coding>`_.
 
@@ -296,7 +305,7 @@ class Coding(Element):
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
         system: Optional[str] = None,
         version: Optional[str] = None,
         code: Optional[str] = None,
@@ -314,13 +323,15 @@ class Coding(Element):
         super().__init__(*args, **kwargs)
 
 
-class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="completeOrderDiscrepancy"):
+class CompleteOrderDiscrepancyInference(
+    RadiologyInsightsInference, discriminator="completeOrderDiscrepancy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A complete order discrepancy is shown when one or more body parts and/or measurements that
     should be in the document (because there is a complete order) are not present.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Complete order discrepancy inference type
+    :ivar kind: Inference type. Required. Complete order discrepancy inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.COMPLETE_ORDER_DISCREPANCY
     :ivar order_type: Order type : CPT ultrasound complete code for abdomen, retroperitoneal,
      pelvis or breast. Required.
@@ -336,17 +347,17 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
     """
 
     kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Complete order discrepancy inference type"""
+    """Inference type. Required. Complete order discrepancy inference type."""
     order_type: "_models.CodeableConcept" = rest_field(
         name="orderType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
      Required."""
-    missing_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(
+    missing_body_parts: Optional[list["_models.CodeableConcept"]] = rest_field(
         name="missingBodyParts", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of missing body parts required by a complete order : SNOMED CT codes."""
-    missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(
+    missing_body_part_measurements: Optional[list["_models.CodeableConcept"]] = rest_field(
         name="missingBodyPartMeasurements", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of missing body parts that require measurement by a complete order : SNOMED CT codes."""
@@ -356,9 +367,9 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         self,
         *,
         order_type: "_models.CodeableConcept",
-        extension: Optional[List["_models.Extension"]] = None,
-        missing_body_parts: Optional[List["_models.CodeableConcept"]] = None,
-        missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
+        missing_body_parts: Optional[list["_models.CodeableConcept"]] = None,
+        missing_body_part_measurements: Optional[list["_models.CodeableConcept"]] = None,
     ) -> None: ...
 
     @overload
@@ -369,10 +380,11 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY  # type: ignore
 
 
-class CriticalResult(_Model):
+class CriticalResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Critical Result consists of two properties.
 
     :ivar description: Description : medical problem. Required.
@@ -405,13 +417,15 @@ class CriticalResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CriticalResultInference(RadiologyInsightsInference, discriminator="criticalResult"):
+class CriticalResultInference(
+    RadiologyInsightsInference, discriminator="criticalResult"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Critical results refer to findings of utmost importance that may require timely attention due
     to their potential impact on patient care.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Critical finding inference type
+    :ivar kind: Inference type. Required. Critical finding inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.CRITICAL_RESULT
     :ivar result: The complete Critical Result, as outlined below, will be reused for the
      recommendation. Required.
@@ -419,7 +433,7 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
     """
 
     kind: Literal[RadiologyInsightsInferenceType.CRITICAL_RESULT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Critical finding inference type"""
+    """Inference type. Required. Critical finding inference type."""
     result: "_models.CriticalResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The complete Critical Result, as outlined below, will be reused for the recommendation.
      Required."""
@@ -429,7 +443,7 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
         self,
         *,
         result: "_models.CriticalResult",
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -440,10 +454,11 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.CRITICAL_RESULT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.CRITICAL_RESULT  # type: ignore
 
 
-class DocumentAdministrativeMetadata(_Model):
+class DocumentAdministrativeMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Document administrative metadata.
 
     :ivar ordered_procedures: List of procedure information associated with the document.
@@ -453,7 +468,7 @@ class DocumentAdministrativeMetadata(_Model):
     :vartype encounter_id: str
     """
 
-    ordered_procedures: Optional[List["_models.OrderedProcedure"]] = rest_field(
+    ordered_procedures: Optional[list["_models.OrderedProcedure"]] = rest_field(
         name="orderedProcedures", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of procedure information associated with the document."""
@@ -466,7 +481,7 @@ class DocumentAdministrativeMetadata(_Model):
     def __init__(
         self,
         *,
-        ordered_procedures: Optional[List["_models.OrderedProcedure"]] = None,
+        ordered_procedures: Optional[list["_models.OrderedProcedure"]] = None,
         encounter_id: Optional[str] = None,
     ) -> None: ...
 
@@ -481,7 +496,7 @@ class DocumentAdministrativeMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentAuthor(_Model):
+class DocumentAuthor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Document author.
 
     :ivar id: author id.
@@ -514,13 +529,12 @@ class DocumentAuthor(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentContent(_Model):
+class DocumentContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The content of the patient document.
 
-    :ivar source_type: The type of the content's source.
-     In case the source type is 'inline', the content is given as a string (for instance, text).
-     In case the source type is 'reference', the content is given as a URI. Required. Known values
-     are: "inline" and "reference".
+    :ivar source_type: The type of the content's source. In case the source type is 'inline', the
+     content is given as a string (for instance, text). In case the source type is 'reference', the
+     content is given as a URI. Required. Known values are: "inline" and "reference".
     :vartype source_type: str or
      ~azure.healthinsights.radiologyinsights.models.DocumentContentSourceType
     :ivar value: The content of the document, given either inline (as a string) or as a reference
@@ -531,10 +545,9 @@ class DocumentContent(_Model):
     source_type: Union[str, "_models.DocumentContentSourceType"] = rest_field(
         name="sourceType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of the content's source.
-     In case the source type is 'inline', the content is given as a string (for instance, text).
-     In case the source type is 'reference', the content is given as a URI. Required. Known values
-     are: \"inline\" and \"reference\"."""
+    """The type of the content's source. In case the source type is 'inline', the content is given as
+     a string (for instance, text). In case the source type is 'reference', the content is given as
+     a URI. Required. Known values are: \"inline\" and \"reference\"."""
     value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the document, given either inline (as a string) or as a reference (URI).
      Required."""
@@ -558,10 +571,10 @@ class DocumentContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_Model):
+class Resource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource is the ancestor of DomainResource from which most resources are derived. Bundle,
-    Parameters, and Binary extend Resource directly.
-    Based on [FHIR Resource](`https://www.hl7.org/fhir/r4/resource.html
+    Parameters, and Binary extend Resource directly. Based on [FHIR
+    Resource](`https://www.hl7.org/fhir/r4/resource.html
     <https://www.hl7.org/fhir/r4/resource.html>`_.
 
     :ivar resource_type: The type of resource. Required.
@@ -611,12 +624,12 @@ class Resource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DomainResource(Resource):
-    """A resource with narrative, extensions, and contained resources
-    Based on `FHIR DomainResource <https://www.hl7.org/fhir/domainresource.html>`_.
+class DomainResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A resource with narrative, extensions, and contained resources Based on `FHIR DomainResource
+    <https://www.hl7.org/fhir/domainresource.html>`_.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    Condition, Observation, ResearchStudy
+    Observation
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -639,20 +652,20 @@ class DomainResource(Resource):
     :vartype modifier_extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     resource_type: str = rest_discriminator(name="resourceType")
     """Discriminator property for DomainResource. Required. Default value is None."""
     text: Optional["_models.Narrative"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text summary of the resource, for human interpretation."""
-    contained: Optional[List["_models.Resource"]] = rest_field(
+    contained: Optional[list["_models.Resource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Contained, inline Resources."""
-    extension: Optional[List["_models.Extension"]] = rest_field(
+    extension: Optional[list["_models.Extension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional Content defined by implementations."""
-    modifier_extension: Optional[List["_models.Extension"]] = rest_field(
+    modifier_extension: Optional[list["_models.Extension"]] = rest_field(
         name="modifierExtension", visibility=["read", "create", "update", "delete", "query"]
     )
     """Extensions that cannot be ignored."""
@@ -667,9 +680,9 @@ class DomainResource(Resource):
         implicit_rules: Optional[str] = None,
         language: Optional[str] = None,
         text: Optional["_models.Narrative"] = None,
-        contained: Optional[List["_models.Resource"]] = None,
-        extension: Optional[List["_models.Extension"]] = None,
-        modifier_extension: Optional[List["_models.Extension"]] = None,
+        contained: Optional[list["_models.Resource"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
+        modifier_extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -683,10 +696,13 @@ class DomainResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Extension(Element):
-    """Base for all elements
-    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
+class Extension(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Base for all elements Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
     :vartype url: str
     :ivar value_quantity: Value as Quantity.
@@ -771,6 +787,8 @@ class Extension(Element):
         self,
         *,
         url: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         value_quantity: Optional["_models.Quantity"] = None,
         value_codeable_concept: Optional["_models.CodeableConcept"] = None,
         value_string: Optional[str] = None,
@@ -796,13 +814,15 @@ class Extension(Element):
         super().__init__(*args, **kwargs)
 
 
-class FindingInference(RadiologyInsightsInference, discriminator="finding"):
+class FindingInference(
+    RadiologyInsightsInference, discriminator="finding"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Findings in a radiology report typically describe abnormalities, lesions, or other notable
     observations related to the anatomy or pathology of the imaged area.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Finding inference type
+    :ivar kind: Inference type. Required. Finding inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.FINDING
     :ivar finding: Finding data : contains extensions, fields and components linked with the
      finding. Required.
@@ -810,7 +830,7 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
     """
 
     kind: Literal[RadiologyInsightsInferenceType.FINDING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Finding inference type"""
+    """Inference type. Required. Finding inference type."""
     finding: "_models.Observation" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Finding data : contains extensions, fields and components linked with the finding. Required."""
 
@@ -819,7 +839,7 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
         self,
         *,
         finding: "_models.Observation",
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -830,10 +850,11 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.FINDING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.FINDING  # type: ignore
 
 
-class FindingOptions(_Model):
+class FindingOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Finding options.
 
     :ivar provide_focused_sentence_evidence: If this is true, provide the sentence that contains
@@ -868,13 +889,15 @@ class FindingOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="followupCommunication"):
+class FollowupCommunicationInference(
+    RadiologyInsightsInference, discriminator="followupCommunication"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Follow-up communication involves the exchange of important information, recommendations, or
     updates between radiologists and other healthcare professionals involved in a patient's care.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Followup Communication inference type
+    :ivar kind: Inference type. Required. Followup Communication inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.FOLLOWUP_COMMUNICATION
     :ivar communicated_at: Communication date and time.
     :vartype communicated_at: list[~datetime.datetime]
@@ -886,12 +909,12 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     """
 
     kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Followup Communication inference type"""
-    communicated_at: Optional[List[datetime.datetime]] = rest_field(
+    """Inference type. Required. Followup Communication inference type."""
+    communicated_at: Optional[list[datetime.datetime]] = rest_field(
         name="communicatedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Communication date and time."""
-    recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = rest_field(
+    recipient: Optional[list[Union[str, "_models.MedicalProfessionalType"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Recipient of the communication."""
@@ -905,9 +928,9 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
         self,
         *,
         was_acknowledged: bool,
-        extension: Optional[List["_models.Extension"]] = None,
-        communicated_at: Optional[List[datetime.datetime]] = None,
-        recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
+        communicated_at: Optional[list[datetime.datetime]] = None,
+        recipient: Optional[list[Union[str, "_models.MedicalProfessionalType"]]] = None,
     ) -> None: ...
 
     @overload
@@ -918,16 +941,19 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION  # type: ignore
 
 
-class FollowupRecommendationInference(RadiologyInsightsInference, discriminator="followupRecommendation"):
+class FollowupRecommendationInference(
+    RadiologyInsightsInference, discriminator="followupRecommendation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Follow-up recommendations offer guidance to healthcare providers on managing and monitoring
     patients based on the findings of imaging studies.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Recommendation inference type
+    :ivar kind: Inference type. Required. Recommendation inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.FOLLOWUP_RECOMMENDATION
     :ivar effective_at: Date and time are displayed when the procedure is recommended to be done at
      a specific point in time.
@@ -958,7 +984,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
     """
 
     kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Recommendation inference type"""
+    """Inference type. Required. Recommendation inference type."""
     effective_at: Optional[str] = rest_field(
         name="effectiveAt", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -968,7 +994,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         name="effectivePeriod", visibility=["read", "create", "update", "delete", "query"]
     )
     """The period is shown if a specific period is mentioned, with a start and end date-time."""
-    findings: Optional[List["_models.RecommendationFinding"]] = rest_field(
+    findings: Optional[list["_models.RecommendationFinding"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Findings related to the recommendation."""
@@ -1000,10 +1026,10 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         is_guideline: bool,
         is_hedging: bool,
         recommended_procedure: "_models.ProcedureRecommendation",
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
         effective_at: Optional[str] = None,
         effective_period: Optional["_models.Period"] = None,
-        findings: Optional[List["_models.RecommendationFinding"]] = None,
+        findings: Optional[list["_models.RecommendationFinding"]] = None,
     ) -> None: ...
 
     @overload
@@ -1014,10 +1040,11 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION  # type: ignore
 
 
-class FollowupRecommendationOptions(_Model):
+class FollowupRecommendationOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Follow-up recommendation options.
 
     :ivar include_recommendations_with_no_specified_modality: Include/Exclude follow-up
@@ -1069,7 +1096,7 @@ class FollowupRecommendationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProcedureRecommendation(_Model):
+class ProcedureRecommendation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The procedure recommendation can be a generic procedure or an imaging procedure.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1082,10 +1109,10 @@ class ProcedureRecommendation(_Model):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind")
     """Discriminator property for ProcedureRecommendation. Required. Default value is None."""
-    extension: Optional[List["_models.Extension"]] = rest_field(
+    extension: Optional[list["_models.Extension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional Content defined by implementations."""
@@ -1095,7 +1122,7 @@ class ProcedureRecommendation(_Model):
         self,
         *,
         kind: str,
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -1109,7 +1136,9 @@ class ProcedureRecommendation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="genericProcedureRecommendation"):
+class GenericProcedureRecommendation(
+    ProcedureRecommendation, discriminator="genericProcedureRecommendation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Generic procedure information.
 
     :ivar extension: Additional Content defined by implementations.
@@ -1137,7 +1166,7 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
         self,
         *,
         code: "_models.CodeableConcept",
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
         description: Optional[str] = None,
     ) -> None: ...
 
@@ -1149,17 +1178,20 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind="genericProcedureRecommendation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = "genericProcedureRecommendation"  # type: ignore
 
 
-class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
+class GuidanceInference(
+    RadiologyInsightsInference, discriminator="guidance"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A guidance inference collects structured information about a specific finding in the report and
     can possibly propose appropriate follow-up recommendations, based upon established,
     evidence-based best practices i.e. ACR guidelines.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Guidance inference type
+    :ivar kind: Inference type. Required. Guidance inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.GUIDANCE
     :ivar finding: The finding associated with the guidance. Required.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.FindingInference
@@ -1182,12 +1214,12 @@ class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
     """
 
     kind: Literal[RadiologyInsightsInferenceType.GUIDANCE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Guidance inference type"""
+    """Inference type. Required. Guidance inference type."""
     finding: "_models.FindingInference" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The finding associated with the guidance. Required."""
     identifier: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The guidance identifier, as a concept. Required."""
-    present_guidance_information: Optional[List["_models.PresentGuidanceInformation"]] = rest_field(
+    present_guidance_information: Optional[list["_models.PresentGuidanceInformation"]] = rest_field(
         name="presentGuidanceInformation", visibility=["read", "create", "update", "delete", "query"]
     )
     """presentGuidanceInformation lists each item of the structured information (e.g. laterality) and
@@ -1196,12 +1228,12 @@ class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """See doc of GuidanceRankingType. Required. Known values are: \"high\" and \"low\"."""
-    recommendation_proposals: Optional[List["_models.FollowupRecommendationInference"]] = rest_field(
+    recommendation_proposals: Optional[list["_models.FollowupRecommendationInference"]] = rest_field(
         name="recommendationProposals", visibility=["read", "create", "update", "delete", "query"]
     )
     """The proposed follow-up recommendations, if any. If this is filled, missingGuidanceInformation
      cannot be filled (and vice versa)."""
-    missing_guidance_information: Optional[List[str]] = rest_field(
+    missing_guidance_information: Optional[list[str]] = rest_field(
         name="missingGuidanceInformation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains all missing items that are needed to determine follow-up."""
@@ -1213,10 +1245,10 @@ class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
         finding: "_models.FindingInference",
         identifier: "_models.CodeableConcept",
         ranking: Union[str, "_models.GuidanceRankingType"],
-        extension: Optional[List["_models.Extension"]] = None,
-        present_guidance_information: Optional[List["_models.PresentGuidanceInformation"]] = None,
-        recommendation_proposals: Optional[List["_models.FollowupRecommendationInference"]] = None,
-        missing_guidance_information: Optional[List[str]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
+        present_guidance_information: Optional[list["_models.PresentGuidanceInformation"]] = None,
+        recommendation_proposals: Optional[list["_models.FollowupRecommendationInference"]] = None,
+        missing_guidance_information: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1227,10 +1259,11 @@ class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.GUIDANCE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.GUIDANCE  # type: ignore
 
 
-class GuidanceOptions(_Model):
+class GuidanceOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Guidance options.
 
     :ivar show_guidance_in_history: If this is true, also show guidances from a clinical history
@@ -1263,7 +1296,7 @@ class GuidanceOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthInsightsErrorResponse(_Model):
+class HealthInsightsErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A response containing error details.
 
     :ivar error: The error object. Required.
@@ -1291,10 +1324,14 @@ class HealthInsightsErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identifier(Element):
-    """An identifier intended for computation
-    Based on `FHIR Identifier <https://www.hl7.org/fhir/R4/identifier.html>`_.
+class Identifier(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An identifier intended for computation Based on `FHIR Identifier
+    <https://www.hl7.org/fhir/R4/identifier.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar use: usual | official | temp | secondary | old (If known).
     :vartype use: str
     :ivar type: Description of identifier.
@@ -1326,6 +1363,8 @@ class Identifier(Element):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         use: Optional[str] = None,
         type: Optional["_models.CodeableConcept"] = None,
         system: Optional[str] = None,
@@ -1345,7 +1384,7 @@ class Identifier(Element):
         super().__init__(*args, **kwargs)
 
 
-class ImagingProcedure(_Model):
+class ImagingProcedure(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Imaging procedure.
 
     :ivar modality: Modality : SNOMED CT code. Required.
@@ -1399,7 +1438,9 @@ class ImagingProcedure(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="imagingProcedureRecommendation"):
+class ImagingProcedureRecommendation(
+    ProcedureRecommendation, discriminator="imagingProcedureRecommendation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Imaging procedures.
 
     :ivar extension: Additional Content defined by implementations.
@@ -1416,11 +1457,11 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
 
     kind: Literal["imagingProcedureRecommendation"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Procedure type : imaging. Required. Default value is \"imagingProcedureRecommendation\"."""
-    procedure_codes: Optional[List["_models.CodeableConcept"]] = rest_field(
+    procedure_codes: Optional[list["_models.CodeableConcept"]] = rest_field(
         name="procedureCodes", visibility=["read", "create", "update", "delete", "query"]
     )
     """LOINC codes for the procedure."""
-    imaging_procedures: List["_models.ImagingProcedure"] = rest_field(
+    imaging_procedures: list["_models.ImagingProcedure"] = rest_field(
         name="imagingProcedures", visibility=["read", "create", "update", "delete", "query"]
     )
     """Imaging procedures. Required."""
@@ -1429,9 +1470,9 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
     def __init__(
         self,
         *,
-        imaging_procedures: List["_models.ImagingProcedure"],
-        extension: Optional[List["_models.Extension"]] = None,
-        procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
+        imaging_procedures: list["_models.ImagingProcedure"],
+        extension: Optional[list["_models.Extension"]] = None,
+        procedure_codes: Optional[list["_models.CodeableConcept"]] = None,
     ) -> None: ...
 
     @overload
@@ -1442,17 +1483,20 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind="imagingProcedureRecommendation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = "imagingProcedureRecommendation"  # type: ignore
 
 
-class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="lateralityDiscrepancy"):
+class LateralityDiscrepancyInference(
+    RadiologyInsightsInference, discriminator="lateralityDiscrepancy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A laterality mismatch occurs when there is a discrepancy between the clinical documentation and
     the ordered procedure (orderLateralityMismatch), a contradiction within the clinical document
     (textLateralityContradiction), or when no laterality is mentioned (textLateralityMissing).
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Laterality discrepancy inference type
+    :ivar kind: Inference type. Required. Laterality discrepancy inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.LATERALITY_DISCREPANCY
     :ivar laterality_indication: Laterality indication : SNOMED CT code for laterality qualifier
      value.
@@ -1465,7 +1509,7 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
     """
 
     kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Laterality discrepancy inference type"""
+    """Inference type. Required. Laterality discrepancy inference type."""
     laterality_indication: Optional["_models.CodeableConcept"] = rest_field(
         name="lateralityIndication", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1482,7 +1526,7 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
         self,
         *,
         discrepancy_type: Union[str, "_models.LateralityDiscrepancyType"],
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
         laterality_indication: Optional["_models.CodeableConcept"] = None,
     ) -> None: ...
 
@@ -1494,16 +1538,19 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY  # type: ignore
 
 
-class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="limitedOrderDiscrepancy"):
+class LimitedOrderDiscrepancyInference(
+    RadiologyInsightsInference, discriminator="limitedOrderDiscrepancy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A limited order discrepancy occurs when there is a limited order, but all body parts and
     measurements that are needed for a complete order are present in the document.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Limited order discrepancy inference type
+    :ivar kind: Inference type. Required. Limited order discrepancy inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.LIMITED_ORDER_DISCREPANCY
     :ivar order_type: Order type : CPT ultrasound complete code for abdomen, retroperitoneal,
      pelvis or breast. Required.
@@ -1518,17 +1565,17 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
     """
 
     kind: Literal[RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Limited order discrepancy inference type"""
+    """Inference type. Required. Limited order discrepancy inference type."""
     order_type: "_models.CodeableConcept" = rest_field(
         name="orderType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
      Required."""
-    present_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(
+    present_body_parts: Optional[list["_models.CodeableConcept"]] = rest_field(
         name="presentBodyParts", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of body parts found in the document : SNOMED CT codes."""
-    present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(
+    present_body_part_measurements: Optional[list["_models.CodeableConcept"]] = rest_field(
         name="presentBodyPartMeasurements", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of body parts that are measured according to the document : SNOMED CT codes."""
@@ -1538,9 +1585,9 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
         self,
         *,
         order_type: "_models.CodeableConcept",
-        extension: Optional[List["_models.Extension"]] = None,
-        present_body_parts: Optional[List["_models.CodeableConcept"]] = None,
-        present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
+        present_body_parts: Optional[list["_models.CodeableConcept"]] = None,
+        present_body_part_measurements: Optional[list["_models.CodeableConcept"]] = None,
     ) -> None: ...
 
     @overload
@@ -1551,12 +1598,13 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY  # type: ignore
 
 
-class Meta(_Model):
-    """Metadata about a resource
-    Based on `FHIR Meta <https://www.hl7.org/fhir/R4/resource.html#Meta>`_.
+class Meta(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Metadata about a resource Based on `FHIR Meta
+    <https://www.hl7.org/fhir/R4/resource.html#Meta>`_.
 
     :ivar version_id: The version specific identifier, as it appears in the version portion of the
      URL. This value changes when the resource is created, updated, or deleted.
@@ -1593,15 +1641,15 @@ class Meta(_Model):
     """A uri that identifies the source system of the resource. This provides a minimal amount of
      Provenance information that can be used to track or differentiate the source of information in
      the resource. The source may identify another FHIR server, document, message, database, etc."""
-    profile: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    profile: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of profiles (references to `StructureDefinition
      <https://www.hl7.org/fhir/structuredefinition.html>`_ resources) that this resource claims to
      conform to. The URL is a reference to `StructureDefinition.url
      <https://www.hl7.org/fhir/structuredefinition-definitions.html#StructureDefinition.url>`_."""
-    security: Optional[List["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    security: Optional[list["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Security labels applied to this resource. These tags connect specific resources to the overall
      security policy and infrastructure."""
-    tag: Optional[List["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tag: Optional[list["_models.Coding"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags applied to this resource. Tags are intended to be used to identify and relate resources to
      process and workflow, and applications are not required to consider the tags when interpreting
      the meaning of a resource."""
@@ -1613,9 +1661,9 @@ class Meta(_Model):
         version_id: Optional[str] = None,
         last_updated: Optional[str] = None,
         source: Optional[str] = None,
-        profile: Optional[List[str]] = None,
-        security: Optional[List["_models.Coding"]] = None,
-        tag: Optional[List["_models.Coding"]] = None,
+        profile: Optional[list[str]] = None,
+        security: Optional[list["_models.Coding"]] = None,
+        tag: Optional[list["_models.Coding"]] = None,
     ) -> None: ...
 
     @overload
@@ -1629,11 +1677,11 @@ class Meta(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Narrative(Element):
+class Narrative(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Any resource that is a `DomainResource <https://www.hl7.org/fhir/domainresource.html>`_ may
     include a human-readable narrative that contains a summary of the resource and may be used to
-    represent the content of the resource to a human.
-    Based on `FHIR Narrative <https://www.hl7.org/fhir/R4/narrative.html#Narrative>`_.
+    represent the content of the resource to a human. Based on `FHIR Narrative
+    <https://www.hl7.org/fhir/R4/narrative.html#Narrative>`_.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -1657,7 +1705,7 @@ class Narrative(Element):
         status: str,
         div: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -1671,9 +1719,11 @@ class Narrative(Element):
         super().__init__(*args, **kwargs)
 
 
-class Observation(DomainResource, discriminator="Observation"):
-    """Detailed information about observations
-    Based on `FHIR Observation <https://www.hl7.org/fhir/R4/observation.html>`_.
+class Observation(
+    DomainResource, discriminator="Observation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Detailed information about observations Based on `FHIR Observation
+    <https://www.hl7.org/fhir/R4/observation.html>`_.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1761,7 +1811,7 @@ class Observation(DomainResource, discriminator="Observation"):
 
     resource_type: Literal["Observation"] = rest_discriminator(name="resourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """resourceType. Required. Default value is \"Observation\"."""
-    identifier: Optional[List["_models.Identifier"]] = rest_field(
+    identifier: Optional[list["_models.Identifier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Business Identifier for observation."""
@@ -1771,7 +1821,7 @@ class Observation(DomainResource, discriminator="Observation"):
     """registered | preliminary | final | amended +. Required. Known values are: \"registered\",
      \"preliminary\", \"final\", \"amended\", \"corrected\", \"cancelled\", \"entered-in-error\",
      and \"unknown\"."""
-    category: Optional[List["_models.CodeableConcept"]] = rest_field(
+    category: Optional[list["_models.CodeableConcept"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Classification of  type of observation."""
@@ -1843,11 +1893,11 @@ class Observation(DomainResource, discriminator="Observation"):
         name="dataAbsentReason", visibility=["read", "create", "update", "delete", "query"]
     )
     """Why the result is missing."""
-    interpretation: Optional[List["_models.CodeableConcept"]] = rest_field(
+    interpretation: Optional[list["_models.CodeableConcept"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """High, low, normal, etc."""
-    note: Optional[List["_models.Annotation"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    note: Optional[list["_models.Annotation"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Comments about the observation."""
     body_site: Optional["_models.CodeableConcept"] = rest_field(
         name="bodySite", visibility=["read", "create", "update", "delete", "query"]
@@ -1855,19 +1905,19 @@ class Observation(DomainResource, discriminator="Observation"):
     """Observed body part."""
     method: Optional["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """How it was done."""
-    reference_range: Optional[List["_models.ObservationReferenceRange"]] = rest_field(
+    reference_range: Optional[list["_models.ObservationReferenceRange"]] = rest_field(
         name="referenceRange", visibility=["read", "create", "update", "delete", "query"]
     )
     """Provides guide for interpretation."""
-    has_member: Optional[List["_models.Reference"]] = rest_field(
+    has_member: Optional[list["_models.Reference"]] = rest_field(
         name="hasMember", visibility=["read", "create", "update", "delete", "query"]
     )
     """Related resource that belongs to the Observation group."""
-    derived_from: Optional[List["_models.Reference"]] = rest_field(
+    derived_from: Optional[list["_models.Reference"]] = rest_field(
         name="derivedFrom", visibility=["read", "create", "update", "delete", "query"]
     )
     """Related measurements the observation is made from."""
-    component: Optional[List["_models.ObservationComponent"]] = rest_field(
+    component: Optional[list["_models.ObservationComponent"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Component results."""
@@ -1883,11 +1933,11 @@ class Observation(DomainResource, discriminator="Observation"):
         implicit_rules: Optional[str] = None,
         language: Optional[str] = None,
         text: Optional["_models.Narrative"] = None,
-        contained: Optional[List["_models.Resource"]] = None,
-        extension: Optional[List["_models.Extension"]] = None,
-        modifier_extension: Optional[List["_models.Extension"]] = None,
-        identifier: Optional[List["_models.Identifier"]] = None,
-        category: Optional[List["_models.CodeableConcept"]] = None,
+        contained: Optional[list["_models.Resource"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
+        modifier_extension: Optional[list["_models.Extension"]] = None,
+        identifier: Optional[list["_models.Identifier"]] = None,
+        category: Optional[list["_models.CodeableConcept"]] = None,
         subject: Optional["_models.Reference"] = None,
         encounter: Optional["_models.Reference"] = None,
         effective_date_time: Optional[str] = None,
@@ -1906,14 +1956,14 @@ class Observation(DomainResource, discriminator="Observation"):
         value_date_time: Optional[str] = None,
         value_period: Optional["_models.Period"] = None,
         data_absent_reason: Optional["_models.CodeableConcept"] = None,
-        interpretation: Optional[List["_models.CodeableConcept"]] = None,
-        note: Optional[List["_models.Annotation"]] = None,
+        interpretation: Optional[list["_models.CodeableConcept"]] = None,
+        note: Optional[list["_models.Annotation"]] = None,
         body_site: Optional["_models.CodeableConcept"] = None,
         method: Optional["_models.CodeableConcept"] = None,
-        reference_range: Optional[List["_models.ObservationReferenceRange"]] = None,
-        has_member: Optional[List["_models.Reference"]] = None,
-        derived_from: Optional[List["_models.Reference"]] = None,
-        component: Optional[List["_models.ObservationComponent"]] = None,
+        reference_range: Optional[list["_models.ObservationReferenceRange"]] = None,
+        has_member: Optional[list["_models.Reference"]] = None,
+        derived_from: Optional[list["_models.Reference"]] = None,
+        component: Optional[list["_models.ObservationComponent"]] = None,
     ) -> None: ...
 
     @overload
@@ -1924,12 +1974,13 @@ class Observation(DomainResource, discriminator="Observation"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resource_type="Observation", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resource_type = "Observation"  # type: ignore
 
 
-class ObservationComponent(Element):
-    """Component results
-    Based on `FHIR Observation.component <https://www.hl7.org/fhir/R4/observation.html>`_.
+class ObservationComponent(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Component results Based on `FHIR Observation.component
+    <https://www.hl7.org/fhir/R4/observation.html>`_.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -2024,11 +2075,11 @@ class ObservationComponent(Element):
         name="dataAbsentReason", visibility=["read", "create", "update", "delete", "query"]
     )
     """Why the component result is missing."""
-    interpretation: Optional[List["_models.CodeableConcept"]] = rest_field(
+    interpretation: Optional[list["_models.CodeableConcept"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """High, low, normal, etc."""
-    reference_range: Optional[List["_models.ObservationReferenceRange"]] = rest_field(
+    reference_range: Optional[list["_models.ObservationReferenceRange"]] = rest_field(
         name="referenceRange", visibility=["read", "create", "update", "delete", "query"]
     )
     """Provides guide for interpretation of component result."""
@@ -2039,7 +2090,7 @@ class ObservationComponent(Element):
         *,
         code: "_models.CodeableConcept",
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
         value_quantity: Optional["_models.Quantity"] = None,
         value_codeable_concept: Optional["_models.CodeableConcept"] = None,
         value_string: Optional[str] = None,
@@ -2053,8 +2104,8 @@ class ObservationComponent(Element):
         value_period: Optional["_models.Period"] = None,
         value_reference: Optional["_models.Reference"] = None,
         data_absent_reason: Optional["_models.CodeableConcept"] = None,
-        interpretation: Optional[List["_models.CodeableConcept"]] = None,
-        reference_range: Optional[List["_models.ObservationReferenceRange"]] = None,
+        interpretation: Optional[list["_models.CodeableConcept"]] = None,
+        reference_range: Optional[list["_models.ObservationReferenceRange"]] = None,
     ) -> None: ...
 
     @overload
@@ -2068,9 +2119,9 @@ class ObservationComponent(Element):
         super().__init__(*args, **kwargs)
 
 
-class ObservationReferenceRange(_Model):
-    """Provides guide for interpretation of component result
-    Based on `FHIR Observation.referenceRange <https://www.hl7.org/fhir/R4/observation.html>`_.
+class ObservationReferenceRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Provides guide for interpretation of component result Based on `FHIR Observation.referenceRange
+    <https://www.hl7.org/fhir/R4/observation.html>`_.
 
     :ivar low: Low Range, if relevant.
     :vartype low: ~azure.healthinsights.radiologyinsights.models.Quantity
@@ -2092,7 +2143,7 @@ class ObservationReferenceRange(_Model):
     """High Range, if relevant."""
     type: Optional["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reference range qualifier."""
-    applies_to: Optional[List["_models.CodeableConcept"]] = rest_field(
+    applies_to: Optional[list["_models.CodeableConcept"]] = rest_field(
         name="appliesTo", visibility=["read", "create", "update", "delete", "query"]
     )
     """Reference range population."""
@@ -2108,7 +2159,7 @@ class ObservationReferenceRange(_Model):
         low: Optional["_models.Quantity"] = None,
         high: Optional["_models.Quantity"] = None,
         type: Optional["_models.CodeableConcept"] = None,
-        applies_to: Optional[List["_models.CodeableConcept"]] = None,
+        applies_to: Optional[list["_models.CodeableConcept"]] = None,
         age: Optional["_models.Range"] = None,
         text: Optional[str] = None,
     ) -> None: ...
@@ -2124,7 +2175,7 @@ class ObservationReferenceRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OrderedProcedure(_Model):
+class OrderedProcedure(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Procedure information.
 
     :ivar code: Procedure code.
@@ -2139,7 +2190,7 @@ class OrderedProcedure(_Model):
     """Procedure code."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Procedure description."""
-    extension: Optional[List["_models.Extension"]] = rest_field(
+    extension: Optional[list["_models.Extension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional Content defined by implementations."""
@@ -2150,7 +2201,7 @@ class OrderedProcedure(_Model):
         *,
         code: Optional["_models.CodeableConcept"] = None,
         description: Optional[str] = None,
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -2164,7 +2215,7 @@ class OrderedProcedure(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientDetails(_Model):
+class PatientDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patient structured information, including demographics and known structured clinical
     information.
 
@@ -2184,7 +2235,7 @@ class PatientDetails(_Model):
         name="birthDate", visibility=["read", "create", "update", "delete", "query"]
     )
     """The patient's date of birth."""
-    clinical_info: Optional[List["_models.Resource"]] = rest_field(
+    clinical_info: Optional[list["_models.Resource"]] = rest_field(
         name="clinicalInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """Known clinical information for the patient, structured."""
@@ -2195,7 +2246,7 @@ class PatientDetails(_Model):
         *,
         sex: Optional[Union[str, "_models.PatientSex"]] = None,
         birth_date: Optional[datetime.date] = None,
-        clinical_info: Optional[List["_models.Resource"]] = None,
+        clinical_info: Optional[list["_models.Resource"]] = None,
     ) -> None: ...
 
     @overload
@@ -2209,7 +2260,7 @@ class PatientDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientDocument(_Model):
+class PatientDocument(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A clinical document related to a patient. Document here is in the wide sense - not just a text
     document (note).
 
@@ -2260,7 +2311,7 @@ class PatientDocument(_Model):
         name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The date and time when the document was created."""
-    authors: Optional[List["_models.DocumentAuthor"]] = rest_field(
+    authors: Optional[list["_models.DocumentAuthor"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Document author(s)."""
@@ -2285,7 +2336,7 @@ class PatientDocument(_Model):
         clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = None,
         language: Optional[str] = None,
         created_at: Optional[datetime.datetime] = None,
-        authors: Optional[List["_models.DocumentAuthor"]] = None,
+        authors: Optional[list["_models.DocumentAuthor"]] = None,
         specialty_type: Optional[Union[str, "_models.SpecialtyType"]] = None,
         administrative_metadata: Optional["_models.DocumentAdministrativeMetadata"] = None,
     ) -> None: ...
@@ -2301,14 +2352,13 @@ class PatientDocument(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientEncounter(_Model):
+class PatientEncounter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """visit/encounter information.
 
     :ivar id: The id of the visit. Required.
     :vartype id: str
-    :ivar period: Time period of the visit.
-     In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end to
-     indicate the discharge time.
+    :ivar period: Time period of the visit. In case of admission, use timePeriod.start to indicate
+     the admission time and timePeriod.end to indicate the discharge time.
     :vartype period: ~azure.healthinsights.radiologyinsights.models.TimePeriod
     :ivar class_property: The class of the encounter. Known values are: "inpatient", "ambulatory",
      "observation", "emergency", "virtual", and "healthHome".
@@ -2318,9 +2368,8 @@ class PatientEncounter(_Model):
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The id of the visit. Required."""
     period: Optional["_models.TimePeriod"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Time period of the visit.
-     In case of admission, use timePeriod.start to indicate the admission time and timePeriod.end to
-     indicate the discharge time."""
+    """Time period of the visit. In case of admission, use timePeriod.start to indicate the admission
+     time and timePeriod.end to indicate the discharge time."""
     class_property: Optional[Union[str, "_models.EncounterClass"]] = rest_field(
         name="class", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2347,7 +2396,7 @@ class PatientEncounter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientRecord(_Model):
+class PatientRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A patient record, including their clinical information and data.
 
     :ivar id: A given identifier for the patient. Has to be unique across all patients in a single
@@ -2369,11 +2418,11 @@ class PatientRecord(_Model):
     details: Optional["_models.PatientDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Patient structured information, including demographics and known structured clinical
      information."""
-    encounters: Optional[List["_models.PatientEncounter"]] = rest_field(
+    encounters: Optional[list["_models.PatientEncounter"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Patient encounters/visits."""
-    patient_documents: Optional[List["_models.PatientDocument"]] = rest_field(
+    patient_documents: Optional[list["_models.PatientDocument"]] = rest_field(
         name="patientDocuments", visibility=["read", "create", "update", "delete", "query"]
     )
     """Patient unstructured clinical data, given as documents."""
@@ -2384,8 +2433,8 @@ class PatientRecord(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         details: Optional["_models.PatientDetails"] = None,
-        encounters: Optional[List["_models.PatientEncounter"]] = None,
-        patient_documents: Optional[List["_models.PatientDocument"]] = None,
+        encounters: Optional[list["_models.PatientEncounter"]] = None,
+        patient_documents: Optional[list["_models.PatientDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2399,10 +2448,14 @@ class PatientRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Period(Element):
-    """A time period defined by a start and end date and optionally time
-    Based on `FHIR Period <https://www.hl7.org/fhir/R4/datatypes.html#Period>`_.
+class Period(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A time period defined by a start and end date and optionally time Based on `FHIR Period
+    <https://www.hl7.org/fhir/R4/datatypes.html#Period>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar start: Starting time with inclusive boundary.
     :vartype start: str
     :ivar end: End time with inclusive boundary, if not ongoing.
@@ -2418,6 +2471,8 @@ class Period(Element):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         start: Optional[str] = None,
         end: Optional[str] = None,
     ) -> None: ...
@@ -2433,7 +2488,7 @@ class Period(Element):
         super().__init__(*args, **kwargs)
 
 
-class PresentGuidanceInformation(_Model):
+class PresentGuidanceInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An item of the structured information (e.g. laterality or size) and one or more corresponding
     details (e.g. left or size-value).
 
@@ -2454,7 +2509,7 @@ class PresentGuidanceInformation(_Model):
         name="presentGuidanceItem", visibility=["read", "create", "update", "delete", "query"]
     )
     """The item of the structured information. Required."""
-    sizes: Optional[List["_models.Observation"]] = rest_field(
+    sizes: Optional[list["_models.Observation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of size values, if the item is about size."""
@@ -2462,11 +2517,11 @@ class PresentGuidanceInformation(_Model):
         name="maximumDiameterAsInText", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum diameter value, if the item is about the maximum diameter."""
-    present_guidance_values: Optional[List[str]] = rest_field(
+    present_guidance_values: Optional[list[str]] = rest_field(
         name="presentGuidanceValues", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of item values that are mentioned in the report."""
-    extension: Optional[List["_models.Extension"]] = rest_field(
+    extension: Optional[list["_models.Extension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional Content defined by implementations."""
@@ -2476,10 +2531,10 @@ class PresentGuidanceInformation(_Model):
         self,
         *,
         present_guidance_item: str,
-        sizes: Optional[List["_models.Observation"]] = None,
+        sizes: Optional[list["_models.Observation"]] = None,
         maximum_diameter_as_in_text: Optional["_models.Quantity"] = None,
-        present_guidance_values: Optional[List[str]] = None,
-        extension: Optional[List["_models.Extension"]] = None,
+        present_guidance_values: Optional[list[str]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -2493,13 +2548,15 @@ class PresentGuidanceInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QualityMeasureInference(RadiologyInsightsInference, discriminator="qualityMeasure"):
+class QualityMeasureInference(
+    RadiologyInsightsInference, discriminator="qualityMeasure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A QualityMeasure inference captures the  MIPS ('measure based incentive payment system')
     quality measure criteria in the document that are used to measure the data completeness.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Guidance measure inference type
+    :ivar kind: Inference type. Required. Guidance measure inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.QUALITY_MEASURE
     :ivar quality_measure_denominator: The denominator, which identifies the QualityMeasure kind.
      Required.
@@ -2514,7 +2571,7 @@ class QualityMeasureInference(RadiologyInsightsInference, discriminator="quality
     """
 
     kind: Literal[RadiologyInsightsInferenceType.QUALITY_MEASURE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Guidance measure inference type"""
+    """Inference type. Required. Guidance measure inference type."""
     quality_measure_denominator: str = rest_field(
         name="qualityMeasureDenominator", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2525,7 +2582,7 @@ class QualityMeasureInference(RadiologyInsightsInference, discriminator="quality
     """The ComplianceType indicates whether the document is compliant for the specified QualityMeasure
      or not, or if exceptions apply. Required. Known values are: \"notEligible\",
      \"performanceNotMet\", \"performanceMet\", and \"denominatorException\"."""
-    quality_criteria: Optional[List[str]] = rest_field(
+    quality_criteria: Optional[list[str]] = rest_field(
         name="qualityCriteria", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of quality criteria identified in the document, if any."""
@@ -2536,8 +2593,8 @@ class QualityMeasureInference(RadiologyInsightsInference, discriminator="quality
         *,
         quality_measure_denominator: str,
         compliance_type: Union[str, "_models.QualityMeasureComplianceType"],
-        extension: Optional[List["_models.Extension"]] = None,
-        quality_criteria: Optional[List[str]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
+        quality_criteria: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2548,10 +2605,11 @@ class QualityMeasureInference(RadiologyInsightsInference, discriminator="quality
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.QUALITY_MEASURE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.QUALITY_MEASURE  # type: ignore
 
 
-class QualityMeasureOptions(_Model):
+class QualityMeasureOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quality Measure Options.
 
     :ivar measure_types: Id(s) of the MIPS measures that need to be evaluated in the document.
@@ -2560,7 +2618,7 @@ class QualityMeasureOptions(_Model):
      ~azure.healthinsights.radiologyinsights.models.QualityMeasureType]
     """
 
-    measure_types: List[Union[str, "_models.QualityMeasureType"]] = rest_field(
+    measure_types: list[Union[str, "_models.QualityMeasureType"]] = rest_field(
         name="measureTypes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Id(s) of the MIPS measures that need to be evaluated in the document. Required."""
@@ -2569,7 +2627,7 @@ class QualityMeasureOptions(_Model):
     def __init__(
         self,
         *,
-        measure_types: List[Union[str, "_models.QualityMeasureType"]],
+        measure_types: list[Union[str, "_models.QualityMeasureType"]],
     ) -> None: ...
 
     @overload
@@ -2583,10 +2641,14 @@ class QualityMeasureOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Quantity(Element):
-    """A measured or measurable amount
-    Based on `FHIR Quantity <https://www.hl7.org/fhir/R4/datatypes.html#Quantity>`_.
+class Quantity(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A measured or measurable amount Based on `FHIR Quantity
+    <https://www.hl7.org/fhir/R4/datatypes.html#Quantity>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar value: Numerical value (with implicit precision).
     :vartype value: float
     :ivar comparator: < | <= | >= | > - how to understand the value.
@@ -2614,6 +2676,8 @@ class Quantity(Element):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         value: Optional[float] = None,
         comparator: Optional[str] = None,
         unit: Optional[str] = None,
@@ -2632,7 +2696,7 @@ class Quantity(Element):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyCodeWithTypes(_Model):
+class RadiologyCodeWithTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Radiology code with types : used in imaging procedure recommendation for contrast and view.
 
     :ivar code: The SNOMED CT code indicates whether imaging was conducted with or without contrast
@@ -2647,7 +2711,7 @@ class RadiologyCodeWithTypes(_Model):
     code: "_models.CodeableConcept" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SNOMED CT code indicates whether imaging was conducted with or without contrast in the case
      of contrast, and in the case of views, it denotes the number of views. Required."""
-    types: List["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    types: list["_models.CodeableConcept"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The collection of types will indicate the contrast substance used in the case of contrast and,
      in the case of views, it will specify the types of views, such as lateral and frontal, etc.
      Required."""
@@ -2657,7 +2721,7 @@ class RadiologyCodeWithTypes(_Model):
         self,
         *,
         code: "_models.CodeableConcept",
-        types: List["_models.CodeableConcept"],
+        types: list["_models.CodeableConcept"],
     ) -> None: ...
 
     @overload
@@ -2671,7 +2735,7 @@ class RadiologyCodeWithTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsData(_Model):
+class RadiologyInsightsData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the list of patients, and configuration data.
 
     :ivar patients: The list of patients, including their clinical information and data. Required.
@@ -2681,7 +2745,7 @@ class RadiologyInsightsData(_Model):
      ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsModelConfiguration
     """
 
-    patients: List["_models.PatientRecord"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    patients: list["_models.PatientRecord"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of patients, including their clinical information and data. Required."""
     configuration: Optional["_models.RadiologyInsightsModelConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2692,7 +2756,7 @@ class RadiologyInsightsData(_Model):
     def __init__(
         self,
         *,
-        patients: List["_models.PatientRecord"],
+        patients: list["_models.PatientRecord"],
         configuration: Optional["_models.RadiologyInsightsModelConfiguration"] = None,
     ) -> None: ...
 
@@ -2707,7 +2771,7 @@ class RadiologyInsightsData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsInferenceOptions(_Model):
+class RadiologyInsightsInferenceOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Options regarding follow up recommendation inferences and finding inferences.
 
     :ivar followup_recommendation_options: Follow-up recommendation options.
@@ -2760,7 +2824,7 @@ class RadiologyInsightsInferenceOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsInferenceResult(_Model):
+class RadiologyInsightsInferenceResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The inference results for the Radiology Insights request. If field 'status' has value
     'succeeded', then field 'result' will contain an instance of RadiologyInsightsInferenceResult.
 
@@ -2772,7 +2836,7 @@ class RadiologyInsightsInferenceResult(_Model):
     :vartype model_version: str
     """
 
-    patient_results: List["_models.RadiologyInsightsPatientResult"] = rest_field(
+    patient_results: list["_models.RadiologyInsightsPatientResult"] = rest_field(
         name="patientResults", visibility=["read", "create", "update", "delete", "query"]
     )
     """Results for the patients given in the request. Required."""
@@ -2783,7 +2847,7 @@ class RadiologyInsightsInferenceResult(_Model):
     def __init__(
         self,
         *,
-        patient_results: List["_models.RadiologyInsightsPatientResult"],
+        patient_results: list["_models.RadiologyInsightsPatientResult"],
         model_version: str,
     ) -> None: ...
 
@@ -2798,7 +2862,7 @@ class RadiologyInsightsInferenceResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsJob(_Model):
+class RadiologyInsightsJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for the Radiology Insights request.
 
     :ivar job_data: The request data for the operation.
@@ -2857,7 +2921,7 @@ class RadiologyInsightsJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsModelConfiguration(_Model):
+class RadiologyInsightsModelConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration affecting the Radiology Insights model's inference.
 
     :ivar verbose: An indication whether the model should produce verbose output.
@@ -2885,7 +2949,7 @@ class RadiologyInsightsModelConfiguration(_Model):
         name="includeEvidence", visibility=["read", "create", "update", "delete", "query"]
     )
     """An indication whether the model's output should include evidence for the inferences."""
-    inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = rest_field(
+    inference_types: Optional[list[Union[str, "_models.RadiologyInsightsInferenceType"]]] = rest_field(
         name="inferenceTypes", visibility=["read", "create", "update", "delete", "query"]
     )
     """This is a list of inference types to be inferred for the current request. It could be used if
@@ -2904,7 +2968,7 @@ class RadiologyInsightsModelConfiguration(_Model):
         *,
         verbose: Optional[bool] = None,
         include_evidence: Optional[bool] = None,
-        inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = None,
+        inference_types: Optional[list[Union[str, "_models.RadiologyInsightsInferenceType"]]] = None,
         inference_options: Optional["_models.RadiologyInsightsInferenceOptions"] = None,
         locale: Optional[str] = None,
     ) -> None: ...
@@ -2920,7 +2984,7 @@ class RadiologyInsightsModelConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsPatientResult(_Model):
+class RadiologyInsightsPatientResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Results of the model's work for a single patient.
 
     :ivar patient_id: Identifier given for the patient in the request. Required.
@@ -2932,7 +2996,7 @@ class RadiologyInsightsPatientResult(_Model):
 
     patient_id: str = rest_field(name="patientId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier given for the patient in the request. Required."""
-    inferences: List["_models.RadiologyInsightsInference"] = rest_field(
+    inferences: list["_models.RadiologyInsightsInference"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The model's inferences for the given patient. Required."""
@@ -2942,7 +3006,7 @@ class RadiologyInsightsPatientResult(_Model):
         self,
         *,
         patient_id: str,
-        inferences: List["_models.RadiologyInsightsInference"],
+        inferences: list["_models.RadiologyInsightsInference"],
     ) -> None: ...
 
     @overload
@@ -2956,13 +3020,15 @@ class RadiologyInsightsPatientResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="radiologyProcedure"):
+class RadiologyProcedureInference(
+    RadiologyInsightsInference, discriminator="radiologyProcedure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Radiology procedures are the specific imaging studies or examinations ordered for the patient,
     extracted from the document information and text.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Radiology Procedure inference type
+    :ivar kind: Inference type. Required. Radiology Procedure inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.RADIOLOGY_PROCEDURE
     :ivar procedure_codes: LOINC codes for the procedure.
     :vartype procedure_codes: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
@@ -2975,12 +3041,12 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
     """
 
     kind: Literal[RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Radiology Procedure inference type"""
-    procedure_codes: Optional[List["_models.CodeableConcept"]] = rest_field(
+    """Inference type. Required. Radiology Procedure inference type."""
+    procedure_codes: Optional[list["_models.CodeableConcept"]] = rest_field(
         name="procedureCodes", visibility=["read", "create", "update", "delete", "query"]
     )
     """LOINC codes for the procedure."""
-    imaging_procedures: List["_models.ImagingProcedure"] = rest_field(
+    imaging_procedures: list["_models.ImagingProcedure"] = rest_field(
         name="imagingProcedures", visibility=["read", "create", "update", "delete", "query"]
     )
     """Imaging procedures. Required."""
@@ -2993,10 +3059,10 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
     def __init__(
         self,
         *,
-        imaging_procedures: List["_models.ImagingProcedure"],
+        imaging_procedures: list["_models.ImagingProcedure"],
         ordered_procedure: "_models.OrderedProcedure",
-        extension: Optional[List["_models.Extension"]] = None,
-        procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
+        procedure_codes: Optional[list["_models.CodeableConcept"]] = None,
     ) -> None: ...
 
     @overload
@@ -3007,13 +3073,18 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE  # type: ignore
 
 
-class Range(Element):
-    """A set of ordered Quantities defined by a low and high limit
-    Based on `FHIR Range <https://www.hl7.org/fhir/R4/datatypes.html#Range>`_.
+class Range(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A set of ordered Quantities defined by a low and high limit Based on `FHIR Range
+    <https://www.hl7.org/fhir/R4/datatypes.html#Range>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar low: Low limit.
     :vartype low: ~azure.healthinsights.radiologyinsights.models.Quantity
     :ivar high: High limit.
@@ -3029,6 +3100,8 @@ class Range(Element):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         low: Optional["_models.Quantity"] = None,
         high: Optional["_models.Quantity"] = None,
     ) -> None: ...
@@ -3044,10 +3117,14 @@ class Range(Element):
         super().__init__(*args, **kwargs)
 
 
-class Ratio(Element):
-    """A ratio of two Quantity values - a numerator and a denominator
-    Based on `FHIR Ratio <https://www.hl7.org/fhir/R4/datatypes.html#Ratio>`_.
+class Ratio(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A ratio of two Quantity values - a numerator and a denominator Based on `FHIR Ratio
+    <https://www.hl7.org/fhir/R4/datatypes.html#Ratio>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar numerator: Numerator value.
     :vartype numerator: ~azure.healthinsights.radiologyinsights.models.Quantity
     :ivar denominator: Denominator value.
@@ -3063,6 +3140,8 @@ class Ratio(Element):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         numerator: Optional["_models.Quantity"] = None,
         denominator: Optional["_models.Quantity"] = None,
     ) -> None: ...
@@ -3078,7 +3157,7 @@ class Ratio(Element):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationFinding(_Model):
+class RecommendationFinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Finding reference for recommendation.
 
     :ivar finding: Finding linked to a recommendation.
@@ -3104,7 +3183,7 @@ class RecommendationFinding(_Model):
     )
     """Recommendation finding status. Required. Known values are: \"present\", \"differential\",
      \"ruleOut\", and \"conditional\"."""
-    extension: Optional[List["_models.Extension"]] = rest_field(
+    extension: Optional[list["_models.Extension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional Content defined by implementations."""
@@ -3116,7 +3195,7 @@ class RecommendationFinding(_Model):
         recommendation_finding_status: Union[str, "_models.RecommendationFindingStatusType"],
         finding: Optional["_models.Observation"] = None,
         critical_finding: Optional["_models.CriticalResult"] = None,
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -3130,10 +3209,14 @@ class RecommendationFinding(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Reference(Element):
-    """A reference from one resource to another
-    Based on `FHIR Reference <https://www.hl7.org/fhir/R4/references.html>`_.
+class Reference(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reference from one resource to another Based on `FHIR Reference
+    <https://www.hl7.org/fhir/R4/references.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar reference: Literal reference, Relative, internal or absolute URL.
     :vartype reference: str
     :ivar type: Type the reference refers to (e.g. "Patient").
@@ -3157,6 +3240,8 @@ class Reference(Element):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         reference: Optional[str] = None,
         type: Optional[str] = None,
         identifier: Optional["_models.Identifier"] = None,
@@ -3174,10 +3259,14 @@ class Reference(Element):
         super().__init__(*args, **kwargs)
 
 
-class SampledData(Element):
-    """A series of measurements taken by a device
-    Based on `FHIR SampledData <https://www.hl7.org/fhir/R4/datatypes.html#SampledData>`_.
+class SampledData(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A series of measurements taken by a device Based on `FHIR SampledData
+    <https://www.hl7.org/fhir/R4/datatypes.html#SampledData>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar origin: Zero value and units. Required.
     :vartype origin: ~azure.healthinsights.radiologyinsights.models.Quantity
     :ivar period: Number of milliseconds between samples. Required.
@@ -3220,6 +3309,8 @@ class SampledData(Element):
         origin: "_models.Quantity",
         period: float,
         dimensions: int,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         factor: Optional[float] = None,
         lower_limit: Optional[float] = None,
         upper_limit: Optional[float] = None,
@@ -3237,13 +3328,15 @@ class SampledData(Element):
         super().__init__(*args, **kwargs)
 
 
-class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="scoringAndAssessment"):
+class ScoringAndAssessmentInference(
+    RadiologyInsightsInference, discriminator="scoringAndAssessment"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identifies and highlights Risk, Scoring, Assessment and Classifications and correspondent
     values dictated in a report, e.g. 'BIRADS 5'.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Scoring and assessment inference type
+    :ivar kind: Inference type. Required. Scoring and assessment inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.SCORING_AND_ASSESSMENT
     :ivar category: Category, e.g. BIRADS. Required. Known values are: "BIRADS", "C-RADS COLONIC
      FINDINGS", "CAD-RADS", "LI-RADS", "LUNG-RADS", "NI-RADS", "O-RADS", "PI-RADS", "TI-RADS",
@@ -3266,7 +3359,7 @@ class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="s
     """
 
     kind: Literal[RadiologyInsightsInferenceType.SCORING_AND_ASSESSMENT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Scoring and assessment inference type"""
+    """Inference type. Required. Scoring and assessment inference type."""
     category: Union[str, "_models.ScoringAndAssessmentCategoryType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3299,7 +3392,7 @@ class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="s
         *,
         category: Union[str, "_models.ScoringAndAssessmentCategoryType"],
         category_description: str,
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
         single_value: Optional[str] = None,
         range_value: Optional["_models.AssessmentValueRange"] = None,
     ) -> None: ...
@@ -3312,10 +3405,13 @@ class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="s
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.SCORING_AND_ASSESSMENT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.SCORING_AND_ASSESSMENT  # type: ignore
 
 
-class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatch"):
+class SexMismatchInference(
+    RadiologyInsightsInference, discriminator="sexMismatch"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A notification for a sex mismatch is displayed when the gender, personal pronouns,
     gender-related body parts, or gender-related procedures mentioned in a patient's clinical
     document are either inconsistent or do not match the gender specified in the patient
@@ -3323,14 +3419,14 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: Inference type. Required. Sex mismatch inference type
+    :ivar kind: Inference type. Required. Sex mismatch inference type.
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.SEX_MISMATCH
     :ivar sex_indication: Sex indication : SNOMED CT code for gender finding. Required.
     :vartype sex_indication: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
     """
 
     kind: Literal[RadiologyInsightsInferenceType.SEX_MISMATCH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Inference type. Required. Sex mismatch inference type"""
+    """Inference type. Required. Sex mismatch inference type."""
     sex_indication: "_models.CodeableConcept" = rest_field(
         name="sexIndication", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3341,7 +3437,7 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
         self,
         *,
         sex_indication: "_models.CodeableConcept",
-        extension: Optional[List["_models.Extension"]] = None,
+        extension: Optional[list["_models.Extension"]] = None,
     ) -> None: ...
 
     @overload
@@ -3352,10 +3448,11 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=RadiologyInsightsInferenceType.SEX_MISMATCH, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = RadiologyInsightsInferenceType.SEX_MISMATCH  # type: ignore
 
 
-class TimePeriod(_Model):
+class TimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A duration of time during which an event is happening.
 
     :ivar start: Starting time with inclusive boundary.
