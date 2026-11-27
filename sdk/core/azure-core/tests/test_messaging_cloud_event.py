@@ -755,3 +755,34 @@ def test_from_json():
     assert event.time.month == 8
     assert event.time.day == 7
     assert event.time.hour == 2
+
+
+@pytest.mark.parametrize(
+    "time, expected_offset",
+    [
+        ("2021-02-18T20:18:10+00:00", datetime.timedelta(0)),
+        ("2021-02-18T20:18:10-08:00", datetime.timedelta(hours=-8)),
+        ("2021-02-18T20:18:10+05:30", datetime.timedelta(hours=5, minutes=30)),
+        ("2021-02-18T20:18:10.123+10:00", datetime.timedelta(hours=10)),
+        ("2021-02-18T20:18:10.539861122-03:30", datetime.timedelta(hours=-3, minutes=-30)),
+    ],
+)
+def test_cloud_custom_dict_time_with_offset(time, expected_offset):
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.hour == 20
+    assert date_obj.utcoffset() == expected_offset
+
+
+def test_cloud_event_from_dict_time_with_offset():
+    event = CloudEvent.from_dict(
+        {
+            "id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+            "source": "https://egtest.dev/cloudcustomevent",
+            "data": {"team": "event grid squad"},
+            "type": "Azure.Sdk.Sample",
+            "time": "2021-02-18T12:18:10-08:00",
+            "specversion": "1.0",
+        }
+    )
+    assert event.time == datetime.datetime(2021, 2, 18, 20, 18, 10, tzinfo=datetime.timezone.utc)

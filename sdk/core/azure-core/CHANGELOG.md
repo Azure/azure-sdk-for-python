@@ -7,6 +7,10 @@
 - Added `ODataV4Format.as_dict()` to convert parsed OData V4 errors, including nested details and model-valued inner errors, to JSON-compatible dictionaries for generated model serialization, preserving `None` values and empty collections.
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
+### Bugs Fixed
+
+- Fixed `CloudEvent.from_dict` parsing the `time` field with the wrong UTC offset when the timestamp used a non-UTC offset (e.g. `-08:00` was parsed as `+00:00` and `+05:30` as `+00:30`).
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
