@@ -1,0 +1,24 @@
+{
+  "id": "48997-changelog",
+  "evidence": "https://github.com/Azure/azure-sdk-for-python/pull/48997",
+  "specPullRequest": "https://github.com/Azure/azure-rest-api-specs/pull/46328",
+  "note": "At SDK revision df767e9732548bc103d7a571b711b36155a1bcab the generated changelog said the tool could not write the 38.4.0 notes. Copilot reported that placeholder on CHANGELOG.md line 5.",
+  "expectedTitles": ["Changelog placeholder would be published"],
+  "forbiddenTitles": ["API versions changed"],
+  "descriptionMustContain": ["tool can't generate changelog for this release, please update manually."],
+  "expectedLine": 5,
+  "context": {
+    "specPrNumber": 46328,
+    "specHeadSha": "27d5cc281039b6275c2b5a6e7af6dc869739c14d",
+    "skillRevision": "eval",
+    "baselineCommitSha": "df767e9732548bc103d7a571b711b36155a1bcab",
+    "packageName": "azure-mgmt-compute",
+    "firstRelease": false,
+    "changedFiles": ["sdk/compute/azure-mgmt-compute/CHANGELOG.md"],
+    "files": {
+      "sdk/compute/azure-mgmt-compute/CHANGELOG.md": {
+        "head": "# Release History\n\n## 38.4.0 (2026-09-14)\n\ntool can't generate changelog for this release, please update manually.\n\n## 38.3.0 (2026-08-12)\n\n### Features Added\n"
+      }
+    }
+  }
+}

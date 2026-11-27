@@ -1,0 +1,39 @@
+{
+  "id": "48637-api-versions",
+  "evidence": "https://github.com/Azure/azure-sdk-for-python/pull/48637",
+  "specPullRequest": "https://github.com/Azure/azure-rest-api-specs/pull/46621",
+  "note": "The published management review reported one blocking finding: the API version moved from 2026-07-01-preview to 2026-08-01-preview. The same review accepted the beta version 1.0.0b1 and the first-release client name PlatformValidationMgmtClient. Those must not be reported again.",
+  "expectedTitles": ["API versions changed"],
+  "forbiddenTitles": [
+    "Preview API requires a beta package version",
+    "First-release client name must end with MgmtClient",
+    "Client constructor parameter order"
+  ],
+  "descriptionMustContain": ["Microsoft.PlatformValidation", "2026-07-01-preview", "2026-08-01-preview"],
+  "expectedLine": 4,
+  "context": {
+    "specPrNumber": 46621,
+    "specHeadSha": "8b60913ae846f5209258162f983c8c2c425e5371",
+    "skillRevision": "eval",
+    "baselineCommitSha": "7e78a15fdc9b5cbcaa6ee44fc32e5de2a3b5da79",
+    "packageName": "azure-mgmt-platformvalidation",
+    "firstRelease": true,
+    "changedFiles": [
+      "sdk/platformvalidation/azure-mgmt-platformvalidation/_metadata.json",
+      "sdk/platformvalidation/azure-mgmt-platformvalidation/azure/mgmt/platformvalidation/_version.py",
+      "sdk/platformvalidation/azure-mgmt-platformvalidation/azure/mgmt/platformvalidation/_client.py"
+    ],
+    "files": {
+      "sdk/platformvalidation/azure-mgmt-platformvalidation/_metadata.json": {
+        "baseline": "{\n  \"apiVersion\": \"2026-07-01-preview\",\n  \"apiVersions\": {\n    \"Microsoft.PlatformValidation\": \"2026-07-01-preview\"\n  },\n  \"commit\": \"127674911f4714c636d2c6495b7959d094d05dff\",\n  \"repository_url\": \"https://github.com/Azure/azure-rest-api-specs\",\n  \"typespec_src\": \"specification/platformvalidation/resource-manager/Microsoft.PlatformValidation/PlatformValidation\",\n  \"emitterVersion\": \"0.63.5\",\n  \"httpClientPythonVersion\": \"^0.36.0\"\n}\n",
+        "head": "{\n  \"apiVersion\": \"2026-08-01-preview\",\n  \"apiVersions\": {\n    \"Microsoft.PlatformValidation\": \"2026-08-01-preview\"\n  },\n  \"commit\": \"8b60913ae846f5209258162f983c8c2c425e5371\",\n  \"repository_url\": \"https://github.com/Azure/azure-rest-api-specs\",\n  \"typespec_src\": \"specification/platformvalidation/resource-manager/Microsoft.PlatformValidation/PlatformValidation\",\n  \"emitterVersion\": \"0.63.8\",\n  \"httpClientPythonVersion\": \"^0.37.3\"\n}\n"
+      },
+      "sdk/platformvalidation/azure-mgmt-platformvalidation/azure/mgmt/platformvalidation/_version.py": {
+        "head": "VERSION = \"1.0.0b1\"\n"
+      },
+      "sdk/platformvalidation/azure-mgmt-platformvalidation/azure/mgmt/platformvalidation/_client.py": {
+        "head": "class PlatformValidationMgmtClient:\n    def __init__(self, credential, subscription_id, base_url=None, **kwargs):\n        pass\n"
+      }
+    }
+  }
+}
