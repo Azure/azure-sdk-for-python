@@ -102,6 +102,37 @@ async def test_interruption_requires_both_cancel_and_truncation(
     assert turn.conversation_id == "conversation-test" and turn.item_id == "item-test"
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+async def test_interruption_waits_for_the_rendered_tail(helpers, is_async):
+    events = _events()
+    extra_audio = dict(events[2], delta=base64.b64encode(b"\x00\x08" * 43200).decode())
+    events.insert(3, extra_audio)
+    events[-1]["audio_end_ms"] = 200
+    pending = iter(events)
+    connection = _connection(is_async, [])
+
+    def receive(**kwargs):
+        event = next(pending)
+        if event is extra_audio:
+            connection.response.cancel.assert_not_called()
+        return event
+
+    connection.recv.side_effect = receive
+    turn = helpers["InterruptedTurn"](min_audio_bytes=96000, audio_end_ms=200)
+    if is_async:
+        await helpers["interrupt_reply_async"](connection, turn)
+        connection.conversation.item.truncate.assert_awaited_once_with(
+            item_id="item-test", content_index=0, audio_end_ms=200
+        )
+    else:
+        helpers["interrupt_reply"](connection, turn)
+        connection.conversation.item.truncate.assert_called_once_with(
+            item_id="item-test", content_index=0, audio_end_ms=200
+        )
+    assert turn.cancelled and turn.truncated
+
+
 @pytest.mark.parametrize(
     "event",
     [
@@ -202,13 +233,14 @@ def test_generated_audio_requires_actual_non_silent_matching_wav(helpers):
     recording_helpers.assert_generated_wav(_wav(), _metadata(), fixture)
 
 
-def test_playback_never_creates_resources_or_loads_websocket_setup(monkeypatch):
+@pytest.mark.parametrize("require_generated_audio", [False, True])
+def test_playback_never_creates_resources_or_loads_websocket_setup(monkeypatch, require_generated_audio):
     monkeypatch.setattr(recording_helpers, "is_live", lambda: False)
     client = MagicMock(side_effect=AssertionError("Playback attempted a live connection"))
     loader = MagicMock(side_effect=AssertionError("Playback loaded a live fixture"))
     monkeypatch.setattr(recording_helpers, "AIProjectClient", client)
     monkeypatch.setattr(recording_helpers, "_sample_helpers", loader)
-    preparer = recording_helpers.RealtimeInterruptionPreparer()
+    preparer = recording_helpers.RealtimeInterruptionPreparer(require_generated_audio=require_generated_audio)
     preparer.test_class_instance = SimpleNamespace(get_credential=MagicMock())
 
     assert preparer.create_resource("unused") == {"interrupted_audio_fixture": recording_helpers.playback_fixture()}
