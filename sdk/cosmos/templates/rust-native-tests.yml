@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-# cspell:ignore clippy msrust
+# cspell:ignore clippy msrust msrustup
 
 parameters:
   - name: Condition
