@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models, types as _types
-from .._configuration import SaaSClientConfiguration
+from .._configuration import SaaSMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -595,14 +595,14 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.saas.SaaSClient`'s
+        :class:`~azure.mgmt.saas.SaaSMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SaaSClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SaaSMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -705,14 +705,14 @@ class SaasSubscriptionLevelOperations:  # pylint: disable=docstring-missing-para
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.saas.SaaSClient`'s
+        :class:`~azure.mgmt.saas.SaaSMgmtClient`'s
         :attr:`saas_subscription_level` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SaaSClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SaaSMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1975,14 +1975,14 @@ class SaasSubscriptionLevelGlobalOperations:  # pylint: disable=docstring-missin
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.saas.SaaSClient`'s
+        :class:`~azure.mgmt.saas.SaaSMgmtClient`'s
         :attr:`saas_subscription_level_global` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SaaSClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SaaSMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2509,14 +2509,14 @@ class SaasTenantLevelOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.saas.SaaSClient`'s
+        :class:`~azure.mgmt.saas.SaaSMgmtClient`'s
         :attr:`saas_tenant_level` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SaaSClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SaaSMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3071,14 +3071,14 @@ class SaasOperationStatusesOperations:  # pylint: disable=docstring-missing-para
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.saas.SaaSClient`'s
+        :class:`~azure.mgmt.saas.SaaSMgmtClient`'s
         :attr:`saas_operation_statuses` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SaaSClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SaaSMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

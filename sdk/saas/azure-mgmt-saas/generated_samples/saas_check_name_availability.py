@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.saas import SaaSClient
+from azure.mgmt.saas import SaaSMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.saas import SaaSClient
 
 
 def main():
-    client = SaaSClient(
+    client = SaaSMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

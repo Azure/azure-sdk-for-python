@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import SaaSClientConfiguration
+from ._configuration import SaaSMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     Operations,
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SaaSClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SaaSMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft.SaaS Resource Provider - GA API.
 
     :ivar operations: Operations operations
@@ -83,7 +83,7 @@ class SaaSClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = SaaSClientConfiguration(
+        self._config = SaaSMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.saas
 
-    class azure.mgmt.saas.SaaSClient: implements ContextManager 
+    class azure.mgmt.saas.SaaSMgmtClient: implements ContextManager 
         operations: Operations
         saas_operation_statuses: SaasOperationStatusesOperations
         saas_subscription_level: SaasSubscriptionLevelOperations
@@ -33,7 +33,7 @@ namespace azure.mgmt.saas
 
 namespace azure.mgmt.saas.aio
 
-    class azure.mgmt.saas.aio.SaaSClient: implements AsyncContextManager 
+    class azure.mgmt.saas.aio.SaaSMgmtClient: implements AsyncContextManager 
         operations: Operations
         saas_operation_statuses: SaasOperationStatusesOperations
         saas_subscription_level: SaasSubscriptionLevelOperations

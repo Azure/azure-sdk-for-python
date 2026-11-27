@@ -76,5 +76,5 @@
         "azure.mgmt.saas.operations.SaasOperationStatusesOperations.get_subscription_operation_status": "Microsoft.SaaS.SaasOperationStatuses.getSubscriptionOperationStatus",
         "azure.mgmt.saas.aio.operations.SaasOperationStatusesOperations.get_subscription_operation_status": "Microsoft.SaaS.SaasOperationStatuses.getSubscriptionOperationStatus"
     },
-    "CrossLanguageVersion": "223c0d127328"
+    "CrossLanguageVersion": "a8bc5179f7b7"
 }
