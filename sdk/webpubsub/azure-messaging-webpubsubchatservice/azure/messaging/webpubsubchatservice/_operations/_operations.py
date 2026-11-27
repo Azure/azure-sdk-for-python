@@ -50,7 +50,7 @@ def build_web_pub_sub_chat_service_get_conversation_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -83,7 +83,7 @@ def build_web_pub_sub_chat_service_list_messages_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -122,7 +122,7 @@ def build_web_pub_sub_chat_service_delete_message_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/conversations/{conversationId}/messages/{messageId}"
     path_format_arguments = {
@@ -160,7 +160,7 @@ def build_web_pub_sub_chat_service_update_message_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -196,7 +196,7 @@ def build_web_pub_sub_chat_service_list_roles_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -224,7 +224,7 @@ def build_web_pub_sub_chat_service_get_role_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -257,7 +257,7 @@ def build_web_pub_sub_chat_service_create_or_replace_role_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -297,7 +297,7 @@ def build_web_pub_sub_chat_service_delete_role_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/roles/{roleName}"
     path_format_arguments = {
@@ -327,7 +327,7 @@ def build_web_pub_sub_chat_service_list_rooms_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -361,7 +361,7 @@ def build_web_pub_sub_chat_service_create_or_replace_room_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -396,7 +396,7 @@ def build_web_pub_sub_chat_service_get_room_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -428,7 +428,7 @@ def build_web_pub_sub_chat_service_delete_room_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/rooms/{roomId}"
     path_format_arguments = {
@@ -458,7 +458,7 @@ def build_web_pub_sub_chat_service_list_topics_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -494,7 +494,7 @@ def build_web_pub_sub_chat_service_create_or_replace_topic_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -530,7 +530,7 @@ def build_web_pub_sub_chat_service_get_topic_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -565,7 +565,7 @@ def build_web_pub_sub_chat_service_update_topic_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -607,7 +607,7 @@ def build_web_pub_sub_chat_service_delete_topic_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/rooms/{roomId}/topics/{topicId}"
     path_format_arguments = {
@@ -638,7 +638,7 @@ def build_web_pub_sub_chat_service_list_room_members_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -674,7 +674,7 @@ def build_web_pub_sub_chat_service_create_or_replace_room_member_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -716,7 +716,7 @@ def build_web_pub_sub_chat_service_delete_room_member_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/rooms/{roomId}/members/{userId}"
     path_format_arguments = {
@@ -747,7 +747,7 @@ def build_web_pub_sub_chat_service_list_users_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -775,7 +775,7 @@ def build_web_pub_sub_chat_service_get_user_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -808,7 +808,7 @@ def build_web_pub_sub_chat_service_create_or_replace_user_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -848,7 +848,7 @@ def build_web_pub_sub_chat_service_delete_user_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/users/{userId}"
     path_format_arguments = {
@@ -878,7 +878,7 @@ def build_web_pub_sub_chat_service_list_rooms_for_user_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1837,7 +1837,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "max_page_size", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def list_rooms(self, *, max_page_size: Optional[int] = None, **kwargs: Any) -> ItemPaged["_models.ChatRoom"]:
         """List rooms with pagination.
@@ -2269,7 +2269,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "room_id", "max_page_size", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def list_topics(
         self, room_id: str, *, max_page_size: Optional[int] = None, **kwargs: Any
@@ -2489,7 +2489,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def create_or_replace_topic(
         self,
@@ -2600,7 +2600,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "room_id", "topic_id", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def get_topic(self, room_id: str, topic_id: str, **kwargs: Any) -> _models.ChatTopic:
         """Get topic information.
@@ -2788,7 +2788,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def update_topic(
         self,
@@ -2901,7 +2901,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         params_added_on={
             "2026-08-01-preview": ["api_version", "hub", "room_id", "topic_id", "etag", "match_condition"]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def delete_topic(  # pylint: disable=inconsistent-return-statements
         self,
@@ -3367,7 +3367,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "max_page_size", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def list_users(self, *, max_page_size: Optional[int] = None, **kwargs: Any) -> ItemPaged["_models.ChatUser"]:
         """List all users with pagination.
@@ -3804,7 +3804,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "user_id", "max_page_size", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def list_rooms_for_user(
         self, user_id: str, *, max_page_size: Optional[int] = None, **kwargs: Any

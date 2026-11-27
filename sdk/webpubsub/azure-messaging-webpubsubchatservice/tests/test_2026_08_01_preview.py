@@ -72,7 +72,7 @@ def _response(payload, status=200):
 
 def _paging_responses(path, fields, identity):
     cursor = "first" if path.endswith("/messages") else "next+/=token"
-    query = urlencode({"api-version": "2026-08-01-preview", "continuationToken": cursor})
+    query = urlencode({"api-version": "2026-11-01", "continuationToken": cursor})
     next_link = f"{ENDPOINT}/api/hubs/chat/chat/{path}?{query}"
     return [
         _response({"value": [{**fields, identity: "first"}], "nextLink": next_link}),
@@ -86,11 +86,12 @@ def _assert_page_requests(run, path):
     assert urlparse(first.url).path == f"/api/hubs/chat/chat/{path}"
     assert parse_qs(urlparse(first.url).query)["maxpagesize"] == ["1"]
     assert "continuationToken" not in parse_qs(urlparse(first.url).query)
-    assert parse_qs(urlparse(first.url).query)["api-version"] == ["2026-08-01-preview"]
+    assert parse_qs(urlparse(first.url).query)["api-version"] == ["2026-11-01"]
     assert urlparse(second.url).path == f"/api/hubs/chat/chat/{path}"
     cursor = "first" if path.endswith("/messages") else "next+/=token"
     assert parse_qs(urlparse(second.url).query)["continuationToken"] == [cursor]
-    assert parse_qs(urlparse(second.url).query)["api-version"] == ["2026-08-01-preview"]
+    assert parse_qs(urlparse(second.url).query)["api-version"] == ["2026-11-01"]
+
 
 
 def _assert_topic_requests(run):

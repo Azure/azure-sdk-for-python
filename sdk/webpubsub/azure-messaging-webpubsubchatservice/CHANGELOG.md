@@ -1,6 +1,13 @@
 # Release History
 
+## 1.0.0 (Unreleased)
+
+### Features Added
+
+- Added support for service API version `2026-11-01`, now the default service version.
+
 ## 1.0.0b2 (2026-11-13)
+
 
 ### Features Added
 
