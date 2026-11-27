@@ -13,7 +13,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from .._patch import get_translation_endpoint, TranslatorHeaderPolicy
+from .._patch import get_translation_endpoint, get_credential_scope, TranslatorHeaderPolicy
 from ._client import TextTranslationClient as ServiceClientGenerated
 
 
@@ -55,7 +55,8 @@ class TextTranslationClient(ServiceClientGenerated):
     :param resource_id: Azure resource ID for Entra ID authentication. Required when using
      TokenCredential with global endpoint.
     :type resource_id: str or None
-    :param audience: Scopes of the credentials.
+    :param audience: Audience of the token requested with a TokenCredential, for example an application ID
+     URI. "/.default" is appended to form the scope if not already present.
     :type audience: str or None
     :param api_version: Default value is "2026-06-06". Note that overriding this default value may
      result in unsupported behavior.
@@ -86,7 +87,7 @@ class TextTranslationClient(ServiceClientGenerated):
             kwargs["per_call_policies"] = per_call_policies
 
         if audience:
-            kwargs["credential_scopes"] = [audience]
+            kwargs["credential_scopes"] = [get_credential_scope(audience)]
 
         super().__init__(
             endpoint=translation_endpoint,

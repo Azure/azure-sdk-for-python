@@ -11,6 +11,8 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
+DEFAULT_SCOPE_SUFFIX = "/.default"
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -56,6 +58,19 @@ def get_translation_endpoint(endpoint: str, api_version: str) -> str:
     return endpoint
 
 
+def get_credential_scope(audience: str) -> str:
+    """Build the token scope for the given audience by appending "/.default" if it is not already present.
+
+    :param audience: The audience (for example, an application ID URI) of the token.
+    :type audience: str
+    :return: The scope to request the token for.
+    :rtype: str
+    """
+    if audience.endswith(DEFAULT_SCOPE_SUFFIX):
+        return audience
+    return audience.rstrip("/") + DEFAULT_SCOPE_SUFFIX
+
+
 class TextTranslationClient(ServiceClientGenerated):
     """Azure Translator is a cloud-based, multilingual, neural machine translation service. The Text
     Translation API enables robust and scalable translation capabilities suitable for diverse
@@ -85,7 +100,8 @@ class TextTranslationClient(ServiceClientGenerated):
     :param resource_id: Azure resource ID for Entra ID authentication. Required when using
      TokenCredential with global endpoint.
     :type resource_id: str or None
-    :param audience: Scopes of the credentials.
+    :param audience: Audience of the token requested with a TokenCredential, for example an application ID
+     URI. "/.default" is appended to form the scope if not already present.
     :type audience: str or None
     :param api_version: Default value is "2026-06-06". Note that overriding this default value may
      result in unsupported behavior.
@@ -116,7 +132,7 @@ class TextTranslationClient(ServiceClientGenerated):
             kwargs["per_call_policies"] = per_call_policies
 
         if audience:
-            kwargs["credential_scopes"] = [audience]
+            kwargs["credential_scopes"] = [get_credential_scope(audience)]
 
         super().__init__(
             endpoint=translation_endpoint,
