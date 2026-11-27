@@ -1,5 +1,11 @@
 # Azure AI VoiceLive client library for Python (conda)
 
+## 2026.12.01
+
+### Packages included
+
+- azure-ai-voicelive-1.3.1
+
 ## 2026.09.01
 
 ### Packages included

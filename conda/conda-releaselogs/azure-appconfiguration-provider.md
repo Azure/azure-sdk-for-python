@@ -1,5 +1,11 @@
 # Azure Appconfiguration Provider client library for Python (conda)
 
+## 2026.12.01
+
+### Packages included
+
+- azure-appconfiguration-provider-2.5.1
+
 ## 2026.09.01
 
 ### Packages included

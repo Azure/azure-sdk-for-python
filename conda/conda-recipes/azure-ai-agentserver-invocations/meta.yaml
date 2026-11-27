@@ -1,0 +1,51 @@
+{% set name = "azure-ai-agentserver-invocations" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('INVOCATIONS_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - aiohttp>=3.10.0,<4.0.0a0
+    - pip
+    - opentelemetry-api>=1.43.0,<2.0.0
+    - aiohttp
+    - azure-ai-agentserver-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - aiohttp>=3.10.0,<4.0.0a0
+    - opentelemetry-api>=1.43.0,<2.0.0
+    - aiohttp
+    - azure-ai-agentserver-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+
+test:
+  imports:
+    - azure.ai.agentserver.invocations
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Agentserver Client Library for Python"
+  description: |
+    This is the Microsoft Azure Agentserver Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/agentserver for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - jennypng
+    - kashifkhan-msft

@@ -1,0 +1,61 @@
+{% set name = "azure-ai-agentserver-core" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('CORE_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - hypercorn>=0.17.0,<1.0.0
+    - microsoft-opentelemetry>=1.3.5,<2.0.0
+    - isodate>=0.6.1,<1.0.0
+    - pip
+    - opentelemetry-api>=1.43.0,<2.0.0
+    - aiohttp>=3.10.0,<4.0.0a0
+    - aiohttp
+    - opentelemetry-sdk>=1.43.0,<2.0.0
+    - python
+    - starlette>=0.45.0,<2.0.0
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - hypercorn>=0.17.0,<1.0.0
+    - microsoft-opentelemetry>=1.3.5,<2.0.0
+    - isodate>=0.6.1,<1.0.0
+    - aiohttp>=3.10.0,<4.0.0a0
+    - opentelemetry-api>=1.43.0,<2.0.0
+    - aiohttp
+    - opentelemetry-sdk>=1.43.0,<2.0.0
+    - python
+    - starlette>=0.45.0,<2.0.0
+
+test:
+  imports:
+    - azure.ai.agentserver.core
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-core"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Agentserver Client Library for Python"
+  description: |
+    This is the Microsoft Azure Agentserver Client Library for Python.
+    Please see https://aka.ms/azsdk/conda/releases/agentserver for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - jennypng
+    - kashifkhan-msft

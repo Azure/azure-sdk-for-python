@@ -1,5 +1,14 @@
 # Azure Key Vault client library for Python (conda)
 
+## 2026.12.01
+
+### Packages included
+
+- azure-keyvault-administration-4.7.2
+- azure-keyvault-certificates-4.12.0
+- azure-keyvault-keys-4.11.3
+- azure-keyvault-secrets-4.12.0
+
 ## 2026.09.01
 
 ### Packages included
