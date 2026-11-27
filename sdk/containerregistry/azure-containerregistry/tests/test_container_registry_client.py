@@ -8,6 +8,7 @@ import os
 import pytest
 import hashlib
 import json
+import time
 from datetime import datetime
 from io import BytesIO
 from unittest.mock import MagicMock
@@ -27,6 +28,7 @@ from azure.containerregistry._helpers import (
     DOCKER_MANIFEST,
     OCI_IMAGE_MANIFEST,
     DEFAULT_CHUNK_SIZE,
+    _parse_challenge,
 )
 from azure.core.exceptions import (
     ResourceNotFoundError,
@@ -960,3 +962,26 @@ class TestContainerRegistryClientUnitTests:
                     assert manifest.architecture == "unknown"
                     assert isinstance(manifest.operating_system, str)
                     assert manifest.operating_system == "unknown"
+
+    def test_parse_challenge(self):
+        header = (
+            'Bearer realm="https://fake_url.azurecr.io/oauth2/token",'
+            'service="fake_url.azurecr.io",scope="registry:catalog:*"'
+        )
+        parsed = _parse_challenge(header)
+        assert parsed == {
+            "realm": "https://fake_url.azurecr.io/oauth2/token",
+            "service": "fake_url.azurecr.io",
+            "scope": "registry:catalog:*",
+        }
+
+    def test_parse_challenge_no_catastrophic_backtracking(self):
+        # The challenge header comes from the registry's 401 response, before the
+        # client is authenticated. A long run of word characters with no key="value"
+        # pair used to drive quadratic backtracking in the parser.
+        header = "Bearer " + "a" * 100000
+        start = time.perf_counter()
+        parsed = _parse_challenge(header)
+        elapsed = time.perf_counter() - start
+        assert parsed == {}
+        assert elapsed < 1.0
