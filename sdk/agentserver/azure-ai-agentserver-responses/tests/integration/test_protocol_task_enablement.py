@@ -179,6 +179,7 @@ async def test_recovery_uses_owning_hosts_handler_provider_and_options(
         options=ResponsesServerOptions(resilient_background=True, steerable_conversations=True),
         store=stores[0],
         configure_observability=None,
+        lifecycle_authorizer=AsyncMock(return_value=True),
     )
     observed = []
 

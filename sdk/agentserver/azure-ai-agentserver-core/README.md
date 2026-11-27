@@ -267,11 +267,60 @@ async def on_shutdown():
 
 ### Memory snapshot lifecycle handlers
 
-The host always registers the private platform routes
+The host exposes the private platform routes
 `POST /_agent/before-snapshot` and `POST /_agent/after-restore`, with equivalent
-aliases at `POST /_before_snapshot` and `POST /_after_restore`. All four routes
-are processed by the framework, including restore validation and environment
-and configuration hydration. Registering application handlers is optional;
+aliases at `POST /_before_snapshot` and `POST /_after_restore`. Whether they
+process requests depends on the hosting mode:
+
+- **Foundry Hosted Agents** (the platform sets `FOUNDRY_HOSTING_ENVIRONMENT`):
+  the `/_agent/` routes are processed without calling `lifecycle_authorizer`.
+  The platform restricts access to the agent port and does not forward
+  external `/_agent/` requests, so no application code is needed.
+- **Everywhere else**, including self-hosted servers: the `/_agent/` routes
+  return HTTP 404 unless an async `lifecycle_authorizer` is configured.
+- The `/_before_snapshot` and `/_after_restore` aliases are registered only when
+  a `lifecycle_authorizer` is configured, and always require it, including in
+  hosted mode.
+
+Self-hosted deployments that need the lifecycle routes must configure an
+authorizer. If `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers the task runtime
+but the lifecycle routes cannot be served, startup fails with an error because
+after-restore could never activate the runtime. If lifecycle handlers are
+registered but the routes cannot be served, the host logs a warning at startup.
+
+When configured, the authorizer runs before lifecycle payload parsing,
+environment/configuration changes, or hooks. Only an explicit `True` result
+permits processing; any other result returns HTTP 403, and authorizer exceptions
+return a generic HTTP 500.
+
+The authorizer must validate caller identity and permission for the requested
+lifecycle operation, not merely the presence of a header or a session ID.
+If using authentication middleware, validate credentials there and grant
+lifecycle permissions only to trusted lifecycle callers. For example, with
+Starlette authentication middleware that supplies a verified user and the
+`agent.lifecycle` scope:
+
+```python
+from starlette.requests import Request
+
+async def authorize_lifecycle(request: Request) -> bool:
+    user = request.scope.get("user")
+    auth = request.scope.get("auth")
+    return bool(
+        user is not None
+        and user.is_authenticated
+        and auth is not None
+        and "agent.lifecycle" in auth.scopes
+    )
+```
+
+This example denies requests if authentication middleware is absent. It does
+not implement credential validation itself. Inference and readiness routes are
+not gated by `lifecycle_authorizer`.
+
+Lifecycle requests that pass these checks are processed by the framework,
+including restore validation and environment and configuration hydration.
+Registering application handlers is optional;
 when absent, only the application callbacks are skipped. Use the hooks to
 release connections that must not be copied into a memory snapshot and rebuild
 them for the restored session:
@@ -279,7 +328,8 @@ them for the restored session:
 ```python
 from azure.ai.agentserver.core import AgentServerHost, AgentSessionContext
 
-app = AgentServerHost()
+# Required outside Foundry Hosted Agents; not called for /_agent/ routes when hosted.
+app = AgentServerHost(lifecycle_authorizer=authorize_lifecycle)
 
 @app.before_snapshot_handler
 async def before_snapshot():

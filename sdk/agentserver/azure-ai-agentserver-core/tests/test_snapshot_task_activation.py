@@ -13,7 +13,7 @@ from collections.abc import Iterator
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import httpx
 import pytest
@@ -85,7 +85,11 @@ def payload(restore_id: str = "restore-1", session_id: str = "session-1") -> dic
 
 
 def host() -> AgentServerHost:
-    return AgentServerHost(configure_observability=None, graceful_shutdown_timeout=0)
+    return AgentServerHost(
+        configure_observability=None,
+        graceful_shutdown_timeout=0,
+        lifecycle_authorizer=AsyncMock(return_value=True),
+    )
 
 
 def client(app: AgentServerHost) -> httpx.AsyncClient:
@@ -1880,3 +1884,28 @@ async def test_inactive_replacement_closes_old_owned_provider_before_publishing_
         assert [credential.closed for credential in credentials] == [1, 0]
     assert closing[-1] == (replacement.provider, None, None)
     assert [credential.closed for credential in credentials] == [1, 1]
+
+
+def test_snapshot_task_deferral_without_lifecycle_routes_fails_startup() -> None:
+    app = AgentServerHost(configure_observability=None, graceful_shutdown_timeout=0)
+
+    with pytest.raises(RuntimeError, match="lifecycle_authorizer"):
+        with TestClient(app):
+            pass
+
+    assert app._task_manager is None
+
+
+def test_disabled_lifecycle_routes_warn_about_registered_handlers(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "false")
+    set_resilient_tasks_enabled(False)
+    app = AgentServerHost(configure_observability=None, graceful_shutdown_timeout=0)
+    app.after_restore_handler(AsyncMock())
+
+    caplog.set_level(logging.WARNING, logger="azure.ai.agentserver")
+    with TestClient(app):
+        pass
+
+    assert "handlers will not run" in caplog.text

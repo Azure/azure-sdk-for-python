@@ -10,6 +10,7 @@ from unittest import mock
 
 import httpx
 import pytest
+from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 
@@ -24,6 +25,15 @@ from azure.ai.agentserver.core import (
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
 from azure.ai.agentserver.core.tasks import resilient_tasks_enabled, set_resilient_tasks_enabled
 from azure.ai.agentserver.core.tasks._manager import TaskManager, get_task_manager, set_task_manager
+
+
+async def _allow_lifecycle(_request: Request) -> bool:
+    return True
+
+
+@pytest.fixture(name="agent")
+def authorized_agent() -> AgentServerHost:
+    return AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
 
 @pytest.fixture(autouse=True)
@@ -175,7 +185,7 @@ async def test_after_restore_validates_explicit_session_guid_in_hosted_mode(
 ) -> None:
     monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "hosted")
     monkeypatch.delenv("FOUNDRY_AGENT_SESSION_GUID", raising=False)
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     callback_count = 0
 
     @agent.after_restore_handler
@@ -218,7 +228,7 @@ async def test_after_restore_allows_non_guid_session_value_outside_hosted_mode(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
     async with httpx.AsyncClient(
         transport=httpx.ASGITransport(app=agent),
@@ -261,7 +271,7 @@ async def test_after_restore_applies_environment_before_callback(
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "captured-guid")
     monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example")
     monkeypatch.delenv("RESTORED_VALUE", raising=False)
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     config = agent.config
     observed: dict[str, object] = {}
 
@@ -326,7 +336,7 @@ async def test_subclass_hooks_run_before_application_callbacks(
             assert self.config.session_id == context.session_id
             events.append("subclass-after-restore")
 
-    agent = ExtendedAgentServerHost()
+    agent = ExtendedAgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
     @agent.before_snapshot_handler
     async def before_snapshot() -> None:
@@ -371,7 +381,7 @@ async def test_subclass_before_snapshot_failure_skips_application_callback_and_r
             if events.count("subclass") == 1:
                 raise RuntimeError("subclass failure")
 
-    agent = ExtendedAgentServerHost()
+    agent = ExtendedAgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
     @agent.before_snapshot_handler
     async def before_snapshot() -> None:
@@ -407,7 +417,7 @@ async def test_subclass_after_restore_failure_rolls_back_and_retries(
         def _restore_lifecycle_environment(self, *_args, **_kwargs) -> None:
             raise AssertionError("subclasses must not replace framework rollback")
 
-    agent = ExtendedAgentServerHost()
+    agent = ExtendedAgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
     @agent.after_restore_handler
     async def after_restore(context: AgentSessionContext) -> None:
@@ -455,7 +465,7 @@ async def test_after_restore_rehydrates_task_manager_session_state_and_rolls_bac
     provider = mock.Mock()
     provider.list = mock.AsyncMock(return_value=[])
     monkeypatch.setattr(TaskManager, "_create_provider", staticmethod(lambda config: provider))
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     task_manager = TaskManager(config=agent.config, provider=provider)
     agent._task_manager = task_manager  # pylint: disable=protected-access
     set_task_manager(task_manager)
@@ -537,7 +547,7 @@ async def test_protocol_subclass_hooks_compose_through_super() -> None:
             await super()._after_restore(context)
             events.append("derived-after")
 
-    agent = DerivedProtocolHost()
+    agent = DerivedProtocolHost(lifecycle_authorizer=_allow_lifecycle)
 
     @agent.before_snapshot_handler
     async def before_snapshot() -> None:
@@ -595,7 +605,7 @@ async def test_lifecycle_routes_cannot_be_overridden_by_subclasses() -> None:
         async def _after_restore(self, context: AgentSessionContext) -> None:
             events.append(context.session_id)
 
-    agent = EndpointOverrideHost()
+    agent = EndpointOverrideHost(lifecycle_authorizer=_allow_lifecycle)
 
     async with httpx.AsyncClient(
         transport=httpx.ASGITransport(app=agent),
@@ -621,7 +631,7 @@ async def test_after_restore_resets_omitted_overrides_to_captured_values(
 ) -> None:
     monkeypatch.setenv("CAPTURED_VALUE", "captured")
     monkeypatch.delenv("ADDED_VALUE", raising=False)
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     observed: list[tuple[str, str | None]] = []
 
     @agent.after_restore_handler
@@ -676,7 +686,7 @@ async def test_before_snapshot_refreshes_environment_baseline(
 ) -> None:
     monkeypatch.setenv("UPDATED_VALUE", "captured")
     monkeypatch.setenv("REMOVED_VALUE", "captured")
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     observed: list[tuple[str, str | None]] = []
 
     @agent.before_snapshot_handler
@@ -741,7 +751,7 @@ async def test_after_restore_hydrates_ambient_request_context(
             observed.append((current.call_id, current.user_id, current.session_id))
             assert current.session_id == context.session_id
 
-    agent = ExtendedAgentServerHost()
+    agent = ExtendedAgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
     @agent.after_restore_handler
     async def after_restore(context: AgentSessionContext) -> None:
@@ -774,7 +784,7 @@ async def test_after_restore_retry_and_new_materialization_are_idempotent(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     restores: list[tuple[str, str]] = []
 
     @agent.after_restore_handler
@@ -830,7 +840,7 @@ async def test_after_restore_rejects_a_different_session(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     callback_count = 0
 
     @agent.after_restore_handler
@@ -866,7 +876,7 @@ async def test_before_snapshot_retries_once_and_resets_after_restore(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     callback_count = 0
 
     @agent.before_snapshot_handler
@@ -900,7 +910,7 @@ async def test_after_restore_failure_is_sanitized_and_rolls_back(
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
     monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example")
     monkeypatch.setenv("RESTORED_VALUE", "captured-value")
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
     @agent.after_restore_handler
     async def after_restore(
@@ -944,7 +954,7 @@ async def test_after_restore_cancellation_rolls_back_and_can_be_retried(
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
     monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example")
     monkeypatch.setenv("RESTORED_VALUE", "captured-value")
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     callback_started = asyncio.Event()
     callback_count = 0
 
@@ -1002,7 +1012,7 @@ async def test_after_restore_cancellation_rolls_back_and_can_be_retried(
 
 @pytest.mark.asyncio
 async def test_before_snapshot_failure_can_be_retried() -> None:
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     callback_count = 0
 
     @agent.before_snapshot_handler
@@ -1029,7 +1039,7 @@ async def test_before_snapshot_failure_can_be_retried() -> None:
 @pytest.mark.asyncio
 async def test_lifecycle_hooks_are_serialized(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
     before_started = asyncio.Event()
     release_before = asyncio.Event()
     after_called = asyncio.Event()
@@ -1081,13 +1091,14 @@ async def test_reserved_lifecycle_route_cannot_be_shadowed(path: str) -> None:
         return JSONResponse({"shadowed": True}, status_code=418)
 
     agent = AgentServerHost(
+        lifecycle_authorizer=_allow_lifecycle,
         routes=[
             Route(
                 path,
                 shadowed_route,
                 methods=["POST"],
             )
-        ]
+        ],
     )
 
     async with httpx.AsyncClient(
@@ -1141,7 +1152,7 @@ def test_lifecycle_decorators_return_original_functions() -> None:
 
 
 def test_lifecycle_routes_are_registered_before_user_routes() -> None:
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
     assert [route.path for route in agent.routes[:4]] == [
         "/_agent/before-snapshot",

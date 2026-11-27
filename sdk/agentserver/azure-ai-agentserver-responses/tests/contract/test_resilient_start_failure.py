@@ -21,6 +21,7 @@ from __future__ import annotations
 import asyncio
 import json
 from typing import Any, AsyncIterator
+from unittest.mock import AsyncMock
 
 import pytest
 from starlette.testclient import TestClient
@@ -73,7 +74,8 @@ async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio
 
 def _build_client(handler: Any = None, *, task_runtime: bool = False, resilient_background: bool = False) -> TestClient:
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(steerable_conversations=task_runtime, resilient_background=resilient_background)
+        options=ResponsesServerOptions(steerable_conversations=task_runtime, resilient_background=resilient_background),
+        lifecycle_authorizer=AsyncMock(return_value=True),
     )
     app.response_handler(handler or _noop_handler)
     return TestClient(app)

@@ -18,6 +18,19 @@
   owned workers to stop before incompatible configuration rollback, and stop
   managers created after startup at shutdown.
 
+### Breaking Changes
+
+- Outside Foundry Hosted Agents (`FOUNDRY_HOSTING_ENVIRONMENT` unset), the
+  `POST /_agent/before-snapshot` and `POST /_agent/after-restore` lifecycle
+  routes return HTTP 404 unless the new async `lifecycle_authorizer` is
+  configured. In hosted mode these routes are processed without calling the
+  authorizer. The `/_before_snapshot` and `/_after_restore` aliases are
+  registered only with an authorizer and always require it. The authorizer
+  must return `True` before any payload processing or state change;
+  otherwise the request is rejected with HTTP 403. Startup now fails if
+  `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers the task runtime while the
+  lifecycle routes cannot be served.
+
 ### Bugs Fixed
 
 - Track task identity throughout inline start/run claims and positional active-
