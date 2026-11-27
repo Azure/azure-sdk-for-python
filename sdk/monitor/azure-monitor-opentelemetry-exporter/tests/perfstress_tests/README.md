@@ -49,3 +49,21 @@ The tests currently written for the T2 SDK:
 ```cmd
 (env) ~/azure-monitor-opentelemetry-exporter/tests> perfstress MonitorExporterPerfTest --sync --num-spans=10
 ```
+
+## Offline feature benchmarks
+
+[Multi-endpoint routing](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/tests/perf/test_multi_endpoint_routing.py) benchmarks use
+512 prebuilt spans and a fake transport, without Azure resources or credentials.
+After setup, run from the package directory:
+
+```powershell
+python -m pytest tests\perf --benchmark-only --benchmark-json routing.json
+python -m pytest tests\perf -k peak_memory --benchmark-disable -s
+```
+
+The matrix covers disabled, disabled with routing attributes, and enabled modes
+at 1, 3, and 25 endpoints, each warmed and cold. Use `-k` to select cases.
+The memory command measures allocations separately, without a timing loop.
+
+Performance tests are skipped unless a `--benchmark-*` option is supplied.
+These benchmarks run locally; no performance CI job or regression threshold is added.

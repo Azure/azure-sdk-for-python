@@ -4,3 +4,4 @@
 ../../identity/azure-identity
 aiohttp>=3.0; python_version >= '3.10'
 fixedint<1.0.0,>=0.1.6
+pytest-benchmark>=5.1.0,<6.0.0
