@@ -115,6 +115,9 @@ class CachedNodeResolver(object):
         # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
         self._on_disk_cache_is_private: Optional[bool] = None
+        # Work out the cache location once, so that reads and writes always use the directory that was checked.
+        self._on_disk_cache_root = get_base_directory_for_cache()
+        self._on_disk_cache_dir = get_versioned_base_directory_for_cache().joinpath("components", self._client_hash)
 
     @staticmethod
     def _get_component_registration_max_workers() -> int:
@@ -221,18 +224,6 @@ class CachedNodeResolver(object):
             object_hash.update(content_hash.encode("utf-8"))
             return _CODE_INVOLVED_PREFIX + object_hash.hexdigest()
 
-    @property
-    def _on_disk_cache_dir(self) -> Path:
-        """Get the base path for on disk cache.
-
-        :return: The base path for the on disk cache
-        :rtype: Path
-        """
-        return get_versioned_base_directory_for_cache().joinpath(
-            "components",
-            self._client_hash,
-        )
-
     def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:
         """Get the on disk cache path for a component.
 
@@ -250,7 +241,7 @@ class CachedNodeResolver(object):
         :rtype: bool
         """
         if self._on_disk_cache_is_private is None:
-            cache_root = get_base_directory_for_cache()
+            cache_root = self._on_disk_cache_root
             # A symlink inside the cache root could also send the cache to a directory that other users can access.
             self._on_disk_cache_is_private = ensure_private_directory(cache_root) and is_path_inside_directory(
                 self._on_disk_cache_dir, cache_root
@@ -417,7 +408,8 @@ class CachedNodeResolver(object):
         """
         dict_of_nodes_to_resolve, cache_contents_to_resolve = self._prepare_items_to_resolve()
 
-        if is_on_disk_cache_enabled() and is_private_preview_enabled():
+        # Skip computing on-disk hashes when the on-disk cache can't be used.
+        if is_on_disk_cache_enabled() and is_private_preview_enabled() and self._is_on_disk_cache_private():
             cache_contents_to_resolve = self._resolve_cache_contents_from_disk(cache_contents_to_resolve)
 
         self._resolve_cache_contents(cache_contents_to_resolve, resolver=self._resolver)

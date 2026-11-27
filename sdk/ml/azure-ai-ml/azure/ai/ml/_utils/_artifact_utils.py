@@ -95,9 +95,11 @@ class ArtifactCache:
             if cache_root in self._cache_directory.parents and not (
                 ensure_private_directory(cache_root) and is_path_inside_directory(self._cache_directory, cache_root)
             ):
+                setting = "LOCALAPPDATA" if os.name == "nt" else "TMPDIR"
                 raise RuntimeError(
-                    f"Artifact cache directory {self._cache_directory.as_posix()} must be inside a directory that "
-                    "only the current user can access."
+                    f"The artifact cache can't use {cache_root.as_posix()} because other users might be able to "
+                    "access it. Remove that folder, or make sure it is owned by the current user and no other user "
+                    f"can access it, or set {setting} to a folder that only the current user can access."
                 )
         self._cache_directory.mkdir(exist_ok=True, parents=True)
         self._artifacts_tool_path = None

@@ -290,8 +290,10 @@ def test_constructor_rejects_cache_root_other_users_can_access(tmp_path, monkeyp
     mocker.patch(f"{_MODULE}.get_base_directory_for_cache", return_value=cache_root)
     mocker.patch(f"{_MODULE}.ensure_private_directory", return_value=False)
 
-    with pytest.raises(RuntimeError, match="only the current user can access"):
+    with pytest.raises(RuntimeError, match="only the current user can access") as error:
         ArtifactCache()
+    assert cache_root.as_posix() in str(error.value)
+    assert ("LOCALAPPDATA" if os.name == "nt" else "TMPDIR") in str(error.value)
     assert not (cache_root / "components").exists()
 
 

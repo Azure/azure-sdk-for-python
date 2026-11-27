@@ -134,23 +134,22 @@ class TestUtils:
         assert not ensure_private_directory(directory)
 
     @pytest.mark.skipif(os.name == "nt", reason="POSIX file permissions and symlinks are not used on Windows")
-    def test_ensure_private_directory_restricts_access_and_rejects_symlinks(self, tmp_path) -> None:
+    def test_ensure_private_directory_rejects_shared_directories_and_symlinks(self, tmp_path) -> None:
         new_directory = tmp_path / "new"
-        assert ensure_private_directory(new_directory)
+        old_umask = os.umask(0)
+        try:
+            assert ensure_private_directory(new_directory)
+        finally:
+            os.umask(old_umask)
         assert stat.S_IMODE(new_directory.stat().st_mode) == 0o700
+        assert ensure_private_directory(new_directory)
 
-        readable_directory = tmp_path / "readable"
-        readable_directory.mkdir()
-        os.chmod(readable_directory, 0o755)
-        assert ensure_private_directory(readable_directory)
-        assert stat.S_IMODE(readable_directory.stat().st_mode) == 0o700
-
-        for mode in (0o775, 0o777):
-            writable_directory = tmp_path / f"writable_{mode:o}"
-            writable_directory.mkdir()
-            os.chmod(writable_directory, mode)
-            assert not ensure_private_directory(writable_directory)
-            assert stat.S_IMODE(writable_directory.stat().st_mode) == mode
+        for mode in (0o711, 0o750, 0o755, 0o775, 0o777):
+            shared_directory = tmp_path / f"shared_{mode:o}"
+            shared_directory.mkdir()
+            os.chmod(shared_directory, mode)
+            assert not ensure_private_directory(shared_directory)
+            assert stat.S_IMODE(shared_directory.stat().st_mode) == mode
 
         link = tmp_path / "link"
         link.symlink_to(new_directory, target_is_directory=True)

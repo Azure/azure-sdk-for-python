@@ -1304,8 +1304,8 @@ def ensure_private_directory(path: Union[str, PathLike]) -> bool:
 
     :param path: Path to the directory.
     :type path: Union[str, os.PathLike]
-    :return: True if the path is a directory owned by the current user that other users cannot write to,
-        False otherwise. Read access for other users is removed.
+    :return: True if the path is a directory owned by the current user that no other user can access,
+        False otherwise.
     :rtype: bool
     """
     uid = _get_current_uid()
@@ -1320,14 +1320,10 @@ def ensure_private_directory(path: Union[str, PathLike]) -> bool:
             return False
         if uid is None:
             return True
+        # If other users could enter the directory, they may already have added entries through a subdirectory
+        # they can write to, so restricting access now would not make it safe.
         mode = stat.S_IMODE(status.st_mode)
-        # If other users could write to the directory, they may already have added entries, so restricting access now
-        # would not make it safe.
-        if status.st_uid != uid or mode & 0o022:
-            return False
-        if mode & 0o077:
-            os.chmod(path, 0o700)
-        return True
+        return status.st_uid == uid and mode & 0o077 == 0
     except OSError:
         return False
 

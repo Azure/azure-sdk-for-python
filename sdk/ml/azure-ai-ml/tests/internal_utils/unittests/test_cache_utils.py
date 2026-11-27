@@ -8,7 +8,7 @@ import mock
 import pytest
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+from azure.ai.ml._utils._cache_utils import CachedNodeResolver, _CacheContent
 from azure.ai.ml.entities import Component, PipelineJob
 
 
@@ -62,7 +62,8 @@ class TestCacheUtils:
         )
         return cache_root
 
-    def test_on_disk_cache_occupied(self, mock_machinelearning_client: MLClient) -> None:
+    def test_on_disk_cache_occupied(self, mock_machinelearning_client: MLClient, cache_root: Path, mocker) -> None:
+        mocker.patch("azure.ai.ml._utils._cache_utils.ensure_private_directory", return_value=True)
         resolver = self.create_resolver(mock_machinelearning_client)
         target_cache_path = self._get_cache_path(self.get_target_node().component, resolver)
         assert not target_cache_path.exists()
@@ -99,9 +100,35 @@ class TestCacheUtils:
         target_cache_path.parent.mkdir(parents=True, exist_ok=True)
         target_cache_path.write_text(untrusted_arm_id, encoding="utf-8")
         mocker.patch("azure.ai.ml._utils._cache_utils.ensure_private_directory", return_value=False)
+        update_on_disk_hash = mocker.spy(_CacheContent, "update_on_disk_hash")
 
         assert self.register_target_node_and_resolve(resolver) == target_component._get_anonymous_hash()
         assert target_cache_path.read_text(encoding="utf-8") == untrusted_arm_id
+        update_on_disk_hash.assert_not_called()
+
+    def test_on_disk_cache_uses_the_directory_it_checked(
+        self, mock_machinelearning_client: MLClient, cache_root: Path, tmp_path: Path, mocker
+    ) -> None:
+        mocker.patch("azure.ai.ml._utils._cache_utils.ensure_private_directory", return_value=True)
+        resolver = self.create_resolver(mock_machinelearning_client)
+        target_component = self.get_target_node().component
+        target_cache_path = self._get_cache_path(target_component, resolver)
+        self.register_target_node_and_resolve(resolver)
+        assert target_cache_path.exists()
+
+        # The base directory changes after the cache was checked, for example because the temporary directory changed.
+        other_root = tmp_path / "other"
+        mocker.patch("azure.ai.ml._utils._cache_utils.get_base_directory_for_cache", return_value=other_root)
+        mocker.patch(
+            "azure.ai.ml._utils._cache_utils.get_versioned_base_directory_for_cache",
+            return_value=other_root / "1.0.0",
+        )
+        other_cache_path = other_root / "1.0.0" / "components" / resolver._client_hash / target_cache_path.name
+        other_cache_path.parent.mkdir(parents=True)
+        other_cache_path.write_text("azureml:/subscriptions/other/components/untrusted/versions/1", encoding="utf-8")
+
+        assert self.register_target_node_and_resolve(resolver) == target_component._get_anonymous_hash()
+        assert self._get_cache_path(target_component, resolver) == target_cache_path
 
     def test_on_disk_cache_ignored_when_cache_directory_is_redirected(
         self, mock_machinelearning_client: MLClient, cache_root: Path, tmp_path: Path, mocker
