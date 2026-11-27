@@ -437,7 +437,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-    :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword RetryMode retry_mode: Fixed or exponential delay between attempts, default is exponential.
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
 
     .. admonition:: Example:
@@ -528,6 +528,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
 
         absolute_timeout = retry_settings["timeout"]
         is_response_error = True
+        retry_after_timeout = False
 
         while retry_active:
             start_time = time.time()
@@ -546,6 +547,12 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
+                        # Never wait longer than the remaining operation timeout.
+                        # We must not retry sooner than the server's Retry-After either.
+                        retry_after = self.get_retry_after(response)
+                        if retry_after and retry_after >= absolute_timeout - (time.time() - start_time):
+                            retry_after_timeout = True
+                            break
                         self.sleep(retry_settings, transport, response=response)
                         is_response_error = True
                         continue
@@ -569,6 +576,8 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
                 end_time = time.time()
                 if absolute_timeout:
                     absolute_timeout -= end_time - start_time
+        if retry_after_timeout:
+            raise ServiceResponseTimeoutError("Response timeout")
         if not response:
             raise AzureError("Maximum retries exceeded.")
 
