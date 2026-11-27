@@ -7,6 +7,8 @@ import json
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml._azure_environments import _get_default_cloud_name
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 
 # cspell:disable-next-line
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import (
@@ -15,7 +17,6 @@ from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 
 
 # cspell:disable-next-line
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import Index as RestIndex
-from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -90,6 +91,7 @@ class IndexOperations(_ScopeDependentOperations):
 
         self._datastore_operation: DatastoreOperations = datastore_operations
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+        self._cloud = kwargs.pop("cloud", None) or _get_default_cloud_name()
 
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
@@ -108,7 +110,10 @@ class IndexOperations(_ScopeDependentOperations):
             workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
 
             endpoint = _get_base_urls_from_discovery_service(
-                workspace_operations, self._operation_scope.workspace_name, self._requests_pipeline
+                workspace_operations,
+                self._operation_scope.workspace_name,
+                self._requests_pipeline,
+                cloud_name=self._cloud,
             )[WorkspaceDiscoveryUrlKey.API]
 
             self.__azure_ai_assets_client = AzureAiAssetsClient042024(

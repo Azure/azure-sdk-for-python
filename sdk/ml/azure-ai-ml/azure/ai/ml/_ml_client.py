@@ -488,6 +488,7 @@ class MLClient:
             self._credential,
             requests_pipeline=self._requests_pipeline,
             dataplane_client=self._service_client_workspace_dataplane,
+            cloud=self._cloud,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)  # type: ignore[arg-type]
 
@@ -620,6 +621,7 @@ class MLClient:
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,
+            cloud=self._cloud,
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
@@ -641,6 +643,7 @@ class MLClient:
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
             service_client_02_2023_preview=self._service_client_02_2023_preview,
+            cloud=self._cloud,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
@@ -687,6 +690,7 @@ class MLClient:
             service_client_01_2024_preview_arm=self._service_client_01_2024_preview_arm,
             service_client_10_2024_preview=self._service_client_10_2024_preview_tsp,
             service_client_01_2025_preview=self._service_client_01_2025_preview,
+            cloud=self._cloud,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -709,6 +713,7 @@ class MLClient:
             datastore_operations=self._datastores,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
+            cloud=self._cloud,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.INDEX, self._indexes)

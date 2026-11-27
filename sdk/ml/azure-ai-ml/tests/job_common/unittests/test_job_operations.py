@@ -8,12 +8,18 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_job
-from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml._azure_environments import AzureEnvironments, _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml._restclient.arm_ml_service import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType, GitProperties
+from azure.ai.ml.constants._common import (
+    AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    AzureMLResourceType,
+    GitProperties,
+    WorkspaceDiscoveryUrlKey,
+)
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations, JobOperations, WorkspaceOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
@@ -205,6 +211,24 @@ class TestJobOperations:
         mock_job_operation._get_workspace_url.assert_called_once()
         mock_job_operation._stream_logs_until_completion.assert_called_once()
         assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
+
+    def test_get_workspace_url_rejects_untrusted_discovery_url(self) -> None:
+        workspace_operations = Mock()
+        workspace_operations.get.return_value.discovery_url = "http://untrusted.invalid/discovery"
+        discovery_response = Mock(status_code=200)
+        discovery_response.text.return_value = '{"api": "https://untrusted.invalid"}'
+        requests_pipeline = Mock()
+        requests_pipeline.with_policies.return_value.get.return_value = discovery_response
+        job_operations = Mock(
+            _all_operations=Mock(all_operations={AzureMLResourceType.WORKSPACE: workspace_operations}),
+            _requests_pipeline=requests_pipeline,
+            _cloud=AzureEnvironments.ENV_DEFAULT,
+        )
+
+        with pytest.raises(ValidationException):
+            JobOperations._get_workspace_url(job_operations, WorkspaceDiscoveryUrlKey.API)
+
+        requests_pipeline.with_policies.return_value.get.assert_not_called()
 
     @pytest.mark.skip(reason="Mock Job missing properties to complete full test in Feb API")
     @patch.object(Job, "_from_rest_object")

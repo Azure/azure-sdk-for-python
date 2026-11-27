@@ -8,9 +8,8 @@ from typing import Any, Dict, Iterable, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.arm_ml_service import (
-    MachineLearningServicesMgmtClient as ServiceClient102024Preview,
-)
+from azure.ai.ml._azure_environments import _get_default_cloud_name
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient102024Preview
 from azure.ai.ml._restclient.arm_ml_service.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -63,6 +62,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
         )
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline", None)
+        self._cloud = kwargs.pop("cloud", None) or _get_default_cloud_name()
         ops_logger.update_filter()
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
@@ -427,7 +427,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             workspace.identity = IdentityConfiguration(type="system_assigned")
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-        workspace_base_uri = _get_workspace_base_url(workspace_operations, hub_name, self._requests_pipeline)
+        workspace_base_uri = _get_workspace_base_url(
+            workspace_operations, hub_name, self._requests_pipeline, cloud_name=self._cloud
+        )
 
         # pylint:disable=unused-argument
         def callback(_: Any, deserialized: Any, args: Any) -> Optional[Workspace]:

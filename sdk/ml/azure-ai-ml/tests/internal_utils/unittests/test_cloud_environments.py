@@ -1,4 +1,5 @@
 import os
+
 import mock
 import pytest
 from mock import MagicMock, patch
@@ -6,6 +7,7 @@ from mock import MagicMock, patch
 from azure.ai.ml._azure_environments import (
     AzureEnvironments,
     EndpointURLS,
+    _environments,
     _get_azure_portal_id_from_metadata,
     _get_base_url_from_metadata,
     _get_cloud_details,
@@ -13,9 +15,10 @@ from azure.ai.ml._azure_environments import (
     _get_default_cloud_name,
     _get_registry_discovery_endpoint_from_metadata,
     _get_storage_endpoint_from_metadata,
+    _is_trusted_aml_api_url,
     _set_cloud,
 )
-from azure.ai.ml.constants._common import ArmConstants, AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, ArmConstants
 from azure.mgmt.core import ARMPipelineClient
 
 
@@ -158,3 +161,61 @@ class TestCloudEnvironments:
     def test_arm_misconfigured(self, mock_get):
         with pytest.raises(Exception) as e_info:
             _set_cloud("MISCONFIGURED")
+
+    @pytest.mark.parametrize(
+        "cloud_name, url, trusted",
+        [
+            (AzureEnvironments.ENV_DEFAULT, "https://eastus.api.azureml.ms/discovery", True),
+            (AzureEnvironments.ENV_DEFAULT, "https://0a1b2c3d.workspace.eastus.api.azureml.ms", True),
+            (AzureEnvironments.ENV_CHINA, "https://chinaeast2.api.ml.azure.cn/discovery", True),
+            (AzureEnvironments.ENV_US_GOVERNMENT, "https://usgovvirginia.api.ml.azure.us/discovery", True),
+            (AzureEnvironments.ENV_DEFAULT, "http://eastus.api.azureml.ms/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://untrusted.invalid/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://eastus.api.azureml.ms.untrusted.invalid/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://eastusapi.azureml.ms/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://eastus.api.azureml.ms@untrusted.invalid/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://untrusted.invalid\\@eastus.api.azureml.ms/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://eastus.api.azureml.ms:8443/discovery", False),
+            (AzureEnvironments.ENV_CHINA, "https://eastus.api.azureml.ms/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, None, False),
+        ],
+    )
+    def test_is_trusted_aml_api_url(self, cloud_name, url, trusted):
+        assert _is_trusted_aml_api_url(url, cloud_name) is trusted
+
+    @mock.patch.dict(os.environ, {}, clear=True)
+    @pytest.mark.parametrize(
+        "registry_discovery_url, trusted_url, untrusted_url",
+        [
+            (None, "https://westus.api.ml.azure.windows.net/discovery", "https://eastus.api.azureml.ms/discovery"),
+            (
+                "https://master.api.azureml-test.ms/",
+                "https://master.api.azureml-test.ms/discovery",
+                "https://eastus.api.azureml.ms/discovery",
+            ),
+            (
+                "https://registry.westeurope.cloudapp.azure.com/",
+                "https://registry.westeurope.cloudapp.azure.com/discovery",
+                "https://other.westeurope.cloudapp.azure.com/discovery",
+            ),
+        ],
+    )
+    def test_is_trusted_aml_api_url_for_custom_cloud(self, registry_discovery_url, trusted_url, untrusted_url):
+        if registry_discovery_url:
+            os.environ[ArmConstants.REGISTRY_ENV_URL] = registry_discovery_url
+        with mock.patch.dict(_environments), mock.patch(
+            "azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get
+        ):
+            _environments.pop("TEST_ENV2", None)
+            assert _is_trusted_aml_api_url(trusted_url, "TEST_ENV2")
+            assert not _is_trusted_aml_api_url(untrusted_url, "TEST_ENV2")
+
+    @mock.patch.dict(os.environ, {}, clear=True)
+    def test_custom_cloud_metadata_is_cached(self):
+        with mock.patch.dict(_environments), mock.patch(
+            "azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get
+        ) as mock_send_request:
+            _environments.pop("TEST_ENV2", None)
+            cloud_details = _get_cloud_details("TEST_ENV2")
+            assert _get_cloud_details("TEST_ENV2") == cloud_details
+            assert mock_send_request.call_count == 1

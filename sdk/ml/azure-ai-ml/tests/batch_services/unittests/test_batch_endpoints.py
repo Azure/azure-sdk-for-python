@@ -8,6 +8,7 @@ from pytest_mock import MockFixture
 from requests import Response
 
 from azure.ai.ml import load_batch_endpoint
+from azure.ai.ml._azure_environments import AzureEnvironments
 from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
 from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
@@ -15,6 +16,7 @@ from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations import (
     BatchEndpointOperations,
     DatastoreOperations,
@@ -335,6 +337,33 @@ class TestBatchEndpointOperations:
 
         mock_batch_endpoint_operations.list_jobs(endpoint_name="ept")
         mock_batch_endpoint_operations._requests_pipeline.get.assert_called_once()
+
+    def test_list_jobs_rejects_untrusted_discovery_url(
+        self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture
+    ) -> None:
+        workspace_operations = mock_batch_endpoint_operations._all_operations.all_operations[
+            AzureMLResourceType.WORKSPACE
+        ]
+        mocker.patch.object(
+            workspace_operations, "get", return_value=Mock(discovery_url="http://untrusted.invalid/discovery")
+        )
+        discovery_response = Mock(status_code=200)
+        discovery_response.text.return_value = '{"api": "https://untrusted.invalid"}'
+        requests_pipeline = Mock()
+        requests_pipeline.with_policies.return_value.get.return_value = discovery_response
+        requests_pipeline.get.return_value = Mock(
+            status_code=200, text=Mock(return_value='{"value": [], "nextLink": null}')
+        )
+        mock_batch_endpoint_operations._requests_pipeline = requests_pipeline
+        mock_batch_endpoint_operations._credentials = Mock()
+        mock_batch_endpoint_operations._cloud = AzureEnvironments.ENV_DEFAULT
+
+        with pytest.raises(ValidationException):
+            mock_batch_endpoint_operations.list_jobs(endpoint_name="ept")
+
+        requests_pipeline.with_policies.return_value.get.assert_not_called()
+        requests_pipeline.get.assert_not_called()
+        mock_batch_endpoint_operations._credentials.get_token.assert_not_called()
 
     def test_list_deployment_jobs(
         self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture

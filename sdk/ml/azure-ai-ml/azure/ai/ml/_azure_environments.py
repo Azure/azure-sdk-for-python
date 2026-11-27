@@ -7,6 +7,7 @@
 import logging
 import os
 from typing import Dict, List, Optional
+from urllib.parse import urlsplit
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, ArmConstants
@@ -71,7 +72,7 @@ def _get_cloud(cloud: str) -> Dict[str, str]:
     arm_clouds = _get_clouds_by_metadata_url(arm_url)
     try:
         new_cloud = arm_clouds[cloud]
-        _environments.update(new_cloud)  # type: ignore[arg-type]
+        _environments[cloud] = new_cloud
         return new_cloud
     except KeyError as e:
         msg = 'Unknown cloud environment "{0}".'.format(cloud)
@@ -235,6 +236,53 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = N
     cloud_details = _get_cloud_details(cloud_name)
     registry_discovery_endpoint = cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
     return str(registry_discovery_endpoint)
+
+
+def _get_aml_api_domain(cloud_name: Optional[str] = None) -> str:
+    """Retrieve the Azure Machine Learning API domain for a cloud, for example ``api.azureml.ms``.
+
+    Regional and private link API hosts are subdomains of this domain, such as ``eastus.api.azureml.ms`` and
+    ``<workspace-id>.workspace.eastus.api.azureml.ms``. The domain comes from the cloud's registry discovery endpoint,
+    so custom clouds use their own metadata. A ``<region>.api.<domain>`` host gives ``api.<domain>``. Any other host is
+    used as is, so a custom endpoint can't extend trust to the other hosts under its parent domain.
+
+    :param cloud_name: cloud name
+    :type cloud_name: Optional[str]
+    :return: The Azure Machine Learning API domain, or an empty string if the cloud has no registry discovery endpoint
+    :rtype: str
+    """
+    host = urlsplit(_get_registry_discovery_endpoint_from_metadata(cloud_name)).hostname or ""
+    labels = host.split(".")
+    return ".".join(labels[1:]) if len(labels) > 3 and labels[1] == "api" else host
+
+
+def _is_trusted_aml_api_url(url: object, cloud_name: Optional[str] = None) -> bool:
+    """Check whether a URL is an HTTPS URL on the cloud's Azure Machine Learning API domain.
+
+    :param url: The URL to check
+    :type url: object
+    :param cloud_name: cloud name
+    :type cloud_name: Optional[str]
+    :return: True if the URL uses HTTPS on the default port without user info, and its host is the cloud's Azure
+        Machine Learning API domain or a subdomain of it. Otherwise False.
+    :rtype: bool
+    """
+    if not isinstance(url, str) or "\\" in url or any(ord(char) <= 32 or ord(char) == 127 for char in url):
+        return False
+    try:
+        parsed = urlsplit(url)
+        host = parsed.hostname or ""
+        if (
+            parsed.scheme != "https"
+            or parsed.username is not None
+            or parsed.password is not None
+            or parsed.port not in (None, 443)
+        ):
+            return False
+    except ValueError:
+        return False
+    domain = _get_aml_api_domain(cloud_name)
+    return bool(domain) and (host == domain or host.endswith("." + domain))
 
 
 def _resource_to_scopes(resource: str) -> List[str]:

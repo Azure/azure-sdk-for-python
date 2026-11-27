@@ -1,11 +1,15 @@
+import json
 import os
 import tempfile
 from collections import OrderedDict
+from unittest.mock import Mock
 
 import pytest
 
+from azure.ai.ml._azure_environments import AzureEnvironments
 from azure.ai.ml._internal._schema.component import NodeType as InternalNodeType
 from azure.ai.ml._utils.utils import (
+    _get_base_urls_from_discovery_service,
     _get_mfe_base_url_from_batch_endpoint,
     dict_eq,
     get_all_data_binding_expressions,
@@ -14,10 +18,21 @@ from azure.ai.ml._utils.utils import (
     map_single_brackets_and_warn,
     write_to_shared_file,
 )
+from azure.ai.ml.constants._common import WorkspaceDiscoveryUrlKey
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, get_type_from_spec
 from azure.ai.ml.exceptions import ValidationException
+
+
+def _mock_discovery(discovery_url: str, api_url: str):
+    workspace_operations = Mock()
+    workspace_operations.get.return_value.discovery_url = discovery_url
+    discovery_response = Mock(status_code=200)
+    discovery_response.text.return_value = json.dumps({"api": api_url, "studio": "https://ml.azure.com"})
+    requests_pipeline = Mock()
+    requests_pipeline.with_policies.return_value.get.return_value = discovery_response
+    return workspace_operations, requests_pipeline
 
 
 @pytest.mark.unittest
@@ -35,6 +50,55 @@ class TestUtils:
         assert "https://eastus2euap.api.azureml.ms/mferp/managementfrontend" == _get_mfe_base_url_from_batch_endpoint(
             endpoint
         )
+
+    @pytest.mark.parametrize(
+        "api_url", ["https://eastus.api.azureml.ms", "https://0a1b2c3d.workspace.eastus.api.azureml.ms"]
+    )
+    def test_get_base_urls_from_discovery_service(self, api_url: str) -> None:
+        workspace_operations, requests_pipeline = _mock_discovery("https://eastus.api.azureml.ms/discovery", api_url)
+
+        urls = _get_base_urls_from_discovery_service(
+            workspace_operations, "ws", requests_pipeline, cloud_name=AzureEnvironments.ENV_DEFAULT
+        )
+
+        assert urls[WorkspaceDiscoveryUrlKey.API] == api_url
+        requests_pipeline.with_policies.return_value.get.assert_called_once_with(
+            "https://eastus.api.azureml.ms/discovery", permit_redirects=False
+        )
+
+    @pytest.mark.parametrize(
+        "discovery_url, api_url, discovery_requested",
+        [
+            ("http://eastus.api.azureml.ms/discovery", "https://eastus.api.azureml.ms", False),
+            ("https://untrusted.invalid/discovery", "https://eastus.api.azureml.ms", False),
+            ("https://eastus.api.azureml.ms/discovery", "https://untrusted.invalid", True),
+            ("https://eastus.api.azureml.ms/discovery", "http://eastus.api.azureml.ms", True),
+        ],
+    )
+    def test_get_base_urls_from_discovery_service_rejects_untrusted_urls(
+        self, discovery_url: str, api_url: str, discovery_requested: bool
+    ) -> None:
+        workspace_operations, requests_pipeline = _mock_discovery(discovery_url, api_url)
+
+        with pytest.raises(ValidationException, match="not trusted"):
+            _get_base_urls_from_discovery_service(
+                workspace_operations, "ws", requests_pipeline, cloud_name=AzureEnvironments.ENV_DEFAULT
+            )
+
+        assert requests_pipeline.with_policies.return_value.get.called is discovery_requested
+
+    def test_get_base_urls_from_discovery_service_error_shows_only_host(self) -> None:
+        workspace_operations, requests_pipeline = _mock_discovery(
+            "https://user:secret@untrusted.invalid/discovery?sig=secret", "https://eastus.api.azureml.ms"
+        )
+
+        with pytest.raises(ValidationException) as error:
+            _get_base_urls_from_discovery_service(
+                workspace_operations, "ws", requests_pipeline, cloud_name=AzureEnvironments.ENV_DEFAULT
+            )
+
+        assert "untrusted.invalid" in error.value.message
+        assert "secret" not in error.value.message
 
     def test_legacy_command_substitution(self) -> None:
         input_string = "test {inputs.val1} ${{inputs.val2}} {search_space.val3} ${{search_space.val4}} {non-captured}"

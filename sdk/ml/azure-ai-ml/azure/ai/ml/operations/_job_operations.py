@@ -20,6 +20,7 @@ from azure.ai.ml._artifacts._artifact_utilities import (
 from azure.ai.ml._azure_environments import (
     _get_aml_resource_id_from_metadata,
     _get_base_url_from_metadata,
+    _get_default_cloud_name,
     _resource_to_scopes,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
@@ -44,8 +45,7 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
-    create_requests_pipeline_with_retry,
-    download_text_from_url,
+    _get_base_urls_from_discovery_service,
     is_data_binding_expression,
     is_private_preview_enabled,
     is_url,
@@ -218,6 +218,7 @@ class JobOperations(_ScopeDependentOperations):
         self.service_client_01_2024_preview_arm = kwargs.pop("service_client_01_2024_preview_arm", None)
         self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self.service_client_01_2025_preview = kwargs.pop("service_client_01_2025_preview", None)
+        self._cloud = kwargs.pop("cloud", None) or _get_default_cloud_name()
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -1339,16 +1340,11 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     def _get_workspace_url(self, url_key: WorkspaceDiscoveryUrlKey) -> str:
-        discovery_url = (
-            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-            .get(self._operation_scope.workspace_name)
-            .discovery_url
-        )
-        all_urls = json.loads(
-            download_text_from_url(
-                discovery_url,
-                create_requests_pipeline_with_retry(requests_pipeline=self._requests_pipeline),
-            )
+        all_urls = _get_base_urls_from_discovery_service(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE],
+            self._operation_scope.workspace_name,
+            self._requests_pipeline,
+            cloud_name=self._cloud,
         )
         return all_urls[url_key]
 
