@@ -47,13 +47,14 @@ class ReviewTriggerTests(unittest.TestCase):
         }
         return collector.resolve_review_target(**values)
 
-    def test_main_and_feature_branch_resolve_same_pr_head(self):
-        for branch in ("main", "mgmt-review-reliability"):
-            with self.subTest(branch=branch):
-                self.client.get.reset_mock()
-                target = self.resolve(ref="refs/heads/" + branch)
-                self.assertEqual({"pr_number": "49107", "head_sha": HEAD}, target)
-                self.client.get.assert_called_once_with(f"/repos/{REPO}/pulls/49107")
+    def test_only_default_branch_resolves_pr_head(self):
+        target = self.resolve()
+        self.assertEqual({"pr_number": "49107", "head_sha": HEAD}, target)
+        self.client.get.assert_called_once_with(f"/repos/{REPO}/pulls/49107")
+        self.client.get.reset_mock()
+        with self.assertRaisesRegex(collector.GitHubApiError, "manual_ref_forbidden"):
+            self.resolve(ref="refs/heads/feature")
+        self.client.get.assert_not_called()
 
     def test_manual_permissions_reject_before_api_access(self):
         cases = [
@@ -116,24 +117,12 @@ class ReviewTriggerTests(unittest.TestCase):
         with self.assertRaisesRegex(collector.GitHubApiError, "Forbidden"):
             self.resolve()
 
-    def test_label_trigger_preserves_eligibility_and_rejects_stale_heads(self):
-        self.client.get.return_value["head"]["repo"]["owner"] = {"login": "personal", "type": "User"}
-        self.client.get.return_value["head"]["repo"]["full_name"] = "personal/sdk"
-        event = {
-            "action": "labeled",
-            "label": {"name": "mgmt-review-needed"},
-            "pull_request": {"number": 49107, "head": {"sha": HEAD}},
-        }
-        arguments = {"event": event, "event_name": "pull_request_target", "actor": "other", "triggering_actor": "other"}
-        self.assertEqual(HEAD, self.resolve(**arguments)["head_sha"])
-        event["pull_request"]["head"]["sha"] = "a" * 40
-        with self.assertRaisesRegex(collector.GitHubApiError, "stale_event_head"):
-            self.resolve(**arguments)
-        event["label"]["name"] = "other"
-        with self.assertRaisesRegex(collector.GitHubApiError, "invalid_trigger"):
-            self.resolve(**arguments)
-        with self.assertRaisesRegex(collector.GitHubApiError, "invalid_trigger"):
-            self.resolve(event_name="push")
+    def test_only_dispatch_can_start_the_reviewer(self):
+        for event_name in ("pull_request_target", "pull_request", "workflow_run", "push"):
+            with self.subTest(event_name=event_name):
+                with self.assertRaisesRegex(collector.GitHubApiError, "invalid_trigger"):
+                    self.resolve(event_name=event_name)
+        self.client.get.assert_not_called()
 
     def test_environment_resolver_exports_only_authorized_target(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -192,7 +181,8 @@ class ReviewTriggerTests(unittest.TestCase):
     def test_compiled_pipeline_uses_one_resolved_target_without_test_bypass(self):
         lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
         source = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("pull_request_target:", lock)
+        self.assertNotIn("pull_request_target:", lock)
+        self.assertIn("workflow_dispatch:", lock)
         self.assertIn("github.event.inputs.pr_number", lock)
         self.assertIn("job-discriminator:", source)
         self.assertNotIn("publish:", source)
@@ -211,28 +201,23 @@ class ReviewTriggerTests(unittest.TestCase):
         self.assertEqual(1, lock.count("name: Validate and render management SDK review"))
         self.assertEqual(1, lock.count("name: Process Safe Outputs"))
 
-    def test_manual_dispatch_is_commented_out_and_concurrency_stays_active(self):
+    def test_dispatch_is_permanent_and_concurrency_uses_dispatched_pr(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
-        self.assertIn("  # workflow_dispatch:", source)
-        self.assertIn("  #     pr_number:", source)
         for content in (source, lock):
-            self.assertNotRegex(content, r"(?m)^  workflow_dispatch:")
+            self.assertRegex(content, r"(?m)^  workflow_dispatch:")
             self.assertIn(
-                "  group: mgmt-sdk-pr-review-${{ github.event.pull_request.number || github.event.inputs.pr_number }}",
+                "  group: mgmt-sdk-pr-review-${{ github.event.inputs.pr_number }}",
                 content,
             )
-        self.assertIn("Manual dispatch is **disabled by default**", source)
-        self.assertIn("comment the block out again and recompile before merging", source)
+        self.assertIn("`workflow_dispatch` is permanently enabled", source)
+        self.assertIn("non-default refs are rejected before setup", source)
 
     def test_unauthorized_manual_jobs_skip_before_setup_even_on_partial_reruns(self):
         lock = WORKFLOW.with_suffix(".lock.yml").read_text(encoding="utf-8")
-        guard = (
-            "github.event_name != 'workflow_dispatch' || "
-            "(github.actor == 'msyyc' && github.triggering_actor == 'msyyc')"
-        )
+        guard = "github.repository == 'Azure/azure-sdk-for-python' && github.ref == 'refs/heads/main'"
+        self.assertNotIn("\n  pre_activation:\n", lock)
         for name in (
-            "pre_activation",
             "activation",
             "review_context",
             "agent",
@@ -244,6 +229,9 @@ class ReviewTriggerTests(unittest.TestCase):
                 job = re.split(r"\n  [a-z_]+:\n", lock.split(f"\n  {name}:\n", 1)[1])[0]
                 condition = re.search(r"(?m)^    if: (.+?)(?=\n    \S|\Z)", job, re.DOTALL)[1]
                 self.assertIn(guard, " ".join(condition.split()))
+                self.assertIn("github.actor == 'msyyc' && github.triggering_actor == 'msyyc'", condition)
+                self.assertIn("github.actor == 'github-actions[bot]'", condition)
+                self.assertIn("github.event.inputs.request_run_id != ''", condition)
         notice = re.split(r"\n  [a-z_]+:\n", lock.split("\n  manual_access_notice:\n", 1)[1])[0]
         self.assertIn("permissions: {}", notice)
         self.assertNotIn("uses:", notice)
@@ -252,12 +240,12 @@ class ReviewTriggerTests(unittest.TestCase):
         self.assertIn("needs: activation", notice)
         condition = re.search(r"(?m)^    if: (.+?)(?=\n    \S|\Z)", notice, re.DOTALL)[1]
         self.assertIn(
-            "always() && (github.event_name == 'workflow_dispatch' || github.event.label.name == 'mgmt-review-needed')",
+            "always() && github.event_name == 'workflow_dispatch'",
             " ".join(condition.split()),
         )
         self.assertIn(
-            "github.event_name == 'workflow_dispatch' && (github.actor != 'msyyc' || github.triggering_actor != 'msyyc')",
-            notice,
+            "github.actor != 'github-actions[bot]' && (github.actor != 'msyyc' || github.triggering_actor != 'msyyc')",
+            " ".join(notice.split()),
         )
         # Keep the condition's allowlist in parity with the independent Python backstop.
         for actor, triggering_actor, permitted in (

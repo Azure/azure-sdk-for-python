@@ -1,48 +1,54 @@
 ---
 checkout: false
 concurrency:
-  # Keep concurrency enabled for label runs and temporarily enabled manual tests.
-  group: mgmt-sdk-pr-review-${{ github.event.pull_request.number || github.event.inputs.pr_number }}
-  job-discriminator: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+  group: mgmt-sdk-pr-review-${{ github.event.inputs.pr_number }}
+  job-discriminator: ${{ github.event.inputs.pr_number }}
 description: Review Python management SDK pull requests against the current repository rules and report actionable findings.
 engine: copilot
 if: >-
-  (github.event_name == 'workflow_dispatch' || github.event.label.name == 'mgmt-review-needed') &&
-  (github.event_name != 'workflow_dispatch' || (github.actor == 'msyyc' && github.triggering_actor == 'msyyc'))
+  github.repository == 'Azure/azure-sdk-for-python' && github.ref == 'refs/heads/main' &&
+  ((github.actor == 'msyyc' && github.triggering_actor == 'msyyc') ||
+   (github.actor == 'github-actions[bot]' && github.event.inputs.request_run_id != '' &&
+    (github.triggering_actor == 'github-actions[bot]' || github.triggering_actor == 'msyyc')))
 jobs:
   agent:
-    if: github.event_name != 'workflow_dispatch' || (github.actor == 'msyyc' && github.triggering_actor == 'msyyc')
+    if: &review_access >-
+      github.repository == 'Azure/azure-sdk-for-python' && github.ref == 'refs/heads/main' &&
+      ((github.actor == 'msyyc' && github.triggering_actor == 'msyyc') ||
+       (github.actor == 'github-actions[bot]' && github.event.inputs.request_run_id != '' &&
+        (github.triggering_actor == 'github-actions[bot]' || github.triggering_actor == 'msyyc')))
   conclusion:
-    if: github.event_name != 'workflow_dispatch' || (github.actor == 'msyyc' && github.triggering_actor == 'msyyc')
+    if: *review_access
   detection:
-    if: github.event_name != 'workflow_dispatch' || (github.actor == 'msyyc' && github.triggering_actor == 'msyyc')
+    if: *review_access
   manual_access_notice:
     name: Explain manual review access policy
-    if: always() && (github.event_name == 'workflow_dispatch' || github.event.label.name == 'mgmt-review-needed')
+    if: always() && github.event_name == 'workflow_dispatch'
     permissions: {}
     runs-on: ubuntu-slim
     steps:
       - name: Explain manual trigger policy
         run: |
-          echo "Only msyyc may manually trigger or rerun this workflow. Label-trigger eligibility is unchanged."
+          echo "Only msyyc may manually trigger or rerun this workflow. Automated requests require verified label provenance. Reviews run from main only."
         shell: bash
       - name: Skip unauthorized manual review
-        if: github.event_name == 'workflow_dispatch' && (github.actor != 'msyyc' || github.triggering_actor != 'msyyc')
+        if: >-
+          github.actor != 'github-actions[bot]' &&
+          (github.actor != 'msyyc' || github.triggering_actor != 'msyyc')
         run: |
           echo "::notice::Skipping management SDK review: only msyyc may manually trigger or rerun this workflow."
           echo "## Management SDK review skipped" >> "$GITHUB_STEP_SUMMARY"
           echo "Only msyyc may manually trigger or rerun this workflow. No SDK evidence is collected, no agent runs, and no review comment is published or hidden." >> "$GITHUB_STEP_SUMMARY"
         shell: bash
   review_context:
-    if: >-
-      (github.event_name == 'workflow_dispatch' || github.event.label.name == 'mgmt-review-needed') &&
-      (github.event_name != 'workflow_dispatch' || (github.actor == 'msyyc' && github.triggering_actor == 'msyyc'))
+    if: *review_access
     needs: activation
     outputs:
       artifact_id: ${{ steps.snapshot.outputs.artifact-id }}
       pr_number: ${{ steps.target.outputs.pr_number }}
       head_sha: ${{ steps.target.outputs.head_sha }}
     permissions:
+      actions: read
       contents: read
       pull-requests: read
     runs-on: ubuntu-latest
@@ -70,6 +76,7 @@ jobs:
         run: |
           mkdir review-snapshot
           cp .github/workflows/scripts/mgmt_sdk_review_context.py review-snapshot/
+          cp .github/workflows/scripts/mgmt_sdk_review_routing.py review-snapshot/
           cp .github/workflows/scripts/mgmt_sdk_review_contract.py review-snapshot/
           cp .github/workflows/scripts/mgmt_sdk_review_evidence.py review-snapshot/
           cp .github/workflows/scripts/mgmt_sdk_review_service.py review-snapshot/
@@ -87,9 +94,7 @@ jobs:
           path: review-snapshot/
           retention-days: 7
   safe_outputs:
-    if: github.event_name != 'workflow_dispatch' || (github.actor == 'msyyc' && github.triggering_actor == 'msyyc')
-labels:
-  - mgmt-review-needed
+    if: *review_access
 mcp-scripts:
   review:
     description: Read pinned evidence or preflight a complete draft; no repository writes or code execution.
@@ -101,19 +106,23 @@ mcp-scripts:
     py: "import json\nimport urllib.request\nbody = inputs[\"request\"].encode(\"utf-8\")\nif len(body) > 2 * 1024 * 1024:\n    raise ValueError(\"Review request exceeds 2 MiB\")\nrequest = urllib.request.Request(\n    \"http://127.0.0.1:8765/review\", data=body,\n    headers={\"Content-Type\": \"application/json\"}, method=\"POST\")\nwith urllib.request.urlopen(request, timeout=110) as response:\n    print(response.read(12 * 1024 * 1024).decode(\"utf-8\"))\n"
     timeout: 120
 "on":
-  pull_request_target:
-    types:
-      - labeled
-  # Manual tests only: use this workflow PR's existing trusted Azure-owned source branch.
-  # Do not create a separate test branch. Uncomment the block below, compile with gh-aw v0.88.8,
-  # commit/push both files to the same PR branch, then dispatch with --ref set to that branch.
-  # Comment it out and recompile before merging. Keep concurrency active in both modes.
-  # workflow_dispatch:
-  #   inputs:
-  #     pr_number:
-  #       description: Azure-owned-source SDK PR number to review and publish to
-  #       required: true
-  #       type: string
+  bots:
+    - "github-actions[bot]"
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: SDK PR number to review
+        required: true
+        type: string
+      head_sha:
+        description: PR head SHA pinned by the label router
+        type: string
+      request_run_id:
+        description: Successful PR Review Intake run ID (automated requests only)
+        type: string
+      request_event_id:
+        description: GitHub label event ID (automated requests only)
+        type: string
 permissions:
   contents: read
   copilot-requests: write
@@ -711,38 +720,32 @@ as an agent tool; do not attempt to call it. Other malformed or mixed outputs st
 
 ## Integration, trust and maintenance
 
-### Temporarily enable manual tests using the production pipeline
+### Label routing and manual reviews
 
-Manual dispatch is **disabled by default**; `mgmt-review-needed` label events remain enabled.
-Test on the workflow PR's **existing trusted Azure-owned source branch**, not a new test branch.
-Do not create a separate branch or PR for testing. Uncomment the `workflow_dispatch` block under `"on"`
-in this source file, run `gh aw compile mgmt-sdk-pr-review --strict` with **v0.88.8**,
-and commit/push both the source and regenerated lockfile to that branch. After testing,
-comment the block out again and recompile before merging. Do not enable only the lockfile:
-the Markdown source is authoritative. The compiler drops YAML comments; the lockfile's
-commented reminder is non-executable and may disappear on regeneration without enabling dispatch.
+`pr-review-intake.yml` receives `pull_request: labeled` events, including fork PRs, without
+permissions, secrets, checkout or artifacts. Its successful run only wakes `pr-review-router.yml`;
+PR-controlled intake code is not an authorization source. The router runs trusted default-branch
+tooling and independently verifies the intake workflow/run and successful request job. It resolves
+fork PRs through commit-associated PRs even when `workflow_run.pull_requests` is empty, rejecting
+ambiguous, closed, withdrawn or stale targets.
 
-Keep the concurrency group and job discriminator active in both modes. They use the PR number
-from label events or, when temporarily enabled, manual event inputs. Commenting out only the
-group would leave an invalid/empty concurrency mapping and would not disable manual dispatch.
+The latest GitHub `mgmt-review-needed` label event must match the intake actor and precede the
+original run creation by no more than five minutes. Its requester must have repository write,
+maintain or admin access. The router dispatches this fixed reviewer on `main` with the PR number,
+head SHA, intake run ID and label event ID. The reviewer independently reconstructs that authorization
+before collecting evidence. Neither workflow downloads intake artifacts or executes PR code.
+Fork approval policies or merge conflicts may prevent the unprivileged intake from running; do not
+bypass those restrictions with privileged execution of PR code.
 
-When enabled, manual runs and `mgmt-review-needed` label events use the same collector, agent, semantic
-preflight, independent publisher and real max-one comment publication. There is no dry-run
-or alternate test implementation. A branch test can replace/hide an older review after successful
-validation, just like a production run; failed validation leaves existing reviews untouched.
-
-After pushing the enabled test revision, dispatch it explicitly:
+`workflow_dispatch` is permanently enabled for routing. Both automated and manual reviews must
+execute from the upstream default branch (`main`); non-default refs are rejected before setup.
+The concurrency group and job discriminator use the dispatched PR number. The same collector,
+agent, semantic preflight, independent publisher and max-one comment publication serve both paths.
+Failed validation leaves existing reviews untouched. To request a manual review:
 
 ```bash
-gh workflow run mgmt-sdk-pr-review.lock.yml --repo Azure/azure-sdk-for-python --ref mgmt-review-reliability -f pr_number=48997
+gh workflow run mgmt-sdk-pr-review.lock.yml --repo Azure/azure-sdk-for-python --ref main -f pr_number=48997
 ```
-
-Replace `mgmt-review-reliability` with the existing workflow PR's source branch, not the SDK PR's
-source branch. Keep all test-enabling and cleanup commits on that same workflow PR branch.
-Omitting `--ref` uses the default
-branch, where this command will not work while manual dispatch remains disabled.
-The dispatch entry point must be available on the default branch for GitHub's manual-run UI;
-adding it only to an unmerged PR is not proof that upstream dispatch is enabled.
 
 Manual dispatch and reruns require both the original actor and triggering actor to be `msyyc`,
 in addition to GitHub's repository write-access requirement. Other manual actors are stopped by
@@ -752,24 +755,28 @@ and adds a run summary. Review jobs show **Skipped**, with no authorization fail
 run can show **Success** because the notice job succeeded. GitHub does not mark an entire run
 skipped when a logging job has successfully run.
 
-Each review job independently checks the actor condition, including partial reruns that reuse
+Automated dispatches require `github-actions[bot]` as the original actor and either that bot or
+`msyyc` as the rerun actor, plus verified intake provenance at target resolution. Bot identity alone
+does not authorize a review. Label requests are not consumed; reapplying the label requests a fresh
+review, and reruns must still match the active event and pinned PR head.
+
+Each review job independently checks the actor and default-branch conditions, including partial reruns that reuse
 successful dependencies. The notice job's policy log remains available if GitHub reuses that job
 instead of rerunning it. Target resolution, agent-service startup and publication also retain
 fail-closed authorization checks as defense in depth if a workflow gate is bypassed. Invalid
 targets or evidence still fail rather than being disguised as authorization skips.
-The SDK PR's source repository must
-be owned by the `Azure` organization; personal forks and deleted source repositories are rejected.
+For manual reviews, the SDK PR's source repository must be owned by the `Azure` organization;
+personal forks and deleted source repositories are rejected. Verified label requests support personal forks.
 The destination is always a PR in Azure/azure-sdk-for-python, not an arbitrary repository or issue.
-Both open and closed PRs are supported for historical reproduction. Existing label-trigger
-eligibility is unchanged. This manual-run allowlist is an operational guard, not protection against
-a maintainer who can rewrite the selected workflow branch; only run reviewed, trusted branches.
+Manual reviews support open and closed PRs for historical reproduction; label requests require an open PR.
+This allowlist is an operational guard, not protection against a maintainer who can rewrite trusted workflows.
 No PR-controlled code is checked out or executed, even when its source is Azure-owned.
 
-Before evidence collection, one bounded GitHub PR lookup authorizes and resolves the target.
+Before evidence collection, bounded GitHub metadata lookups authorize and resolve the target.
 The producer exports its PR number and current head SHA as trusted job outputs used by the
-collector, agent service, prompt, publisher and fixed comment target. Label events additionally
-require the current head to match the event head. Head changes during collection fail the run.
-The selected workflow branch determines tooling, never the SDK PR's source or target branch.
+collector, agent service, prompt, publisher and fixed comment target. Automated requests additionally
+require the current head to match the intake head. Head changes during collection fail the run.
+The trusted default-branch workflow determines tooling, never the SDK PR's source or target branch.
 
 ### Evidence and publication boundaries
 
@@ -791,8 +798,7 @@ Do not describe receipts or line ranges as proof of semantic correctness.
 
 The authoritative policy implementation and check identifiers live in
 `mgmt_sdk_review_evidence.py`; the rules text is fetched from the same trusted workflow commit
-and remains visible. This lets a manual branch test exercise that branch's policy changes without
-accepting policy from the SDK PR or mixing new tooling with older default-branch rules. When review rules change,
+and remains visible, without accepting policy from the SDK PR or mixing tooling and rules revisions. When review rules change,
 update deterministic policy and its rule-parity tests together. Unsupported metadata layouts
 remain unverified instead of executing packaging code. Collection preserves the 500-request,
 256-KiB-per-file limits, with an 8-MiB source-catalog text cap; specification registration has
@@ -844,9 +850,8 @@ require human review; it is never counted as a published or clean review.
 
 ### Post-merge rollout gate
 
-Local tests and PR CI do not deploy this workflow. Label events use default-branch workflow
-tooling; manual runs use the selected workflow revision. A successful manual test on a feature
-branch does not prove that the production default branch has deployed those changes.
+Local tests and PR CI do not deploy this workflow. The intake, router and reviewer must be merged
+to the default branch before label routing works. Automated and manual runs use default-branch tooling.
 After merge, use fresh triggers across confirmed initial releases, ordinary updates, breaking
 changes and incomplete evidence. Verify actual `toolingRevision`, `safe_outputs` and the comment.
 Require ten consecutive representative canaries with a valid published review or explicit expected

@@ -1,0 +1,17 @@
+name: PR Review Intake
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions: {}
+
+jobs:
+  request:
+    if: github.event.label.name == 'mgmt-review-needed'
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      # Only a wake-up signal; the trusted router validates GitHub label events.
+      - name: Signal a review request
+        run: echo "Management SDK review requested."
