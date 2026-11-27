@@ -1,0 +1,28 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+  - name: Condition
+    type: string
+    default: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+
+steps:
+  - pwsh: |
+      & '$(CosmosProbePython)' -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py offline `
+        --require-installed-wheel `
+        --results '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/offline'
+      exit $LASTEXITCODE
+    displayName: Python Unit Tests
+    condition: ${{ parameters.Condition }}
+    env:
+      APPLICATIONINSIGHTS_CONNECTION_STRING: ''
+      COSMOSDBCONNECTIONSTRING: ''
+  - task: PublishTestResults@2
+    displayName: Publish Python Unit Test Results
+    condition: ${{ parameters.Condition }}
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/offline/pytest.xml
+      testRunTitle: Cosmos Rust offline Python
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true
