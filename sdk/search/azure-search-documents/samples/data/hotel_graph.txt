@@ -1,0 +1,8 @@
+Historic Harbor Hotel is a hotel in Seattle. Contoso Hospitality operates
+Historic Harbor Hotel. Historic Harbor Hotel was founded in 1984.
+
+Mountain View Inn is a hotel in Denver. Alpine Hospitality operates
+Mountain View Inn. Mountain View Inn was founded in 2002.
+
+Contoso Hospitality and Alpine Hospitality are organizations, not hotels.
+Seattle and Denver are cities. These hotel descriptions are synthetic.
