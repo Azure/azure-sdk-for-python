@@ -28,7 +28,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENTATIVE, UNHEALTHY
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
-from common.fault_rule_adapters import _RustFaultInjection, _REGION_DOWN
+from common.fault_rule_adapters import _RegionFaultRules, _REGION_DOWN
 
 REGION_1 = os.getenv("WRITE_LOCATION", "")
 REGION_2 = os.getenv("READ_LOCATION", "West US")
@@ -293,7 +293,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The custom transport becomes Rust fault rules for document operations in REGION_1.
-        custom_transport = _RustFaultInjection(error, REGION_1)
+        custom_transport = _RegionFaultRules(error, REGION_1)
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc = create_doc()
         predicate = None

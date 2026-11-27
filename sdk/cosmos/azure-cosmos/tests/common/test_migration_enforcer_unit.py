@@ -252,8 +252,17 @@ def _class_method_exists(src_tree, class_name, method_name):
     return False
 
 
-def _uses_shared_rust_setup(tree, setup_tree):
+def _uses_shared_rust_setup(tree, setup_tree=None):
     """Recognize the read fixtures only when their client pins and delegation hold."""
+    if not any(
+        isinstance(node, ast.ImportFrom) and node.level == 0
+        and node.module == "read_container._container_setup" for node in tree.body
+    ):
+        return False
+    if setup_tree is None:
+        setup_tree = ast.parse(
+            (_PKG_ROOT / "tests" / "read_container" / "_container_setup.py").read_text(encoding="utf-8")
+        )
     setup_names = {
         "SyncContainerReadCase": ("setUp", ""),
         "AsyncContainerReadCase": ("asyncSetUp", "_async"),
@@ -439,18 +448,28 @@ class TestExample:
     def test_every_migrated_file_pins_rust_backend_rust(self):
         """Invariant 4: direct pins or verified inherited setup select Rust."""
         violations = []
-        setup = ast.parse((_TESTS_DIR / "read_container" / "_container_setup.py").read_text(encoding="utf-8"))
         for path in _source_linked_test_files():
             if _rel(path) in _PIN_EXEMPT_FILES:
                 continue
             text = path.read_text(encoding="utf-8")
-            if not any(pin in text for pin in _PIN_LITERALS) and not _uses_shared_rust_setup(ast.parse(text), setup):
+            if not any(pin in text for pin in _PIN_LITERALS) and not _uses_shared_rust_setup(ast.parse(text)):
                 violations.append(_rel(path))
         self.assertEqual(
             violations, [],
             'migrated files missing a direct _backend="rust" pin or verified shared Rust setup:\n  - '
             + "\n  - ".join(violations),
         )
+
+    def test_shared_setup_resolution_is_independent_of_search_scope_rust(self):
+        tree = ast.parse(
+            "from read_container._container_setup import SyncContainerReadCase\n"
+            "class TestCopy(SyncContainerReadCase):\n"
+            "    def test_case_rust(self): pass\n"
+        )
+        with patch.dict(globals(), {"_TESTS_DIR": _PKG_ROOT / "tests" / "get_database_client"}):
+            self.assertTrue(_uses_shared_rust_setup(tree))
+        with patch.object(pathlib.Path, "read_text", side_effect=AssertionError("Unneeded fixture read")):
+            self.assertFalse(_uses_shared_rust_setup(ast.parse("def test_case_rust(): pass")))
 
     def test_shared_setup_requires_real_inheritance_and_super_delegation_rust(self):
         setup = ast.parse((_TESTS_DIR / "read_container" / "_container_setup.py").read_text(encoding="utf-8"))

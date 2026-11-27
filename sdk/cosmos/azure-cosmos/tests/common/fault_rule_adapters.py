@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Test-only adapters from legacy fault scenarios to Rust fault-rule mappings."""
+"""Helpers that turn the fault scenarios used by the tests into fault rules passed to the client when it is created."""
 
 import uuid
 
@@ -11,7 +11,7 @@ from azure.core.exceptions import ServiceResponseError
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
-#: Rust driver labels for the document operations the original transport predicate matched.
+#: The item operations that _RegionFaultRules adds a fault for.
 _DOCUMENT_OPERATION_TYPES = (
     "ReadItem",
     "QueryItem",
@@ -22,16 +22,17 @@ _DOCUMENT_OPERATION_TYPES = (
     "DeleteItem",
     "BatchItem",
 )
+#: Pass this instead of an error to make the whole region unreachable (a connection error).
 _REGION_DOWN = "region_down"
 
-_GAP_10_PPAF_SKIP = (
-    "driver-gap: Rust fault injection cannot transform the database-account response to enable "
-    "PPAF (known gap 10: custom transports are excluded)."
+_PPAF_SKIP_REASON = (
+    "driver-gap: fault rules cannot change the account details the client reads, so these tests "
+    "cannot turn on per-partition automatic failover (PPAF)."
 )
 
-#: Rust fault-rule labels for the legacy operation types the transport predicates matched.
-# The retry-safe patch scenario runs server-side (PatchItem); read_all_items is a Rust query.
-_RUST_OPERATION_TYPES = {
+#: Fault rule operation names for each operation type the tests use.
+# Patch has its own PatchItem rule. read_all_items is sent as a query.
+_FAULT_RULE_OPERATIONS = {
     OperationType.Read: ("ReadItem",),
     OperationType.SqlQuery: ("QueryItem",),
     OperationType.ReadFeed: ("QueryItem", "ChangeFeedItem"),
@@ -44,13 +45,11 @@ _RUST_OPERATION_TYPES = {
 }
 
 
-class _RustFaultInjection(object):
-    """Rust stand-in for FaultInjectionTransport with one region-targeted document fault.
+class _RegionFaultRules(object):
+    """Builds fault rules that make every item operation in one region fail with the same error.
 
-    Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport
-    options are excluded. Faults become Rust
-    ``_fault_injection_rules`` fixed when the client is built, so the original's later
-    ``faults = []`` / ``add_fault`` on the live client cannot change that client's rules.
+    The rules are passed to the client when it is created and cannot be changed afterwards,
+    so tests that remove or add faults on a running client are skipped.
     """
 
     def __init__(self, error, region):
@@ -58,6 +57,7 @@ class _RustFaultInjection(object):
         self.region = region or None
 
     def rules(self):
+        """Returns one fault rule per item operation, using the stored error and region."""
         suffix = uuid.uuid4().hex
         if isinstance(self.error, CosmosHttpResponseError):
             fault = {"status_code": self.error.status_code}
@@ -76,22 +76,21 @@ class _RustFaultInjection(object):
 
     @faults.setter
     def faults(self, value):
-        pytest.skip("driver-gap: Rust fault injection rules cannot be removed from a live client (known gap 10).")
+        pytest.skip("driver-gap: fault rules cannot be removed from a client after it is created.")
 
     def add_fault(self, predicate, error):
-        pytest.skip("driver-gap: Rust fault injection rules cannot be added to a live client (known gap 10).")
+        pytest.skip("driver-gap: fault rules cannot be added to a client after it is created.")
 
 
 class FaultInjectionTransport(object):
-    """Rust stand-in for the legacy FaultInjectionTransport.
+    """Keeps the method names of the original fault injection transport so the tests read the same.
 
-    Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport
-    options are excluded. The predicate and error lambdas
-    are evaluated once against a probe to record the operation type, target region, delay and error, which
-    become Rust ``_fault_injection_rules`` fixed when the client is built.
+    Tests still call add_fault with a predicate and an error. Each predicate is run once against
+    a fake request to record the operation type and target region. rules() then turns the
+    recorded faults into fault rules passed to the client when it is created.
     """
 
-    class _Probe(object):
+    class _FakeRequest(object):
         def __init__(self):
             self.operation_type = None
             self.target_uri = None
@@ -106,7 +105,7 @@ class FaultInjectionTransport(object):
         self.response_transformations = []
 
     def add_fault(self, predicate, error_lambda):
-        probe = self._Probe()
+        probe = self._FakeRequest()
         predicate(probe)
         self.faults.append((probe, error_lambda(probe)))
 
@@ -137,20 +136,24 @@ class FaultInjectionTransport(object):
 
     @staticmethod
     def transform_topology_ppaf_enabled(inner):
-        pytest.skip(_GAP_10_PPAF_SKIP)
+        pytest.skip(_PPAF_SKIP_REASON)
 
     def rules(self, region_by_uri):
+        """Returns one fault rule per recorded fault and operation.
+
+        region_by_uri maps each endpoint URL used in the tests to its region name.
+        """
         rules = []
         suffix = uuid.uuid4().hex
         for index, (probe, fault) in enumerate(self.faults):
             if isinstance(fault.error, CosmosHttpResponseError):
                 outcome = {"status_code": fault.error.status_code, "sub_status": fault.error.sub_status or 0}
             elif isinstance(fault.error, ServiceResponseError):
-                # A failed response without an HTTP status maps to Rust's transport-level response failure.
+                # An error with no HTTP status code becomes a response timeout.
                 outcome = {"error_type": "ResponseTimeout"}
             else:
                 raise TypeError("unsupported injected error {!r}".format(fault.error))
-            for operation_type in _RUST_OPERATION_TYPES[probe.operation_type]:
+            for operation_type in _FAULT_RULE_OPERATIONS[probe.operation_type]:
                 rules.append(
                     dict(
                         id="{}-{}-{}".format(operation_type, index, suffix),

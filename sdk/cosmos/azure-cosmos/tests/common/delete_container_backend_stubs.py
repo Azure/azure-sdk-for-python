@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Deletion stand-ins with no dependency on the retiring legacy implementation."""
+"""Helpers for container delete tests.
+
+They send ``delete_container`` calls to a fake, so tests can check what would
+have been sent, without a network.
+"""
 
 import inspect
 from types import SimpleNamespace
@@ -15,6 +19,16 @@ from common.container_backend_stubs import _AsyncFakeBackend, _FakeBackend
 
 
 def make_delete_case(is_async):
+    """Set up a database object whose ``delete_container`` calls go to a fake.
+
+    Returns the setup for one test case:
+    - ``database``: the database to call ``delete_container`` on.
+    - ``backend``: the fake. It replies "204 No Content". ``backend.execute`` is a
+      mock, so a test can check how many requests were sent and what they contained.
+    - ``connection``: ``ReadContainer`` and ``DeleteContainer`` fail the test if
+      they are called. ``_set_container_properties_cache`` is a mock.
+    - ``is_async``: whether ``database`` is the async version.
+    """
     mock = AsyncMock if is_async else MagicMock
     response = BackendResponse(
         status_code=204,
@@ -30,9 +44,9 @@ def make_delete_case(is_async):
         _backend=backend,
         last_response_headers={},
         ReadContainer=mock(
-            side_effect=AssertionError("Python must not fetch deletion metadata")
+            side_effect=AssertionError("delete_container should not read the container first")
         ),
-        DeleteContainer=mock(side_effect=AssertionError("Legacy deletion was called")),
+        DeleteContainer=mock(side_effect=AssertionError("DeleteContainer should not be called")),
         _set_container_properties_cache=MagicMock(),
     )
     proxy_type = AsyncDatabaseProxy if is_async else DatabaseProxy
@@ -44,12 +58,18 @@ def make_delete_case(is_async):
     )
 
 
-def _delete(case, *args, **kwargs):
+def _call_container_delete(case, *args, **kwargs):
+    """Call ``delete_container`` on the database and wait for it if the client is async."""
     result = case.database.delete_container(*args, **kwargs)
     return run_async(result) if inspect.isawaitable(result) else result
 
 
-def _assert_no_dispatch(case):
+def _assert_no_request_sent(case):
+    """Check that nothing was sent and the saved container properties were not touched.
+
+    Tests use this after a call that must fail before any request is made, such as
+    a call with an option that is no longer supported.
+    """
     case.backend.execute.assert_not_called()
     case.connection.DeleteContainer.assert_not_called()
     case.connection.ReadContainer.assert_not_called()

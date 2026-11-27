@@ -8,7 +8,7 @@ from azure.core.exceptions import ServiceResponseError
 
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from common.fault_rule_adapters import FaultInjectionTransport, _RustFaultInjection
+from common.fault_rule_adapters import FaultInjectionTransport, _RegionFaultRules
 
 
 @pytest.mark.parametrize(
@@ -21,7 +21,7 @@ from common.fault_rule_adapters import FaultInjectionTransport, _RustFaultInject
 )
 @pytest.mark.parametrize("region", ["West US", "", None])
 def test_document_fault_rules_preserve_outcome_and_region_rust(error, outcome, region):
-    adapter = _RustFaultInjection(error, region)
+    adapter = _RegionFaultRules(error, region)
     rules = adapter.rules()
     assert [{key: value for key, value in rule.items() if key != "id"} for rule in rules] == [
         {"operation_type": operation, "region": region or None, **outcome}
@@ -36,7 +36,7 @@ def test_document_fault_rules_preserve_outcome_and_region_rust(error, outcome, r
             "BatchItem",
         )
     ]
-    batches = [rules, adapter.faults, _RustFaultInjection(error, region).rules()]
+    batches = [rules, adapter.faults, _RegionFaultRules(error, region).rules()]
     ids = [rule["id"] for batch in batches for rule in batch]
     assert len(set(ids)) == len(ids)
     rules[0]["region"] = "changed"
@@ -45,7 +45,7 @@ def test_document_fault_rules_preserve_outcome_and_region_rust(error, outcome, r
 
 @pytest.mark.parametrize("mutation", ["remove", "add"])
 def test_document_live_rule_mutation_keeps_driver_gap_skip_rust(mutation):
-    adapter = _RustFaultInjection("region_down", "West US")
+    adapter = _RegionFaultRules("region_down", "West US")
     verb = "removed from" if mutation == "remove" else "added to"
     with pytest.raises(pytest.skip.Exception) as caught:
         if mutation == "remove":
@@ -53,7 +53,7 @@ def test_document_live_rule_mutation_keeps_driver_gap_skip_rust(mutation):
         else:
             adapter.add_fault(lambda request: True, "region_down")
     assert str(caught.value) == (
-        f"driver-gap: Rust fault injection rules cannot be {verb} a live client (known gap 10)."
+        f"driver-gap: fault rules cannot be {verb} a client after it is created."
     )
     assert all(rule["error_type"] == "ConnectionError" for rule in adapter.rules())
 
@@ -153,6 +153,6 @@ def test_availability_topology_transformation_keeps_driver_gap_skip_rust():
     with pytest.raises(pytest.skip.Exception) as caught:
         adapter.response_transformations[0][1]({})
     assert str(caught.value) == (
-        "driver-gap: Rust fault injection cannot transform the database-account response to enable "
-        "PPAF (known gap 10: custom transports are excluded)."
+        "driver-gap: fault rules cannot change the account details the client reads, so these tests "
+        "cannot turn on per-partition automatic failover (PPAF)."
     )

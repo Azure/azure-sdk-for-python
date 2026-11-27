@@ -1,5 +1,6 @@
 {
   "scope": "27 original modules; observations, transitive helpers, controls, annotations and fixture fingerprints",
+  "source_revision": "c7817ded3af4945aeb4d7be77b8cbbb06d98c075",
   "not_a_completion_certificate": true,
   "source_modules": [
     "tests\\test_availability_strategy.py",

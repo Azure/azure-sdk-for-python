@@ -1,24 +1,10 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Access-condition passthrough for the migrated control-plane operations.
+"""Checks that etag and match_condition still protect delete_database and create_container.
 
-These pin a regression the Rust migration introduced and this change reverts.
-``CosmosClient.delete_database`` and ``DatabaseProxy.create_container`` briefly
-popped ``etag`` / ``match_condition`` / ``session_token`` out of ``kwargs``
-before calling ``build_options``. That looked harmless -- both had just been
-deprecation-warned as inapplicable -- but it was not:
-
-* ``build_options`` is what turns ``etag`` + ``match_condition`` into
-  ``request_options["accessCondition"]``, which becomes an ``If-Match`` header
-  on both engines. Dropping it silently removed a caller's optimistic
-  concurrency guard, so a guarded delete destroyed a database the service would
-  otherwise have refused to touch with a 412.
-* ``build_options`` also raises ``ValueError`` when ``etag`` is passed without a
-  ``match_condition``. Popping the keys swallowed that error.
-
-The pops were redundant besides: ``_get_match_headers`` and ``COMMON_OPTIONS``
-already consume all three keys, so none of them ever survived into the kwargs
-the Rust eligibility gate inspects.
+When a caller passes etag with match_condition, the request must carry that condition,
+so the service only applies it if the resource still has that etag. If etag is passed
+without match_condition, the SDK must raise ValueError.
 """
 import unittest
 from unittest import mock
@@ -30,17 +16,16 @@ import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import PartitionKey
 from azure.cosmos._helpers._request_container import is_create_container_rust_eligible
 from azure.cosmos._helpers._request_database import is_delete_database_rust_eligible
-from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._helpers._client_context import CosmosClientContext
 
 
 @pytest.mark.cosmosEmulator
 class TestAccessConditionPassthroughUnit(unittest.TestCase):
-    """The access condition must reach ``request_options`` on both engines."""
+    """etag and match_condition must reach the request options of each operation."""
 
     @staticmethod
     def _client():
-        """A minimal ``CosmosClient`` with a mocked connection, so requests are captured not sent."""
+        """A minimal ``CosmosClient`` with a mocked connection, so nothing is sent."""
         client = cosmos_client.CosmosClient.__new__(cosmos_client.CosmosClient)
         client.client_connection = mock.MagicMock()
         client.client_connection.last_response_headers = {}
@@ -71,8 +56,8 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
             captured["options"].get("accessCondition"),
             {"type": "IfMatch", "condition": "etag-value"},
         )
-        # The keys are consumed by build_options, so nothing strays into the
-        # kwargs the eligibility gate inspects -- which is why no pop is needed.
+        # The SDK has already turned these into request options, so they must
+        # not also be passed on as extra keyword arguments.
         self.assertNotIn("etag", captured["kwargs"])
         self.assertNotIn("match_condition", captured["kwargs"])
         self.assertNotIn("session_token", captured["kwargs"])
@@ -89,7 +74,7 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         import azure.cosmos.database as database_module
 
         connection = mock.MagicMock()
-        connection._backend = LEGACY_BACKEND
+        connection._backend = mock.MagicMock(name="backend")
         database = database_module.DatabaseProxy(connection, "db-id")
         captured = {}
 
@@ -112,16 +97,12 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
             {"type": "IfMatch", "condition": "etag-value"},
         )
 
-    def test_access_condition_becomes_a_typed_setting_on_the_rust_path_rust(self):
-        """Both kinds of write condition become named fields rather than staying loose text.
+    def test_access_condition_becomes_a_request_setting_rust(self):
+        """Each kind of etag condition becomes its own request setting.
 
-        A caller supplies the condition as a small mapping saying which kind and which
-        version. Each kind lands in its own field: one means "only if it still matches",
-        the other "only if it does not". They are opposites, so a path that mixed them up
-        would write exactly when it should not.
-
-        The test above checks the old path still receives the mapping unchanged; this one
-        checks the Rust path turns it into fields. Both have to hold during the migration.
+        "IfMatch" becomes if_match (write only if the etag still matches) and "IfNoneMatch"
+        becomes if_none_match (write only if it does not). They are opposites, so mixing
+        them up would write exactly when it should not.
         """
         from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
 
@@ -138,8 +119,9 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
             "etag-value",
         )
 
-    def test_access_condition_does_not_force_a_core_python_fallback_rust(self):
-        """Rust honors the header, so a guarded call stays on the Rust path."""
+    def test_access_condition_is_accepted_rust(self):
+        """An etag condition is a supported option, so delete_database and create_container
+        accept it rather than raising an "unsupported" error."""
         options = {"accessCondition": {"type": "IfMatch", "condition": "etag-value"}}
         self.assertTrue(is_delete_database_rust_eligible(options, {}))
         self.assertTrue(is_create_container_rust_eligible(options, {}))

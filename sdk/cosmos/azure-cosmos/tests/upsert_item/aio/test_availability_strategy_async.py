@@ -32,7 +32,7 @@ from azure.cosmos.http_constants import ResourceType
 from config.clients import create_data_client_async, create_data_client_async_for_endpoint, create_setup_client
 from config.settings import TestSettings
 
-from common.fault_rule_adapters import FaultInjectionTransport as FaultInjectionTransportAsync, _GAP_10_PPAF_SKIP
+from common.fault_rule_adapters import FaultInjectionTransport as FaultInjectionTransportAsync, _PPAF_SKIP_REASON
 
 #cspell:ignore PPAF, ppaf
 
@@ -425,7 +425,7 @@ class TestAsyncAvailabilityStrategy:
         if custom_transport is not None:
             # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. Account-response transformations (PPAF) have no Rust fault-rule equivalent.
             if custom_transport.response_transformations:
-                pytest.skip(_GAP_10_PPAF_SKIP)
+                pytest.skip(_PPAF_SKIP_REASON)
             client_kwargs["_fault_injection_rules"] = custom_transport.rules(self.REGION_BY_URI)
         client = create_data_client_async_for_endpoint(endpoint, _backend="rust", **client_kwargs)
         await client.__aenter__()

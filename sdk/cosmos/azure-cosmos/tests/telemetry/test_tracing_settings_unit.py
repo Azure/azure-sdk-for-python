@@ -23,7 +23,7 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos.aio._backend import binding_adapter as async_binding
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
-from common.rust_telemetry_payload import v2
+from common.telemetry_payload import fill_payload_defaults
 from telemetry.test_rust_telemetry_unit import (
     recording_setup,
 )  # pylint: disable=unused-import
@@ -88,7 +88,7 @@ def native(request, recording, monkeypatch):  # pylint: disable=unused-argument
         body = {"id": prepared.item_id} if h.status == 200 else {"message": "missing"}
         response = h.status, 0, {}, json.dumps(body).encode(), "diagnostic summary"
         end = time.time_ns()
-        payload = v2({
+        payload = fill_payload_defaults({
             "schema_version": 2,
             "complete": True,
             "incomplete_reasons": [],

@@ -67,9 +67,11 @@ def test_every_point_operation_has_only_headers_and_explicit_options_rust(async_
     """
     backend = AsyncBackend() if async_mode else Backend()
     options = {
-        "partitionKey": "p", "disableAutomaticIdGeneration": True,
+        "partitionKey": "p",
         "initialHeaders": {"x-customer": "value"},
     }
+    if op != "create_item":
+        options["disableAutomaticIdGeneration"] = True
     before = deepcopy(options)
     invoke((AsyncItemHelper if async_mode else ItemHelper)(backend), op,
            request_options=options, no_response=False,

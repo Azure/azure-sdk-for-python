@@ -354,7 +354,6 @@ assert Path(sdk_subprocess.__file__).resolve() == Path(sys.argv[3])
     ], ("test_config",)),
     (["tests/fault_injection", "tests/toxiproxy"], (
         "test_config", "_client_transport", "_fault_injection_transport",
-        "common.fault_resources",
     )),
 ])
 def test_maintained_copies_collect_without_original_configuration_rust(tmp_path, selections, blocked):

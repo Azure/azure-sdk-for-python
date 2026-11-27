@@ -24,7 +24,7 @@ from azure.cosmos.aio._backend import binding_adapter as async_binding
 from azure.cosmos._diagnostic_logging import DiagnosticLogging
 from azure.cosmos._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
-from common.rust_telemetry_payload import v2
+from common.telemetry_payload import fill_payload_defaults
 from read_all_items.test_read_all_items_contract_unit import feed  # pylint: disable=unused-import
 from test_cosmos_http_logging_policy import FilterStatusCode
 
@@ -166,7 +166,7 @@ def test_summary_logging_and_attempt_tracing_coexist_rust(native, monkeypatch):
     instrumentation._get_tracer_cached.cache_clear()
     implementation = settings.tracing_implementation()
     settings.tracing_enabled, settings.tracing_implementation = True, None
-    native.tracing_payload = v2({
+    native.tracing_payload = fill_payload_defaults({
         "schema_version": 2,
         "complete": True,
         "incomplete_reasons": [],

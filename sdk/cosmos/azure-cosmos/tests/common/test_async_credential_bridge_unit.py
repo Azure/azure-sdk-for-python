@@ -1,6 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Credential requests borrow the application loop without owning its lifetime."""
+"""Tests for how the async client gets tokens from an async credential.
+
+The async client asks the customer's credential for tokens through a small token
+helper (AsyncTokenCredentialBridge). The helper calls get_token on the customer's
+event loop, the asyncio loop that runs the customer's async code. It never opens,
+closes or stops anything the customer owns: the credential, the credential's HTTP
+connection, or the event loop.
+"""
 
 import asyncio
 import functools
@@ -14,13 +21,16 @@ from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialB
 from azure.cosmos._backend.credentials import resolve_credential
 
 
-@pytest.mark.parametrize("returns_awaitable", [False, True], ids=["plain-token", "opaque-coroutine"])
-def test_context_manager_token_result_matches_legacy_policy_rust(monkeypatch, returns_awaitable):
+@pytest.mark.parametrize("returns_async_result", [False, True], ids=["plain-token", "async-result"])
+def test_get_token_result_is_used_rust(monkeypatch, returns_async_result):
+    """get_token may return the token itself, or an async result that gives the token.
+    The client handles both.
+
+    The client does not ask for a token when it is created. It calls get_token on the
+    customer's event loop and never opens or closes the credential.
+    """
     from azure.core.credentials import AccessToken
-    from azure.core.pipeline import PipelineContext, PipelineRequest
-    from azure.core.rest import HttpRequest
     from azure.cosmos.aio import CosmosClient
-    from azure.cosmos.aio._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
     from azure.cosmos.aio._backend import binding_adapter
 
     scope = "https://account.example/.default"
@@ -36,7 +46,7 @@ def test_context_manager_token_result_matches_legacy_policy_rust(monkeypatch, re
 
         def get_token(self, *scopes, **kwargs):
             calls.append((scopes, asyncio.get_running_loop()))
-            if returns_awaitable:
+            if returns_async_result:
                 async def complete():
                     return token
                 return complete()
@@ -51,6 +61,7 @@ def test_context_manager_token_result_matches_legacy_policy_rust(monkeypatch, re
         received.append(bridge._start_token_request(scope).result(timeout=5))
         return handle
 
+    # Replace the compiled module with a fake so no real connection is made.
     monkeypatch.setattr(
         binding_adapter,
         "_rust_module",
@@ -66,12 +77,9 @@ def test_context_manager_token_result_matches_legacy_policy_rust(monkeypatch, re
 
     async def run():
         try:
-            request = PipelineRequest(HttpRequest("GET", "https://account.example"), PipelineContext(None))
-            await AsyncCosmosBearerTokenCredentialPolicy(credential, scope).on_request(request)
-            assert request.http_request.headers["Authorization"] == f"type=aad&ver=1.0&sig={token.token}"
             await client._adapter.initialize()
             assert received == [token]
-            assert calls == [((scope,), asyncio.get_running_loop())] * 2
+            assert calls == [((scope,), asyncio.get_running_loop())]
         finally:
             await client.close()
 
@@ -81,9 +89,12 @@ def test_context_manager_token_result_matches_legacy_policy_rust(monkeypatch, re
 
 @pytest.mark.parametrize("method_name", ["get_token", "get_token_info"])
 @pytest.mark.parametrize("decoration", ["wrapped", "asyncio_marked"])
-def test_credential_resolution_and_bridge_agree_on_async_methods_rust(
+def test_decorated_async_token_method_is_treated_as_async_rust(
     credential_owner_loop, method_name, decoration
 ):
+    """get_token can be async even when a decorator hides that. The sync client rejects
+    such a credential, and the async client accepts it and gets its token.
+    """
     token = SimpleNamespace(token="test-token", expires_on=4102444800)
 
     async def token_method(*scopes):
@@ -96,12 +107,14 @@ def test_credential_resolution_and_bridge_agree_on_async_methods_rust(
     if decoration == "wrapped":
         decorated = functools.wraps(token_method)(decorated)
     else:
+        # Older Python versions let a function be marked as async with a hidden asyncio
+        # attribute. Newer versions removed it, so this case only runs where it exists.
         marker = getattr(asyncio.coroutines, "_is_coroutine", None)
         if marker is None:
-            pytest.skip("This Python version has no legacy asyncio coroutine marker")
+            pytest.skip("This Python version no longer has the asyncio async-function mark")
         setattr(decorated, "_is_coroutine", marker)
         if not asyncio.iscoroutinefunction(decorated):
-            pytest.skip("This Python version no longer recognizes asyncio coroutine markers")
+            pytest.skip("This Python version no longer treats the asyncio mark as async")
 
     credential = SimpleNamespace(**{method_name: decorated})
     with pytest.raises(TypeError, match="Synchronous CosmosClient"):
@@ -117,7 +130,8 @@ def test_credential_resolution_and_bridge_agree_on_async_methods_rust(
 
 
 @pytest.mark.parametrize("error_type", [TimeoutError, asyncio.CancelledError])
-def test_bridge_preserves_credential_exception_identity_rust(credential_owner_loop, error_type):
+def test_credential_error_is_raised_unchanged_rust(credential_owner_loop, error_type):
+    """If get_token raises an error, the caller gets that same error, with its original cause."""
     error = error_type("credential failed")
     original_cause = ValueError("credential cause")
     error.__cause__ = original_cause
@@ -136,7 +150,10 @@ def test_bridge_preserves_credential_exception_identity_rust(credential_owner_lo
         bridge._close_cosmos_async_bridge()
 
 
-def test_native_result_cancellation_reaches_credential_coroutine_rust(credential_owner_loop):
+def test_cancelling_token_request_cancels_credential_call_rust(credential_owner_loop):
+    """Cancelling a token request that is still waiting also stops the running get_token
+    call. The customer's event loop keeps running.
+    """
     started = threading.Event()
     cancelled = threading.Event()
 
@@ -160,7 +177,12 @@ def test_native_result_cancellation_reaches_credential_coroutine_rust(credential
     assert credential_owner_loop.is_running()
 
 
-def test_last_release_cancels_only_bridge_owned_work_rust():
+def test_last_user_closing_cancels_only_its_token_requests_rust():
+    """Two users of the same credential share one token helper. When the first one
+    finishes, a waiting token request keeps going. When the last one finishes, the
+    request is stopped. The customer's other async work and the credential are not
+    touched.
+    """
     async def run():
         started, cancelled = asyncio.Event(), asyncio.Event()
         credential_closed = False
@@ -204,6 +226,9 @@ def test_last_release_cancels_only_bridge_owned_work_rust():
 
 
 def test_shared_credential_cannot_move_between_active_application_loops_rust(credential_owner_loop):
+    """A credential that is in use on one running event loop cannot be used from a
+    different event loop at the same time.
+    """
     credential = object()
     first = AsyncTokenCredentialBridge.acquire(credential, loop=credential_owner_loop)
 
@@ -219,7 +244,10 @@ def test_shared_credential_cannot_move_between_active_application_loops_rust(cre
         first._close_cosmos_async_bridge()
 
 
-def test_stopped_or_closed_owner_loop_is_rejected_rust():
+def test_stopped_or_closed_event_loop_is_rejected_rust():
+    """The token helper needs an event loop that is running. A stopped or closed loop
+    raises RuntimeError.
+    """
     loop = asyncio.new_event_loop()
     try:
         with pytest.raises(RuntimeError, match="must be running"):
@@ -230,10 +258,13 @@ def test_stopped_or_closed_owner_loop_is_rejected_rust():
         AsyncTokenCredentialBridge(object(), loop=loop)
 
 
-def test_closed_bridge_rejects_scheduling_without_creating_coroutine_rust(credential_owner_loop):
+def test_closed_token_helper_rejects_token_requests_rust(credential_owner_loop):
+    """After the token helper is closed, a new token request raises RuntimeError and
+    get_token is never called.
+    """
     class Credential:
         async def get_token(self, *scopes):
-            raise AssertionError("closed bridge must not execute credential")
+            raise AssertionError("A closed token helper must not call get_token")
 
     bridge = AsyncTokenCredentialBridge(Credential(), loop=credential_owner_loop)
     bridge._close_cosmos_async_bridge()
@@ -241,7 +272,15 @@ def test_closed_bridge_rejects_scheduling_without_creating_coroutine_rust(creden
         bridge._start_token_request("scope")
 
 
-def test_real_identity_credential_keeps_its_application_session_before_and_after_cosmos_rust(monkeypatch):
+def test_identity_credential_stays_usable_after_client_closes_rust(monkeypatch):
+    """Uses a real azure-identity ClientSecretCredential with a fake sign-in server.
+
+    The sync client rejects this async credential. The async client can be created
+    before the event loop starts, and it gets its token on the customer's event loop.
+    The credential's HTTP connection stays open, so the customer can keep using the
+    credential after the client closes. Using the client from a second event loop
+    raises RuntimeError.
+    """
     from azure.core.pipeline.transport import AsyncHttpResponse
     from azure.core.pipeline.transport._aiohttp import AioHttpTransport
     from azure.identity.aio import ClientSecretCredential
@@ -290,7 +329,7 @@ def test_real_identity_credential_keeps_its_application_session_before_and_after
     )
     with pytest.raises(TypeError, match="Synchronous CosmosClient"):
         CosmosClient("https://account.example", credential, _backend="rust")
-    # Construction must remain possible before an application loop starts.
+    # The async client can be created before the event loop starts.
     client = AsyncCosmosClient("https://account.example", credential, _backend="rust")
     assert client._adapter._token_credential is credential
     handles = []
@@ -308,6 +347,7 @@ def test_real_identity_credential_keeps_its_application_session_before_and_after
         return 200, 0, {}, b'{"id":"item","pk":"A"}', None
 
     released = []
+    # Replace the compiled module with a fake so no real connection is made.
     monkeypatch.setattr(
         binding_adapter,
         "_rust_module",

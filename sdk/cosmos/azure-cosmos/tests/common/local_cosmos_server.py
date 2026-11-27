@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Loopback HTTP account endpoint for tests exercising the real native transport."""
+"""A small local HTTP server that stands in for a Cosmos DB account, so tests can check the exact requests the SDK sends."""
 
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -12,6 +12,8 @@ from types import SimpleNamespace
 
 @dataclass(frozen=True)
 class RecordedRequest:
+    """One request received by the server. Header names are stored in lower case."""
+
     method: str
     path: str
     headers: dict[str, str]
@@ -20,11 +22,16 @@ class RecordedRequest:
 
 @contextmanager
 def local_cosmos_server(respond=None):
-    """Record requests and delegate non-account responses to ``respond(request)``.
+    """Starts a local server and records every request it receives.
 
-    The callback returns an HTTP status and a JSON-serializable body. Unexpected
-    requests fail with HTTP 500. Callers must disable the native HTTP/2 probe in
-    an isolated process; this server supports HTTP/1.x only.
+    Yields an object with ``endpoint`` (the URL to give the client) and ``requests``
+    (the recorded requests). The server answers the client's account lookup
+    (GET /) itself, as a single-region account in East US. Every other request is
+    passed to ``respond(request)``, which returns an HTTP status and a body that can
+    be turned into JSON. If ``respond`` is not given, those requests get HTTP 500.
+
+    The server supports HTTP/1.x only, so callers run the test in a separate
+    process with AZURE_COSMOS_CONNECTION_POOL_IS_HTTP2_ALLOWED set to "false".
     """
     requests = []
 
@@ -80,4 +87,4 @@ def local_cosmos_server(respond=None):
         server.shutdown()
         server.server_close()
         worker.join(3)
-        assert not worker.is_alive(), "Loopback server did not stop"
+        assert not worker.is_alive(), "Local test server did not stop"

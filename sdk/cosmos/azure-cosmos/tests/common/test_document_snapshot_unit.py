@@ -53,7 +53,9 @@ def arguments(operation, body):
     Having one place that knows this difference is what lets the tests below run the same
     body through all four without each one repeating the special case.
     """
-    result = {"container_link": "dbs/d/colls/c", "item_id": "target"}
+    result = {"container_link": "dbs/d/colls/c"}
+    if operation != "create_item":
+        result["item_id"] = "target"
     if operation == "patch_item":
         result["patch_operations"] = [{"op": "set", "path": "/value", "value": body}]
         result["request_options"] = {"partitionKey": "p"}

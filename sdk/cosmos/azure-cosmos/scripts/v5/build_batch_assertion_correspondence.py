@@ -18,6 +18,9 @@ SPEC = importlib.util.spec_from_file_location(
 )
 REF = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(REF)
+# Keep the batch review's source snapshot independent of the create-item review.
+SOURCE_REVISION = "c7817ded3af4945aeb4d7be77b8cbbb06d98c075"
+REF.MAIN_REVISION = SOURCE_REVISION
 # Reuse the existing source/annotation fingerprint format rather than another parser.
 # pylint: disable=protected-access
 FUNCTIONS = REF.FUNCTIONS
@@ -645,6 +648,7 @@ def build():
     return {
         "scope": "27 original modules; observations, transitive helpers, controls, annotations "
         "and fixture fingerprints",
+        "source_revision": SOURCE_REVISION,
         "not_a_completion_certificate": True,
         "source_modules": source_paths(),
         "counts": dict(sorted(counts.items())),

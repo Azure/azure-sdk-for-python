@@ -13,6 +13,7 @@ import pytest
 from common._retired_test_sources import RETIRED_THROUGHPUT_SOURCES
 from common._throughput_copy_inventory import container_test_files, container_test_targets
 from common.sdk_subprocess import sdk_python_command
+from common.test_migration_enforcer_unit import _uses_shared_rust_setup
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -49,7 +50,7 @@ def test_same_original_selection_and_source_pins_rust(operation, expected):
             node.value.value for node in ast.walk(tree)
             if isinstance(node, ast.keyword) and node.arg == "_backend" and isinstance(node.value, ast.Constant)
         ]
-        assert pins == ["rust"]
+        assert pins == ["rust"] or (not pins and _uses_shared_rust_setup(tree)), filename
         cls = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == class_name)
         method = next(node for node in cls.body if getattr(node, "name", None) == method_name)
         reference, = re.findall(r"# Source: (tests/\S+)", ast.get_source_segment(text, method))

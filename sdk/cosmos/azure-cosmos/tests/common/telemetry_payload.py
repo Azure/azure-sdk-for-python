@@ -1,20 +1,32 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Fake binding attempt payloads (schema 2) and the span attributes they produce."""
+"""Builds fake request-attempt reports for telemetry tests, and the span attributes each one should produce.
 
+After each operation the SDK receives a report that lists every request attempt it
+made, with fields such as status code, region and request charge. The SDK turns each
+attempt into a ``cosmosdb.request`` tracing span. These helpers let a test set only
+the fields it cares about.
+"""
+
+# Default values for attempt fields that a test does not set.
 REGION = "West US 2"
 SERVER = "alpha-bank-westus2.documents.azure.com"
 ACTIVITY_ID = "00000000-0000-0000-0000-000000000001"
 
 
 def _failed(status):
+    """A status code counts as failed unless it is 2xx or 304 (not modified)."""
     return not (200 <= status < 300 or status == 304)
 
 
-def v2(payload):
-    """Fill schema-2 fields into a fake payload in place, and return it.
+def fill_payload_defaults(payload):
+    """Adds default values for any report fields the test did not set, and returns the same dict.
 
-    :param dict payload: A fake payload with at least the attempt rows.
+    Sets schema_version to 2, the report format the SDK reads. Totals such as the final
+    status code, request charge and contacted regions are worked out from the attempt rows.
+
+    :param dict payload: A fake report with an "attempts" list. Each attempt needs at least
+        "driver_status_code".
     :return: The same payload.
     :rtype: dict
     """
@@ -45,11 +57,11 @@ def v2(payload):
 
 
 def expected_attempt_attributes(row, operation):
-    """Attributes the SDK records on a ``cosmosdb.request`` span for one row.
+    """Returns the attributes the SDK should record on the ``cosmosdb.request`` span for one attempt.
 
-    :param dict row: A schema-2 attempt row.
+    :param dict row: One attempt row, after fill_payload_defaults.
     :param str operation: Public SDK method name.
-    :return: Expected span attributes, without customer attributes.
+    :return: Expected span attributes, not including any the customer adds.
     :rtype: dict
     """
     status = str(row["driver_status_code"])

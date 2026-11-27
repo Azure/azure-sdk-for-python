@@ -357,7 +357,9 @@ def test_all_point_operations_enter_only_the_item_binding_rust(
     case = metadata_case
     method = op + ("_async" if case.asynchronous else "")
     monkeypatch.setattr(case.module._rust_module, method, case.item_call, raising=False)
-    arguments = {"container_link": "dbs/db/colls/c", "item_id": "item"}
+    arguments = {"container_link": "dbs/db/colls/c"}
+    if op != "create_item":
+        arguments["item_id"] = "item"
     if op in ("create_item", "upsert_item", "replace_item"):
         arguments["body"] = {"id": "item", "pk": "key"}
     else:

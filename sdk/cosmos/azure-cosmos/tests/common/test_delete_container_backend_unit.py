@@ -53,8 +53,8 @@ from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFo
 
 
 from common.delete_container_backend_stubs import (
-    _delete,
-    _assert_no_dispatch,
+    _call_container_delete,
+    _assert_no_request_sent,
     make_delete_case,
 )
 
@@ -111,12 +111,12 @@ def test_delete_dependencies_do_not_require_legacy_rust(
     )
     hook = MagicMock()
     if status == 204:
-        assert module["_delete"](case, "c1", response_hook=hook) is None
+        assert module["_call_container_delete"](case, "c1", response_hook=hook) is None
         hook.assert_called_once()
         assert hook.call_args.args[1] is None
     else:
         with pytest.raises(CosmosHttpResponseError) as raised:
-            module["_delete"](case, "c1", response_hook=hook)
+            module["_call_container_delete"](case, "c1", response_hook=hook)
         assert raised.value.status_code == status
         hook.assert_not_called()
     case.backend.execute.assert_called_once()
@@ -157,7 +157,7 @@ def test_delete_accepts_target_forms_and_returns_none_rust(delete_case, target_k
             "c1"
         )
     hook = MagicMock()
-    assert _delete(case, target, response_hook=hook) is None
+    assert _call_container_delete(case, target, response_hook=hook) is None
     hook.assert_called_once()
     assert hook.call_args.args[1] is None
     case.connection.ReadContainer.assert_not_called()
@@ -192,8 +192,8 @@ def test_delete_rejects_obsolete_options_rust(delete_case, option, value):
     """
     case = delete_case
     with pytest.raises(TypeError, match=option):
-        _delete(case, "c1", **{option: value})
-    _assert_no_dispatch(case)
+        _call_container_delete(case, "c1", **{option: value})
+    _assert_no_request_sent(case)
 
 
 @pytest.mark.parametrize(
@@ -222,9 +222,9 @@ def test_delete_rejects_nested_obsolete_options_before_dispatch_rust(
     original = deepcopy(kwargs)
     hook = MagicMock()
     with pytest.raises(TypeError, match=option):
-        _delete(delete_case, "c1", response_hook=hook, **kwargs)
+        _call_container_delete(delete_case, "c1", response_hook=hook, **kwargs)
     assert kwargs == original
-    _assert_no_dispatch(delete_case)
+    _assert_no_request_sent(delete_case)
     hook.assert_not_called()
 
 
@@ -233,8 +233,8 @@ def test_delete_rejects_non_callable_hook_before_dispatch_rust(delete_case, hook
     with pytest.raises(
         TypeError, match="delete_container response_hook must be callable or None"
     ):
-        _delete(delete_case, "c1", response_hook=hook)
-    _assert_no_dispatch(delete_case)
+        _call_container_delete(delete_case, "c1", response_hook=hook)
+    _assert_no_request_sent(delete_case)
 
 
 @pytest.mark.parametrize(
@@ -275,8 +275,8 @@ def test_delete_rejects_async_hook_before_dispatch_rust(delete_case, kind):
     with pytest.raises(
         TypeError, match="delete_container response_hook must be synchronous"
     ):
-        _delete(delete_case, "c1", response_hook=hooks[kind])
-    _assert_no_dispatch(delete_case)
+        _call_container_delete(delete_case, "c1", response_hook=hooks[kind])
+    _assert_no_request_sent(delete_case)
 
 
 @pytest.mark.parametrize(
@@ -296,8 +296,8 @@ def test_delete_has_matching_argument_binding_rust(delete_case, args, kwargs):
     """
     case = delete_case
     with pytest.raises(TypeError):
-        _delete(case, *args, **kwargs)
-    _assert_no_dispatch(case)
+        _call_container_delete(case, *args, **kwargs)
+    _assert_no_request_sent(case)
     signature = inspect.signature(case.database.delete_container)
     assert list(signature.parameters) == ["container", "initial_headers", "kwargs"]
     assert (
@@ -348,8 +348,8 @@ def test_delete_unsupported_rust_settings_never_reach_core_python_rust(
         else (TypeError, "delete_container.*legacy Python")
     )
     with pytest.raises(error, match=message):
-        _delete(delete_case, "c1", response_hook=hook, **kwargs)
-    _assert_no_dispatch(delete_case)
+        _call_container_delete(delete_case, "c1", response_hook=hook, **kwargs)
+    _assert_no_request_sent(delete_case)
     hook.assert_not_called()
 
 
@@ -373,9 +373,9 @@ def test_delete_rejects_retry_write_before_dispatch_rust(delete_case, kwargs):
     original = deepcopy(kwargs)
     hook = MagicMock()
     with pytest.raises(TypeError, match="delete_container.*retry_write.*Rust driver"):
-        _delete(delete_case, "c1", response_hook=hook, **kwargs)
+        _call_container_delete(delete_case, "c1", response_hook=hook, **kwargs)
     assert kwargs == original
-    _assert_no_dispatch(delete_case)
+    _assert_no_request_sent(delete_case)
     hook.assert_not_called()
 
 
@@ -394,7 +394,7 @@ def test_delete_rejects_retry_write_before_dispatch_rust(delete_case, kwargs):
     ],
 )
 def test_delete_allows_default_write_retries_rust(delete_case, kwargs):
-    assert _delete(delete_case, "c1", **kwargs) is None
+    assert _call_container_delete(delete_case, "c1", **kwargs) is None
     delete_case.backend.execute.assert_called_once()
     prepared = delete_case.backend.execute.call_args.args[0]
     assert "retry_write" not in settings_options(prepared)
@@ -417,7 +417,7 @@ def test_delete_forwards_supported_timeout_and_application_headers_rust(
     read is made along the way.
     """
     assert (
-        _delete(
+        _call_container_delete(
             delete_case,
             "c1",
             timeout=timeout,
@@ -481,7 +481,7 @@ def test_delete_conditions_are_forwarded_without_ignored_warnings_rust(
     case = delete_case
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
-        _delete(case, "c1", **kwargs)
+        _call_container_delete(case, "c1", **kwargs)
     assert not caught
     prepared = case.backend.execute.call_args.args[0]
     condition = prepared.settings.item
@@ -526,8 +526,8 @@ def test_delete_invalid_conditions_fail_before_dispatch_rust(
     was guarded -- and there is no getting the container back.
     """
     with pytest.raises(error):
-        _delete(delete_case, "c1", **kwargs)
-    _assert_no_dispatch(delete_case)
+        _call_container_delete(delete_case, "c1", **kwargs)
+    _assert_no_request_sent(delete_case)
 
 
 @pytest.mark.parametrize("falsey", [False, True])
@@ -559,7 +559,7 @@ def test_delete_hook_runs_once_with_isolated_headers_and_none_rust(delete_case, 
             headers["x-ms-request-charge"] = "changed"
             seen.append(body)
 
-    assert _delete(case, "c1", response_hook=Hook()) is None
+    assert _call_container_delete(case, "c1", response_hook=Hook()) is None
     assert seen == [None]
     assert case.connection.last_response_headers["x-ms-request-charge"] == "3"
 
@@ -586,7 +586,7 @@ def test_delete_hook_errors_do_not_replay_the_delete_rust(delete_case, error):
     case = delete_case
     hook = MagicMock(side_effect=error)
     with pytest.raises(type(error)) as raised:
-        _delete(case, "c1", response_hook=hook)
+        _call_container_delete(case, "c1", response_hook=hook)
     assert raised.value is error
     hook.assert_called_once()
     assert case.connection.DeleteContainer.call_count == 0
@@ -617,7 +617,7 @@ def test_delete_service_errors_preserve_headers_and_never_fall_back_rust(
     )
     hook = MagicMock()
     with pytest.raises(CosmosHttpResponseError) as raised:
-        _delete(case, "c1", response_hook=hook)
+        _call_container_delete(case, "c1", response_hook=hook)
     assert raised.value.status_code == status
     if status == 404:
         assert isinstance(raised.value, CosmosResourceNotFoundError)
@@ -651,7 +651,7 @@ def test_delete_binding_errors_and_cancellation_are_not_replayed_rust(
     case.backend.execute.side_effect = error
     hook = MagicMock()
     with pytest.raises(type(error)) as raised:
-        _delete(case, "c1", response_hook=hook)
+        _call_container_delete(case, "c1", response_hook=hook)
     assert raised.value is error
     hook.assert_not_called()
     case.connection.DeleteContainer.assert_not_called()

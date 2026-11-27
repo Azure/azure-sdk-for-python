@@ -23,7 +23,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 from common.async_test_helpers import run_async
-from common.rust_telemetry_payload import expected_attempt_attributes, v2
+from common.telemetry_payload import expected_attempt_attributes, fill_payload_defaults
 from common.typed_requests import wire_headers
 
 pytest.importorskip("opentelemetry.sdk.trace")
@@ -153,7 +153,7 @@ def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
         if harness.error is not None:
             raise harness.error
         end = time.time_ns()
-        payload = v2({
+        payload = fill_payload_defaults({
             "schema_version": 2,
             "complete": True,
             "incomplete_reasons": [],
@@ -690,7 +690,7 @@ def test_disabled_error_never_reads_private_diagnostics_rust(create, recording):
 
 def failure_payload(reason, count):
     stamp = time.time_ns()
-    return v2({
+    return fill_payload_defaults({
         "schema_version": 2,
         "complete": False,
         "incomplete_reasons": [reason],
@@ -930,7 +930,7 @@ TWO_ORDERS = [("order-17", "customer-17"), ("order-18", "customer-18")]
 
 
 def page_payload(stamp, index, status):
-    return v2({
+    return fill_payload_defaults({
         "schema_version": 2,
         "complete": True,
         "incomplete_reasons": [],
@@ -1421,7 +1421,7 @@ def sync_item_harness(recording, monkeypatch):  # pylint: disable=unused-argumen
             harness.barrier.wait(timeout=5)
         if harness.error is not None:
             raise harness.error
-        payload = v2({
+        payload = fill_payload_defaults({
             "schema_version": 2,
             "complete": True,
             "incomplete_reasons": [],
@@ -1792,7 +1792,7 @@ def test_failed_logging_and_stderr_leave_a_reporting_failure_count_rust(monkeypa
 
 def contribution_response(total, start=None, count=2):
     """Sample real timestamps unless a test supplies an explicit synthetic timeline."""
-    payload = v2({
+    payload = fill_payload_defaults({
         "schema_version": 2,
         "complete": True,
         "incomplete_reasons": [],
@@ -6423,10 +6423,13 @@ def test_container_read_owns_diagnostics_through_hook_and_cache_rust(  # pylint:
         if status < 400:
             result = harness.read_properties(response_hook=hook, **kwargs)
             assert result == (CONTAINER_PROPERTIES if status == 200 else {})
-            assert hooks == [result]
+            assert hooks == ([result] if status == 200 else [None])
             assert result.get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
-            cached = harness.connection._set_container_properties_cache.call_args.args[1]
-            assert cached["partitionKey"] == (CONTAINER_PROPERTIES["partitionKey"] if status == 200 else None)
+            if status == 200:
+                cached = harness.connection._set_container_properties_cache.call_args.args[1]
+                assert cached["partitionKey"] == CONTAINER_PROPERTIES["partitionKey"]
+            else:
+                harness.connection._set_container_properties_cache.assert_not_called()
         else:
             error_type = {
                 404: CosmosResourceNotFoundError,

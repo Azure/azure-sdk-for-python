@@ -87,12 +87,14 @@ def test_point_normalization_preserves_source_rust(value, kind, values):
 )
 def test_write_key_presence_not_truthiness_selects_extraction_rust(operation, options, expected):
     """Only omission requests extraction; explicit falsey keys must survive preparation."""
-    args, normalized_options = normalize_item_arguments(operation, {
+    arguments = {
         "container_link": "dbs/db/colls/orders",
-        "item_id": "order-42",
         "body": {"id": "order-42", "customerId": "customer-17"},
         "request_options": options,
-    })
+    }
+    if operation != "create_item":
+        arguments["item_id"] = "order-42"
+    args, normalized_options = normalize_item_arguments(operation, arguments)
     prepared = build_item_request(operation, args, normalized_options, ClientOperationDefaults())
     assert prepared.partition_key == expected
 

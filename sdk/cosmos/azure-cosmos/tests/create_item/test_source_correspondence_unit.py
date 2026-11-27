@@ -47,14 +47,18 @@ def test_create_source_lineage_and_collection_rust(path):
 
 
 @pytest.mark.parametrize("local_exists", [False, True])
-def test_original_source_ignores_modified_or_removed_legacy_files_rust(monkeypatch, tmp_path, local_exists):
+@pytest.mark.parametrize("newline", ["\n", "\r\n"])
+def test_original_source_ignores_modified_or_removed_legacy_files_rust(monkeypatch, tmp_path, local_exists, newline):
     original = "def test_original():\n    assert True\n"
     local = tmp_path / "tests" / "test_original.py"
     if local_exists:
         local.parent.mkdir()
         local.write_text("def test_local():\n    assert False\n", encoding="utf-8")
     monkeypatch.setattr(correspondence, "ROOT", tmp_path)
-    monkeypatch.setattr(correspondence, "_main_sources", lambda: {"tests\\test_original.py": original})
+    monkeypatch.setattr(
+        correspondence, "_main_sources",
+        lambda: {"tests\\test_original.py": original.replace("\n", newline)},
+    )
     text, functions = correspondence._read_file.__wrapped__("tests\\test_original.py")
     assert text == original
     assert set(functions) == {"test_original"}

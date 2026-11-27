@@ -177,8 +177,8 @@
             "path": "tests\\common\\local_cosmos_server.py",
             "symbol": "local_cosmos_server",
             "kind": "function-decorator",
-            "line": 21,
-            "end_line": 21,
+            "line": 23,
+            "end_line": 23,
             "column": 1,
             "ast_sha256": "c893f89e52ad4726b639e88e6c5c2eaf0acf999a66e2b1e3a12128dd8783d82b",
             "snippet": "contextmanager"
@@ -3372,7 +3372,7 @@
             "end_line": 363,
             "column": 5,
             "ast_sha256": "529cf6af764f0e9d623d57966f1aa46836e800ea9fc0fa5203e33ef25ecff54f",
-            "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\r\n        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),\r\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),\r\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},\r\n         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})\r\n    ])"
+            "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\n        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},\n         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})\n    ])"
           }
         ],
         "arguments": "self, operation, client_availability_strategy, request_availability_strategy",
@@ -3580,7 +3580,7 @@
             "end_line": 404,
             "column": 5,
             "ast_sha256": "9b82fc39fc202dc11adf80fe92be8bed576301b5d427b6717fbc0f1442e59971",
-            "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\r\n        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),\r\n        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),\r\n        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})\r\n    ])"
+            "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\n        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),\n        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),\n        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})\n    ])"
           }
         ],
         "arguments": "self, operation, client_availability_strategy, request_availability_strategy",
@@ -4371,7 +4371,7 @@
             "end_line": 69,
             "column": 0,
             "ast_sha256": "dbfaa6aff5378855084312e849779349013d31c3917ba0f8660a94bdb2513d8d",
-            "snippet": "NON_TRANSIENT_STATUS_CODES = [\r\n    (400, None),\r\n    (409, None),\r\n    (405, None),\r\n    (412, None),\r\n    (413, None),\r\n    (401, None),\r\n    (404, 0)\r\n]"
+            "snippet": "NON_TRANSIENT_STATUS_CODES = [\n    (400, None),\n    (409, None),\n    (405, None),\n    (412, None),\n    (413, None),\n    (401, None),\n    (404, 0)\n]"
           },
           "READ": {
             "path": "tests\\test_availability_strategy.py",
@@ -5416,7 +5416,7 @@
             "end_line": 387,
             "column": 5,
             "ast_sha256": "529cf6af764f0e9d623d57966f1aa46836e800ea9fc0fa5203e33ef25ecff54f",
-            "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\r\n        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),\r\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),\r\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},\r\n         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})\r\n    ])"
+            "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\n        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},\n         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})\n    ])"
           }
         ],
         "arguments": "self, operation, client_availability_strategy, request_availability_strategy, setup",
@@ -5679,7 +5679,7 @@
             "end_line": 435,
             "column": 5,
             "ast_sha256": "9b82fc39fc202dc11adf80fe92be8bed576301b5d427b6717fbc0f1442e59971",
-            "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\r\n        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),\r\n        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),\r\n        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})\r\n    ])"
+            "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\n        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),\n        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),\n        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})\n    ])"
           }
         ],
         "arguments": "self, operation, client_availability_strategy, request_availability_strategy, setup",
@@ -6757,7 +6757,7 @@
             "end_line": 106,
             "column": 0,
             "ast_sha256": "dbfaa6aff5378855084312e849779349013d31c3917ba0f8660a94bdb2513d8d",
-            "snippet": "NON_TRANSIENT_STATUS_CODES = [\r\n    (400, None),\r\n    (409, None),\r\n    (405, None),\r\n    (412, None),\r\n    (413, None),\r\n    (401, None),\r\n    (404, 0)\r\n]"
+            "snippet": "NON_TRANSIENT_STATUS_CODES = [\n    (400, None),\n    (409, None),\n    (405, None),\n    (412, None),\n    (413, None),\n    (401, None),\n    (404, 0)\n]"
           },
           "READ": {
             "path": "tests\\test_availability_strategy_async.py",
@@ -12143,7 +12143,7 @@
             "end_line": 454,
             "column": 5,
             "ast_sha256": "f036b1a00dece704318d16e383e2e6737d374bea8f01948e39115856794efc84",
-            "snippet": "pytest.mark.skipif(\r\n        test_config.TestConfig.data_auth_mode == 'aad',\r\n        reason=AAD_MWR_SKIP_REASON\r\n    )"
+            "snippet": "pytest.mark.skipif(\n        test_config.TestConfig.data_auth_mode == 'aad',\n        reason=AAD_MWR_SKIP_REASON\n    )"
           }
         ],
         "arguments": "self",
@@ -12156,7 +12156,7 @@
             "end_line": 24,
             "column": 0,
             "ast_sha256": "21bcf29d2782b8ce2c7bc1faf722621bcdde2ae9d7ae5b76f61010619b687c82",
-            "snippet": "AAD_MWR_SKIP_REASON = (\r\n    \"MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only.\"\r\n)"
+            "snippet": "AAD_MWR_SKIP_REASON = (\n    \"MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only.\"\n)"
           },
           "test_config": {
             "path": "tests\\test_session.py",
@@ -12311,7 +12311,7 @@
             "end_line": 446,
             "column": 5,
             "ast_sha256": "f036b1a00dece704318d16e383e2e6737d374bea8f01948e39115856794efc84",
-            "snippet": "pytest.mark.skipif(\r\n        test_config.TestConfig.data_auth_mode == 'aad',\r\n        reason=AAD_MWR_SKIP_REASON\r\n    )"
+            "snippet": "pytest.mark.skipif(\n        test_config.TestConfig.data_auth_mode == 'aad',\n        reason=AAD_MWR_SKIP_REASON\n    )"
           }
         ],
         "arguments": "self",
@@ -12324,7 +12324,7 @@
             "end_line": 24,
             "column": 0,
             "ast_sha256": "21bcf29d2782b8ce2c7bc1faf722621bcdde2ae9d7ae5b76f61010619b687c82",
-            "snippet": "AAD_MWR_SKIP_REASON = (\r\n    \"MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only.\"\r\n)"
+            "snippet": "AAD_MWR_SKIP_REASON = (\n    \"MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only.\"\n)"
           },
           "test_config": {
             "path": "tests\\test_session_async.py",
@@ -12760,7 +12760,7 @@
               "end_line": 363,
               "column": 5,
               "ast_sha256": "529cf6af764f0e9d623d57966f1aa46836e800ea9fc0fa5203e33ef25ecff54f",
-              "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\r\n        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),\r\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),\r\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},\r\n         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})\r\n    ])"
+              "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\n        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},\n         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})\n    ])"
             },
             "disposition": "unresolved-no-equivalent-replacement",
             "rationale": "No assertion-equivalent replacement test has been established; do not claim its gates/vectors migrated.",
@@ -12836,7 +12836,7 @@
               "end_line": 404,
               "column": 5,
               "ast_sha256": "9b82fc39fc202dc11adf80fe92be8bed576301b5d427b6717fbc0f1442e59971",
-              "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\r\n        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),\r\n        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),\r\n        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})\r\n    ])"
+              "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\n        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),\n        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),\n        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})\n    ])"
             },
             "disposition": "unresolved-no-equivalent-replacement",
             "rationale": "No assertion-equivalent replacement test has been established; do not claim its gates/vectors migrated.",
@@ -13522,7 +13522,7 @@
               "end_line": 387,
               "column": 5,
               "ast_sha256": "529cf6af764f0e9d623d57966f1aa46836e800ea9fc0fa5203e33ef25ecff54f",
-              "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\r\n        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),\r\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),\r\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},\r\n         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})\r\n    ])"
+              "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\n        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),\n        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},\n         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})\n    ])"
             },
             "disposition": "unresolved-no-equivalent-replacement",
             "rationale": "No assertion-equivalent replacement test has been established; do not claim its gates/vectors migrated.",
@@ -13643,7 +13643,7 @@
               "end_line": 435,
               "column": 5,
               "ast_sha256": "9b82fc39fc202dc11adf80fe92be8bed576301b5d427b6717fbc0f1442e59971",
-              "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\r\n        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),\r\n        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),\r\n        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})\r\n    ])"
+              "snippet": "pytest.mark.parametrize(\"client_availability_strategy, request_availability_strategy\", [\n        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),\n        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),\n        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})\n    ])"
             },
             "disposition": "unresolved-no-equivalent-replacement",
             "rationale": "No assertion-equivalent replacement test has been established; do not claim its gates/vectors migrated.",
@@ -18356,7 +18356,7 @@
               "end_line": 454,
               "column": 5,
               "ast_sha256": "f036b1a00dece704318d16e383e2e6737d374bea8f01948e39115856794efc84",
-              "snippet": "pytest.mark.skipif(\r\n        test_config.TestConfig.data_auth_mode == 'aad',\r\n        reason=AAD_MWR_SKIP_REASON\r\n    )"
+              "snippet": "pytest.mark.skipif(\n        test_config.TestConfig.data_auth_mode == 'aad',\n        reason=AAD_MWR_SKIP_REASON\n    )"
             },
             "disposition": "unresolved-no-equivalent-replacement",
             "rationale": "No assertion-equivalent replacement test has been established; do not claim its gates/vectors migrated.",
@@ -18463,7 +18463,7 @@
               "end_line": 446,
               "column": 5,
               "ast_sha256": "f036b1a00dece704318d16e383e2e6737d374bea8f01948e39115856794efc84",
-              "snippet": "pytest.mark.skipif(\r\n        test_config.TestConfig.data_auth_mode == 'aad',\r\n        reason=AAD_MWR_SKIP_REASON\r\n    )"
+              "snippet": "pytest.mark.skipif(\n        test_config.TestConfig.data_auth_mode == 'aad',\n        reason=AAD_MWR_SKIP_REASON\n    )"
             },
             "disposition": "unresolved-no-equivalent-replacement",
             "rationale": "No assertion-equivalent replacement test has been established; do not claim its gates/vectors migrated.",
@@ -21686,10 +21686,10 @@
           "path": "tests\\create_item\\test_source_correspondence_unit.py",
           "symbol": "test_original_source_ignores_modified_or_removed_legacy_files_rust",
           "kind": "function",
-          "line": 50,
-          "end_line": 60,
+          "line": 51,
+          "end_line": 64,
           "column": 0,
-          "ast_sha256": "7d8e1d16c0a8a5b9a29b6ab57fb30764fbe206e5f25ca3b8070454866496eeb1",
+          "ast_sha256": "b525bf2be7833e9c850eb9cfb815e1ccffda01f6631b49cd16a2ba02f4273549",
           "snippet": "test_original_source_ignores_modified_or_removed_legacy_files_rust"
         },
         "source": null,
@@ -21700,8 +21700,8 @@
           "path": "tests\\create_item\\test_source_correspondence_unit.py",
           "symbol": "test_aad_gap_skips_precede_fixture_setup_rust",
           "kind": "function",
-          "line": 64,
-          "end_line": 73,
+          "line": 68,
+          "end_line": 77,
           "column": 0,
           "ast_sha256": "253d612b4d9127deab2462e2850ec3da23d5890e1cadd380c7da3987272f9a80",
           "snippet": "test_aad_gap_skips_precede_fixture_setup_rust"
@@ -21714,8 +21714,8 @@
           "path": "tests\\create_item\\test_source_correspondence_unit.py",
           "symbol": "test_async_suppression_sequence_matches_main_rust",
           "kind": "function",
-          "line": 76,
-          "end_line": 100,
+          "line": 80,
+          "end_line": 104,
           "column": 0,
           "ast_sha256": "9ee34eca7db94ababff48a0e0585cd3fe3c6ac1689e66ddd9476fceda6939413",
           "snippet": "test_async_suppression_sequence_matches_main_rust"
@@ -21728,8 +21728,8 @@
           "path": "tests\\create_item\\test_source_correspondence_unit.py",
           "symbol": "test_default_session_copy_retains_original_sequence_and_collection_rust",
           "kind": "function",
-          "line": 103,
-          "end_line": 149,
+          "line": 107,
+          "end_line": 153,
           "column": 0,
           "ast_sha256": "4cfc547cd6115d7eac36a61e7599e105d8d571870cf4ce55a0602ad486dc5da4",
           "snippet": "test_default_session_copy_retains_original_sequence_and_collection_rust"
@@ -21742,8 +21742,8 @@
           "path": "tests\\create_item\\test_source_correspondence_unit.py",
           "symbol": "test_default_session_requires_session_before_provisioning_rust",
           "kind": "function",
-          "line": 152,
-          "end_line": 164,
+          "line": 156,
+          "end_line": 168,
           "column": 0,
           "ast_sha256": "3a4cf892d07eb42ffbd275ba46d3be6921488ea6e648c3e274bffde3440158f3",
           "snippet": "test_default_session_requires_session_before_provisioning_rust"
@@ -21756,8 +21756,8 @@
           "path": "tests\\create_item\\test_source_correspondence_unit.py",
           "symbol": "test_async_suppression_observer_uses_last_write_session_rust",
           "kind": "function",
-          "line": 167,
-          "end_line": 215,
+          "line": 171,
+          "end_line": 219,
           "column": 0,
           "ast_sha256": "cf63650eeb69eae8528e0de2c2893c8d037d4611e27d1a09f6607af1bdf7dd50",
           "snippet": "test_async_suppression_observer_uses_last_write_session_rust"
@@ -39699,9 +39699,19 @@
             "column": 1,
             "ast_sha256": "92d094edfcca6080dd9d42351941c0a6dd6908232e7aa97b1e609a63b2bd2b36",
             "snippet": "pytest.mark.parametrize(\"local_exists\", [False, True])"
+          },
+          {
+            "path": "tests\\create_item\\test_source_correspondence_unit.py",
+            "symbol": "test_original_source_ignores_modified_or_removed_legacy_files_rust",
+            "kind": "function-decorator",
+            "line": 50,
+            "end_line": 50,
+            "column": 1,
+            "ast_sha256": "7404fa8eeba152a92ad47c7f2e5c788229eac53a18a8803c7646726267f53c92",
+            "snippet": "pytest.mark.parametrize(\"newline\", [\"\\n\", \"\\r\\n\"])"
           }
         ],
-        "arguments": "monkeypatch, tmp_path, local_exists",
+        "arguments": "monkeypatch, tmp_path, local_exists, newline",
         "annotation_dependencies": {},
         "local_fixtures": [],
         "conftests": [
@@ -39721,8 +39731,8 @@
             "path": "tests\\create_item\\test_source_correspondence_unit.py",
             "symbol": "test_aad_gap_skips_precede_fixture_setup_rust",
             "kind": "function-decorator",
-            "line": 63,
-            "end_line": 63,
+            "line": 67,
+            "end_line": 67,
             "column": 1,
             "ast_sha256": "d464b372fcd477a32c681a66d86d208c675ada592661ba4ac0df7b3994eff70b",
             "snippet": "pytest.mark.parametrize(\"surface\", [\"sync\", \"aio\"])"
@@ -40681,7 +40691,7 @@
             "end_line": 101,
             "column": 4,
             "ast_sha256": "793a3025d0ad0a1263b971ad1ba43990ab528b906f617fef92f5f4647552eecd",
-            "snippet": "_skip_scope_tests_on_non_emulator = pytest.mark.skipif(\r\n        not configs.is_emulator,\r\n        reason=\"Scope capture tests are emulator-specific (localhost audience).\"\r\n    )"
+            "snippet": "_skip_scope_tests_on_non_emulator = pytest.mark.skipif(\n        not configs.is_emulator,\n        reason=\"Scope capture tests are emulator-specific (localhost audience).\"\n    )"
           },
           "configs": {
             "path": "tests\\test_aad_async.py",
@@ -40781,7 +40791,7 @@
             "end_line": 101,
             "column": 4,
             "ast_sha256": "793a3025d0ad0a1263b971ad1ba43990ab528b906f617fef92f5f4647552eecd",
-            "snippet": "_skip_scope_tests_on_non_emulator = pytest.mark.skipif(\r\n        not configs.is_emulator,\r\n        reason=\"Scope capture tests are emulator-specific (localhost audience).\"\r\n    )"
+            "snippet": "_skip_scope_tests_on_non_emulator = pytest.mark.skipif(\n        not configs.is_emulator,\n        reason=\"Scope capture tests are emulator-specific (localhost audience).\"\n    )"
           },
           "configs": {
             "path": "tests\\test_aad_async.py",
@@ -40908,7 +40918,7 @@
             "end_line": 16,
             "column": 0,
             "ast_sha256": "40c37157d555602ec706e4445b93f5e375ee3f724a6aea5ae3e53c0911e5a31f",
-            "snippet": "from test_excluded_locations import (TestDataType, set_test_data_type,\r\n                                     read_item_test_data, write_item_test_data, read_and_write_item_test_data,\r\n                                     verify_endpoint)"
+            "snippet": "from test_excluded_locations import (TestDataType, set_test_data_type,\n                                     read_item_test_data, write_item_test_data, read_and_write_item_test_data,\n                                     verify_endpoint)"
           }
         },
         "local_fixtures": [
@@ -42951,7 +42961,7 @@
             "end_line": 103,
             "column": 4,
             "ast_sha256": "52e6cac87fb084e79e5e757c3dc39424513920e2bf329be6bb69dddcb49473d7",
-            "snippet": "_skip_on_non_emulator = pytest.mark.skipif(\r\n        not configs.is_emulator,\r\n        reason=\"Emulator credential tests are emulator-specific (localhost audience).\"\r\n    )"
+            "snippet": "_skip_on_non_emulator = pytest.mark.skipif(\n        not configs.is_emulator,\n        reason=\"Emulator credential tests are emulator-specific (localhost audience).\"\n    )"
           },
           "configs": {
             "path": "tests\\test_aad.py",
@@ -43041,7 +43051,7 @@
             "end_line": 103,
             "column": 4,
             "ast_sha256": "52e6cac87fb084e79e5e757c3dc39424513920e2bf329be6bb69dddcb49473d7",
-            "snippet": "_skip_on_non_emulator = pytest.mark.skipif(\r\n        not configs.is_emulator,\r\n        reason=\"Emulator credential tests are emulator-specific (localhost audience).\"\r\n    )"
+            "snippet": "_skip_on_non_emulator = pytest.mark.skipif(\n        not configs.is_emulator,\n        reason=\"Emulator credential tests are emulator-specific (localhost audience).\"\n    )"
           },
           "configs": {
             "path": "tests\\test_aad.py",
@@ -46081,7 +46091,7 @@
         "end_line": 64,
         "column": 0,
         "ast_sha256": "7c835f922e09b9ab6876beaed8607eaf4fc3f413a5f2373bade2e706a24f74b2",
-        "snippet": "CLIENT_ONLY_TEST_DATA = [\r\n    # preferred_locations, client_excluded_locations, excluded_locations_request\r\n    # 0. No excluded location\r\n    [[L1, L2], [], None],\r\n    # 1. Single excluded location\r\n    [[L1, L2], [L1], None],\r\n    # 2. Exclude all locations\r\n    [[L1, L2], [L1, L2], None],\r\n    # 3. Exclude a location not in preferred locations\r\n    [[L1, L2], [L3], None],\r\n]"
+        "snippet": "CLIENT_ONLY_TEST_DATA = [\n    # preferred_locations, client_excluded_locations, excluded_locations_request\n    # 0. No excluded location\n    [[L1, L2], [], None],\n    # 1. Single excluded location\n    [[L1, L2], [L1], None],\n    # 2. Exclude all locations\n    [[L1, L2], [L1, L2], None],\n    # 3. Exclude a location not in preferred locations\n    [[L1, L2], [L3], None],\n]"
       },
       {
         "path": "tests\\test_excluded_locations.py",
@@ -46091,7 +46101,7 @@
         "end_line": 84,
         "column": 0,
         "ast_sha256": "3e1d4e1e47c8cee82bb208ba609d733f2397a6746fe985d05aca21273365eb75",
-        "snippet": "CLIENT_AND_REQUEST_TEST_DATA = [\r\n    # preferred_locations, client_excluded_locations, excluded_locations_request\r\n    # 0. No client excluded locations + a request excluded location\r\n    [[L1, L2], [], [L1]],\r\n    # 1. The same client and request excluded location\r\n    [[L1, L2], [L1], [L1]],\r\n    # 2. Less request excluded locations\r\n    [[L1, L2], [L1, L2], [L1]],\r\n    # 3. More request excluded locations\r\n    [[L1, L2], [L1], [L1, L2]],\r\n    # 4. All locations were excluded\r\n    [[L1, L2], [L1, L2], [L1, L2]],\r\n    # 5. No common excluded locations\r\n    [[L1, L2], [L1], [L2]],\r\n    # 6. Request excluded location not in preferred locations\r\n    [[L1, L2], [L1, L2], [L3]],\r\n    # 7. Empty excluded locations, remove all client level excluded locations\r\n    [[L1, L2], [L1, L2], []],\r\n]"
+        "snippet": "CLIENT_AND_REQUEST_TEST_DATA = [\n    # preferred_locations, client_excluded_locations, excluded_locations_request\n    # 0. No client excluded locations + a request excluded location\n    [[L1, L2], [], [L1]],\n    # 1. The same client and request excluded location\n    [[L1, L2], [L1], [L1]],\n    # 2. Less request excluded locations\n    [[L1, L2], [L1, L2], [L1]],\n    # 3. More request excluded locations\n    [[L1, L2], [L1], [L1, L2]],\n    # 4. All locations were excluded\n    [[L1, L2], [L1, L2], [L1, L2]],\n    # 5. No common excluded locations\n    [[L1, L2], [L1], [L2]],\n    # 6. Request excluded location not in preferred locations\n    [[L1, L2], [L1, L2], [L3]],\n    # 7. Empty excluded locations, remove all client level excluded locations\n    [[L1, L2], [L1, L2], []],\n]"
       },
       {
         "path": "tests\\test_excluded_locations.py",
@@ -47747,7 +47757,7 @@
         "end_line": 388,
         "column": 12,
         "ast_sha256": "7dec1fedbefdd3bbc13ea5a4be160bb11b09cd3d742603aa37686637ca9c14fb",
-        "snippet": "_perform_read_operation(\r\n                operation,\r\n                setup['col'],\r\n                doc,\r\n                expected_uris,\r\n                excluded_uris,\r\n                availability_strategy=request_availability_strategy)"
+        "snippet": "_perform_read_operation(\n                operation,\n                setup['col'],\n                doc,\n                expected_uris,\n                excluded_uris,\n                availability_strategy=request_availability_strategy)"
       }
     },
     {
@@ -47792,7 +47802,7 @@
         "end_line": 396,
         "column": 12,
         "ast_sha256": "832571b68741eea12c9b31fe91c18794063537e6c40ec6cadd3cb6cb2ad9ec83",
-        "snippet": "_perform_write_operation(\r\n                operation,\r\n                setup['col'],\r\n                doc,\r\n                expected_uris,\r\n                excluded_uris,\r\n                availability_strategy=request_availability_strategy)"
+        "snippet": "_perform_write_operation(\n                operation,\n                setup['col'],\n                doc,\n                expected_uris,\n                excluded_uris,\n                availability_strategy=request_availability_strategy)"
       }
     },
     {
@@ -47921,7 +47931,7 @@
         "end_line": 443,
         "column": 12,
         "ast_sha256": "6c819c87be66baacc3cb232852fdf90094d3b3541ec7889e6562cf7087f4a0b0",
-        "snippet": "_perform_read_operation(\r\n                operation,\r\n                setup['col'],\r\n                doc,\r\n                expected_uris,\r\n                [],\r\n                availability_strategy=request_availability_strategy)"
+        "snippet": "_perform_read_operation(\n                operation,\n                setup['col'],\n                doc,\n                expected_uris,\n                [],\n                availability_strategy=request_availability_strategy)"
       }
     },
     {
@@ -47966,7 +47976,7 @@
         "end_line": 452,
         "column": 12,
         "ast_sha256": "9afd7b6264aebc88261abe99aa624ec6518265504eb4471c5b907a72d1b85a4c",
-        "snippet": "_perform_write_operation(\r\n                operation,\r\n                setup['col'],\r\n                doc,\r\n                expected_uris,\r\n                [],\r\n                retry_write=True,\r\n                availability_strategy=request_availability_strategy)"
+        "snippet": "_perform_write_operation(\n                operation,\n                setup['col'],\n                doc,\n                expected_uris,\n                [],\n                retry_write=True,\n                availability_strategy=request_availability_strategy)"
       }
     },
     {
@@ -48095,7 +48105,7 @@
         "end_line": 844,
         "column": 12,
         "ast_sha256": "bab7dc9f9e4f87c067b77390e550c4aba1236e5a289ba0abab96108136e68bac",
-        "snippet": "_perform_read_operation(\r\n                READ,\r\n                setup_with_transport['col'],\r\n                doc,\r\n                [uri_down],\r\n                [failed_over_uri],\r\n                availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                READ,\n                setup_with_transport['col'],\n                doc,\n                [uri_down],\n                [failed_over_uri],\n                availability_strategy=strategy)"
       }
     },
     {
@@ -48267,7 +48277,7 @@
         "end_line": 890,
         "column": 12,
         "ast_sha256": "c9a10ee28e3b8113e0b622949565f1e4ce9334a1dd8667caab844831fa03ffdc",
-        "snippet": "_perform_read_operation(\r\n                operation,\r\n                setup['col'],\r\n                doc,\r\n                expected_uris,\r\n                [])"
+        "snippet": "_perform_read_operation(\n                operation,\n                setup['col'],\n                doc,\n                expected_uris,\n                [])"
       }
     },
     {
@@ -48312,7 +48322,7 @@
         "end_line": 898,
         "column": 12,
         "ast_sha256": "c4e6c0a32d21d04b72c9c48f69b8cfcf698a5924373a47d8e2c31f117c5fd6ed",
-        "snippet": "_perform_write_operation(\r\n                operation,\r\n                setup['col'],\r\n                doc,\r\n                expected_uris,\r\n                [],\r\n                retry_write=True)"
+        "snippet": "_perform_write_operation(\n                operation,\n                setup['col'],\n                doc,\n                expected_uris,\n                [],\n                retry_write=True)"
       }
     },
     {
@@ -48486,7 +48496,7 @@
         "end_line": 667,
         "column": 16,
         "ast_sha256": "ff0435b8f7369c97bb2c806e5440b2e1c10d5a367aaaaba17e82a10bc30c5fa7",
-        "snippet": "_perform_read_operation(\r\n                    operation,\r\n                    setup['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    excluded_uris,\r\n                    excluded_locations=[self.REGION_2],\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                    operation,\n                    setup['col'],\n                    doc,\n                    expected_uris,\n                    excluded_uris,\n                    excluded_locations=[self.REGION_2],\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -48531,7 +48541,7 @@
         "end_line": 677,
         "column": 16,
         "ast_sha256": "510ed851c25d1f39402c979bee6445587685c11c9f6d2edacc9bcc28ffc17ec2",
-        "snippet": "_perform_write_operation(\r\n                    operation,\r\n                    setup['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    excluded_uris,\r\n                    retry_write=True,\r\n                    excluded_locations=[self.REGION_2],\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                    operation,\n                    setup['col'],\n                    doc,\n                    expected_uris,\n                    excluded_uris,\n                    retry_write=True,\n                    excluded_locations=[self.REGION_2],\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -49192,7 +49202,7 @@
         "end_line": 769,
         "column": 20,
         "ast_sha256": "58a6f44287570405b39498f2bac731feb971dfb515c75ec3434f92d6d244aa3c",
-        "snippet": "_perform_read_operation(\r\n                        operation,\r\n                        setup_with_fault_injection['col'],\r\n                        doc,\r\n                        expected_uris,\r\n                        [],\r\n                        availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                        operation,\n                        setup_with_fault_injection['col'],\n                        doc,\n                        expected_uris,\n                        [],\n                        availability_strategy=strategy)"
       }
     },
     {
@@ -49237,7 +49247,7 @@
         "end_line": 778,
         "column": 20,
         "ast_sha256": "24193b240cf22fffc75c58436784945ff2a0348c33b2af6ac45e8366fcad09ce",
-        "snippet": "_perform_write_operation(\r\n                        operation,\r\n                        setup_with_fault_injection['col'],\r\n                        doc,\r\n                        expected_uris,\r\n                        [],\r\n                        retry_write=True,\r\n                        availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                        operation,\n                        setup_with_fault_injection['col'],\n                        doc,\n                        expected_uris,\n                        [],\n                        retry_write=True,\n                        availability_strategy=strategy)"
       }
     },
     {
@@ -49366,7 +49376,7 @@
         "end_line": 795,
         "column": 16,
         "ast_sha256": "cb14c82e561135b49ee08c8d772e74cedd0974ea2f17451971073a958835c16c",
-        "snippet": "_perform_read_operation(\r\n                    operation,\r\n                    setup_with_fault_injection['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    excluded_uris,\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                    operation,\n                    setup_with_fault_injection['col'],\n                    doc,\n                    expected_uris,\n                    excluded_uris,\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -49411,7 +49421,7 @@
         "end_line": 804,
         "column": 16,
         "ast_sha256": "29cbd3f1f0c8b5bedce15cc16b7237b47286eaf6fa203ef69717ab9b1b19f134",
-        "snippet": "_perform_write_operation(\r\n                    operation,\r\n                    setup_with_fault_injection['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    excluded_uris,\r\n                    retry_write=True,\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                    operation,\n                    setup_with_fault_injection['col'],\n                    doc,\n                    expected_uris,\n                    excluded_uris,\n                    retry_write=True,\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -49497,7 +49507,7 @@
         "end_line": 944,
         "column": 8,
         "ast_sha256": "4b8e7fa2a98e97501542fe5cf725d10bc66fc208136a1eb7a77e4bdb374ad11e",
-        "snippet": "_validate_response_uris(\r\n            [uri_down, failed_over_uri],\r\n            [],\r\n            operation_type=OperationType.Read,\r\n            resource_type=ResourceType.Document,\r\n        )"
+        "snippet": "_validate_response_uris(\n            [uri_down, failed_over_uri],\n            [],\n            operation_type=OperationType.Read,\n            resource_type=ResourceType.Document,\n        )"
       }
     },
     {
@@ -50304,7 +50314,7 @@
         "end_line": 160,
         "column": 8,
         "ast_sha256": "bfdb7872afa543cca2c1fa61ff0f191019c4809cb857c7756919583cb048b959",
-        "snippet": "container.create_item(\r\n            body=doc,\r\n            retry_write=retry_write,\r\n            excluded_locations=excluded_locations,\r\n            **kwargs)"
+        "snippet": "container.create_item(\n            body=doc,\n            retry_write=retry_write,\n            excluded_locations=excluded_locations,\n            **kwargs)"
       }
     },
     {
@@ -50504,7 +50514,7 @@
         "end_line": 213,
         "column": 4,
         "ast_sha256": "f71eb015647e28c8257e90638c59bc16e535db1c545918be78aecf007cc9c50f",
-        "snippet": "_validate_response_uris(\r\n        expected_uris,\r\n        excluded_uris,\r\n        operation_type=_get_operation_type(operation),\r\n        resource_type=ResourceType.Document)"
+        "snippet": "_validate_response_uris(\n        expected_uris,\n        excluded_uris,\n        operation_type=_get_operation_type(operation),\n        resource_type=ResourceType.Document)"
       }
     },
     {
@@ -50870,7 +50880,7 @@
         "end_line": 417,
         "column": 18,
         "ast_sha256": "87c00fbe5d5a26cff20ec56d057ac55831fdf242e075f8c4c3226becb50b6e81",
-        "snippet": "_perform_read_operation(\r\n                operation,\r\n                container,\r\n                doc,\r\n                expected_uris,\r\n                excluded_uris,\r\n                availability_strategy=request_availability_strategy)"
+        "snippet": "_perform_read_operation(\n                operation,\n                container,\n                doc,\n                expected_uris,\n                excluded_uris,\n                availability_strategy=request_availability_strategy)"
       }
     },
     {
@@ -50915,7 +50925,7 @@
         "end_line": 425,
         "column": 18,
         "ast_sha256": "58ccaf6b97173302e24bf178538b9fb9be257d80a6069710903618f1099e473d",
-        "snippet": "_perform_write_operation(\r\n                operation,\r\n                container,\r\n                doc,\r\n                expected_uris,\r\n                excluded_uris,\r\n                availability_strategy=request_availability_strategy)"
+        "snippet": "_perform_write_operation(\n                operation,\n                container,\n                doc,\n                expected_uris,\n                excluded_uris,\n                availability_strategy=request_availability_strategy)"
       }
     },
     {
@@ -51044,7 +51054,7 @@
         "end_line": 478,
         "column": 18,
         "ast_sha256": "f1448eef23943f2da85d44d2306b6bef8af36e6caef8eb8a8775d5895cbe480a",
-        "snippet": "_perform_read_operation(\r\n                operation,\r\n                setup_with_transport['col'],\r\n                doc,\r\n                [uri_down, failed_over_uri],\r\n                [],\r\n                availability_strategy=request_availability_strategy)"
+        "snippet": "_perform_read_operation(\n                operation,\n                setup_with_transport['col'],\n                doc,\n                [uri_down, failed_over_uri],\n                [],\n                availability_strategy=request_availability_strategy)"
       }
     },
     {
@@ -51089,7 +51099,7 @@
         "end_line": 487,
         "column": 18,
         "ast_sha256": "4580703898b3e49e02cf7426eccc1dda1bd5143947ff14811d48ef2af54a4a6d",
-        "snippet": "_perform_write_operation(\r\n                operation,\r\n                setup_with_transport['col'],\r\n                doc,\r\n                [uri_down, failed_over_uri],\r\n                [],\r\n                retry_write=True,\r\n                availability_strategy=request_availability_strategy)"
+        "snippet": "_perform_write_operation(\n                operation,\n                setup_with_transport['col'],\n                doc,\n                [uri_down, failed_over_uri],\n                [],\n                retry_write=True,\n                availability_strategy=request_availability_strategy)"
       }
     },
     {
@@ -51218,7 +51228,7 @@
         "end_line": 1041,
         "column": 18,
         "ast_sha256": "69c18dcb4e881ea632b80a349d219de662f5f601fa9fc5889243fb6a3f91f752",
-        "snippet": "_perform_read_operation(\r\n                operation,\r\n                setup_with_transport['col'],\r\n                doc,\r\n                [uri_down, failed_over_uri],\r\n                [])"
+        "snippet": "_perform_read_operation(\n                operation,\n                setup_with_transport['col'],\n                doc,\n                [uri_down, failed_over_uri],\n                [])"
       }
     },
     {
@@ -51263,7 +51273,7 @@
         "end_line": 1049,
         "column": 18,
         "ast_sha256": "1241c17655529de86cbeb4e176db81a578665ef90967f1adf9fc6677f98e5f21",
-        "snippet": "_perform_write_operation(\r\n                operation,\r\n                setup_with_transport['col'],\r\n                doc,\r\n                [uri_down, failed_over_uri],\r\n                [],\r\n                retry_write=True)"
+        "snippet": "_perform_write_operation(\n                operation,\n                setup_with_transport['col'],\n                doc,\n                [uri_down, failed_over_uri],\n                [],\n                retry_write=True)"
       }
     },
     {
@@ -51392,7 +51402,7 @@
         "end_line": 985,
         "column": 18,
         "ast_sha256": "bab7dc9f9e4f87c067b77390e550c4aba1236e5a289ba0abab96108136e68bac",
-        "snippet": "_perform_read_operation(\r\n                READ,\r\n                setup_with_transport['col'],\r\n                doc,\r\n                [uri_down],\r\n                [failed_over_uri],\r\n                availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                READ,\n                setup_with_transport['col'],\n                doc,\n                [uri_down],\n                [failed_over_uri],\n                availability_strategy=strategy)"
       }
     },
     {
@@ -51609,7 +51619,7 @@
         "end_line": 830,
         "column": 22,
         "ast_sha256": "19753520eddf41805e8f0534f6aa88a26ff4829fe113d87c3bd24c67ed12b732",
-        "snippet": "_perform_read_operation(\r\n                    operation,\r\n                    setup_with_transport['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    excluded_uris,\r\n                    excluded_locations=[setup['region_2']],\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                    operation,\n                    setup_with_transport['col'],\n                    doc,\n                    expected_uris,\n                    excluded_uris,\n                    excluded_locations=[setup['region_2']],\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -51654,7 +51664,7 @@
         "end_line": 840,
         "column": 22,
         "ast_sha256": "5e4e1c1c383b73e180227454fc5872a8636d80ce188dc5ea00aa9534414cdd3f",
-        "snippet": "_perform_write_operation(\r\n                    operation,\r\n                    setup_with_transport['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    excluded_uris,\r\n                    retry_write=True,\r\n                    excluded_locations=[setup['region_2']],\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                    operation,\n                    setup_with_transport['col'],\n                    doc,\n                    expected_uris,\n                    excluded_uris,\n                    retry_write=True,\n                    excluded_locations=[setup['region_2']],\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -51832,7 +51842,7 @@
         "end_line": 776,
         "column": 18,
         "ast_sha256": "c9782401956fcb528de523579f3bde3583b920c6adb4169b7fa64a50eebbcb67",
-        "snippet": "_perform_write_operation(\r\n                operation,\r\n                setup_with_transport['col'],\r\n                doc,\r\n                expected_uris,\r\n                excluded_uris,\r\n                retry_write=False,\r\n                availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                operation,\n                setup_with_transport['col'],\n                doc,\n                expected_uris,\n                excluded_uris,\n                retry_write=False,\n                availability_strategy=strategy)"
       }
     },
     {
@@ -52051,7 +52061,7 @@
         "end_line": 547,
         "column": 22,
         "ast_sha256": "af1f90c7f681634ce94810b978bb34274ed1471957be47724f14d54038f9fa13",
-        "snippet": "_perform_read_operation(\r\n                    operation,\r\n                    setup_with_fault['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    [],\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                    operation,\n                    setup_with_fault['col'],\n                    doc,\n                    expected_uris,\n                    [],\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -52096,7 +52106,7 @@
         "end_line": 556,
         "column": 22,
         "ast_sha256": "2290e5e494ae761300b0b0b3a04437e6f6a70ae52f2ec17f3d88d9e1327e99d3",
-        "snippet": "_perform_write_operation(\r\n                    operation,\r\n                    setup_with_fault['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    [],\r\n                    retry_write=True,\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                    operation,\n                    setup_with_fault['col'],\n                    doc,\n                    expected_uris,\n                    [],\n                    retry_write=True,\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -52315,7 +52325,7 @@
         "end_line": 905,
         "column": 26,
         "ast_sha256": "58a6f44287570405b39498f2bac731feb971dfb515c75ec3434f92d6d244aa3c",
-        "snippet": "_perform_read_operation(\r\n                        operation,\r\n                        setup_with_fault_injection['col'],\r\n                        doc,\r\n                        expected_uris,\r\n                        [],\r\n                        availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                        operation,\n                        setup_with_fault_injection['col'],\n                        doc,\n                        expected_uris,\n                        [],\n                        availability_strategy=strategy)"
       }
     },
     {
@@ -52360,7 +52370,7 @@
         "end_line": 914,
         "column": 26,
         "ast_sha256": "24193b240cf22fffc75c58436784945ff2a0348c33b2af6ac45e8366fcad09ce",
-        "snippet": "_perform_write_operation(\r\n                        operation,\r\n                        setup_with_fault_injection['col'],\r\n                        doc,\r\n                        expected_uris,\r\n                        [],\r\n                        retry_write=True,\r\n                        availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                        operation,\n                        setup_with_fault_injection['col'],\n                        doc,\n                        expected_uris,\n                        [],\n                        retry_write=True,\n                        availability_strategy=strategy)"
       }
     },
     {
@@ -52489,7 +52499,7 @@
         "end_line": 931,
         "column": 22,
         "ast_sha256": "cb14c82e561135b49ee08c8d772e74cedd0974ea2f17451971073a958835c16c",
-        "snippet": "_perform_read_operation(\r\n                    operation,\r\n                    setup_with_fault_injection['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    excluded_uris,\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                    operation,\n                    setup_with_fault_injection['col'],\n                    doc,\n                    expected_uris,\n                    excluded_uris,\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -52534,7 +52544,7 @@
         "end_line": 940,
         "column": 22,
         "ast_sha256": "29cbd3f1f0c8b5bedce15cc16b7237b47286eaf6fa203ef69717ab9b1b19f134",
-        "snippet": "_perform_write_operation(\r\n                    operation,\r\n                    setup_with_fault_injection['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    excluded_uris,\r\n                    retry_write=True,\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                    operation,\n                    setup_with_fault_injection['col'],\n                    doc,\n                    expected_uris,\n                    excluded_uris,\n                    retry_write=True,\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -52620,7 +52630,7 @@
         "end_line": 1101,
         "column": 8,
         "ast_sha256": "4b8e7fa2a98e97501542fe5cf725d10bc66fc208136a1eb7a77e4bdb374ad11e",
-        "snippet": "_validate_response_uris(\r\n            [uri_down, failed_over_uri],\r\n            [],\r\n            operation_type=OperationType.Read,\r\n            resource_type=ResourceType.Document,\r\n        )"
+        "snippet": "_validate_response_uris(\n            [uri_down, failed_over_uri],\n            [],\n            operation_type=OperationType.Read,\n            resource_type=ResourceType.Document,\n        )"
       }
     },
     {
@@ -53232,7 +53242,7 @@
         "end_line": 620,
         "column": 22,
         "ast_sha256": "a491f6c425283f77cf23c009be14dc1053d508e3a771d2b893ca6c09d5fd660f",
-        "snippet": "_perform_read_operation(\r\n                    operation,\r\n                    setup_with_transport['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    [],\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_read_operation(\n                    operation,\n                    setup_with_transport['col'],\n                    doc,\n                    expected_uris,\n                    [],\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -53277,7 +53287,7 @@
         "end_line": 629,
         "column": 22,
         "ast_sha256": "106e0886e629c45adde49664d3ae46c2172ed09441cce35e2a58f453e55757d8",
-        "snippet": "_perform_write_operation(\r\n                    operation,\r\n                    setup_with_transport['col'],\r\n                    doc,\r\n                    expected_uris,\r\n                    [],\r\n                    retry_write=True,\r\n                    availability_strategy=strategy)"
+        "snippet": "_perform_write_operation(\n                    operation,\n                    setup_with_transport['col'],\n                    doc,\n                    expected_uris,\n                    [],\n                    retry_write=True,\n                    availability_strategy=strategy)"
       }
     },
     {
@@ -53427,7 +53437,7 @@
         "end_line": 193,
         "column": 14,
         "ast_sha256": "bfdb7872afa543cca2c1fa61ff0f191019c4809cb857c7756919583cb048b959",
-        "snippet": "container.create_item(\r\n            body=doc,\r\n            retry_write=retry_write,\r\n            excluded_locations=excluded_locations,\r\n            **kwargs)"
+        "snippet": "container.create_item(\n            body=doc,\n            retry_write=retry_write,\n            excluded_locations=excluded_locations,\n            **kwargs)"
       }
     },
     {
@@ -53627,7 +53637,7 @@
         "end_line": 241,
         "column": 4,
         "ast_sha256": "f71eb015647e28c8257e90638c59bc16e535db1c545918be78aecf007cc9c50f",
-        "snippet": "_validate_response_uris(\r\n        expected_uris,\r\n        excluded_uris,\r\n        operation_type=_get_operation_type(operation),\r\n        resource_type=ResourceType.Document)"
+        "snippet": "_validate_response_uris(\n        expected_uris,\n        excluded_uris,\n        operation_type=_get_operation_type(operation),\n        resource_type=ResourceType.Document)"
       }
     },
     {
@@ -55344,7 +55354,7 @@
         "end_line": 77,
         "column": 8,
         "ast_sha256": "5824d72305a673b7900388b16d1d8c55510921e826484499d1ddb092f99dcb33",
-        "snippet": "client.get_database_client(database_name).get_container_client(container_name).create_item(\r\n            body={'id': 'item1', container_pk: 'value'})"
+        "snippet": "client.get_database_client(database_name).get_container_client(container_name).create_item(\n            body={'id': 'item1', container_pk: 'value'})"
       }
     },
     {
@@ -56238,7 +56248,7 @@
         "end_line": 89,
         "column": 14,
         "ast_sha256": "5824d72305a673b7900388b16d1d8c55510921e826484499d1ddb092f99dcb33",
-        "snippet": "client.get_database_client(database_name).get_container_client(container_name).create_item(\r\n            body={'id': 'item1', container_pk: 'value'})"
+        "snippet": "client.get_database_client(database_name).get_container_client(container_name).create_item(\n            body={'id': 'item1', container_pk: 'value'})"
       }
     },
     {
@@ -56421,7 +56431,7 @@
         "end_line": 132,
         "column": 18,
         "ast_sha256": "193fdc365d9feda60632a688f3d5b3969adfb860f8411949acbd44c12fa27cfb",
-        "snippet": "created_db.get_container_client(container_name).create_item(\r\n                body={'id': 'item1', container2_pk: 'val'})"
+        "snippet": "created_db.get_container_client(container_name).create_item(\n                body={'id': 'item1', container2_pk: 'val'})"
       }
     },
     {
@@ -56747,7 +56757,7 @@
         "end_line": 188,
         "column": 18,
         "ast_sha256": "9f99a6d73078f5a9c99092726cd477afa0dc00fb65bf21dc2befbe8436df68f0",
-        "snippet": "created_db.get_container_client(container_name).create_item(\r\n                body={'id': 'item1', 'county': 'ventura', 'city': 'oxnard'})"
+        "snippet": "created_db.get_container_client(container_name).create_item(\n                body={'id': 'item1', 'county': 'ventura', 'city': 'oxnard'})"
       }
     },
     {
@@ -56910,7 +56920,7 @@
         "end_line": 214,
         "column": 18,
         "ast_sha256": "58fae4b8d48432a7947044f3f86c29fcfee32838d24587175e74f7b5813f5d33",
-        "snippet": "created_db.get_container_client(container_name).create_item(\r\n                body={'id': 'item3', 'country': 'USA', 'state': 'CA'})"
+        "snippet": "created_db.get_container_client(container_name).create_item(\n                body={'id': 'item3', 'country': 'USA', 'state': 'CA'})"
       }
     },
     {
@@ -58162,7 +58172,7 @@
         "end_line": 523,
         "column": 8,
         "ast_sha256": "4f70ce70069ef875f33a503e585e5be76b1460cc537ed7f18e9594f92429c81a",
-        "snippet": "self.assertEqual(created_document.get('name'),\r\n                         document_definition['name'])"
+        "snippet": "self.assertEqual(created_document.get('name'),\n                         document_definition['name'])"
       }
     },
     {
@@ -58374,7 +58384,7 @@
         "end_line": 533,
         "column": 8,
         "ast_sha256": "4f70ce70069ef875f33a503e585e5be76b1460cc537ed7f18e9594f92429c81a",
-        "snippet": "self.assertEqual(created_document.get('name'),\r\n                         document_definition['name'])"
+        "snippet": "self.assertEqual(created_document.get('name'),\n                         document_definition['name'])"
       }
     },
     {
@@ -58480,7 +58490,7 @@
         "end_line": 535,
         "column": 8,
         "ast_sha256": "318b240bb2e3bab37c121802c9ea8713720ab0a4d18aaa008899da0016706339",
-        "snippet": "self.assertEqual(created_document.get('id'),\r\n                         document_definition['id'])"
+        "snippet": "self.assertEqual(created_document.get('id'),\n                         document_definition['id'])"
       }
     },
     {
@@ -58567,7 +58577,7 @@
         "end_line": 541,
         "column": 8,
         "ast_sha256": "6e1af7ae2ee9c38552cbb1abb39ffe7735073d508e0fd45dbc1536c6c3a1889f",
-        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,\r\n                                           created_collection.create_item,\r\n                                           duplicated_definition_with_id)"
+        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,\n                                           created_collection.create_item,\n                                           duplicated_definition_with_id)"
       }
     },
     {
@@ -58683,7 +58693,7 @@
         "end_line": 547,
         "column": 8,
         "ast_sha256": "62dd7e220ac17171aed52904cdf2d94cc298185498a52e580acd651decfa6ee6",
-        "snippet": "self.assertEqual(\r\n            len(documents),\r\n            before_create_documents_count + 3,\r\n            'create should increase the number of documents')"
+        "snippet": "self.assertEqual(\n            len(documents),\n            before_create_documents_count + 3,\n            'create should increase the number of documents')"
       }
     },
     {
@@ -58749,7 +58759,7 @@
         "end_line": 578,
         "column": 8,
         "ast_sha256": "886c0c9016ca2fb77c3c36ab404680cb8f5321337a1f5eb9da99216d13004938",
-        "snippet": "self.assertEqual(replaced_document['name'],\r\n                         'replaced document',\r\n                         'document id property should change')"
+        "snippet": "self.assertEqual(replaced_document['name'],\n                         'replaced document',\n                         'document id property should change')"
       }
     },
     {
@@ -58771,7 +58781,7 @@
         "end_line": 581,
         "column": 8,
         "ast_sha256": "dca21f83c3cf1c1f8ee59d8b70e331b7942ca5b0ec94f7cb31973961ea780ba9",
-        "snippet": "self.assertEqual(replaced_document['spam'],\r\n                         'not eggs',\r\n                         'property should have changed')"
+        "snippet": "self.assertEqual(replaced_document['spam'],\n                         'not eggs',\n                         'property should have changed')"
       }
     },
     {
@@ -58793,7 +58803,7 @@
         "end_line": 584,
         "column": 8,
         "ast_sha256": "c0efeb7498441593e87f404400b2998c48b515ed6e2418accea805cd9041c1d5",
-        "snippet": "self.assertEqual(created_document['id'],\r\n                         replaced_document['id'],\r\n                         'document id should stay the same')"
+        "snippet": "self.assertEqual(created_document['id'],\n                         replaced_document['id'],\n                         'document id should stay the same')"
       }
     },
     {
@@ -58815,7 +58825,7 @@
         "end_line": 597,
         "column": 8,
         "ast_sha256": "a996d20053d51f130a818bfdd0621fe5d9b5144c54428d47523740a258a20c1e",
-        "snippet": "self.__AssertHTTPFailureWithStatus(\r\n            StatusCodes.PRECONDITION_FAILED,\r\n            created_collection.replace_item,\r\n            replaced_document['id'],\r\n            replaced_document,\r\n            if_match=old_etag,\r\n        )"
+        "snippet": "self.__AssertHTTPFailureWithStatus(\n            StatusCodes.PRECONDITION_FAILED,\n            created_collection.replace_item,\n            replaced_document['id'],\n            replaced_document,\n            if_match=old_etag,\n        )"
       }
     },
     {
@@ -58925,7 +58935,7 @@
         "end_line": 638,
         "column": 8,
         "ast_sha256": "88f98bd31c0ced5759bcba70a4e6541cda80f1ac94b208fd25dd6891dc658bd1",
-        "snippet": "self.assertEqual(replaced_document_conditional['name'],\r\n                         'replaced document based on condition',\r\n                         'document id property should change')"
+        "snippet": "self.assertEqual(replaced_document_conditional['name'],\n                         'replaced document based on condition',\n                         'document id property should change')"
       }
     },
     {
@@ -58947,7 +58957,7 @@
         "end_line": 641,
         "column": 8,
         "ast_sha256": "40834d50afcac3186824644f926583e9c1c9136b9e5ce8daf4bd71ce7b2f4249",
-        "snippet": "self.assertEqual(replaced_document_conditional['spam'],\r\n                         'new spam field',\r\n                         'property should have changed')"
+        "snippet": "self.assertEqual(replaced_document_conditional['spam'],\n                         'new spam field',\n                         'property should have changed')"
       }
     },
     {
@@ -58969,7 +58979,7 @@
         "end_line": 644,
         "column": 8,
         "ast_sha256": "cf2235097d9a1a942a8e71dec763de7d6a426626f54f4de45cce74feec3ecf97",
-        "snippet": "self.assertEqual(replaced_document_conditional['id'],\r\n                         replaced_document['id'],\r\n                         'document id should stay the same')"
+        "snippet": "self.assertEqual(replaced_document_conditional['id'],\n                         replaced_document['id'],\n                         'document id should stay the same')"
       }
     },
     {
@@ -58991,7 +59001,7 @@
         "end_line": 651,
         "column": 8,
         "ast_sha256": "9c2200babe616328079e3c7652befe50fbf7475f250462647725835c5172dc22",
-        "snippet": "self.assertEqual(replaced_document['id'],\r\n                         one_document_from_read['id'])"
+        "snippet": "self.assertEqual(replaced_document['id'],\n                         one_document_from_read['id'])"
       }
     },
     {
@@ -59013,7 +59023,7 @@
         "end_line": 661,
         "column": 8,
         "ast_sha256": "a43dcdf0ddbeb5e25044803c5049c12397891b97f52437ec1d697d15f7673d0f",
-        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,\r\n                                           created_collection.read_item,\r\n                                           replaced_document['id'],\r\n                                           replaced_document['id'])"
+        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,\n                                           created_collection.read_item,\n                                           replaced_document['id'],\n                                           replaced_document['id'])"
       }
     },
     {
@@ -59119,7 +59129,7 @@
         "end_line": 279,
         "column": 33,
         "ast_sha256": "81afbab46388256e692cacdcfd450f247deaddaf21d6a69b84bd3b8fd171f072",
-        "snippet": "created_collection.create_item(body=document_definition,\r\n                                                                enable_automatic_id_generation=True)"
+        "snippet": "created_collection.create_item(body=document_definition,\n                                                                enable_automatic_id_generation=True)"
       }
     },
     {
@@ -59630,7 +59640,7 @@
         "end_line": 296,
         "column": 14,
         "ast_sha256": "ead712e76e10222eaaf3cadbb50c42681888a6d962105000af0ab0e02116065e",
-        "snippet": "self.__assert_http_failure_with_status(StatusCodes.CONFLICT,\r\n                                                     created_collection.create_item,\r\n                                                     duplicated_definition_with_id)"
+        "snippet": "self.__assert_http_failure_with_status(StatusCodes.CONFLICT,\n                                                     created_collection.create_item,\n                                                     duplicated_definition_with_id)"
       }
     },
     {
@@ -59878,7 +59888,7 @@
         "end_line": 337,
         "column": 14,
         "ast_sha256": "f55d92cec5454dad01704c720fd0a5801ba9d8d2b1058a7464bf0406dad23651",
-        "snippet": "self.__assert_http_failure_with_status(\r\n            StatusCodes.PRECONDITION_FAILED,\r\n            created_collection.replace_item,\r\n            replaced_document['id'],\r\n            replaced_document,\r\n            if_match=old_etag,\r\n        )"
+        "snippet": "self.__assert_http_failure_with_status(\n            StatusCodes.PRECONDITION_FAILED,\n            created_collection.replace_item,\n            replaced_document['id'],\n            replaced_document,\n            if_match=old_etag,\n        )"
       }
     },
     {
@@ -60164,7 +60174,7 @@
         "end_line": 404,
         "column": 14,
         "ast_sha256": "8f9a1bb9ac99a7bc20eaaf185f2fa921964ea58abbebfd1cad153346d206e826",
-        "snippet": "self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,\r\n                                                     created_collection.read_item,\r\n                                                     replaced_document['id'],\r\n                                                     replaced_document['id'])"
+        "snippet": "self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,\n                                                     created_collection.read_item,\n                                                     replaced_document['id'],\n                                                     replaced_document['id'])"
       }
     },
     {
@@ -60887,7 +60897,7 @@
         "end_line": 978,
         "column": 8,
         "ast_sha256": "6e1af7ae2ee9c38552cbb1abb39ffe7735073d508e0fd45dbc1536c6c3a1889f",
-        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,\r\n                                           created_collection.create_item,\r\n                                           duplicated_definition_with_id)"
+        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,\n                                           created_collection.create_item,\n                                           duplicated_definition_with_id)"
       }
     },
     {
@@ -61003,7 +61013,7 @@
         "end_line": 984,
         "column": 8,
         "ast_sha256": "c9b2e9a1bcc7f9c55e6ca678f31130effe96fdbd3d4657c5d022a7423f615066",
-        "snippet": "self.assertEqual(\r\n            len(documents),\r\n            before_create_documents_count + 1,\r\n            'create should increase the number of documents')"
+        "snippet": "self.assertEqual(\n            len(documents),\n            before_create_documents_count + 1,\n            'create should increase the number of documents')"
       }
     },
     {
@@ -61311,7 +61321,7 @@
         "end_line": 1043,
         "column": 8,
         "ast_sha256": "41bc23f58306b0b146ad76e0367128d866d282eb833a50b188c3e6e732dd5607",
-        "snippet": "self.__AssertHTTPFailureWithStatus(\r\n            StatusCodes.PRECONDITION_FAILED,\r\n            created_collection.replace_item,\r\n            to_be_replaced_document['id'],\r\n            to_be_replaced_document,\r\n            if_match=old_etag,\r\n        )"
+        "snippet": "self.__AssertHTTPFailureWithStatus(\n            StatusCodes.PRECONDITION_FAILED,\n            created_collection.replace_item,\n            to_be_replaced_document['id'],\n            to_be_replaced_document,\n            if_match=old_etag,\n        )"
       }
     },
     {
@@ -61421,7 +61431,7 @@
         "end_line": 1085,
         "column": 8,
         "ast_sha256": "88f98bd31c0ced5759bcba70a4e6541cda80f1ac94b208fd25dd6891dc658bd1",
-        "snippet": "self.assertEqual(replaced_document_conditional['name'],\r\n                         'replaced document based on condition',\r\n                         'document id property should change')"
+        "snippet": "self.assertEqual(replaced_document_conditional['name'],\n                         'replaced document based on condition',\n                         'document id property should change')"
       }
     },
     {
@@ -61443,7 +61453,7 @@
         "end_line": 1088,
         "column": 8,
         "ast_sha256": "40834d50afcac3186824644f926583e9c1c9136b9e5ce8daf4bd71ce7b2f4249",
-        "snippet": "self.assertEqual(replaced_document_conditional['spam'],\r\n                         'new spam field',\r\n                         'property should have changed')"
+        "snippet": "self.assertEqual(replaced_document_conditional['spam'],\n                         'new spam field',\n                         'property should have changed')"
       }
     },
     {
@@ -61465,7 +61475,7 @@
         "end_line": 1091,
         "column": 8,
         "ast_sha256": "8c96c8cdcc98a63223dde16706c7a781a5b3a741798f301e70bcae048fb64979",
-        "snippet": "self.assertEqual(replaced_document_conditional['id'],\r\n                         to_be_replaced_document['id'],\r\n                         'document id should stay the same')"
+        "snippet": "self.assertEqual(replaced_document_conditional['id'],\n                         to_be_replaced_document['id'],\n                         'document id should stay the same')"
       }
     },
     {
@@ -61487,7 +61497,7 @@
         "end_line": 1098,
         "column": 8,
         "ast_sha256": "e53d8a0f88847dd68232be56cc8a6e60fd6a12c95bd72352f3e0c3ccf7cdea98",
-        "snippet": "self.assertEqual(to_be_replaced_document['id'],\r\n                         one_document_from_read['id'])"
+        "snippet": "self.assertEqual(to_be_replaced_document['id'],\n                         one_document_from_read['id'])"
       }
     },
     {
@@ -61509,7 +61519,7 @@
         "end_line": 1108,
         "column": 8,
         "ast_sha256": "616cd897d470beb870ef09e2fc3f2298bfb52095b4448f463c1307d7ca184c6f",
-        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,\r\n                                           created_collection.read_item,\r\n                                           to_be_replaced_document['id'],\r\n                                           to_be_replaced_document['id'])"
+        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,\n                                           created_collection.read_item,\n                                           to_be_replaced_document['id'],\n                                           to_be_replaced_document['id'])"
       }
     },
     {
@@ -61691,7 +61701,7 @@
         "end_line": 795,
         "column": 8,
         "ast_sha256": "4f70ce70069ef875f33a503e585e5be76b1460cc537ed7f18e9594f92429c81a",
-        "snippet": "self.assertEqual(created_document.get('name'),\r\n                         document_definition['name'])"
+        "snippet": "self.assertEqual(created_document.get('name'),\n                         document_definition['name'])"
       }
     },
     {
@@ -61873,7 +61883,7 @@
         "end_line": 805,
         "column": 8,
         "ast_sha256": "4f70ce70069ef875f33a503e585e5be76b1460cc537ed7f18e9594f92429c81a",
-        "snippet": "self.assertEqual(created_document.get('name'),\r\n                         document_definition['name'])"
+        "snippet": "self.assertEqual(created_document.get('name'),\n                         document_definition['name'])"
       }
     },
     {
@@ -61979,7 +61989,7 @@
         "end_line": 807,
         "column": 8,
         "ast_sha256": "318b240bb2e3bab37c121802c9ea8713720ab0a4d18aaa008899da0016706339",
-        "snippet": "self.assertEqual(created_document.get('id'),\r\n                         document_definition['id'])"
+        "snippet": "self.assertEqual(created_document.get('id'),\n                         document_definition['id'])"
       }
     },
     {
@@ -62066,7 +62076,7 @@
         "end_line": 813,
         "column": 8,
         "ast_sha256": "6e1af7ae2ee9c38552cbb1abb39ffe7735073d508e0fd45dbc1536c6c3a1889f",
-        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,\r\n                                           created_collection.create_item,\r\n                                           duplicated_definition_with_id)"
+        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,\n                                           created_collection.create_item,\n                                           duplicated_definition_with_id)"
       }
     },
     {
@@ -62182,7 +62192,7 @@
         "end_line": 819,
         "column": 8,
         "ast_sha256": "c7a2031922e65b7339f9fad02a2705d7b0a98c288982c292c0c19ce25fa558d5",
-        "snippet": "self.assertEqual(\r\n            len(documents),\r\n            before_create_documents_count + 2,\r\n            'create should increase the number of documents')"
+        "snippet": "self.assertEqual(\n            len(documents),\n            before_create_documents_count + 2,\n            'create should increase the number of documents')"
       }
     },
     {
@@ -62248,7 +62258,7 @@
         "end_line": 851,
         "column": 8,
         "ast_sha256": "886c0c9016ca2fb77c3c36ab404680cb8f5321337a1f5eb9da99216d13004938",
-        "snippet": "self.assertEqual(replaced_document['name'],\r\n                         'replaced document',\r\n                         'document id property should change')"
+        "snippet": "self.assertEqual(replaced_document['name'],\n                         'replaced document',\n                         'document id property should change')"
       }
     },
     {
@@ -62270,7 +62280,7 @@
         "end_line": 854,
         "column": 8,
         "ast_sha256": "dca21f83c3cf1c1f8ee59d8b70e331b7942ca5b0ec94f7cb31973961ea780ba9",
-        "snippet": "self.assertEqual(replaced_document['spam'],\r\n                         'not eggs',\r\n                         'property should have changed')"
+        "snippet": "self.assertEqual(replaced_document['spam'],\n                         'not eggs',\n                         'property should have changed')"
       }
     },
     {
@@ -62292,7 +62302,7 @@
         "end_line": 857,
         "column": 8,
         "ast_sha256": "c0efeb7498441593e87f404400b2998c48b515ed6e2418accea805cd9041c1d5",
-        "snippet": "self.assertEqual(created_document['id'],\r\n                         replaced_document['id'],\r\n                         'document id should stay the same')"
+        "snippet": "self.assertEqual(created_document['id'],\n                         replaced_document['id'],\n                         'document id should stay the same')"
       }
     },
     {
@@ -62314,7 +62324,7 @@
         "end_line": 870,
         "column": 8,
         "ast_sha256": "a996d20053d51f130a818bfdd0621fe5d9b5144c54428d47523740a258a20c1e",
-        "snippet": "self.__AssertHTTPFailureWithStatus(\r\n            StatusCodes.PRECONDITION_FAILED,\r\n            created_collection.replace_item,\r\n            replaced_document['id'],\r\n            replaced_document,\r\n            if_match=old_etag,\r\n        )"
+        "snippet": "self.__AssertHTTPFailureWithStatus(\n            StatusCodes.PRECONDITION_FAILED,\n            created_collection.replace_item,\n            replaced_document['id'],\n            replaced_document,\n            if_match=old_etag,\n        )"
       }
     },
     {
@@ -62424,7 +62434,7 @@
         "end_line": 916,
         "column": 8,
         "ast_sha256": "88f98bd31c0ced5759bcba70a4e6541cda80f1ac94b208fd25dd6891dc658bd1",
-        "snippet": "self.assertEqual(replaced_document_conditional['name'],\r\n                         'replaced document based on condition',\r\n                         'document id property should change')"
+        "snippet": "self.assertEqual(replaced_document_conditional['name'],\n                         'replaced document based on condition',\n                         'document id property should change')"
       }
     },
     {
@@ -62446,7 +62456,7 @@
         "end_line": 919,
         "column": 8,
         "ast_sha256": "40834d50afcac3186824644f926583e9c1c9136b9e5ce8daf4bd71ce7b2f4249",
-        "snippet": "self.assertEqual(replaced_document_conditional['spam'],\r\n                         'new spam field',\r\n                         'property should have changed')"
+        "snippet": "self.assertEqual(replaced_document_conditional['spam'],\n                         'new spam field',\n                         'property should have changed')"
       }
     },
     {
@@ -62468,7 +62478,7 @@
         "end_line": 922,
         "column": 8,
         "ast_sha256": "cf2235097d9a1a942a8e71dec763de7d6a426626f54f4de45cce74feec3ecf97",
-        "snippet": "self.assertEqual(replaced_document_conditional['id'],\r\n                         replaced_document['id'],\r\n                         'document id should stay the same')"
+        "snippet": "self.assertEqual(replaced_document_conditional['id'],\n                         replaced_document['id'],\n                         'document id should stay the same')"
       }
     },
     {
@@ -62490,7 +62500,7 @@
         "end_line": 929,
         "column": 8,
         "ast_sha256": "9c2200babe616328079e3c7652befe50fbf7475f250462647725835c5172dc22",
-        "snippet": "self.assertEqual(replaced_document['id'],\r\n                         one_document_from_read['id'])"
+        "snippet": "self.assertEqual(replaced_document['id'],\n                         one_document_from_read['id'])"
       }
     },
     {
@@ -62512,7 +62522,7 @@
         "end_line": 939,
         "column": 8,
         "ast_sha256": "a43dcdf0ddbeb5e25044803c5049c12397891b97f52437ec1d697d15f7673d0f",
-        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,\r\n                                           created_collection.read_item,\r\n                                           replaced_document['id'],\r\n                                           replaced_document['id'])"
+        "snippet": "self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,\n                                           created_collection.read_item,\n                                           replaced_document['id'],\n                                           replaced_document['id'])"
       }
     },
     {
@@ -62578,7 +62588,7 @@
         "end_line": 764,
         "column": 33,
         "ast_sha256": "bcb0ae9818514799fdaa1faf4eb4b567a41b1622532ababacb1b385260b51c34",
-        "snippet": "created_collection.create_item(body=document_definition,\r\n                                                                enable_automatic_id_generation=True,\r\n                                                                no_response=False)"
+        "snippet": "created_collection.create_item(body=document_definition,\n                                                                enable_automatic_id_generation=True,\n                                                                no_response=False)"
       }
     },
     {
@@ -63389,7 +63399,7 @@
         "end_line": 791,
         "column": 14,
         "ast_sha256": "ead712e76e10222eaaf3cadbb50c42681888a6d962105000af0ab0e02116065e",
-        "snippet": "self.__assert_http_failure_with_status(StatusCodes.CONFLICT,\r\n                                                     created_collection.create_item,\r\n                                                     duplicated_definition_with_id)"
+        "snippet": "self.__assert_http_failure_with_status(StatusCodes.CONFLICT,\n                                                     created_collection.create_item,\n                                                     duplicated_definition_with_id)"
       }
     },
     {
@@ -63673,7 +63683,7 @@
         "end_line": 849,
         "column": 14,
         "ast_sha256": "f55d92cec5454dad01704c720fd0a5801ba9d8d2b1058a7464bf0406dad23651",
-        "snippet": "self.__assert_http_failure_with_status(\r\n            StatusCodes.PRECONDITION_FAILED,\r\n            created_collection.replace_item,\r\n            replaced_document['id'],\r\n            replaced_document,\r\n            if_match=old_etag,\r\n        )"
+        "snippet": "self.__assert_http_failure_with_status(\n            StatusCodes.PRECONDITION_FAILED,\n            created_collection.replace_item,\n            replaced_document['id'],\n            replaced_document,\n            if_match=old_etag,\n        )"
       }
     },
     {
@@ -64025,7 +64035,7 @@
         "end_line": 925,
         "column": 14,
         "ast_sha256": "8f9a1bb9ac99a7bc20eaaf185f2fa921964ea58abbebfd1cad153346d206e826",
-        "snippet": "self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,\r\n                                                     created_collection.read_item,\r\n                                                     replaced_document['id'],\r\n                                                     replaced_document['id'])"
+        "snippet": "self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,\n                                                     created_collection.read_item,\n                                                     replaced_document['id'],\n                                                     replaced_document['id'])"
       }
     },
     {
@@ -65138,8 +65148,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "assertion",
-          "line": 99,
-          "end_line": 99,
+          "line": 100,
+          "end_line": 100,
           "column": 8,
           "ast_sha256": "e2adb0f89062c585c6823e77d6aa292c27cb78096acfb7d8c0117039613301b4",
           "snippet": "assert headers == expected"
@@ -65172,10 +65182,10 @@
           "path": "tests\\common\\local_cosmos_server.py",
           "symbol": "local_cosmos_server",
           "kind": "function",
-          "line": 22,
-          "end_line": 83,
+          "line": 24,
+          "end_line": 90,
           "column": 0,
-          "ast_sha256": "3c7237502e0d846c0d4716c39c3948d37e5e2d3cdeafbf2949906f6cea5aafb1",
+          "ast_sha256": "4f1f23cfe1a6c7fcfce90495ba2241e3c5f3ace3e4b51dfbc8b44778291c46e8",
           "snippet": "local_cosmos_server"
         },
         {
@@ -65192,8 +65202,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "function",
-          "line": 64,
-          "end_line": 99,
+          "line": 65,
+          "end_line": 100,
           "column": 0,
           "ast_sha256": "e61e74268097a4670794d281890f243a830e54f49cbe86691b383365186dbcc6",
           "snippet": "_check_create_headers"
@@ -65203,7 +65213,7 @@
           "symbol": "_create_response",
           "kind": "function",
           "line": 46,
-          "end_line": 61,
+          "end_line": 62,
           "column": 0,
           "ast_sha256": "7a5ae1e03966159d05023c6dff2e6100543f31d48e9dc4d37a753bb10b89ce25",
           "snippet": "_create_response"
@@ -65235,7 +65245,7 @@
         "end_line": 211,
         "column": 8,
         "ast_sha256": "980b2eee35ba7add0ac3e125ded104a847e0caac8faeecc545108da621838180",
-        "snippet": "self.data_container.create_item(\r\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n            throughput_bucket=request_throughput_bucket_number,\r\n            raw_response_hook=request_raw_response_hook)"
+        "snippet": "self.data_container.create_item(\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n            throughput_bucket=request_throughput_bucket_number,\n            raw_response_hook=request_raw_response_hook)"
       }
     },
     {
@@ -65256,8 +65266,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "assertion",
-          "line": 99,
-          "end_line": 99,
+          "line": 100,
+          "end_line": 100,
           "column": 8,
           "ast_sha256": "e2adb0f89062c585c6823e77d6aa292c27cb78096acfb7d8c0117039613301b4",
           "snippet": "assert headers == expected"
@@ -65290,10 +65300,10 @@
           "path": "tests\\common\\local_cosmos_server.py",
           "symbol": "local_cosmos_server",
           "kind": "function",
-          "line": 22,
-          "end_line": 83,
+          "line": 24,
+          "end_line": 90,
           "column": 0,
-          "ast_sha256": "3c7237502e0d846c0d4716c39c3948d37e5e2d3cdeafbf2949906f6cea5aafb1",
+          "ast_sha256": "4f1f23cfe1a6c7fcfce90495ba2241e3c5f3ace3e4b51dfbc8b44778291c46e8",
           "snippet": "local_cosmos_server"
         },
         {
@@ -65310,8 +65320,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "function",
-          "line": 64,
-          "end_line": 99,
+          "line": 65,
+          "end_line": 100,
           "column": 0,
           "ast_sha256": "e61e74268097a4670794d281890f243a830e54f49cbe86691b383365186dbcc6",
           "snippet": "_check_create_headers"
@@ -65321,7 +65331,7 @@
           "symbol": "_create_response",
           "kind": "function",
           "line": 46,
-          "end_line": 61,
+          "end_line": 62,
           "column": 0,
           "ast_sha256": "7a5ae1e03966159d05023c6dff2e6100543f31d48e9dc4d37a753bb10b89ce25",
           "snippet": "_create_response"
@@ -65353,7 +65363,7 @@
         "end_line": 344,
         "column": 8,
         "ast_sha256": "f2d388cb89aa01a00f7cb4c92675761fc9623c66e18e5354baaa7980f9158a97",
-        "snippet": "created_container.create_item(\r\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n            priority=request_priority,\r\n            raw_response_hook=request_priority_raw_response_hook)"
+        "snippet": "created_container.create_item(\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n            priority=request_priority,\n            raw_response_hook=request_priority_raw_response_hook)"
       }
     },
     {
@@ -65374,8 +65384,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "assertion",
-          "line": 99,
-          "end_line": 99,
+          "line": 100,
+          "end_line": 100,
           "column": 8,
           "ast_sha256": "e2adb0f89062c585c6823e77d6aa292c27cb78096acfb7d8c0117039613301b4",
           "snippet": "assert headers == expected"
@@ -65408,10 +65418,10 @@
           "path": "tests\\common\\local_cosmos_server.py",
           "symbol": "local_cosmos_server",
           "kind": "function",
-          "line": 22,
-          "end_line": 83,
+          "line": 24,
+          "end_line": 90,
           "column": 0,
-          "ast_sha256": "3c7237502e0d846c0d4716c39c3948d37e5e2d3cdeafbf2949906f6cea5aafb1",
+          "ast_sha256": "4f1f23cfe1a6c7fcfce90495ba2241e3c5f3ace3e4b51dfbc8b44778291c46e8",
           "snippet": "local_cosmos_server"
         },
         {
@@ -65428,8 +65438,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "function",
-          "line": 64,
-          "end_line": 99,
+          "line": 65,
+          "end_line": 100,
           "column": 0,
           "ast_sha256": "e61e74268097a4670794d281890f243a830e54f49cbe86691b383365186dbcc6",
           "snippet": "_check_create_headers"
@@ -65439,7 +65449,7 @@
           "symbol": "_create_response",
           "kind": "function",
           "line": 46,
-          "end_line": 61,
+          "end_line": 62,
           "column": 0,
           "ast_sha256": "7a5ae1e03966159d05023c6dff2e6100543f31d48e9dc4d37a753bb10b89ce25",
           "snippet": "_create_response"
@@ -65471,7 +65481,7 @@
         "end_line": 162,
         "column": 8,
         "ast_sha256": "5b01bc3e3bac3e4ed6264f030fc64c24309df4e97b827ee88b752de6a1872f60",
-        "snippet": "data_container.create_item(\r\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n            throughput_bucket=request_throughput_bucket_number,\r\n            raw_response_hook=request_raw_response_hook)"
+        "snippet": "data_container.create_item(\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n            throughput_bucket=request_throughput_bucket_number,\n            raw_response_hook=request_raw_response_hook)"
       }
     },
     {
@@ -65495,7 +65505,7 @@
         "end_line": 31,
         "column": 4,
         "ast_sha256": "e04c35c9f9f09f05236d1c4faefe77225aabdfd735d34782c0f488046c8253ba",
-        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]\r\n            == client_priority)"
+        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]\n            == client_priority)"
       }
     },
     {
@@ -65519,7 +65529,7 @@
         "end_line": 23,
         "column": 4,
         "ast_sha256": "9393035c2de7df4652af2ced52f473891f91f443ce62dc296f971ac45d598426",
-        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]\r\n            == str(client_throughput_bucket_number))"
+        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]\n            == str(client_throughput_bucket_number))"
       }
     },
     {
@@ -65543,7 +65553,7 @@
         "end_line": 35,
         "column": 4,
         "ast_sha256": "fa946c33b5f8a80aad6702d63b16d2c1585a24d04f787202b9edd9e30203a0ba",
-        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]\r\n            == request_priority)"
+        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]\n            == request_priority)"
       }
     },
     {
@@ -65567,7 +65577,7 @@
         "end_line": 27,
         "column": 8,
         "ast_sha256": "47e6c523f6607b3eb831e3aab806751720324118d0ebbb0e70e64b999e41ded2",
-        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]\r\n                == str(request_throughput_bucket_number))"
+        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]\n                == str(request_throughput_bucket_number))"
       }
     },
     {
@@ -65588,8 +65598,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "assertion",
-          "line": 99,
-          "end_line": 99,
+          "line": 100,
+          "end_line": 100,
           "column": 8,
           "ast_sha256": "e2adb0f89062c585c6823e77d6aa292c27cb78096acfb7d8c0117039613301b4",
           "snippet": "assert headers == expected"
@@ -65622,10 +65632,10 @@
           "path": "tests\\common\\local_cosmos_server.py",
           "symbol": "local_cosmos_server",
           "kind": "function",
-          "line": 22,
-          "end_line": 83,
+          "line": 24,
+          "end_line": 90,
           "column": 0,
-          "ast_sha256": "3c7237502e0d846c0d4716c39c3948d37e5e2d3cdeafbf2949906f6cea5aafb1",
+          "ast_sha256": "4f1f23cfe1a6c7fcfce90495ba2241e3c5f3ace3e4b51dfbc8b44778291c46e8",
           "snippet": "local_cosmos_server"
         },
         {
@@ -65642,8 +65652,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "function",
-          "line": 64,
-          "end_line": 99,
+          "line": 65,
+          "end_line": 100,
           "column": 0,
           "ast_sha256": "e61e74268097a4670794d281890f243a830e54f49cbe86691b383365186dbcc6",
           "snippet": "_check_create_headers"
@@ -65653,7 +65663,7 @@
           "symbol": "_create_response",
           "kind": "function",
           "line": 46,
-          "end_line": 61,
+          "end_line": 62,
           "column": 0,
           "ast_sha256": "7a5ae1e03966159d05023c6dff2e6100543f31d48e9dc4d37a753bb10b89ce25",
           "snippet": "_create_response"
@@ -65706,8 +65716,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "assertion",
-          "line": 99,
-          "end_line": 99,
+          "line": 100,
+          "end_line": 100,
           "column": 8,
           "ast_sha256": "e2adb0f89062c585c6823e77d6aa292c27cb78096acfb7d8c0117039613301b4",
           "snippet": "assert headers == expected"
@@ -65740,10 +65750,10 @@
           "path": "tests\\common\\local_cosmos_server.py",
           "symbol": "local_cosmos_server",
           "kind": "function",
-          "line": 22,
-          "end_line": 83,
+          "line": 24,
+          "end_line": 90,
           "column": 0,
-          "ast_sha256": "3c7237502e0d846c0d4716c39c3948d37e5e2d3cdeafbf2949906f6cea5aafb1",
+          "ast_sha256": "4f1f23cfe1a6c7fcfce90495ba2241e3c5f3ace3e4b51dfbc8b44778291c46e8",
           "snippet": "local_cosmos_server"
         },
         {
@@ -65760,8 +65770,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "function",
-          "line": 64,
-          "end_line": 99,
+          "line": 65,
+          "end_line": 100,
           "column": 0,
           "ast_sha256": "e61e74268097a4670794d281890f243a830e54f49cbe86691b383365186dbcc6",
           "snippet": "_check_create_headers"
@@ -65771,7 +65781,7 @@
           "symbol": "_create_response",
           "kind": "function",
           "line": 46,
-          "end_line": 61,
+          "end_line": 62,
           "column": 0,
           "ast_sha256": "7a5ae1e03966159d05023c6dff2e6100543f31d48e9dc4d37a753bb10b89ce25",
           "snippet": "_create_response"
@@ -65803,7 +65813,7 @@
         "end_line": 146,
         "column": 14,
         "ast_sha256": "980b2eee35ba7add0ac3e125ded104a847e0caac8faeecc545108da621838180",
-        "snippet": "self.data_container.create_item(\r\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n            throughput_bucket=request_throughput_bucket_number,\r\n            raw_response_hook=request_raw_response_hook)"
+        "snippet": "self.data_container.create_item(\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n            throughput_bucket=request_throughput_bucket_number,\n            raw_response_hook=request_raw_response_hook)"
       }
     },
     {
@@ -65824,8 +65834,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "assertion",
-          "line": 99,
-          "end_line": 99,
+          "line": 100,
+          "end_line": 100,
           "column": 8,
           "ast_sha256": "e2adb0f89062c585c6823e77d6aa292c27cb78096acfb7d8c0117039613301b4",
           "snippet": "assert headers == expected"
@@ -65858,10 +65868,10 @@
           "path": "tests\\common\\local_cosmos_server.py",
           "symbol": "local_cosmos_server",
           "kind": "function",
-          "line": 22,
-          "end_line": 83,
+          "line": 24,
+          "end_line": 90,
           "column": 0,
-          "ast_sha256": "3c7237502e0d846c0d4716c39c3948d37e5e2d3cdeafbf2949906f6cea5aafb1",
+          "ast_sha256": "4f1f23cfe1a6c7fcfce90495ba2241e3c5f3ace3e4b51dfbc8b44778291c46e8",
           "snippet": "local_cosmos_server"
         },
         {
@@ -65878,8 +65888,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "function",
-          "line": 64,
-          "end_line": 99,
+          "line": 65,
+          "end_line": 100,
           "column": 0,
           "ast_sha256": "e61e74268097a4670794d281890f243a830e54f49cbe86691b383365186dbcc6",
           "snippet": "_check_create_headers"
@@ -65889,7 +65899,7 @@
           "symbol": "_create_response",
           "kind": "function",
           "line": 46,
-          "end_line": 61,
+          "end_line": 62,
           "column": 0,
           "ast_sha256": "7a5ae1e03966159d05023c6dff2e6100543f31d48e9dc4d37a753bb10b89ce25",
           "snippet": "_create_response"
@@ -65921,7 +65931,7 @@
         "end_line": 300,
         "column": 18,
         "ast_sha256": "f2d388cb89aa01a00f7cb4c92675761fc9623c66e18e5354baaa7980f9158a97",
-        "snippet": "created_container.create_item(\r\n                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n                priority=request_priority,\r\n                raw_response_hook=request_priority_raw_response_hook)"
+        "snippet": "created_container.create_item(\n                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n                priority=request_priority,\n                raw_response_hook=request_priority_raw_response_hook)"
       }
     },
     {
@@ -65942,8 +65952,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "assertion",
-          "line": 99,
-          "end_line": 99,
+          "line": 100,
+          "end_line": 100,
           "column": 8,
           "ast_sha256": "e2adb0f89062c585c6823e77d6aa292c27cb78096acfb7d8c0117039613301b4",
           "snippet": "assert headers == expected"
@@ -65976,10 +65986,10 @@
           "path": "tests\\common\\local_cosmos_server.py",
           "symbol": "local_cosmos_server",
           "kind": "function",
-          "line": 22,
-          "end_line": 83,
+          "line": 24,
+          "end_line": 90,
           "column": 0,
-          "ast_sha256": "3c7237502e0d846c0d4716c39c3948d37e5e2d3cdeafbf2949906f6cea5aafb1",
+          "ast_sha256": "4f1f23cfe1a6c7fcfce90495ba2241e3c5f3ace3e4b51dfbc8b44778291c46e8",
           "snippet": "local_cosmos_server"
         },
         {
@@ -65996,8 +66006,8 @@
           "path": "tests\\create_item\\test_header_wire_unit.py",
           "symbol": "_check_create_headers",
           "kind": "function",
-          "line": 64,
-          "end_line": 99,
+          "line": 65,
+          "end_line": 100,
           "column": 0,
           "ast_sha256": "e61e74268097a4670794d281890f243a830e54f49cbe86691b383365186dbcc6",
           "snippet": "_check_create_headers"
@@ -66007,7 +66017,7 @@
           "symbol": "_create_response",
           "kind": "function",
           "line": 46,
-          "end_line": 61,
+          "end_line": 62,
           "column": 0,
           "ast_sha256": "7a5ae1e03966159d05023c6dff2e6100543f31d48e9dc4d37a753bb10b89ce25",
           "snippet": "_create_response"
@@ -66039,7 +66049,7 @@
         "end_line": 97,
         "column": 14,
         "ast_sha256": "5b01bc3e3bac3e4ed6264f030fc64c24309df4e97b827ee88b752de6a1872f60",
-        "snippet": "data_container.create_item(\r\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n            throughput_bucket=request_throughput_bucket_number,\r\n            raw_response_hook=request_raw_response_hook)"
+        "snippet": "data_container.create_item(\n            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n            throughput_bucket=request_throughput_bucket_number,\n            raw_response_hook=request_raw_response_hook)"
       }
     },
     {
@@ -66063,7 +66073,7 @@
         "end_line": 33,
         "column": 4,
         "ast_sha256": "e04c35c9f9f09f05236d1c4faefe77225aabdfd735d34782c0f488046c8253ba",
-        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]\r\n            == client_priority)"
+        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]\n            == client_priority)"
       }
     },
     {
@@ -66087,7 +66097,7 @@
         "end_line": 25,
         "column": 4,
         "ast_sha256": "9393035c2de7df4652af2ced52f473891f91f443ce62dc296f971ac45d598426",
-        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]\r\n            == str(client_throughput_bucket_number))"
+        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]\n            == str(client_throughput_bucket_number))"
       }
     },
     {
@@ -66111,7 +66121,7 @@
         "end_line": 37,
         "column": 4,
         "ast_sha256": "fa946c33b5f8a80aad6702d63b16d2c1585a24d04f787202b9edd9e30203a0ba",
-        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]\r\n            == request_priority)"
+        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]\n            == request_priority)"
       }
     },
     {
@@ -66135,7 +66145,7 @@
         "end_line": 29,
         "column": 4,
         "ast_sha256": "47e6c523f6607b3eb831e3aab806751720324118d0ebbb0e70e64b999e41ded2",
-        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]\r\n            == str(request_throughput_bucket_number))"
+        "snippet": "assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]\n            == str(request_throughput_bucket_number))"
       }
     },
     {
@@ -66191,7 +66201,7 @@
         "end_line": 730,
         "column": 22,
         "ast_sha256": "3b36223e217d6050ca4e226b8a13e27656ffcfbfe6e205314aa34dda09d542fe",
-        "snippet": "created_collection.create_item(\r\n                body={\"pk\": \"p\", \"id\": \"doc1\", \"value\": 1},\r\n                response_hook=hook,\r\n            )"
+        "snippet": "created_collection.create_item(\n                body={\"pk\": \"p\", \"id\": \"doc1\", \"value\": 1},\n                response_hook=hook,\n            )"
       }
     },
     {
@@ -66303,7 +66313,7 @@
         "end_line": 735,
         "column": 12,
         "ast_sha256": "b90c2678c53468b1bf89d227619ca16de73c57bada12022b315f4d4db4cb6c60",
-        "snippet": "self.assertEqual(\r\n                created.get_response_headers()[\"x-ms-request-charge\"],\r\n                captured[0][\"x-ms-request-charge\"],\r\n            )"
+        "snippet": "self.assertEqual(\n                created.get_response_headers()[\"x-ms-request-charge\"],\n                captured[0][\"x-ms-request-charge\"],\n            )"
       }
     },
     {
@@ -66347,7 +66357,7 @@
         "end_line": 746,
         "column": 12,
         "ast_sha256": "1df17ae7f469dc58325c2be517640ddbceee0e178b68afe2c85ce24b6883f9a9",
-        "snippet": "self.assertEqual(\r\n                read.get_response_headers()[\"x-ms-request-charge\"],\r\n                captured[0][\"x-ms-request-charge\"],\r\n            )"
+        "snippet": "self.assertEqual(\n                read.get_response_headers()[\"x-ms-request-charge\"],\n                captured[0][\"x-ms-request-charge\"],\n            )"
       }
     },
     {
@@ -66391,7 +66401,7 @@
         "end_line": 759,
         "column": 12,
         "ast_sha256": "cd1c28341a1089c069e84c51cbbee0c0990cbf7b7c74de0dd3e8f8382be69068",
-        "snippet": "self.assertEqual(\r\n                replaced.get_response_headers()[\"x-ms-request-charge\"],\r\n                captured[0][\"x-ms-request-charge\"],\r\n            )"
+        "snippet": "self.assertEqual(\n                replaced.get_response_headers()[\"x-ms-request-charge\"],\n                captured[0][\"x-ms-request-charge\"],\n            )"
       }
     },
     {
@@ -66435,7 +66445,7 @@
         "end_line": 771,
         "column": 12,
         "ast_sha256": "cfbad7b553b5d5f8d3b0617cd7503377c55f966941e1ae230f63cd517b8b868a",
-        "snippet": "self.assertEqual(\r\n                upserted.get_response_headers()[\"x-ms-request-charge\"],\r\n                captured[0][\"x-ms-request-charge\"],\r\n            )"
+        "snippet": "self.assertEqual(\n                upserted.get_response_headers()[\"x-ms-request-charge\"],\n                captured[0][\"x-ms-request-charge\"],\n            )"
       }
     },
     {
@@ -66535,7 +66545,7 @@
         "end_line": 705,
         "column": 28,
         "ast_sha256": "3b36223e217d6050ca4e226b8a13e27656ffcfbfe6e205314aa34dda09d542fe",
-        "snippet": "created_collection.create_item(\r\n                body={\"pk\": \"p\", \"id\": \"doc1\", \"value\": 1},\r\n                response_hook=hook,\r\n            )"
+        "snippet": "created_collection.create_item(\n                body={\"pk\": \"p\", \"id\": \"doc1\", \"value\": 1},\n                response_hook=hook,\n            )"
       }
     },
     {
@@ -66647,7 +66657,7 @@
         "end_line": 710,
         "column": 12,
         "ast_sha256": "696e3776416dd070c90b2f338372953bbb41ec2943d1e0008e1d0947e0898d99",
-        "snippet": "assert (\r\n                created.get_response_headers()[\"x-ms-request-charge\"]\r\n                == captured[0][\"x-ms-request-charge\"]\r\n            )"
+        "snippet": "assert (\n                created.get_response_headers()[\"x-ms-request-charge\"]\n                == captured[0][\"x-ms-request-charge\"]\n            )"
       }
     },
     {
@@ -66691,7 +66701,7 @@
         "end_line": 721,
         "column": 12,
         "ast_sha256": "7eebccf147209943cac54121370f0e5b2b54ead523dc4fbd9b2d90e2ad035227",
-        "snippet": "assert (\r\n                read.get_response_headers()[\"x-ms-request-charge\"]\r\n                == captured[0][\"x-ms-request-charge\"]\r\n            )"
+        "snippet": "assert (\n                read.get_response_headers()[\"x-ms-request-charge\"]\n                == captured[0][\"x-ms-request-charge\"]\n            )"
       }
     },
     {
@@ -66735,7 +66745,7 @@
         "end_line": 734,
         "column": 12,
         "ast_sha256": "0c031a1ae1017d19c74f5ded2c3d87b6c384dfaccbe947361e09d4cc3fb1881f",
-        "snippet": "assert (\r\n                replaced.get_response_headers()[\"x-ms-request-charge\"]\r\n                == captured[0][\"x-ms-request-charge\"]\r\n            )"
+        "snippet": "assert (\n                replaced.get_response_headers()[\"x-ms-request-charge\"]\n                == captured[0][\"x-ms-request-charge\"]\n            )"
       }
     },
     {
@@ -66779,7 +66789,7 @@
         "end_line": 746,
         "column": 12,
         "ast_sha256": "090aee8cf5e6a3aa3b7cfea387679ad0868f5ad960013407942fb0c71d480898",
-        "snippet": "assert (\r\n                upserted.get_response_headers()[\"x-ms-request-charge\"]\r\n                == captured[0][\"x-ms-request-charge\"]\r\n            )"
+        "snippet": "assert (\n                upserted.get_response_headers()[\"x-ms-request-charge\"]\n                == captured[0][\"x-ms-request-charge\"]\n            )"
       }
     },
     {
@@ -67508,7 +67518,7 @@
         "end_line": 450,
         "column": 16,
         "ast_sha256": "b5d2e546fbe5516a3fd075e57b87636c8041e84de6c622a00f332417c570cee9",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 container.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 container.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -67541,7 +67551,7 @@
         "end_line": 452,
         "column": 16,
         "ast_sha256": "cabab907c76c45f2d70f4311a6b631750cb770030cbc37032c2b8debece9b4c0",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\r\n                                 max_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\n                                 max_backoff_in_seconds)"
       }
     },
     {
@@ -67574,7 +67584,7 @@
         "end_line": 454,
         "column": 16,
         "ast_sha256": "373276eb4e55f094db7597f4c401292d7e081a36865329e09758e8355489a9d4",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\r\n                                 max_throttle_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\n                                 max_throttle_backoff_in_seconds)"
       }
     },
     {
@@ -67607,7 +67617,7 @@
         "end_line": 456,
         "column": 16,
         "ast_sha256": "5c6679a4ab46b0a5393541b223cb8d5bc5b6ab7f0533d0566eab023d56f40ba3",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,\r\n                    max_total_retries)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,\n                    max_total_retries)"
       }
     },
     {
@@ -67748,7 +67758,7 @@
         "end_line": 99,
         "column": 16,
         "ast_sha256": "b79d2316252a9c6feafe648ab7d75624df6ccf6621d82a52f4edc2b5dc716ea3",
-        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 self.created_collection.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 self.created_collection.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -67784,7 +67794,7 @@
         "end_line": 103,
         "column": 16,
         "ast_sha256": "d927caac9b93f0a55fe1258aeff03f591db0e49a797dd9fdb6fede48f87a5e2f",
-        "snippet": "self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        connection_policy.RetryOptions.MaxRetryAttemptCount *\r\n                                        self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        connection_policy.RetryOptions.MaxRetryAttemptCount *\n                                        self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -67925,7 +67935,7 @@
         "end_line": 126,
         "column": 16,
         "ast_sha256": "b79d2316252a9c6feafe648ab7d75624df6ccf6621d82a52f4edc2b5dc716ea3",
-        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 self.created_collection.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 self.created_collection.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -67961,7 +67971,7 @@
         "end_line": 129,
         "column": 16,
         "ast_sha256": "f4213dcd5590afb5be4f4a8c95268e02c3ab57241aea8cd25a80c3941435db62",
-        "snippet": "self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)"
+        "snippet": "self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)"
       }
     },
     {
@@ -68099,7 +68109,7 @@
         "end_line": 416,
         "column": 16,
         "ast_sha256": "cabab907c76c45f2d70f4311a6b631750cb770030cbc37032c2b8debece9b4c0",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\r\n                                 max_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\n                                 max_backoff_in_seconds)"
       }
     },
     {
@@ -68132,7 +68142,7 @@
         "end_line": 418,
         "column": 16,
         "ast_sha256": "373276eb4e55f094db7597f4c401292d7e081a36865329e09758e8355489a9d4",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\r\n                                 max_throttle_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\n                                 max_throttle_backoff_in_seconds)"
       }
     },
     {
@@ -68305,7 +68315,7 @@
         "end_line": 389,
         "column": 16,
         "ast_sha256": "373276eb4e55f094db7597f4c401292d7e081a36865329e09758e8355489a9d4",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\r\n                                 max_throttle_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\n                                 max_throttle_backoff_in_seconds)"
       }
     },
     {
@@ -68481,7 +68491,7 @@
         "end_line": 153,
         "column": 16,
         "ast_sha256": "d901c48ac4be6b95485d60382ce18ff372b75c76d566bae971f32cc5a6250935",
-        "snippet": "self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)"
+        "snippet": "self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)"
       }
     },
     {
@@ -68622,7 +68632,7 @@
         "end_line": 335,
         "column": 16,
         "ast_sha256": "b5d2e546fbe5516a3fd075e57b87636c8041e84de6c622a00f332417c570cee9",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 container.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 container.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -68691,7 +68701,7 @@
         "end_line": 340,
         "column": 16,
         "ast_sha256": "5bd1b17b63ddf76b789f04c72aafebd6f7a6ca0c2b5b46427e93a209e5e5bbf2",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\r\n                                        self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\n                                        self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -68823,7 +68833,7 @@
         "end_line": 184,
         "column": 16,
         "ast_sha256": "b79d2316252a9c6feafe648ab7d75624df6ccf6621d82a52f4edc2b5dc716ea3",
-        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 self.created_collection.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 self.created_collection.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -68856,7 +68866,7 @@
         "end_line": 187,
         "column": 16,
         "ast_sha256": "d927caac9b93f0a55fe1258aeff03f591db0e49a797dd9fdb6fede48f87a5e2f",
-        "snippet": "self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -68997,7 +69007,7 @@
         "end_line": 307,
         "column": 16,
         "ast_sha256": "b5d2e546fbe5516a3fd075e57b87636c8041e84de6c622a00f332417c570cee9",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 container.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 container.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -69033,7 +69043,7 @@
         "end_line": 311,
         "column": 16,
         "ast_sha256": "5bd1b17b63ddf76b789f04c72aafebd6f7a6ca0c2b5b46427e93a209e5e5bbf2",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\r\n                                        self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\n                                        self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -69174,7 +69184,7 @@
         "end_line": 280,
         "column": 16,
         "ast_sha256": "b5d2e546fbe5516a3fd075e57b87636c8041e84de6c622a00f332417c570cee9",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 container.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 container.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -69243,7 +69253,7 @@
         "end_line": 285,
         "column": 16,
         "ast_sha256": "5bd1b17b63ddf76b789f04c72aafebd6f7a6ca0c2b5b46427e93a209e5e5bbf2",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\r\n                                        self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\n                                        self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -69818,7 +69828,7 @@
         "end_line": 412,
         "column": 16,
         "ast_sha256": "cabab907c76c45f2d70f4311a6b631750cb770030cbc37032c2b8debece9b4c0",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\r\n                                 max_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\n                                 max_backoff_in_seconds)"
       }
     },
     {
@@ -69851,7 +69861,7 @@
         "end_line": 414,
         "column": 16,
         "ast_sha256": "a314cbf2a3df9a6c55a07e75191bb9b0b37d5c63b18cc36c70677bf75d8b8a52",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\r\n                                 max_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\n                                 max_backoff_in_seconds)"
       }
     },
     {
@@ -70027,7 +70037,7 @@
         "end_line": 501,
         "column": 16,
         "ast_sha256": "b5d2e546fbe5516a3fd075e57b87636c8041e84de6c622a00f332417c570cee9",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 container.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 container.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -70060,7 +70070,7 @@
         "end_line": 503,
         "column": 16,
         "ast_sha256": "cabab907c76c45f2d70f4311a6b631750cb770030cbc37032c2b8debece9b4c0",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\r\n                                 max_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\n                                 max_backoff_in_seconds)"
       }
     },
     {
@@ -70093,7 +70103,7 @@
         "end_line": 505,
         "column": 16,
         "ast_sha256": "373276eb4e55f094db7597f4c401292d7e081a36865329e09758e8355489a9d4",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\r\n                                 max_throttle_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\n                                 max_throttle_backoff_in_seconds)"
       }
     },
     {
@@ -70126,7 +70136,7 @@
         "end_line": 508,
         "column": 16,
         "ast_sha256": "5c6679a4ab46b0a5393541b223cb8d5bc5b6ab7f0533d0566eab023d56f40ba3",
-        "snippet": "self.assertEqual(\r\n                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,\r\n                    max_total_retries)"
+        "snippet": "self.assertEqual(\n                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,\n                    max_total_retries)"
       }
     },
     {
@@ -70267,7 +70277,7 @@
         "end_line": 128,
         "column": 20,
         "ast_sha256": "d8cca2ccf58818957a7076705641c46bfab0f126cd5698837625360527c0777a",
-        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                     container.client_connection.last_response_headers[\r\n                                         HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                     container.client_connection.last_response_headers[\n                                         HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -70303,7 +70313,7 @@
         "end_line": 132,
         "column": 20,
         "ast_sha256": "0d64a8d5075b14446775f1844e77859836c9faff32b140013d8832ee2bbdbdf6",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                                HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                            connection_policy.RetryOptions.MaxRetryAttemptCount *\r\n                                            self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                                HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                            connection_policy.RetryOptions.MaxRetryAttemptCount *\n                                            self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -70444,7 +70454,7 @@
         "end_line": 157,
         "column": 20,
         "ast_sha256": "d8cca2ccf58818957a7076705641c46bfab0f126cd5698837625360527c0777a",
-        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                     container.client_connection.last_response_headers[\r\n                                         HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                     container.client_connection.last_response_headers[\n                                         HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -70480,7 +70490,7 @@
         "end_line": 160,
         "column": 20,
         "ast_sha256": "1d0e833380ef5fcbb116eca92ebc8be311fe31017f7b4a9f8380902b8f646367",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                                HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                            connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                                HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                            connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)"
       }
     },
     {
@@ -70618,7 +70628,7 @@
         "end_line": 467,
         "column": 16,
         "ast_sha256": "cabab907c76c45f2d70f4311a6b631750cb770030cbc37032c2b8debece9b4c0",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\r\n                                 max_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,\n                                 max_backoff_in_seconds)"
       }
     },
     {
@@ -70651,7 +70661,7 @@
         "end_line": 469,
         "column": 16,
         "ast_sha256": "373276eb4e55f094db7597f4c401292d7e081a36865329e09758e8355489a9d4",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\r\n                                 max_throttle_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\n                                 max_throttle_backoff_in_seconds)"
       }
     },
     {
@@ -70824,7 +70834,7 @@
         "end_line": 440,
         "column": 16,
         "ast_sha256": "373276eb4e55f094db7597f4c401292d7e081a36865329e09758e8355489a9d4",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\r\n                                 max_throttle_backoff_in_seconds)"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,\n                                 max_throttle_backoff_in_seconds)"
       }
     },
     {
@@ -71000,7 +71010,7 @@
         "end_line": 186,
         "column": 20,
         "ast_sha256": "7f4055fc4ba8157f994376e361546ccf3834c702f1418d2455f1cf74a8955f3d",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                                HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                            connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                                HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                            connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)"
       }
     },
     {
@@ -71141,7 +71151,7 @@
         "end_line": 380,
         "column": 16,
         "ast_sha256": "b5d2e546fbe5516a3fd075e57b87636c8041e84de6c622a00f332417c570cee9",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 container.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 container.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -71174,7 +71184,7 @@
         "end_line": 383,
         "column": 16,
         "ast_sha256": "5c6679a4ab46b0a5393541b223cb8d5bc5b6ab7f0533d0566eab023d56f40ba3",
-        "snippet": "self.assertEqual(\r\n                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,\r\n                    max_total_retries)"
+        "snippet": "self.assertEqual(\n                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,\n                    max_total_retries)"
       }
     },
     {
@@ -71210,7 +71220,7 @@
         "end_line": 387,
         "column": 16,
         "ast_sha256": "5bd1b17b63ddf76b789f04c72aafebd6f7a6ca0c2b5b46427e93a209e5e5bbf2",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\r\n                                        self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\n                                        self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -71375,7 +71385,7 @@
         "end_line": 221,
         "column": 20,
         "ast_sha256": "d8cca2ccf58818957a7076705641c46bfab0f126cd5698837625360527c0777a",
-        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                     container.client_connection.last_response_headers[\r\n                                         HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                     container.client_connection.last_response_headers[\n                                         HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -71408,7 +71418,7 @@
         "end_line": 224,
         "column": 20,
         "ast_sha256": "0d64a8d5075b14446775f1844e77859836c9faff32b140013d8832ee2bbdbdf6",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                                HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                            connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                                HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                            connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -71549,7 +71559,7 @@
         "end_line": 351,
         "column": 16,
         "ast_sha256": "b5d2e546fbe5516a3fd075e57b87636c8041e84de6c622a00f332417c570cee9",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 container.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 container.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -71585,7 +71595,7 @@
         "end_line": 355,
         "column": 16,
         "ast_sha256": "5bd1b17b63ddf76b789f04c72aafebd6f7a6ca0c2b5b46427e93a209e5e5bbf2",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\r\n                                        self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\n                                        self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -71726,7 +71736,7 @@
         "end_line": 322,
         "column": 16,
         "ast_sha256": "b5d2e546fbe5516a3fd075e57b87636c8041e84de6c622a00f332417c570cee9",
-        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\r\n                                 container.client_connection.last_response_headers[\r\n                                     HttpHeaders.ThrottleRetryCount])"
+        "snippet": "self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,\n                                 container.client_connection.last_response_headers[\n                                     HttpHeaders.ThrottleRetryCount])"
       }
     },
     {
@@ -71759,7 +71769,7 @@
         "end_line": 325,
         "column": 16,
         "ast_sha256": "5c6679a4ab46b0a5393541b223cb8d5bc5b6ab7f0533d0566eab023d56f40ba3",
-        "snippet": "self.assertEqual(\r\n                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,\r\n                    max_total_retries)"
+        "snippet": "self.assertEqual(\n                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,\n                    max_total_retries)"
       }
     },
     {
@@ -71795,7 +71805,7 @@
         "end_line": 329,
         "column": 16,
         "ast_sha256": "5bd1b17b63ddf76b789f04c72aafebd6f7a6ca0c2b5b46427e93a209e5e5bbf2",
-        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\r\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\r\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\r\n                                        self.retry_after_in_milliseconds)"
+        "snippet": "self.assertGreaterEqual(container.client_connection.last_response_headers[\n                                            HttpHeaders.ThrottleRetryWaitTimeInMs],\n                                        container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *\n                                        self.retry_after_in_milliseconds)"
       }
     },
     {
@@ -74049,7 +74059,7 @@
         "end_line": 495,
         "column": 27,
         "ast_sha256": "babb409495d201ed2832ffb4e3426f8f7708aa9881c8ba22ccd3adec358745b4",
-        "snippet": "container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n                                                 raw_response_hook=test_config.token_response_hook)"
+        "snippet": "container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n                                                 raw_response_hook=test_config.token_response_hook)"
       }
     },
     {
@@ -74095,7 +74105,7 @@
         "end_line": 505,
         "column": 8,
         "ast_sha256": "140fb2d0d750cb171e845e5b68755bbf36d796646e13877ff5bd28e8e0d7acb8",
-        "snippet": "assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==\r\n                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==\r\n                response_session_token)"
+        "snippet": "assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==\n                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==\n                response_session_token)"
       }
     },
     {
@@ -74270,7 +74280,7 @@
         "end_line": 138,
         "column": 27,
         "ast_sha256": "5adfe8bea7bdea4d27e7d3e3004bbeead0790389f302d57403e9f9c27772a307",
-        "snippet": "self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n                                                               raw_response_hook=test_config.no_token_response_hook)"
+        "snippet": "self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n                                                               raw_response_hook=test_config.no_token_response_hook)"
       }
     },
     {
@@ -74316,7 +74326,7 @@
         "end_line": 148,
         "column": 8,
         "ast_sha256": "140fb2d0d750cb171e845e5b68755bbf36d796646e13877ff5bd28e8e0d7acb8",
-        "snippet": "assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==\r\n                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==\r\n                response_session_token)"
+        "snippet": "assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==\n                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==\n                response_session_token)"
       }
     },
     {
@@ -74491,7 +74501,7 @@
         "end_line": 488,
         "column": 33,
         "ast_sha256": "babb409495d201ed2832ffb4e3426f8f7708aa9881c8ba22ccd3adec358745b4",
-        "snippet": "container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n                                                                    raw_response_hook=test_config.token_response_hook)"
+        "snippet": "container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n                                                                    raw_response_hook=test_config.token_response_hook)"
       }
     },
     {
@@ -74537,7 +74547,7 @@
         "end_line": 498,
         "column": 8,
         "ast_sha256": "140fb2d0d750cb171e845e5b68755bbf36d796646e13877ff5bd28e8e0d7acb8",
-        "snippet": "assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==\r\n                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==\r\n                response_session_token)"
+        "snippet": "assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==\n                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==\n                response_session_token)"
       }
     },
     {
@@ -74712,7 +74722,7 @@
         "end_line": 383,
         "column": 33,
         "ast_sha256": "8f6a914c6a32a91960753a4dc38baff62b730536ce617b4bc6b8e546c3ee03e5",
-        "snippet": "self.created_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\r\n                                                               raw_response_hook=test_config.no_token_response_hook)"
+        "snippet": "self.created_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},\n                                                               raw_response_hook=test_config.no_token_response_hook)"
       }
     },
     {
@@ -74758,7 +74768,7 @@
         "end_line": 393,
         "column": 8,
         "ast_sha256": "140fb2d0d750cb171e845e5b68755bbf36d796646e13877ff5bd28e8e0d7acb8",
-        "snippet": "assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==\r\n                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==\r\n                response_session_token)"
+        "snippet": "assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==\n                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==\n                response_session_token)"
       }
     },
     {
@@ -75232,7 +75242,7 @@
         "end_line": 104,
         "column": 8,
         "ast_sha256": "06d0ea996fcc339dde2b0b9e1ec61361f9a39b5cd79ba184775a93f47e8c6591",
-        "snippet": "self.assertNotEqual(\r\n            eventual_consistency_client\r\n            .client_connection.default_headers[http_constants.HttpHeaders.ConsistencyLevel],\r\n            account_consistency_level)"
+        "snippet": "self.assertNotEqual(\n            eventual_consistency_client\n            .client_connection.default_headers[http_constants.HttpHeaders.ConsistencyLevel],\n            account_consistency_level)"
       }
     },
     {

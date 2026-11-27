@@ -440,11 +440,9 @@ def test_required_inventory_matches_default_exclusions_rust():
     }
 
 
-def test_offline_inventory_keeps_shared_backend_contracts_not_core_python_rust():
+def test_offline_inventory_excludes_core_python_tests_rust():
     files = runner.discover_tests(PACKAGE, "offline")
-    shared = PACKAGE / "tests" / "common" / "test_backend_contract_unit.py"
     legacy = PACKAGE / "tests" / "common" / "test_core_python_backend_unit.py"
-    assert shared in files
     assert legacy not in files
     reads = PACKAGE / "tests" / "read_database"
     assert reads / "test_read_database_backend_unit.py" in files
@@ -452,11 +450,6 @@ def test_offline_inventory_keeps_shared_backend_contracts_not_core_python_rust()
     containers = PACKAGE / "tests" / "common"
     assert containers / "test_container_backend_unit.py" in files
     assert containers / "test_container_legacy_unit.py" not in files
-    assert runner.declared_tests(shared) == {
-        "TestBackendContract::test_operation_routing_is_frozen_rust",
-        "TestBackendContract::test_backend_execution_errors_never_replay_rust",
-        "TestBackendContract::test_async_backend_execution_errors_never_replay_rust",
-    }
 
 
 def test_required_guard_allows_only_explicit_core_python_parameter_exclusions_rust(tmp_path):

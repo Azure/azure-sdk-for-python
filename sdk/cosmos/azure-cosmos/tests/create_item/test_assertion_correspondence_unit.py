@@ -124,6 +124,7 @@ def _read_file(relative):
         text = _main_sources()[key]
     else:
         text = path.read_text(encoding="utf-8-sig")
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
     return text, dict(_functions(ast.parse(text)))
 
 

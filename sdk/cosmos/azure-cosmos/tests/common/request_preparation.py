@@ -5,7 +5,7 @@
 A caller's keyword arguments do not go straight to the code that builds a request. They
 first pass through preparation, which rejects arguments that no longer exist, works out
 when the operation must finish, and sorts the rest into request values and options. Tests
-that skip that step would be checking a shape no customer call ever produces.
+that skip that step would be checking input that no real customer call ever produces.
 
 These helpers run the real preparation and hand back what it produced, so a test can
 supply ordinary keyword arguments and still see what the code under test would see.
@@ -45,9 +45,9 @@ def prepare_item_request(op, *, partition_key_value, container_rid, kwargs=None,
                          no_response_on_write_default=False, compact_utf8=False, **arguments):
     """Run real preparation for one operation and return the finished request.
 
-    The partition key and the container address are supplied by the caller rather than
-    looked up, because finding them for real would need a live container and a metadata
-    read. Everything else -- sorting arguments, rejecting bad ones, deciding the deadline,
+    The partition key and the container's resource id (container_rid) are supplied by the
+    caller rather than looked up, because looking them up would need a real container.
+    Everything else -- sorting arguments, rejecting bad ones, deciding the deadline,
     building the request -- is the production code.
     """
     values = dict(kwargs or {})
@@ -56,7 +56,7 @@ def prepare_item_request(op, *, partition_key_value, container_rid, kwargs=None,
         values.setdefault("enable_automatic_id_generation", True)
     deadline = prepare_create_item_kwargs(values) if op == "create_item" else None
     args, options = normalize_item_arguments(op, values, compact_utf8=compact_utf8, deadline=deadline)
-    # These fixtures exercise explicit wire options, not metadata resolution.
+    # Use the given partition key and container id instead of looking them up.
     options["partitionKey"] = partition_key_value
     if container_rid is not None:
         options["containerRID"] = container_rid

@@ -17,8 +17,8 @@ from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from common.delete_container_backend_stubs import (
-    _delete,
-    _assert_no_dispatch,
+    _call_container_delete,
+    _assert_no_request_sent,
     make_delete_case,
 )
 
@@ -75,7 +75,7 @@ def test_delete_accepts_target_forms_and_returns_none_legacy(delete_case, target
             "c1"
         )
     hook = MagicMock()
-    assert _delete(case, target, response_hook=hook) is None
+    assert _call_container_delete(case, target, response_hook=hook) is None
     hook.assert_called_once()
     assert hook.call_args.args[1] is None
     case.connection.ReadContainer.assert_not_called()
@@ -97,8 +97,8 @@ def test_delete_rejects_obsolete_options_legacy(delete_case, option, value):
     case = delete_case
     case.connection._backend = case.legacy_backend
     with pytest.raises(TypeError, match=option):
-        _delete(case, "c1", **{option: value})
-    _assert_no_dispatch(case)
+        _call_container_delete(case, "c1", **{option: value})
+    _assert_no_request_sent(case)
 
 
 @pytest.mark.parametrize(
@@ -119,8 +119,8 @@ def test_delete_has_matching_argument_binding_legacy(delete_case, args, kwargs):
     case = delete_case
     case.connection._backend = case.legacy_backend
     with pytest.raises(TypeError):
-        _delete(case, *args, **kwargs)
-    _assert_no_dispatch(case)
+        _call_container_delete(case, *args, **kwargs)
+    _assert_no_request_sent(case)
     signature = inspect.signature(case.database.delete_container)
     assert list(signature.parameters) == ["container", "initial_headers", "kwargs"]
     assert (
@@ -130,7 +130,7 @@ def test_delete_has_matching_argument_binding_legacy(delete_case, args, kwargs):
 
 def test_delete_preserves_explicit_legacy_retry_write_legacy(delete_case):
     delete_case.connection._backend = delete_case.legacy_backend
-    assert _delete(delete_case, "c1", retry_write=2) is None
+    assert _call_container_delete(delete_case, "c1", retry_write=2) is None
     delete_case.backend.execute.assert_not_called()
     delete_case.connection.DeleteContainer.assert_called_once()
     options = delete_case.connection.DeleteContainer.call_args.kwargs["options"]
@@ -182,7 +182,7 @@ def test_delete_conditions_are_forwarded_without_ignored_warnings_legacy(
     case.connection._backend = case.legacy_backend
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
-        _delete(case, "c1", **kwargs)
+        _call_container_delete(case, "c1", **kwargs)
     assert not caught
     call = case.connection.DeleteContainer.call_args
     condition = call.kwargs["options"].get("accessCondition")
@@ -213,8 +213,8 @@ def test_delete_invalid_conditions_fail_before_dispatch_legacy(
     """
     delete_case.connection._backend = delete_case.legacy_backend
     with pytest.raises(error):
-        _delete(delete_case, "c1", **kwargs)
-    _assert_no_dispatch(delete_case)
+        _call_container_delete(delete_case, "c1", **kwargs)
+    _assert_no_request_sent(delete_case)
 
 
 @pytest.mark.parametrize("falsey", [False, True])
@@ -249,7 +249,7 @@ def test_delete_hook_runs_once_with_isolated_headers_and_none_legacy(
             headers["x-ms-request-charge"] = "changed"
             seen.append(body)
 
-    assert _delete(case, "c1", response_hook=Hook()) is None
+    assert _call_container_delete(case, "c1", response_hook=Hook()) is None
     assert seen == [None]
     assert case.connection.last_response_headers["x-ms-request-charge"] == "3"
 
@@ -277,7 +277,7 @@ def test_delete_hook_errors_do_not_replay_the_delete_legacy(delete_case, error):
     case.connection._backend = case.legacy_backend
     hook = MagicMock(side_effect=error)
     with pytest.raises(type(error)) as raised:
-        _delete(case, "c1", response_hook=hook)
+        _call_container_delete(case, "c1", response_hook=hook)
     assert raised.value is error
     hook.assert_called_once()
     assert case.connection.DeleteContainer.call_count == 1
@@ -297,7 +297,7 @@ def test_explicit_core_python_delete_retains_core_python_transport_options_legac
     """
     case = delete_case
     case.connection._backend = case.legacy_backend
-    _delete(case, "c1", timeout=1.5, connection_timeout=2)
+    _call_container_delete(case, "c1", timeout=1.5, connection_timeout=2)
     call = case.connection.DeleteContainer.call_args
     assert call.kwargs["timeout"] == 1.5
     assert call.kwargs["connection_timeout"] == 2
