@@ -44,6 +44,7 @@ def test_create_headers_reach_wire_rust(surface, client_options, request_options
 
 
 def _create_response(request):
+    # cspell:ignore AQAAAAEAAAA
     path = request.path.rstrip("/")
     if request.method == "GET" and path == "/dbs/db/colls/coll":
         return 200, {
