@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added `disable_etag_lock` keyword to `download_file` to allow downloading a file that is being modified during the download, such as a file that is actively being written to. Set `disable_etag_lock=True` to enable this behavior (defaults to `False`).
+- Added `download_retry_total` and `download_retry_backoff` keywords to `download_file` to configure how many times, and how many seconds apart, a failed read of the download response body is retried (defaults to 2 retries, 1 second apart).
 
 ## 12.27.0b1 (2026-11-05)
 

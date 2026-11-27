@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added `disable_etag_lock` keyword to `download_blob` to allow downloading a blob that is being modified during the download, such as an append blob that is actively being written to. Set `disable_etag_lock=True` to enable this behavior (defaults to `False`).
+- Added `download_retry_total` and `download_retry_backoff` keywords to `download_blob` to configure how many times, and how many seconds apart, a failed read of the download response body is retried (defaults to 2 retries, 1 second apart).
 
 ### Bugs Fixed
 - Fixed an issue where `BlobClient.commit_block_list` sent every block in the `Latest` list of the request, ignoring `BlobBlock.state`. Blocks with `BlockState.COMMITTED` or `BlockState.UNCOMMITTED` are now sent as `Committed` or `Uncommitted`.

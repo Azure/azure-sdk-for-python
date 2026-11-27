@@ -211,6 +211,8 @@ class DataLakeFileClient(PathClient):
         max_concurrency: Optional[int] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
         disable_etag_lock: bool = False,
+        download_retry_total: int = 2,
+        download_retry_backoff: float = 1,
         validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any

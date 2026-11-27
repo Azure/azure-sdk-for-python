@@ -124,6 +124,8 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         non_empty_ranges: Optional[List[Dict[str, Any]]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         disable_etag_lock: bool = False,
+        download_retry_total: int = 2,
+        download_retry_backoff: float = 1,
         **kwargs: Any,
     ) -> None:
         self.client = client
@@ -155,6 +157,8 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         # Parameters for each get operation
         self.validate_content = validate_content
         self.disable_etag_lock = disable_etag_lock
+        self.download_retry_total = download_retry_total
+        self.download_retry_backoff = download_retry_backoff
         self.request_options = kwargs
 
     def _calculate_range(self, chunk_start: int) -> Tuple[int, int]:
@@ -243,7 +247,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
             )
 
             retry_active = True
-            retry_total = 3
+            retries_remaining = self.download_retry_total
             while retry_active:
                 response: Any = None
                 try:
@@ -264,10 +268,10 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                     )
                     retry_active = False
                 except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
-                    retry_total -= 1
-                    if retry_total <= 0:
+                    if retries_remaining <= 0:
                         raise HttpResponseError(error, error=error) from error
-                    time.sleep(1)
+                    retries_remaining -= 1
+                    time.sleep(self.download_retry_backoff)
             content_length = response.content_length
 
             if self.disable_etag_lock and len(chunk_data) != chunk_end - chunk_start + 1:
@@ -356,6 +360,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     """The size of the total data in the stream. This will be the byte range if specified,
     otherwise the total size of the blob."""
 
+    # pylint: disable-next=too-many-statements
     def __init__(
         self,
         clients: "AzureBlobStorage" = None,  # type: ignore [assignment]
@@ -370,11 +375,20 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         encoding: Optional[str] = None,
         download_cls: Optional[Callable] = None,
         disable_etag_lock: bool = False,
+        download_retry_total: Optional[int] = None,
+        download_retry_backoff: Optional[float] = None,
         **kwargs: Any,
     ) -> None:
         self.name = name
         self.container = container
         self.size = 0
+
+        if download_retry_total is not None and download_retry_total < 0:
+            raise ValueError("download_retry_total must be 0 or greater.")
+        if download_retry_backoff is not None and download_retry_backoff < 0:
+            raise ValueError("download_retry_backoff must be 0 or greater.")
+        self._download_retry_total = 2 if download_retry_total is None else download_retry_total
+        self._download_retry_backoff = 1 if download_retry_backoff is None else download_retry_backoff
 
         self._disable_etag_lock = disable_etag_lock
         self._clients = clients
@@ -498,7 +512,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         )
 
         retry_active = True
-        retry_total = 3
+        retries_remaining = self._download_retry_total
         while retry_active:
             try:
                 location_mode, response = cast(
@@ -567,10 +581,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     )
                 retry_active = False
             except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
-                retry_total -= 1
-                if retry_total <= 0:
+                if retries_remaining <= 0:
                     raise HttpResponseError(error, error=error) from error
-                time.sleep(1)
+                retries_remaining -= 1
+                time.sleep(self._download_retry_backoff)
         self._download_offset += len(self._current_content)
         self._raw_download_offset += response.content_length
 
@@ -643,6 +657,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
                 disable_etag_lock=self._disable_etag_lock,
+                download_retry_total=self._download_retry_total,
+                download_retry_backoff=self._download_retry_backoff,
                 **self._request_options,
             )
 
@@ -754,6 +770,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 use_location=self._location_mode,
                 progress_hook=self._progress_hook,
                 disable_etag_lock=self._disable_etag_lock,
+                download_retry_total=self._download_retry_total,
+                download_retry_backoff=self._download_retry_backoff,
                 **self._request_options,
             )
             self._first_chunk = False
@@ -887,6 +905,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             use_location=self._location_mode,
             progress_hook=self._progress_hook,
             disable_etag_lock=self._disable_etag_lock,
+            download_retry_total=self._download_retry_total,
+            download_retry_backoff=self._download_retry_backoff,
             **self._request_options,
         )
         if parallel:

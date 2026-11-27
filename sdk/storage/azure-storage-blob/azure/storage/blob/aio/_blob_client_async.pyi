@@ -218,6 +218,8 @@ class BlobClient(  # type: ignore[misc]
         encoding: str,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
         disable_etag_lock: bool = False,
+        download_retry_total: int = 2,
+        download_retry_backoff: float = 1,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -241,6 +243,8 @@ class BlobClient(  # type: ignore[misc]
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
         disable_etag_lock: bool = False,
+        download_retry_total: int = 2,
+        download_retry_backoff: float = 1,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -264,6 +268,8 @@ class BlobClient(  # type: ignore[misc]
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
         disable_etag_lock: bool = False,
+        download_retry_total: int = 2,
+        download_retry_backoff: float = 1,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any

@@ -668,5 +668,68 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         finally:
             await service.delete_container(container_name)
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_download_retry_settings(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        container_name = self.get_resource_name("utcontainer")
+        service = self._create_storage_service(
+            BlobServiceClient,
+            storage_account_name,
+            storage_account_key,
+            max_single_get_size=4,
+            max_chunk_get_size=4,
+        )
+        container = await service.create_container(container_name)
+        blob = container.get_blob_client(self.get_resource_name("blob"))
+        await blob.upload_blob(b"abcd" * 4, overwrite=True)
+        response_error = ServiceResponseError("connection reset")
+
+        try:
+            # Act / Assert - no retries
+            with mock.patch(
+                "azure.storage.blob.aio._download_async.process_content",
+                new_callable=mock.AsyncMock,
+                side_effect=response_error,
+            ) as process:
+                with pytest.raises(HttpResponseError):
+                    await blob.download_blob(download_retry_total=0)
+            assert process.await_count == 1
+
+            # Act / Assert - custom retry count and backoff
+            with mock.patch(
+                "azure.storage.blob.aio._download_async.process_content",
+                new_callable=mock.AsyncMock,
+                side_effect=response_error,
+            ) as process, mock.patch(
+                "azure.storage.blob.aio._download_async.asyncio.sleep", new_callable=mock.AsyncMock
+            ) as sleep:
+                with pytest.raises(HttpResponseError):
+                    await blob.download_blob(download_retry_total=1, download_retry_backoff=0.5)
+            assert process.await_count == 2
+            sleep.assert_any_await(0.5)
+
+            # Act / Assert - retries on subsequent chunks
+            with mock.patch(
+                "azure.storage.blob.aio._download_async.process_content",
+                new_callable=mock.AsyncMock,
+                side_effect=[b"abcd", response_error, response_error],
+            ) as process, mock.patch(
+                "azure.storage.blob.aio._download_async.asyncio.sleep", new_callable=mock.AsyncMock
+            ) as sleep:
+                downloader = await blob.download_blob(
+                    max_concurrency=1, download_retry_total=1, download_retry_backoff=0.5
+                )
+                with pytest.raises(HttpResponseError):
+                    await downloader.readall()
+            assert process.await_count == 3
+            sleep.assert_any_await(0.5)
+        finally:
+            await service.delete_container(container_name)
+            await service.close()
+
 
 # ------------------------------------------------------------------------------

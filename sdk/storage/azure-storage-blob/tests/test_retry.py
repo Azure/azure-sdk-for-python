@@ -680,4 +680,56 @@ class TestStorageRetry(StorageRecordedTestCase):
         finally:
             service.delete_container(container_name)
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_retry_settings(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        container_name = self.get_resource_name("utcontainer")
+        service = self._create_storage_service(
+            BlobServiceClient,
+            storage_account_name,
+            storage_account_key,
+            max_single_get_size=4,
+            max_chunk_get_size=4,
+        )
+        container = service.create_container(container_name)
+        blob = container.get_blob_client(self.get_resource_name("blob"))
+        blob.upload_blob(b"abcd" * 4, overwrite=True)
+        response_error = ServiceResponseError("connection reset")
+
+        try:
+            # Act / Assert - no retries
+            with mock.patch(
+                "azure.storage.blob._download.process_content", side_effect=response_error
+            ) as process, mock.patch("azure.storage.blob._download.time.sleep") as sleep:
+                with pytest.raises(HttpResponseError):
+                    blob.download_blob(download_retry_total=0)
+            assert process.call_count == 1
+            sleep.assert_not_called()
+
+            # Act / Assert - custom retry count and backoff
+            with mock.patch(
+                "azure.storage.blob._download.process_content", side_effect=response_error
+            ) as process, mock.patch("azure.storage.blob._download.time.sleep") as sleep:
+                with pytest.raises(HttpResponseError):
+                    blob.download_blob(download_retry_total=1, download_retry_backoff=0.5)
+            assert process.call_count == 2
+            sleep.assert_called_once_with(0.5)
+
+            # Act / Assert - retries on subsequent chunks
+            with mock.patch(
+                "azure.storage.blob._download.process_content",
+                side_effect=[b"abcd", response_error, response_error],
+            ) as process, mock.patch("azure.storage.blob._download.time.sleep") as sleep:
+                downloader = blob.download_blob(max_concurrency=1, download_retry_total=1, download_retry_backoff=0.5)
+                with pytest.raises(HttpResponseError):
+                    downloader.readall()
+            assert process.call_count == 3  # 1 initial request + 2 attempts on the first chunk
+            sleep.assert_called_once_with(0.5)
+        finally:
+            service.delete_container(container_name)
+
     # ------------------------------------------------------------------------------
