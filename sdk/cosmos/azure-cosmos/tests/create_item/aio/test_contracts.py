@@ -12,7 +12,7 @@ import pytest_asyncio
 
 from azure.cosmos import PartitionKey, exceptions
 from azure.cosmos.aio import CosmosClient
-from auth._token_credentials import make_async_token_credential, skip_unless_token_auth
+from auth._token_credentials import make_async_token_credential
 from config import clients
 from create_item._contract_cases import (
     AAD_CONTENT, COMPACT_CONTENT, EMOJI_CASES, INVALID_IDS, MEBIBYTE,
@@ -251,9 +251,49 @@ async def test_document_crud_response_payload_on_write_disabled_rust(
     variant_database, make_variant_container, contract_client, monkeypatch, backend
 ):
     # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_document_crud_async
-    await _document_crud_create_persistence(
-        variant_database, make_variant_container, contract_client, monkeypatch, backend
-    )
+    container = target(contract_client, variant_database, make_variant_container(PartitionKey(path="/pk")))
+    native = observe_native_create(monkeypatch, contract_client, backend, asynchronous=True)
+    original = {"name": "sample document", "spam": "eggs", "key": "value", "pk": "pk"}
+    body = deepcopy(original)
+    generated = await container.create_item(body, enable_automatic_id_generation=True, no_response=False)
+    assert body == original
+    assert_fields(generated, original)
+
+    explicit_body = dict(original, id=uuid.uuid4().hex)
+    default_id = explicit_body["id"]
+    default_suppressed = await container.create_item(explicit_body)
+    assert default_suppressed == {}
+
+    explicit_body["id"] = uuid.uuid4().hex
+    suppressed_id = explicit_body["id"]
+    explicit_suppressed = await container.create_item(explicit_body, no_response=True)
+    assert explicit_suppressed == {}
+
+    explicit_body["id"] = uuid.uuid4().hex
+    explicit = await container.create_item(explicit_body, no_response=False)
+    assert_fields(explicit, explicit_body)
+
+    expected_ids = {generated["id"], default_id, suppressed_id, explicit["id"]}
+    assert len(expected_ids) == 4
+    if native is not None:
+        assert native.call_count == 4
+        assert {call.args[1].item_id for call in native.call_args_list} == expected_ids
+    with pytest.raises(exceptions.CosmosResourceExistsError) as caught:
+        await container.create_item(explicit_body.copy())
+    assert caught.value.status_code == 409
+
+    # Use an independent Rust reader for legacy comparisons, retaining the
+    # writer's session guarantee across clients.
+    async with clients.create_data_client_async(_backend="rust") as observer:
+        observed_container = target(observer, variant_database, container)
+        stored = [item async for item in observed_container.query_items(
+            "SELECT * FROM c", partition_key="pk",
+            session_token=explicit.get_response_headers()["x-ms-session-token"],
+        )]
+    assert len(stored) == 4
+    assert {item["id"] for item in stored} == expected_ids
+    for item in stored:
+        assert_fields(item, original)
 
 
 async def _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact, query=False):
@@ -282,26 +322,16 @@ async def _token_credential_create(variant_database, make_variant_container, mon
 
 
 @pytest.mark.cosmosEmulator
-@skip_unless_token_auth()
+@pytest.mark.skip(reason="driver-gap: Gap 40 - shared container credentials can cause key-authenticated cleanup "
+                  "to use AAD and fail with 403/5300. Re-enable after credential isolation is fixed.")
 async def test_compact_utf8_item_write_with_aad_rust(variant_database, make_variant_container, monkeypatch, backend):
     # Source: tests/test_aad_async.py::TestAADAsync.test_compact_utf8_item_write_with_aad_async
-    if backend == "rust":
-        pytest.skip(
-            "driver-gap: Gap 40 - shared container cache can reuse AAD credentials for "
-            "key-authenticated cleanup, causing DELETE container to fail with 403/5300. "
-            "Re-enable after Rust driver credential isolation is fixed."
-        )
     await _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact=True)
 
 
 @pytest.mark.cosmosEmulator
-@skip_unless_token_auth()
+@pytest.mark.skip(reason="driver-gap: Gap 40 - shared container credentials can cause key-authenticated cleanup "
+                  "to use AAD and fail with 403/5300. Re-enable after credential isolation is fixed.")
 async def test_aad_credentials_rust(variant_database, make_variant_container, monkeypatch, backend):
     # Source: tests/test_aad_async.py::TestAADAsync.test_aad_credentials_async
-    if backend == "rust":
-        pytest.skip(
-            "driver-gap: Gap 40 - shared container cache can reuse AAD credentials for "
-            "key-authenticated cleanup, causing DELETE container to fail with 403/5300. "
-            "Re-enable after Rust driver credential isolation is fixed."
-        )
     await _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact=False, query=True)

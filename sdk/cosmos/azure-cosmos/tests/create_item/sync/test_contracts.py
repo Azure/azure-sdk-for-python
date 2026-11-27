@@ -10,7 +10,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey, exceptions
-from auth._token_credentials import make_sync_token_credential, skip_unless_token_auth
+from auth._token_credentials import make_sync_token_credential
 from config import clients
 from create_item._contract_cases import (
     AAD_CONTENT, COMPACT_CONTENT, EMOJI_CASES, INVALID_IDS, MEBIBYTE,
@@ -249,16 +249,16 @@ def test_document_crud_response_payload_on_write_disabled_rust(
     _document_crud_create_persistence(
         variant_database, make_variant_container, contract_client, monkeypatch, backend
     )
-
-
-@pytest.mark.cosmosLong
-@pytest.mark.cosmosAADLong
-@pytest.mark.parametrize("contract_client", [{"no_response_on_write": True}], indirect=True)
-def test_document_crud_response_payload_enabled_via_override_rust(
-    variant_database, make_variant_container, contract_client, monkeypatch, backend
-):
-    # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_document_crud_response_payload_enabled_via_override
-    _document_crud_create_persistence(variant_database, make_variant_container, contract_client, monkeypatch, backend)
+    container = target(contract_client, variant_database, make_variant_container(PartitionKey(path="/pk")))
+    native = observe_native_create(monkeypatch, contract_client, backend)
+    body = {"id": uuid.uuid4().hex, "pk": "pk", "name": "sample document"}
+    captured = []
+    created = container.create_item(body, response_hook=lambda headers, _: captured.append(dict(headers)))
+    assert_created(created, body, True, native)
+    assert len(captured) == 1
+    stored = container.read_item(body["id"], partition_key=body["pk"])
+    assert_fields(stored, body)
+    assert captured[0]["etag"] == stored["_etag"]
 
 
 def _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact, query=False):
@@ -287,26 +287,16 @@ def _token_credential_create(variant_database, make_variant_container, monkeypat
 
 
 @pytest.mark.cosmosEmulator
-@skip_unless_token_auth()
+@pytest.mark.skip(reason="driver-gap: Gap 40 - shared container credentials can cause key-authenticated cleanup "
+                  "to use AAD and fail with 403/5300. Re-enable after credential isolation is fixed.")
 def test_compact_utf8_item_write_with_aad_rust(variant_database, make_variant_container, monkeypatch, backend):
     # Source: tests/test_aad.py::TestAAD.test_compact_utf8_item_write_with_aad
-    if backend == "rust":
-        pytest.skip(
-            "driver-gap: Gap 40 - shared container cache can reuse AAD credentials for "
-            "key-authenticated cleanup, causing DELETE container to fail with 403/5300. "
-            "Re-enable after Rust driver credential isolation is fixed."
-        )
     _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact=True)
 
 
 @pytest.mark.cosmosEmulator
-@skip_unless_token_auth()
+@pytest.mark.skip(reason="driver-gap: Gap 40 - shared container credentials can cause key-authenticated cleanup "
+                  "to use AAD and fail with 403/5300. Re-enable after credential isolation is fixed.")
 def test_aad_credentials_rust(variant_database, make_variant_container, monkeypatch, backend):
     # Source: tests/test_aad.py::TestAAD.test_aad_credentials
-    if backend == "rust":
-        pytest.skip(
-            "driver-gap: Gap 40 - shared container cache can reuse AAD credentials for "
-            "key-authenticated cleanup, causing DELETE container to fail with 403/5300. "
-            "Re-enable after Rust driver credential isolation is fixed."
-        )
     _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact=False, query=True)

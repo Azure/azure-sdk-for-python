@@ -11,8 +11,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from common.database_backend_stubs import (
-    _BindingAdapter,
-    _AsyncBindingAdapter,
+    _FakeBackend,
+    _AsyncFakeBackend,
     _call_database_read,
     make_database_read_case,
 )
@@ -218,7 +218,7 @@ def test_sync_read_database_routes_to_rust_and_parses_response_rust():
         ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         BackendResponse(
             status_code=200,
             headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
@@ -253,7 +253,7 @@ def test_sync_read_database_routes_to_rust_and_parses_response_rust():
 
 def test_sync_read_database_maps_not_found_and_skips_hook_rust():
     """A not-found from the Rust engine still raises the typed not-found error."""
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         BackendResponse(
             status_code=404,
             headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
@@ -276,7 +276,7 @@ def test_sync_read_database_maps_not_found_and_skips_hook_rust():
 
 def test_sync_database_proxy_read_selects_rust_backend_rust():
     """The public sync proxy delegates its read through the stored backend."""
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         BackendResponse(
             status_code=200,
             headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
@@ -299,7 +299,7 @@ def test_sync_database_proxy_read_selects_rust_backend_rust():
 
 def test_sync_database_proxy_read_rejects_deprecated_session_token_rust():
     """Obsolete session-token usage fails before any request is sent."""
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         BackendResponse(
             status_code=200,
             headers=CaseInsensitiveDict({}),
@@ -832,7 +832,7 @@ def test_async_read_database_routes_to_rust():
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             last_response_headers={},
         )
-        backend = _AsyncBindingAdapter(
+        backend = _AsyncFakeBackend(
             BackendResponse(
                 status_code=200,
                 headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
@@ -881,7 +881,7 @@ def test_async_read_database_maps_not_found_and_skips_hook_rust():
 
     async def run():
         """Confirm a Rust 404 response raises ``CosmosResourceNotFoundError`` and the hook is never called."""
-        backend = _AsyncBindingAdapter(
+        backend = _AsyncFakeBackend(
             BackendResponse(
                 status_code=404,
                 headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
@@ -932,7 +932,7 @@ def test_read_database_rejects_options_rust_cannot_honor_rust(
         ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "legacy"}),
         last_response_headers={},
     )
-    backend = _BindingAdapter()
+    backend = _FakeBackend()
 
     with pytest.raises(error, match=message):
         DatabaseHelper(connection, backend).read_database(
@@ -952,7 +952,7 @@ def test_read_database_rejects_driver_owned_initial_header_rust():
         ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "legacy"}),
         last_response_headers={},
     )
-    backend = _BindingAdapter()
+    backend = _FakeBackend()
 
     with pytest.raises(TypeError, match="initial_headers.*Accept"):
         DatabaseHelper(connection, backend).read_database("db1", request_options)
@@ -988,7 +988,7 @@ def test_async_read_database_rejects_options_rust_cannot_honor_rust(
             ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "legacy"}),
             last_response_headers={},
         )
-        backend = _AsyncBindingAdapter()
+        backend = _AsyncFakeBackend()
 
         with pytest.raises(error, match=message):
             await AsyncDatabaseHelper(connection, backend).read_database(
@@ -1013,7 +1013,7 @@ def test_async_read_database_rejects_driver_owned_initial_header_rust():
             ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "legacy"}),
             last_response_headers={},
         )
-        backend = _AsyncBindingAdapter()
+        backend = _AsyncFakeBackend()
 
         with pytest.raises(TypeError, match="initial_headers.*x-ms-version"):
             await AsyncDatabaseHelper(connection, backend).read_database(
@@ -1031,7 +1031,7 @@ def test_async_database_proxy_read_selects_rust_backend_rust():
 
     async def run():
         """Read via the public async proxy and confirm Rust serves the request, not the legacy connection."""
-        backend = _AsyncBindingAdapter(
+        backend = _AsyncFakeBackend(
             BackendResponse(
                 status_code=200,
                 headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
@@ -1059,7 +1059,7 @@ def test_async_database_proxy_read_rejects_deprecated_session_token_rust():
 
     async def run():
         """No request is prepared for an obsolete option."""
-        backend = _AsyncBindingAdapter(
+        backend = _AsyncFakeBackend(
             BackendResponse(
                 status_code=200,
                 headers=CaseInsensitiveDict({}),

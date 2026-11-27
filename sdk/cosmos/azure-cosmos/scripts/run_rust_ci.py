@@ -96,6 +96,21 @@ OFFLINE_SKIPS = {
 }
 
 
+def offline_skip_reasons(platform: str) -> dict[str, set[str]]:
+    """Return reviewed offline skip reasons for the runner's operating system.
+
+    :param platform: The value of sys.platform.
+    :type platform: str
+    :return: Test module paths relative to tests, with their allowed skip reasons.
+    :rtype: dict[str, set[str]]
+    """
+    reasons = OFFLINE_SKIPS.copy()
+    if platform in ("linux", "darwin"):
+        # These helpers exercise Windows Job Objects; Windows still requires execution.
+        reasons["toxiproxy/test_toxiproxy_local_unit.py"] = {"Windows process-tree ownership"}
+    return reasons
+
+
 def discover_tests(root: Path, suite: str) -> list[Path]:
     """Include maintained matching modules, excluding local-only originals and comparisons.
 
@@ -239,7 +254,7 @@ class RequiredCoverage:
             self.file_ids.setdefault(path, set()).add(item.nodeid)
             self.selected.add(item.nodeid)
             # Existing unconditional skips document intentionally unsupported contracts.
-            # Environment-dependent skipif/importorskip never qualifies.
+            # Environment-dependent skips require an explicit file-scoped allowance.
             reasons = (
                 {mark.kwargs["reason"] for mark in item.iter_markers("skip") if mark.kwargs.get("reason")}
                 if self.allow_declared_skips
@@ -332,7 +347,10 @@ def run_native(results: Path, variant: str = "all") -> int:
         if completed.returncode:
             return completed.returncode
     for log_name, features in runs:
-        command = ["cargo", "test", "--workspace", "--locked", *features, "--", "--test-threads=1"]
+        command = [
+            "cargo", "test", "--workspace", "--locked", "--no-default-features",
+            *features, "--", "--test-threads=1",
+        ]
         with (results / log_name).open("w", encoding="utf-8") as log:
             completed = subprocess.run(
                 command, cwd=PACKAGE, env=environment, stdout=log, stderr=subprocess.STDOUT, check=False
@@ -473,7 +491,7 @@ def main() -> int:
     if args.suite == "cancellation":
         options.append("--confcutdir=" + str(PACKAGE / "tests" / "fault_injection"))
     expected_skips = (
-        {(PACKAGE / "tests" / name).resolve(): reasons for name, reasons in OFFLINE_SKIPS.items()}
+        {(PACKAGE / "tests" / name).resolve(): reasons for name, reasons in offline_skip_reasons(sys.platform).items()}
         if args.suite == "offline"
         else {}
     )

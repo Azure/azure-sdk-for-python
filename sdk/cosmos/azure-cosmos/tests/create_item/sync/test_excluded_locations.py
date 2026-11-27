@@ -44,7 +44,7 @@ class TestExcludedLocations:
             container = client.get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
             body = {"id": f"doc2-{uuid.uuid4()}", **PARTITION_KEY_ITEMS}
             options = {} if request_exclusions is None else {"excluded_locations": request_exclusions}
-            created = container.create_item(body, tracing_enable=False, **options)
+            created = container.create_item(body, tracing_options={"enabled": False}, **options)
 
             assert all(created[key] == value for key, value in body.items())
             regions = _rust._debug_cached_account_regions(client._adapter._ensure_driver_handle())

@@ -28,30 +28,15 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         # Same split as the original: key_database provisions, database_for_test
         # (AAD in the cosmosAAD* lanes) runs the tested operations.
         self.key_client = create_setup_client_async()
+        self.addAsyncCleanup(self.key_client.close)
         await self.key_client.__aenter__()
         self.client = create_data_client_async(_backend="rust")
-        try:
-            await self.client.__aenter__()
-        except BaseException:
-            await self.key_client.close()
-            raise
+        self.addAsyncCleanup(self.client.close)
+        await self.client.__aenter__()
         self._db_id = "qi_crud_subpartition_async_" + uuid.uuid4().hex
-        self.key_database = None
-        try:
-            self.key_database = await self.key_client.create_database(self._db_id)
-        except BaseException:
-            await self.client.close()
-            await self.key_client.close()
-            raise
+        self.key_database = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self.key_client.delete_database, self._db_id)
         self.database_for_test = self.client.get_database_client(self._db_id)
-
-    async def asyncTearDown(self):
-        try:
-            if self.key_database is not None:
-                await self.key_client.delete_database(self._db_id)
-        finally:
-            await self.client.close()
-            await self.key_client.close()
 
     async def test_partitioned_collection_document_crud_and_query_subpartition_async_rust(self):
         # pylint: disable-next=line-too-long
@@ -161,7 +146,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
             await created_collection.read_item(created_document, partition_key=["Redmond"])
             self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
-            assert error.status_code, StatusCodes.BAD_REQUEST
+            assert error.status_code == StatusCodes.BAD_REQUEST
             assert error.sub_status == SubStatusCodes.PARTITION_KEY_MISMATCH
 
         # using mix value types for partition key

@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Checks that a call really ran through the Rust binding.
-
-Standalone Rust behavior tests (modules carrying the ``# Rust behavior test``
-header) use these helpers instead of the retiring parity framework.
+"""Helpers that tests use to check two things: that an SDK call really ran in
+the SDK's compiled code, and that pages returned by the live service carry the
+expected headers.
 """
 
 from __future__ import annotations
@@ -18,11 +17,22 @@ from config.diagnostics import _binding_operation_count
 T = TypeVar("T")
 
 
-def assert_live_page_headers(snapshots: Sequence[Mapping[str, Any]]) -> None:
-    """Require charged, diagnosed service pages with distinct activity IDs."""
-    assert snapshots, "no page headers were captured"
+def assert_live_page_headers(page_headers: Sequence[Mapping[str, Any]]) -> None:
+    """Helper for paging tests: check that every page came from its own request
+    to the live service.
+
+    ``page_headers`` holds the response headers of each page, usually collected
+    with ``response_hook``. Every page must have an activity ID, a request
+    charge above zero and SDK diagnostics, and no two pages can share an
+    activity ID.
+
+    Example::
+
+        assert_live_page_headers(page_headers)
+    """
+    assert page_headers, "no page headers were captured"
     activity_ids = []
-    for headers in snapshots:
+    for headers in page_headers:
         assert headers["x-ms-activity-id"]
         assert float(headers["x-ms-request-charge"]) > 0
         assert headers["x-ms-cosmos-sdk-diagnostics"]
@@ -46,10 +56,16 @@ def assert_rust_client(client: Any) -> None:
 
 
 def run_on_rust(client: Any, call: Callable[[], T]) -> T:
-    """Run ``call`` and fail unless it entered the Rust binding.
+    """Helper for tests: run ``call``, return its result, and fail the test if
+    ``call`` did not start an operation in the SDK's compiled code.
 
-    The counter is process-wide, so keep the checked call isolated from
-    unrelated concurrent work.
+    Example::
+
+        run_on_rust(client, lambda: orders.read_item(item_id, partition_key="b"))
+
+    The check compares an operation counter before and after ``call``. The
+    counter is shared by the whole Python process, so the test must not make
+    other SDK calls from another thread or async task while ``call`` runs.
     """
     assert_rust_client(client)
     before = _binding_operation_count()

@@ -19,7 +19,7 @@ from dataclasses import replace
 from typing import Any, Callable, Mapping, Optional
 
 from ..._backend.capabilities import OperationRouting
-from ..._backend.contracts import PreparedRequest
+from ..._backend.contracts import BackendResponse, PreparedRequest
 from ..._backend.operations import (
     OP_CREATE_CONTAINER,
     OP_READ_CONTAINER,
@@ -131,7 +131,7 @@ class AsyncContainerHelper:
         container_link: Any,
         request_options: Mapping[str, Any],
         *,
-        response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Optional[CosmosDict]], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
         routing: Optional[OperationRouting] = None,
         deadline: Optional[float] = None,
@@ -149,6 +149,7 @@ class AsyncContainerHelper:
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
+        not_modified = False
 
         def build_request() -> PreparedRequest:
             return build_read_container_prepared(
@@ -156,6 +157,11 @@ class AsyncContainerHelper:
                 request_options,
                 kwargs=operation_kwargs,
             )
+
+        def process_response(response: BackendResponse) -> CosmosDict:
+            nonlocal not_modified
+            not_modified = response.status_code == 304
+            return process_backend_response(response, client_connection=self._client_connection)
 
         supported = is_read_container_rust_eligible(request_options, operation_kwargs)
         routing = (
@@ -174,10 +180,7 @@ class AsyncContainerHelper:
                     options=legacy_deadline_options(request_options, deadline),
                     **legacy_deadline_kwargs(operation_kwargs, deadline),
                 ),
-                process_response=lambda response: process_backend_response(
-                    response,
-                    client_connection=self._client_connection,
-                ),
+                process_response=process_response,
                 deadline=deadline,
             ),
             deadline,
@@ -186,7 +189,7 @@ class AsyncContainerHelper:
         remaining_timeout(deadline)
         on_response = with_response_header_snapshot(response_hook, copy_body=True)
         if on_response is not None:
-            on_response(result.get_response_headers(), result)
+            on_response(result.get_response_headers(), None if not_modified else result)
         return result
 
     async def delete_container(

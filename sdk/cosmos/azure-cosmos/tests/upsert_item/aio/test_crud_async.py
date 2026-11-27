@@ -31,13 +31,13 @@ class MockHandler(logging.Handler):
 
     def __init__(self):
         super(MockHandler, self).__init__()
-        self.messages = []
+        self.records = []
 
     def reset(self):
-        self.messages = []
+        self.records = []
 
     def emit(self, record):
-        self.messages.append(record)
+        self.records.append(record)
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -196,7 +196,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                     "request logging ('x-ms-thinclient-proxy-resource-type': 'colls'); the Rust driver "
                     "caches container metadata internally and does not emit these records. "
                     "All 10 concurrent upserts ran.")
-        assert sum("'x-ms-thinclient-proxy-resource-type': 'colls'" in response.message for response in mock_handler.messages) == 1
+        assert sum("'x-ms-thinclient-proxy-resource-type': 'colls'" in response.message for response in mock_handler.records) == 1
 
     async def test_query_iterable_functionality_async_rust(self):
         # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_query_iterable_functionality_async

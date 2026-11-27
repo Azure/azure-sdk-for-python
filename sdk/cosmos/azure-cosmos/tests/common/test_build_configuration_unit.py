@@ -196,6 +196,7 @@ def test_prototype_wheel_targets_rust():
     assert config["build-system"]["backend-path"] == ["."]
     assert config["tool"]["maturin"]["locked"] is True
     assert config["tool"]["maturin"]["module-name"] == "azure.cosmos._rust"
+    assert config["tool"]["maturin"]["features"] == ["pyo3/extension-module"]
 
 
 def test_driver_source_and_features_are_preserved_rust():
@@ -226,8 +227,10 @@ def test_driver_source_and_features_are_preserved_rust():
         "__internal_in_memory_emulator", "fault_injection"
     ]
     assert binding["features"]["test-probes"] == ["azure_data_cosmos_driver/fault_injection"]
+    assert binding["features"]["default"] == ["extension-module"]
+    assert binding["features"]["extension-module"] == ["pyo3/extension-module"]
     assert set(binding["dependencies"]["pyo3"]["features"]) == {
-        "extension-module", "abi3-py310", "generate-import-lib"
+        "abi3-py310", "generate-import-lib"
     }
     lock = _read_toml(PACKAGE_ROOT / "Cargo.lock")
     locked_drivers = [package for package in lock["package"] if package["name"] == "azure_data_cosmos_driver"]

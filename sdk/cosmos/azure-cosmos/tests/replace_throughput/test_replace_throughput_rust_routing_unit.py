@@ -9,15 +9,14 @@ from __future__ import annotations
 from common.typed_requests import legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 from common.sdk_subprocess import sdk_python_command
+from common.local_cosmos_server import local_cosmos_server
 
 from copy import deepcopy
 from contextlib import contextmanager
 import json
 import os
 import subprocess
-import threading
 import time
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -142,43 +141,12 @@ def _native_driver():
     """Acquire a real binding handle using only a loopback account response."""
     from azure.cosmos import ConnectionPoolOptions, CosmosClient, CosmosRuntime
 
-    requests = []
-
-    class Handler(BaseHTTPRequestHandler):
-        def do_GET(self):  # pylint: disable=invalid-name
-            requests.append(self.path)
-            location = {"name": "East US", "databaseAccountEndpoint": endpoint}
-            body = json.dumps({
-                "id": "test", "_rid": "AQAAAA==", "_self": "",
-                "writableLocations": [location], "readableLocations": [location],
-            }).encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-
-        def do_PUT(self):  # pylint: disable=invalid-name
-            requests.append(self.path)
-            self.send_error(500, "No throughput write should be dispatched")
-
-        def log_message(self, *_args):
-            pass
-
     runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(proxy_allowed=False))
-    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
-    endpoint = f"http://127.0.0.1:{server.server_port}"
-    worker = threading.Thread(target=server.serve_forever, daemon=True)
-    worker.start()
-    try:
-        with CosmosClient(endpoint, "ZmFrZQ==", _backend="rust", runtime=runtime) as client:
+    with local_cosmos_server() as server:
+        with CosmosClient(server.endpoint, "ZmFrZQ==", _backend="rust", runtime=runtime) as client:
             handle = client._adapter._ensure_driver_handle(deadline=time.monotonic() + 5)
-            assert requests == ["/"]
-            yield SimpleNamespace(handle=handle, requests=requests)
-    finally:
-        server.shutdown()
-        server.server_close()
-        worker.join(3)
+            assert [request.path for request in server.requests] == ["/"]
+            yield SimpleNamespace(handle=handle, requests=server.requests)
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
@@ -214,6 +182,6 @@ def _check_native_replacement_controls(asynchronous):
         # A real handle gets past argument conversion to the native timeout check.
         with pytest.raises(ValueError, match="timeout_seconds must be positive"):
             function(driver.handle, prepared, timeout_seconds=0, include_attempts=True)
-        assert driver.requests == ["/"]
+        assert [request.path for request in driver.requests] == ["/"]
     assert not hasattr(_rust, "read_offer")
     assert not hasattr(_rust, "replace_offer")

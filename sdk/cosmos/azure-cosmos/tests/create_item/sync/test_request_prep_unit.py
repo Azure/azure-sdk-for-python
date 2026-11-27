@@ -51,8 +51,8 @@ class TestHappyPathComposition(unittest.TestCase):
     keyword arguments the prep recognises.
 
     These three tests show that the prep returns a fully-formed
-    ``PreparedRequest``, that it consumes the keyword arguments it
-    recognises (so the caller doesn't forward them twice), and that the
+    ``PreparedRequest``, that it rejects unknown keywords without changing
+    the caller's dictionary, and that the
     body bytes parse cleanly back into the dict the body now carries.
     """
 
@@ -88,23 +88,21 @@ class TestHappyPathComposition(unittest.TestCase):
         # The rid is set into the headers under the key the SDK reads.
         self.assertEqual(wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"], "rid-orders-1")
 
-    def test_kwargs_dict_is_consumed_by_compose_step_rust(self):
-        """The prep removes every recognised keyword argument from the input
-        dict, so the caller doesn't forward it a second time to azure-core."""
+    def test_unknown_kwargs_rejected_without_mutating_input_rust(self):
+        """Unknown settings fail without modifying the caller's options."""
         kwargs = {
             "priority": "High",
             "extra_unknown": "left-alone",
         }
-        prepare_create_item_request(
-            container_link="dbs/db/colls/c",
-            body={"id": "x"},
-            partition_key_value="pk",
-            container_rid="rid",
-            kwargs=kwargs,
-        )
-        self.assertEqual(kwargs["priority"], "High")
-        # Keyword arguments the prep doesn't recognise stay put.
-        self.assertEqual(kwargs["extra_unknown"], "left-alone")
+        with self.assertRaisesRegex(TypeError, "create_item.*extra_unknown"):
+            prepare_create_item_request(
+                container_link="dbs/db/colls/c",
+                body={"id": "x"},
+                partition_key_value="pk",
+                container_rid="rid",
+                kwargs=kwargs,
+            )
+        self.assertEqual(kwargs, {"priority": "High", "extra_unknown": "left-alone"})
 
     def test_body_bytes_are_json_round_trippable_rust(self):
         """The serialised body bytes parse back into the dict the body now
@@ -411,7 +409,7 @@ class TestTriggerIncludeRejection(unittest.TestCase):
         for key in ("pre_trigger_include", "post_trigger_include"):
             for value in ("validateOrder", ["t1", "t2"], ("a", "b"), ["only"], None, []):
                 with self.subTest(key=key, value=value):
-                    with self.assertRaisesRegex(TypeError, "triggers are excluded"):
+                    with self.assertRaisesRegex(TypeError, key):
                         prepare_create_item_request(
                             container_link="dbs/db/colls/c",
                             body={"id": "x"},

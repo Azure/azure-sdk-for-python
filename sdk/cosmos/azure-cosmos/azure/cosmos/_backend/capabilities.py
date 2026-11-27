@@ -212,6 +212,7 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     ops.OP_READ_CONTAINER: OpCapability(
         frozenset({ops.OP_READ_CONTAINER}),
+        unsupported_error_type=TypeError,
         unsupported_message=(
             "ContainerProxy.read cannot run on the Rust backend for this call because a per-call "
             "setting, request hook, or header override cannot be honored. Remove the unsupported "

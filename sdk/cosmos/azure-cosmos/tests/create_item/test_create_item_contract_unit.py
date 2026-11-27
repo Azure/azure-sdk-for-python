@@ -18,6 +18,7 @@ response conversion, callbacks, and isolation of customer-owned input.
 import asyncio
 import inspect
 import json
+import logging
 from dataclasses import replace
 from functools import partial
 from types import MappingProxyType
@@ -124,6 +125,258 @@ def test_retired_options_are_rejected_before_metadata_rust(point_create, name, v
     with pytest.raises(TypeError, match=name):
         point_create.call({"id": "item"}, **{name: value})
     assert point_create.events == []
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("name", [
+    "retry_total", "retry_connect", "retry_read", "retry_status",
+    "retry_backoff_factor", "retry_backoff_max", "retry_on_methods",
+])
+@pytest.mark.parametrize("value", [None, 0, 1])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_retry_policy_controls_are_rejected_before_create_dispatch_rust(point_create, name, value, source):
+    options = {name: value}
+    kwargs = options if source == "keyword" else {source: options}
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=f"create_item.*{name}"):
+        point_create.call({"id": "order-42"}, response_hook=hook, **kwargs)
+    assert options == {name: value}
+    assert point_create.events == []
+    assert point_create.native_calls == 0
+    hook.assert_not_called()
+    point_create.cc.CreateItem.assert_not_called()
+    point_create.proxy.read.assert_not_called()
+    point_create.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("name,value", [
+    ("proxy", None), ("proxy", False), ("proxy", "http://unused.invalid:3128"),
+    ("stream", None), ("stream", False), ("stream", True),
+    ("retry_writes", None), ("retry_writes", 1), ("unknown_setting", False),
+    ("tracing_enable", False),
+])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_unknown_and_transport_create_options_fail_before_dispatch_rust(point_create, name, value, source):
+    options = {name: value}
+    kwargs = options if source == "keyword" else {source: options}
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=name):
+        point_create.call({"id": "order-42"}, response_hook=hook, **kwargs)
+    assert options == {name: value}
+    assert point_create.events == []
+    assert point_create.native_calls == 0
+    hook.assert_not_called()
+    point_create.cc.CreateItem.assert_not_called()
+    point_create.proxy.read.assert_not_called()
+    point_create.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("name,internal,value", [
+    ("filter_predicate", "filterPredicate", "FROM c WHERE false"),
+    ("patch_operations", "patch_operations", []),
+    ("max_item_count", "maxItemCount", 1),
+    ("populate_query_metrics", "populateQueryMetrics", True),
+    ("continuation", "continuation", "next-page"),
+    ("is_query_plan_request", "isQueryPlanRequest", True),
+    ("max_integrated_cache_staleness_in_ms", "maxIntegratedCacheStaleness", 1000),
+    ("offer_enable_ru_per_minute_throughput", "offerEnableRUPerMinuteThroughput", True),
+    ("if_match", "if_match", '"version"'),
+    ("if_none_match", "if_none_match", "*"),
+    ("access_condition", "accessCondition", {"type": "IfMatch", "condition": '"version"'}),
+    ("item_id", "item_id", "another-item"),
+])
+@pytest.mark.parametrize("empty", [None, False, "supplied"])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_inapplicable_create_options_fail_before_dispatch_rust(
+    point_create, name, internal, value, empty, source
+):
+    value = value if empty == "supplied" else empty
+    key = name if source == "keyword" else internal
+    options = {key: value}
+    kwargs = options if source == "keyword" else {source: options}
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=key):
+        point_create.call({"id": "order-42"}, response_hook=hook, **kwargs)
+    assert options == {key: value}
+    assert point_create.events == []
+    assert point_create.native_calls == 0
+    hook.assert_not_called()
+    point_create.cc.CreateItem.assert_not_called()
+    point_create.proxy.read.assert_not_called()
+    point_create.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("header", [
+    "X-MS-MAX-ITEM-COUNT", "x-ms-documentdb-populatequerymetrics", "If-Match", "If-None-Match",
+])
+@pytest.mark.parametrize("source", ["initial_headers", "request_options", "feed_options", "nested_headers"])
+def test_inapplicable_create_header_aliases_fail_before_dispatch_rust(point_create, header, source):
+    options = {header: "1"}
+    kwargs = (
+        {"request_options": {"initialHeaders": options}} if source == "nested_headers" else {source: options}
+    )
+    with pytest.raises(TypeError, match=f"(?i){header}"):
+        point_create.call({"id": "order-42"}, **kwargs)
+    assert options == {header: "1"}
+    assert point_create.events == []
+    assert point_create.native_calls == 0
+    point_create.cc.CreateItem.assert_not_called()
+    point_create.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+def test_create_validation_preserves_selected_option_mapping_rust(point_create):
+    ignored = {"maxItemCount": 1}
+    result = point_create.call({"id": "order-42"}, request_options=None, feed_options=ignored)
+    assert result["id"] == "order-42"
+    assert ignored == {"maxItemCount": 1}
+    assert point_create.native_calls == 1
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("source", ["request_options", "feed_options"])
+def test_supported_nested_create_options_still_dispatch_rust(point_create, source):
+    options = MappingProxyType({
+        "partitionKey": "customer-17", "indexingDirective": 2,
+        "sessionToken": "0:-1#1", "throughputBucket": 7,
+        "contentType": "application/json", "utf8DecodingMode": "Strict",
+        "responsePayloadOnWriteDisabled": False, "timeout": 5,
+        "x-ms-custom": "value", "x-ms-activity-id": "create-activity",
+    })
+    result = point_create.call({"id": "order-42", "pk": "customer-17"}, **{source: options})
+    assert result["id"] == "order-42"
+    assert point_create.native_calls == 1
+    settings = point_create.prepared.settings
+    assert settings.item.indexing_directive == 2
+    assert settings.session_token == "0:-1#1"
+    assert settings.throughput_bucket == 7
+    assert settings.activity_id == "create-activity"
+    assert settings.resource.content_type == "application/json"
+    assert legacy_partition_key_from_request(point_create.prepared) == '["customer-17"]'
+    assert wire_headers(point_create.prepared)["x-ms-custom"] == "value"
+    assert point_create.events[-1] == ("write", 5)
+    point_create.cc.CreateItem.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+def test_supported_create_request_and_telemetry_options_still_dispatch_rust(point_create):
+    hook = MagicMock()
+    options = {"priorityLevel": "Low"}
+    result = point_create.call(
+        {"id": "order-42"}, request_options=options, priority="High",
+        timeout=5, connection_timeout=None, response_hook=hook,
+        excluded_locations=["East US"], initial_headers={"x-ms-custom": "value"},
+        tracing_options={"enabled": False}, tracing_attributes={"test": "create"},
+        logger=logging.getLogger(__name__), logging_enable=False,
+    )
+    assert result["id"] == "order-42"
+    assert options == {"priorityLevel": "Low"}
+    assert point_create.native_calls == 1
+    assert point_create.prepared.settings.priority == "High"
+    assert point_create.prepared.settings.excluded_locations == ("East US",)
+    assert point_create.events[-1] == ("write", 5)
+    assert wire_headers(point_create.prepared)["x-ms-custom"] == "value"
+    hook.assert_called_once()
+    point_create.cc.CreateItem.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, False), (True, False)], ids=["sync-legacy", "async-legacy"], indirect=True
+)
+@pytest.mark.parametrize("name,value", [
+    ("retry_total", 0), ("retry_connect", 0), ("retry_read", 0), ("retry_status", 0),
+    ("retry_backoff_factor", 0), ("retry_backoff_max", 0), ("retry_on_methods", ["POST"]),
+])
+def test_retry_policy_controls_still_reach_explicit_legacy_create_rust(point_create, name, value):
+    assert point_create.call({"id": "order-42"}, **{name: value})["id"] == "order-42"
+    point_create.cc.CreateItem.assert_called_once()
+    assert point_create.cc.CreateItem.call_args.kwargs[name] == value
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("name,internal,value", [
+    ("retry_write", "retry_write", 0),
+    ("retry_write", "retry_write", False),
+    ("retry_write", "retry_write", 1),
+    ("connection_timeout", "connection_timeout", 0),
+    ("connection_timeout", "connection_timeout", False),
+    ("connection_timeout", "connection_timeout", 2),
+    ("initial_headers", "initialHeaders", {"Accept": "custom"}),
+    ("initial_headers", "initialHeaders", {"Cache-Control": "custom"}),
+    ("initial_headers", "initialHeaders", {"uSeR-aGeNt": "custom"}),
+    ("initial_headers", "initialHeaders", {"x-ms-version": "custom"}),
+    ("availability_strategy", "availabilityStrategy", True),
+    ("availability_strategy", "availabilityStrategy", {}),
+    ("availability_strategy", "availabilityStrategy", {"threshold_ms": 100}),
+    ("availability_strategy", "availability_strategy", True),
+])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_unsupported_create_settings_raise_type_error_before_dispatch_rust(
+    point_create, name, internal, value, source
+):
+    kwargs = {name: value} if source == "keyword" else {source: {internal: value}}
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=name):
+        point_create.call({"id": "order-42"}, response_hook=hook, **kwargs)
+    assert point_create.events == []
+    assert point_create.native_calls == 0
+    hook.assert_not_called()
+    point_create.cc.CreateItem.assert_not_called()
+    point_create.proxy.read.assert_not_called()
+    point_create.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("strategy", [None, False])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_create_without_unsupported_overrides_still_dispatches_rust(point_create, strategy, source):
+    options = {"retry_write": None}
+    if source == "keyword":
+        options.update(
+            connection_timeout=None, availability_strategy=strategy,
+            initial_headers={"x-ms-custom": "value"},
+        )
+        kwargs = options
+    else:
+        options.update(availabilityStrategy=strategy, initialHeaders={"x-ms-custom": "value"})
+        kwargs = {source: options}
+    assert point_create.call({"id": "order-42"}, **kwargs)["id"] == "order-42"
+    assert point_create.native_calls == 1
+    assert wire_headers(point_create.prepared)["x-ms-custom"] == "value"
+    point_create.cc.CreateItem.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, False), (True, False)], ids=["sync-legacy", "async-legacy"], indirect=True
+)
+@pytest.mark.parametrize("options", [
+    {"retry_write": 0}, {"connection_timeout": 2},
+    {"initial_headers": {"User-Agent": "custom"}}, {"availability_strategy": True},
+])
+def test_explicit_legacy_create_keeps_its_supported_settings_rust(point_create, options):
+    assert point_create.call({"id": "order-42"}, **options)["id"] == "order-42"
+    point_create.cc.CreateItem.assert_called_once()
 
 
 def test_only_body_is_positional_rust(point_create):

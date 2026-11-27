@@ -10,7 +10,7 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
-use pyo3::exceptions::{PyNotImplementedError, PyValueError};
+use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyBytesMethods};
 
@@ -89,8 +89,8 @@ impl RequestHeadersAndOptions {
         crate::runtime::read_consistency_from_str(value.as_str())
             .map(Some)
             .ok_or_else(|| {
-                PyNotImplementedError::new_err(format!(
-                    "The Rust binding cannot represent per-call consistency {:?}; \
+                PyValueError::new_err(format!(
+                    "Invalid per-call consistency {:?}; \
                      supported levels are Eventual, ConsistentPrefix, Session, \
                      BoundedStaleness, and Strong.",
                     value.as_str(),

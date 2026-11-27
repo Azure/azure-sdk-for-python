@@ -1,15 +1,15 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Copied legacy container lifecycle assertions with _backend="rust".
+"""Copied legacy container-listing assertions with _backend="rust".
 
 This aio copy retains the source assertions and owns its setup database.
 Method-level Source comments identify the originals. Cleanup is registered
 for the owned resources, but service failures can still prevent deletion.
 
-The listing assertion checks a count increase after creation; the filtered
-query assertion checks that results are nonempty. Neither is exhaustive
-paging coverage or proof of each internal routing step. Lazy results are
-consumed before assertions.
+The write-payload-disabled and hierarchical-partition cases check a count
+increase after creation and the listed id or partition key. These are not
+exhaustive paging checks. Lazy results are consumed before assertions.
+The standard listing/query lifecycle remains in query_containers.
 
 Separate parity tests compare backends. This file runs its copied
 assertions with a Rust-selected client only.
@@ -22,7 +22,6 @@ import pytest
 
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -49,64 +48,6 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
             await self.key_client.delete_database(self._database_id)
         except exceptions.CosmosResourceNotFoundError:
             pass
-
-    async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
-        try:
-            await func(*args, **kwargs)
-            self.fail('function should fail.')
-        except exceptions.CosmosHttpResponseError as inst:
-            assert inst.status_code == status_code
-
-    async def test_collection_crud_async_rust(self):
-        """Container listing stays accurate across a create and a delete.
-
-        The full legacy lifecycle test, kept here for the listing half. It
-        counts containers, creates one, counts again and expects exactly one
-        more, then deletes it and confirms the container is really gone by
-        reading it and getting a 404.
-
-        The count comparison is the point: a listing that caches, pages badly,
-        or silently truncates would still return a plausible-looking list, and
-        only counting before and against after catches it.
-
-        The same legacy test is also copied into ``query_containers`` and
-        ``read_container``, each pinning the part of it they own.
-        """
-        # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_collection_crud_async
-        created_db = self.database_for_test
-        collections = [collection async for collection in created_db.list_containers()]
-        # create a collection
-        before_create_collections_count = len(collections)
-        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
-        collection_indexing_policy = {'indexingMode': 'consistent'}
-        created_collection = await created_db.create_container(id=collection_id,
-                                                               indexing_policy=collection_indexing_policy,
-                                                               partition_key=PartitionKey(path="/pk", kind="Hash"))
-        assert collection_id == created_collection.id
-
-        created_properties = await created_collection.read()
-        assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
-        assert PartitionKey(path='/pk', kind='Hash') == created_properties['partitionKey']
-
-        # read collections after creation
-        collections = [collection async for collection in created_db.list_containers()]
-        assert len(collections) == before_create_collections_count + 1
-        # query collections
-        collections = [collection async for collection in created_db.query_containers(
-
-            query='SELECT * FROM root r WHERE r.id=@id',
-            parameters=[
-                {'name': '@id', 'value': collection_id}
-            ]
-        )]
-
-        assert len(collections) > 0
-        # delete collection
-        await created_db.delete_container(created_collection.id)
-        # read collection after deletion
-        created_container = created_db.get_container_client(created_collection.id)
-        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
-                                                     created_container.read)
 
     async def test_collection_listing_with_write_payload_disabled_async_rust(self):
         """Disabling write payloads must not suppress listed container properties.

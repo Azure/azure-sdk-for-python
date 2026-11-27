@@ -642,7 +642,7 @@ def test_native_unknown_read_consistency_fails_before_driver_lookup_rust(
         headers={"x-ms-consistency-level": level} if raw_header else {},
         settings=RequestSettings(consistency_level=None if raw_header else level),
     )
-    with pytest.raises(NotImplementedError, match="per-call consistency"):
+    with pytest.raises(ValueError, match="per-call consistency"):
         getattr(binding, method)(
             driver_handle="invalid-driver-handle", prepared=prepared, timeout_seconds=timeout_seconds
         )

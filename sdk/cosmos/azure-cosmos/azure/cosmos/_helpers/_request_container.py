@@ -285,6 +285,7 @@ def build_read_container_prepared(
     :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
     """
     read_options = dict(request_options)
+    validate_container_retry_write_kwargs(read_options, "ContainerProxy.read")
     read_options.pop("sessionToken", None)
     headers, settings = account_request_settings(read_options, kwargs)
     return PreparedRequest(

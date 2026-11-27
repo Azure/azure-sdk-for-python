@@ -22,15 +22,11 @@
 """Provide the asynchronous CosmosClient used by the customer app.
 
 The customer app supplies an account address, credential, and optional
-settings. This module defines the Python wrapper's account client, which
-prepares and retains client state for later operations.
+settings. The client checks these inputs and saves them for later operations.
 
-For example, client.get_database_client("sales") returns an asynchronous
-DatabaseProxy without reading or creating the database. This call does
-not require await. Operations such as await database.read() then use
-the configured asynchronous Python backend.
-
-This module is Python wrapper code, not the binding or the Rust driver.
+Create one CosmosClient for each account and reuse it for all operations.
+For example, client = CosmosClient(url, credential=key) creates a client
+for one account.
 """
 
 import logging
@@ -313,15 +309,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> None:
         """Prepare this client from the supplied account address and credential.
 
-        Resolve client settings, select the asynchronous Python backend, and
-        retain the state used by later operations. Create and store
-        CosmosClientConnection for the operation helpers and client-lifecycle
-        methods that still require it.
+        Check the inputs and save them for later operations. No request is sent
+        to the service here. A wrong key or address is reported by
+        ``async with client:``, or by the first operation if ``async with`` is
+        not used.
 
         If construction fails, the customer app does not receive a usable client.
         """
         validate_credential(credential)
         reject_removed_options(kwargs)
+        self._url = url
         kwargs = resolve_connection_policy_kwargs(kwargs)
         # Choose which backend this client will use. A ``_backend=`` argument
         # wins; otherwise the COSMOS_BACKEND environment variable decides;
@@ -422,7 +419,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self.client_connection._backend = self._adapter  # pylint: disable=protected-access
 
     def __repr__(self) -> str:
-        return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
+        return "<CosmosClient [{}]>".format(self._url)[:1024]
 
     @trace_operation_async(
         binding_operation="initialize", operation_name="initialize", name_of_span="CosmosClient.__aenter__"

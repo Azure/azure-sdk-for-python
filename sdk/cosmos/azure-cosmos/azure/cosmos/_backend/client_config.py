@@ -94,8 +94,10 @@ def _normalize_locations(
     supplies no preferred or excluded regions.
 
     Preserve order and spelling, including surrounding whitespace on nonblank
-    names. This checks the input shape, not whether a region exists in the
-    account. Invalid sequences or blank/non-string entries raise ValueError.
+    names. Region names are later matched without regard to case or spaces, so
+    "West US" and "westus" select the same region. This checks the input shape,
+    not whether a region exists in the account. Invalid sequences or
+    blank/non-string entries raise ValueError.
 
     :param value: Region-name sequence to snapshot, or None.
     :type value: typing.Sequence[str] or None
@@ -108,14 +110,11 @@ def _normalize_locations(
         return ()
     if isinstance(value, (str, bytes)):
         raise ValueError(
-            "{name} must be a sequence of region-name strings (e.g. ['West US']), "
-            "not a bare string; got {val!r}. A bare string is read one character "
-            "at a time, which is never what you want here.".format(
-                name=arg_name, val=value
-            )
+            "{name} must be a list of region names, such as ['West US'], "
+            "not a single string; got {val!r}.".format(name=arg_name, val=value)
         )
     if not isinstance(value, Sequence):
-        raise ValueError("{} must be a sequence of region-name strings.".format(arg_name))
+        raise ValueError("{} must be a list of region names.".format(arg_name))
     if any(not isinstance(region, str) or not region.strip() for region in value):
         raise ValueError("{} must contain non-empty region-name strings.".format(arg_name))
     return tuple(value)

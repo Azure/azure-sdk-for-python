@@ -147,8 +147,9 @@ def pytest_collection_finish(session):
     """Create the shared databases and containers only if the run needs them.
 
     Runs after pytest has worked out which tests it is about to run. If every
-    one of them is a unit test (files named ``*_unit.py``), there is nothing to
-    set up and no account to reach, so this returns immediately. That is what
+    one of them is a unit test (files named ``*_unit.py``) or is marked
+    ``cosmosCustomerWheel``, there is nothing to set up and no account to reach,
+    so this returns immediately. That is what
     lets the routing tests for ``list_databases`` and the other operations run
     with no Cosmos account and no emulator.
     Do not provision for collection-only or aborted runs. An explicit request
@@ -158,7 +159,10 @@ def pytest_collection_finish(session):
         session.config.option.collectonly
         or (session.testsfailed and not session.config.option.continue_on_collection_errors)
         or not session.items
-        or all(item.path.name.endswith("_unit.py") for item in session.items)
+        or all(
+            item.path.name.endswith("_unit.py") or item.get_closest_marker("cosmosCustomerWheel") is not None
+            for item in session.items
+        )
     ):
         return
 

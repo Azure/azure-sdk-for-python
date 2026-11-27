@@ -40,12 +40,16 @@ from ..partition_key import (
 )
 from . import _request_item
 from ._client_context import ClientOperationDefaults, ClientLastResponseHeaders
-from ._request_settings import compose_item_options, is_supported_operation_timeout, overrides_driver_owned_header
+from ._request_settings import (
+    compose_item_options, is_supported_operation_timeout,
+    overrides_driver_owned_header,
+)
 from ._item_prep import (
     prepare_patch_item_kwargs,
     prepare_replace_item_kwargs,
     serialize_patch_body,
     apply_patch_item_options,
+    validate_create_item_arguments,
 )
 from ._document import build_create_document, serialize_document
 from ._resource_validation import validate_resource
@@ -70,6 +74,8 @@ def normalize_item_arguments(
     :return: Normalized request values and internal request options.
     :rtype: tuple[dict, dict]
     """
+    if op == "create_item":
+        validate_create_item_arguments(arguments)
     kwargs = dict(arguments)
     if (
         op in ("read_item", "replace_item", "patch_item", "delete_item")
@@ -105,9 +111,7 @@ def normalize_item_arguments(
         )
     populate_query_metrics = kwargs.pop("populate_query_metrics", None)
     options = compose_item_options(kwargs)
-    if (op == "create_item" and populate_query_metrics) or (
-        op in ("upsert_item", "replace_item") and populate_query_metrics is not None
-    ):
+    if op in ("upsert_item", "replace_item") and populate_query_metrics is not None:
         warnings.warn(
             "the populate_query_metrics flag does not apply to this method "
             "and will be removed in the future",
@@ -127,7 +131,9 @@ def normalize_item_arguments(
     return args, options
 
 
-def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) -> None:
+def validate_rust_item_options(
+    args: Dict[str, Any], options: Dict[str, Any], *, operation: Optional[str] = None,
+) -> None:
     """Reject options this path cannot honor, before anything is sent.
 
     Failing here is the point. The alternatives would be to send the request
@@ -137,16 +143,28 @@ def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) ->
 
     :param dict[str, Any] args: Normalized request values containing remaining call keywords.
     :param dict[str, Any] options: Internal request options checked for unsupported controls.
+    :keyword str or None operation: Item operation whose unsupported-input contract applies.
     :return: None.
     :rtype: None
     """
+    error_type = TypeError if operation == "create_item" else NotImplementedError
     for key in ("connection_timeout", "retry_write"):
         if args["kwargs"].get(key) is not None or options.get(key) is not None:
-            raise NotImplementedError(f"The Rust item backend does not support per-call {key}")
+            raise error_type(f"The Rust item backend does not support per-call {key}")
+    if operation == "create_item":
+        for name in ("availabilityStrategy", "availability_strategy"):
+            strategy = options.get(name)
+            if strategy is not None and strategy is not False:
+                raise TypeError(
+                    "create_item() does not support write hedging through availability_strategy; "
+                    "omit it or pass None or False."
+                )
     timeout = args["kwargs"].get("timeout", options.get("timeout"))
     if not is_supported_operation_timeout(timeout):
         raise ValueError("Item timeout must be None or a finite number of seconds >= 1 and < 2**64.")
     if overrides_driver_owned_header(options):
+        if operation == "create_item":
+            raise TypeError("create_item() cannot override driver-owned initial_headers.")
         raise NotImplementedError("The Rust item backend cannot override driver-owned initial headers")
 
 
@@ -299,7 +317,7 @@ class ItemHelper:
             op, arguments, compact_utf8=self._defaults.enable_compact_utf8_item_writes,
             deadline=deadline,
         )
-        validate_rust_item_options(args, options)
+        validate_rust_item_options(args, options, operation=op)
         self._defaults.apply_to_options(options)
         prepared = build_item_request(op, args, options, self._defaults)
         response = self._backend.execute(prepared, deadline=args["deadline"])

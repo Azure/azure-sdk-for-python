@@ -56,8 +56,19 @@ def fixture_package(tmp_path):
 
 
 @pytest.mark.parametrize("suite", ["allocator", "handoff"])
-def test_experiment_changes_only_copy_and_links_embedded_python(tooling, package, tmp_path, suite):
+@pytest.mark.parametrize("optional_extension", [False, True])
+def test_experiment_changes_only_copy_and_links_embedded_python(
+    tooling, package, tmp_path, suite, optional_extension
+):
     runner, _ = tooling
+    if optional_extension:
+        manifest_path = package / "azure_cosmos_rust" / "Cargo.toml"
+        manifest = manifest_path.read_text(encoding="utf-8").replace('    "extension-module",\n', "")
+        manifest += (
+            '\n[features]\ndefault = [\n    "extension-module",\n]\n'
+            'extension-module = ["pyo3/extension-module"]\n'
+        )
+        manifest_path.write_text(manifest, encoding="utf-8")
     before = runner.snapshot(package)
     copied, saved = runner.prepare_copy(package, tmp_path / suite)
     runner.instrument(copied, runner.ASSETS, suite, "linux")

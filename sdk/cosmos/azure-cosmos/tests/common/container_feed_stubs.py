@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Legacy connection fixtures retained by container feed migration tests."""
+"""Fakes for container listing tests.
+
+Gives tests a fake that returns one page of results, and connection objects
+that can be built without a network.
+"""
 
 from unittest.mock import MagicMock
 
@@ -20,16 +24,16 @@ from azure.cosmos.aio._cosmos_client_connection_async import (
 from azure.cosmos.documents import ConnectionPolicy
 
 
-class _CapturingPagedBackend(CosmosBackend):
-    """Records the paged request it was handed and yields one canned page."""
+class _FakePagedBackend(CosmosBackend):
+    """Fake that keeps the request it receives and returns one page of results."""
 
     def __init__(self, body: bytes) -> None:
-        """Store the canned page body to yield and a slot to capture the prepared request."""
+        """Store the page body to return."""
         self.body = body
         self.prepared = None
 
     def execute_pages(self, prepared, *, deadline=None):
-        """Record the prepared query and yield one canned page."""
+        """Keep the request and return one page with the stored body."""
         self.prepared = prepared
         yield BackendPage(
             status_code=200,
@@ -39,20 +43,20 @@ class _CapturingPagedBackend(CosmosBackend):
         )
 
     def execute(self, prepared, *, deadline=None):
-        """Fail immediately -- a paged backend must never be called through the single-reply path."""
-        raise AssertionError("a feed must not dispatch through the single-reply path")
+        """Fail the test. Listing must ask for pages, not a single reply."""
+        raise AssertionError("listing must ask for pages, not a single reply")
 
 
-class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
-    """Record the page request produced by asynchronous container methods."""
+class _AsyncFakePagedBackend(AsyncCosmosBackend):
+    """Async version of ``_FakePagedBackend``."""
 
     def __init__(self, body: bytes) -> None:
-        """Store the canned page body and a slot to capture the prepared request."""
+        """Store the page body to return."""
         self.body = body
         self.prepared = None
 
     async def execute_pages(self, prepared, *, deadline=None):
-        """Record the prepared query and yield one canned page."""
+        """Keep the request and return one page with the stored body."""
         self.prepared = prepared
         yield BackendPage(
             status_code=200,
@@ -62,12 +66,16 @@ class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
         )
 
     async def execute(self, prepared, *, deadline=None):
-        """Fail immediately -- a paged backend must never be called through the single-reply path."""
-        raise AssertionError("a feed must not dispatch through the single-reply path")
+        """Fail the test. Listing must ask for pages, not a single reply."""
+        raise AssertionError("listing must ask for pages, not a single reply")
 
 
 def _new_sync_connection() -> SyncConnection:
-    """Build a minimal ``SyncConnection`` with no live transport, for routing tests."""
+    """Build a sync connection object without opening a network connection.
+
+    Only the attributes the listing code reads are set. Tests set ``_backend``
+    to the fake they need.
+    """
     conn = SyncConnection.__new__(SyncConnection)
     conn._setup_complete = True
     conn._response_state = ClientLastResponseHeaders()
@@ -91,7 +99,11 @@ def _new_sync_connection() -> SyncConnection:
 
 
 def _new_async_connection() -> AsyncConnection:
-    """Build a minimal ``AsyncConnection`` with no live transport, for routing tests."""
+    """Build an async connection object without opening a network connection.
+
+    Only the attributes the listing code reads are set. Tests set ``_backend``
+    to the fake they need.
+    """
     conn = AsyncConnection.__new__(AsyncConnection)
     conn._setup_complete = True
     conn._response_state = ClientLastResponseHeaders()

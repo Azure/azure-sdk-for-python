@@ -233,7 +233,7 @@ async def test_live_matrix_keeps_overrides_native_capture_and_cleanup_rust(
     else:
         client.__exit__.assert_called_once()
 
-    expected_options = {"tracing_enable": False}
+    expected_options = {"tracing_options": {"enabled": False}}
     if test_data[1] is not None:
         expected_options["excluded_locations"] = test_data[1]
     assert options_seen == [expected_options]

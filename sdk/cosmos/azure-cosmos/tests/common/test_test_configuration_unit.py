@@ -23,14 +23,18 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 @pytest.mark.parametrize("include_legacy", [False, True], ids=["pipeline", "local-parity"])
-def test_replacement_legacy_variants_require_local_opt_in_rust(include_legacy):
+@pytest.mark.parametrize("operation,fixture,test_name", [
+    ("replace", "replace_case", "target_ownership_returns_and_rust_dispatch"),
+    ("read", "read_case", "metadata_flags_and_none_timeout_preserve_backend"),
+])
+def test_resource_legacy_variants_require_local_opt_in_rust(include_legacy, operation, fixture, test_name):
     code = f"""
 import pytest
 
 class CheckSelection:
     def pytest_collection_finish(self, session):
         selected = {{
-            (item.callspec.params["delete_case"], item.callspec.params["replace_case"])
+            (item.callspec.params["delete_case"], item.callspec.params[{fixture!r}])
             for item in session.items
         }}
         expected = {{("sync", False), ("async", False)}}
@@ -39,8 +43,8 @@ class CheckSelection:
         assert selected == expected
 
 raise SystemExit(pytest.main([
-    "tests/common/test_replace_container_backend_unit.py",
-    "-k", "target_ownership_returns_and_rust_dispatch",
+    "tests/common/test_{operation}_container_backend_unit.py",
+    "-k", {test_name!r},
     "-q", "-p", "no:cacheprovider",
     *{["--include-legacy-tests"] if include_legacy else []!r},
 ], plugins=[CheckSelection()]))
@@ -231,7 +235,7 @@ def test_setup_cleanup_closes_client_even_after_partial_failure_rust(monkeypatch
     monkeypatch.setattr(setup, "resources", owned)
     session = SimpleNamespace(
         config=SimpleNamespace(option=SimpleNamespace(collectonly=False, continue_on_collection_errors=False)),
-        testsfailed=0, items=[SimpleNamespace(path=Path("test_live.py"))],
+        testsfailed=0, items=[SimpleNamespace(path=Path("test_live.py"), get_closest_marker=Mock(return_value=None))],
     )
     if failure in ("database", "container"):
         failing_call = (

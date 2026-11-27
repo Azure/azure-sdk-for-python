@@ -10,8 +10,9 @@ path on the async path only, async applications would break while sync ones
 kept working.
 
 What it does: three original legacy tests copied from
-``tests/test_crud_container_async.py``, changed in one place -- the client is
-built with ``_backend="rust"``. ``test_collection_crud_async`` creates a
+main's ``tests/test_crud_container_async.py``. Key authentication provisions
+resources; reads use the configured Rust data credential (key or AAD).
+``test_collection_crud_async`` creates a
 container, reads it back and checks the indexing mode and partition key
 survived the round trip. ``test_partitioned_collection_async`` checks the
 partition key on a container created with throughput.
@@ -34,63 +35,29 @@ Run with::
 
     pytest --noconftest tests/read_container/aio/test_crud_container.py -v
 """
-import os
 import unittest
 import uuid
-from functools import wraps
-from types import SimpleNamespace
-from unittest.mock import patch
 
 import pytest
 
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.aio import CosmosClient, ContainerProxy
-from common._rust_checks import run_on_rust_async
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from read_container._container_setup import AsyncContainerReadCase
 
 
 @pytest.mark.cosmosAADLong
 @pytest.mark.cosmosLong
-class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
+class TestCRUDContainerOperationsAsync(AsyncContainerReadCase):
 
     async def asyncSetUp(self) -> None:
-        self.key_client = CosmosClient(HOST, KEY, _backend="rust")
-        self.addAsyncCleanup(self.key_client.close)
-        self._database_id = "read_container_legacy_async_" + str(uuid.uuid4())
-        self.addAsyncCleanup(self._delete_owned_database)
-        self.database_for_test = await self.key_client.create_database(self._database_id)
-        self.configs = SimpleNamespace(TEST_MULTI_PARTITION_CONTAINER_ID="quota_target")
+        await super().asyncSetUp()
         if self._testMethodName == "test_partitioned_collection_quota_async_rust":
             await self.database_for_test.create_container(
                 self.configs.TEST_MULTI_PARTITION_CONTAINER_ID,
                 PartitionKey(path="/id"), offer_throughput=10100,
             )
-        original_read = ContainerProxy.read
-
-        @wraps(original_read)
-        async def guarded_read(container, *args, **kwargs):
-            return await run_on_rust_async(
-                self.key_client, lambda: original_read(container, *args, **kwargs)
-            )
-
-        read_patch = patch.object(ContainerProxy, "read", guarded_read)
-        read_patch.start()
-        self.addCleanup(read_patch.stop)
-
-    async def _delete_owned_database(self) -> None:
-        try:
-            await self.key_client.delete_database(self._database_id)
-        except exceptions.CosmosResourceNotFoundError:
-            pass
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         try:
@@ -111,8 +78,9 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         A read layer that keeps serving a container that no longer exists is a
         correctness bug a customer would hit immediately.
 
-        The same legacy test is also copied into ``list_containers`` and
-        ``query_containers``, each pinning the part of it they own.
+        The same scenario remains in ``query_containers`` for combined listing
+        and query checks. This copy's setup additionally guards container reads
+        against legacy fallback and requires Rust binding execution.
         """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_collection_crud_async
         created_db = self.database_for_test

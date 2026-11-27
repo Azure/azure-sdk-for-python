@@ -6,9 +6,12 @@ import ast
 from collections import Counter
 from functools import lru_cache
 import hashlib
+import io
 import json
 import re
 from pathlib import Path
+import subprocess
+import zipfile
 
 import pytest
 from common.source_fingerprints import stable_ast_dump
@@ -16,6 +19,7 @@ from common.source_fingerprints import stable_ast_dump
 
 ROOT = Path(__file__).resolve().parents[2]
 LEDGER = Path(__file__).with_name("assertion_correspondence.json")
+MAIN_REVISION = "ade63f410467d071e7d5321bafdb3c52b3f1e552"
 FUNCTIONS = (ast.FunctionDef, ast.AsyncFunctionDef)
 DISPOSITIONS = {
     "supported-correspondence",
@@ -92,10 +96,34 @@ def _key(reference):
 
 
 @lru_cache(maxsize=None)
+def _main_sources():
+    prefix = "sdk/cosmos/azure-cosmos/"
+    try:
+        archive = subprocess.check_output(
+            ["git", "archive", "--format=zip", MAIN_REVISION, prefix + "tests"],
+            cwd=ROOT.parents[2], stderr=subprocess.PIPE,
+        )
+    except subprocess.CalledProcessError as error:
+        raise AssertionError(
+            f"Fetch main revision {MAIN_REVISION} before running migration guards: "
+            + error.stderr.decode("utf-8", errors="replace")
+        ) from error
+    with zipfile.ZipFile(io.BytesIO(archive)) as files:
+        return {
+            name.removeprefix(prefix).replace("/", "\\"): files.read(name).decode("utf-8-sig")
+            for name in files.namelist() if name.endswith(".py")
+        }
+
+
+@lru_cache(maxsize=None)
 def _read_file(relative):
     path = ROOT.joinpath(*relative.replace("\\", "/").split("/"))
     assert path.is_relative_to(ROOT), relative
-    text = path.read_text(encoding="utf-8-sig")
+    key = str(path.relative_to(ROOT)).replace("/", "\\")
+    if path.parent == ROOT / "tests" and path.name.startswith("test_"):
+        text = _main_sources()[key]
+    else:
+        text = path.read_text(encoding="utf-8-sig")
     return text, dict(_functions(ast.parse(text)))
 
 
@@ -222,7 +250,12 @@ def _annotation_context(path, symbol):
     directory = ROOT.joinpath(*path.split("\\")).parent
     while directory.is_relative_to(ROOT / "tests"):
         conftest = directory / "conftest.py"
-        if conftest.exists():
+        if directory == ROOT / "tests" and path.replace("/", "\\") in _main_sources():
+            conftests.append({
+                "path": str(conftest.relative_to(ROOT)),
+                "ast_sha256": _fingerprint(ast.parse(_main_sources()["tests\\conftest.py"])),
+            })
+        elif conftest.exists():
             conftests.append({
                 "path": str(conftest.relative_to(ROOT)),
                 "ast_sha256": _fingerprint(ast.parse(conftest.read_text(encoding="utf-8-sig"))),
@@ -316,6 +349,7 @@ def _assigned_value(path, name, symbol=None):
 
 def test_assertion_ledger_references_and_complete_reviewed_scope_rust():
     ledger = _load()
+    assert ledger["source_revision"] == MAIN_REVISION
     assert ledger["schema_version"] == 1
     assert ledger["verification"]["kind"] == "static-correspondence-with-separately-recorded-targeted-execution"
     policies = {policy["id"]: policy for policy in ledger["policy_references"]}
@@ -382,7 +416,7 @@ def test_assertion_ledger_discovery_inventory_is_not_claimed_as_coverage_rust():
     ))
     # Include callable references and the shared dispatcher, not only direct calls.
     for relative in ledger["source_files"]:
-        text = ROOT.joinpath(*relative.split("\\")).read_text(encoding="utf-8-sig")
+        text, _ = _read_file(relative)
         for symbol, function in _functions(ast.parse(text)):
             if not function.name.startswith("test_"):
                 continue
@@ -443,7 +477,7 @@ def test_annotation_contexts_and_review_scope_rust():
     for ref in audit["infrastructure_functions"]:
         _validate_reference(ref)
     for value in audit["infrastructure_values"]:
-        text = ROOT.joinpath(*value["path"].split("\\")).read_text(encoding="utf-8-sig")
+        text, _ = _read_file(value["path"])
         statements = [
             node for node in ast.parse(text).body if isinstance(node, ast.Assign)
             and any(isinstance(target, ast.Name) and target.id == value["symbol"] for target in node.targets)

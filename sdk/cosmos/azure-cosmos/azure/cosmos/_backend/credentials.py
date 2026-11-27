@@ -110,21 +110,27 @@ def _is_resource_token_credential(credential: Any) -> bool:
 
 
 def validate_credential(credential: Any) -> None:
-    """Validate supported credentials without acquiring a bridge or contacting the service.
+    """Check that the credential has a supported form.
+
+    Supported forms are an account key string, a dict with a "masterKey" entry,
+    or a Microsoft Entra token credential (sync or async). Raise ValueError for
+    anything else, including a blank key and resource tokens. This does not
+    contact the service, so it cannot tell whether the key is correct.
 
     :param credential: Account key, master-key mapping, or token credential to validate.
     :type credential: typing.Any
+    :raises ValueError: The credential is blank, a resource token, or an unsupported type.
     """
     if isinstance(credential, Mapping):
         reject_resource_token_fields(credential)
     if isinstance(credential, str):
-        if not credential:
+        if not credential.strip():
             raise ValueError("The account key must be a non-empty string.")
         return
     if isinstance(credential, Mapping) and "masterKey" in credential:
         master_key = credential["masterKey"]
-        if not isinstance(master_key, str) or not master_key:
-            # Reject an invalid key before acquiring a driver handle.
+        if not isinstance(master_key, str) or not master_key.strip():
+            # Reject a blank or non-string key before any request is sent.
             raise ValueError(
                 "CosmosClient requires the 'masterKey' entry to be a non-empty string."
             )

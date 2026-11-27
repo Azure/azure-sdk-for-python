@@ -11,7 +11,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
 from azure.cosmos.database import DatabaseProxy
-from common.container_backend_stubs import _AsyncBindingAdapter, _BindingAdapter
+from common.container_backend_stubs import _AsyncFakeBackend, _FakeBackend
 
 
 def make_delete_case(is_async):
@@ -24,7 +24,7 @@ def make_delete_case(is_async):
         body=b"",
         diagnostics="delete trace",
     )
-    backend = (_AsyncBindingAdapter if is_async else _BindingAdapter)(response)
+    backend = (_AsyncFakeBackend if is_async else _FakeBackend)(response)
     backend.execute = mock(wraps=backend.execute)
     connection = SimpleNamespace(
         _backend=backend,

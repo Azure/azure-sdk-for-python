@@ -22,6 +22,7 @@ from threading import Barrier
 from unittest.mock import AsyncMock, Mock
 
 import pytest
+from common.async_test_helpers import run_async
 from common.rust_telemetry_payload import expected_attempt_attributes, v2
 from common.typed_requests import wire_headers
 
@@ -2127,7 +2128,7 @@ def item_runtime_harness(request, recording):  # pylint: disable=unused-argument
 
     def invoke(method, *args, **kwargs):
         result = method(*args, **kwargs)
-        return result if request.param == "sync" else asyncio.run(result)
+        return result if request.param == "sync" else run_async(result)
 
     harness.invoke = invoke
     return harness
@@ -2458,15 +2459,25 @@ def test_feed_range_discovery_async_cancellation_allows_explicit_retry(range_dis
     async def run():
         harness.gate = asyncio.Event()
         pager = harness.container.read_feed_ranges()
+
+        async def fetch():
+            try:
+                return await pager.by_page().__anext__()
+            except asyncio.CancelledError as error:
+                # Check the SDK boundary before Python 3.10 replaces the task's exception.
+                assert str(error) == "stop discovery"
+                raise
+
         with trace.get_tracer("customer").start_as_current_span("first_consumer") as first_parent:
-            first = asyncio.create_task(pager.by_page().__anext__())
+            first = asyncio.create_task(fetch())
             await harness.gate.wait()
             # The rejected competing fetch must not join the in-flight operation.
             with pytest.raises(RuntimeError, match="concurrent"):
                 await pager.by_page().__anext__()
             first.cancel("stop discovery")
-            with pytest.raises(asyncio.CancelledError, match="stop discovery"):
+            with pytest.raises(asyncio.CancelledError):
                 await first
+            assert first.cancelled()
         assert len(harness.calls) == len(seen) == 1 and seen[0].outcome == "cancelled"
         assert pager.get_response_headers() == {}
         assert telemetry._OPERATION.get() is None
@@ -2829,11 +2840,20 @@ def test_range_subset_async_cancellation(range_subset):
 
     async def run():
         harness.gate = asyncio.Event()
-        task = asyncio.create_task(harness.container.is_feed_range_subset(harness.parent_range, harness.child_range))
+
+        async def compare():
+            try:
+                return await harness.container.is_feed_range_subset(harness.parent_range, harness.child_range)
+            except asyncio.CancelledError as error:
+                assert str(error) == "subset cancellation"
+                raise
+
+        task = asyncio.create_task(compare())
         await harness.gate.wait()
         task.cancel("subset cancellation")
-        with pytest.raises(asyncio.CancelledError, match="subset cancellation"):
+        with pytest.raises(asyncio.CancelledError):
             await task
+        assert task.cancelled()
         assert telemetry._OPERATION.get() is None
 
     asyncio.run(run())
@@ -3155,11 +3175,20 @@ def test_partition_key_range_cancellation_preserves_completed_metadata(
 
     async def run():
         harness.gate = asyncio.Event()
-        task = asyncio.create_task(harness.container.feed_range_from_partition_key(NonePartitionKeyValue))
+
+        async def calculate():
+            try:
+                return await harness.container.feed_range_from_partition_key(NonePartitionKeyValue)
+            except asyncio.CancelledError as error:
+                assert str(error) == "range cancellation"
+                raise
+
+        task = asyncio.create_task(calculate())
         await harness.gate.wait()
         task.cancel("range cancellation")
-        with pytest.raises(asyncio.CancelledError, match="range cancellation"):
+        with pytest.raises(asyncio.CancelledError):
             await task
+        assert task.cancelled()
         assert telemetry._OPERATION.get() is None
 
     asyncio.run(run())

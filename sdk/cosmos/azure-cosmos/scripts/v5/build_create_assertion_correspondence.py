@@ -97,8 +97,8 @@ def select():
                 if predicate(node.name):
                     selected[path, symbol] = stem
         path = source_file("test_headers", asynchronous)
-        for helper in ("assert_client_throughput_bucket", "assert_request_throughput_bucket",
-                       "assert_client_priority", "assert_request_priority"):
+        for helper in ("client_raw_response_hook", "request_raw_response_hook",
+                       "client_priority_raw_response_hook", "request_priority_raw_response_hook"):
             selected[path, helper] = "test_headers"
         path = source_file("test_availability_strategy", asynchronous)
         for helper in ("_perform_write_operation", "_validate_response_uris"):
@@ -169,24 +169,33 @@ def disposition(path, symbol, kind, node):
                                if key.endswith(f".test_{level_name}_{header_column}{suffix}_rust"))
             mapped(
                 "Original client default/request precedence values are asserted at the typed native boundary "
-                "with a wrapped real create. Header conversion and service scheduling are separate from this "
-                "assertion.",
+                "with a wrapped real service create. The same client-default/override values are also checked "
+                "on an actual HTTP create received by a loopback server through the installed Rust transport. "
+                "The unset case checks that neither header is emitted. This combines separate service and "
+                "local-wire runs, not header observation on the service request or service scheduling evidence.",
                 assertions(target, header_test, header_column), partial=True,
-                pending=("public-native-run", "native-wire-header-observation"),
+                pending=("public-native-run", "live-service-wire-header-observation"),
             )
         if "container_create_item_throughput_bucket" in name:
             target_symbol = next(key for key in functions(target)[1]
                                  if key.endswith(f".test_container_create_item_throughput_bucket{suffix}_rust"))
             mapped(
                 "Original request bucket 3 is asserted at the typed native boundary with a wrapped real create. "
-                "Header conversion and service scheduling are separate from this assertion.",
+                "The loopback wire test also observes request bucket 3 overriding client bucket 2 through "
+                "the installed Rust transport. That is additional request-value evidence, not the exact "
+                "request-only configuration or header observation on a real service request.",
                 assertions(target, target_symbol, "throughput_bucket"), partial=True,
-                pending=("public-native-run", "native-wire-header-observation"),
+                pending=("public-native-run", "live-service-wire-header-observation"),
             )
+        if row["replacements"]:
+            wire_path = "tests\\create_item\\test_header_wire_unit.py"
+            row["replacements"].extend(assertions(wire_path, "_check_create_headers", "headers == expected"))
+            row["replacements"].extend(assertions(wire_path, "test_create_headers_reach_wire_rust"))
         for call in ast.walk(function):
-            if isinstance(call, ast.Call) and isinstance(call.func, ast.Name) and call.func.id.startswith("assert_"):
-                if call.func.id in names:
-                    row["helper_sources"].append(reference(path, call.func.id))
+            if isinstance(call, ast.Call):
+                for keyword in call.keywords:
+                    if keyword.arg == "raw_response_hook" and isinstance(keyword.value, ast.Name):
+                        row["helper_sources"].append(reference(path, keyword.value.id))
     elif "test_retry_policy" in path:
         cls = symbol.split(".")[0]
         helper = "_MockExecuteFunction" if "throttle" in name and "backoff" not in name else "MockExecuteFunctionConnectionReset.__call__"
@@ -299,33 +308,49 @@ def disposition(path, symbol, kind, node):
         if node.lineno < first_query:
             symbol2 = "_document_crud_create_persistence"
             suppressed_composite = "response_payload_on_write_disabled" in path
+            if suppressed_composite and asynchronous:
+                symbol2 = "test_document_crud_response_payload_on_write_disabled_rust"
             if suppressed_composite and "assertIsNone(headerEnvelope.headers)" in text:
                 other("Before-create callback envelope initialization, not missing native create coverage.")
             elif suppressed_composite and "assertIsNotNone(headerEnvelope.headers)" in text:
-                mapped("Suppressed create invokes its hook and retains response headers at the fake native boundary. "
-                       "This alone does not establish callback etag equality with the real stored item.",
-                       assertions("tests\\create_item\\test_create_item_contract_unit.py",
-                                  "test_falsey_hook_gets_independent_body_and_headers_rust", "len(calls)"),
-                       partial=True, level="public-boundary-fake-extension",
-                       pending=("suppressed-native-hook-headers",))
+                mapped("Client-default suppressed create invokes its hook once on the real native path.",
+                       assertions(replacement, "test_document_crud_response_payload_on_write_disabled_rust",
+                                  "len(captured)"))
             elif suppressed_composite and not asynchronous and name == "test_document_crud" and (
                     "headerEnvelope" in text or "expectedEtag" in text):
-                set_result("unresolved", "Original suppressed create invokes capture_response_headers, whose etag must "
-                           "equal the independently read stored item's _etag. Header presence and generic hook charge "
-                           "equality do not establish this combined native persistence/version assertion.",
-                           pending=("suppressed-create-callback-etag-equals-stored-etag",))
+                mapped("Client-default suppressed create retains its callback ETag and compares it with the "
+                       "independently read stored item's _etag.",
+                       assertions(replacement, "test_document_crud_response_payload_on_write_disabled_rust",
+                                  'captured[0]'))
                 row["helper_sources"] = [reference(path, "CosmosResponseHeaderEnvelope.capture_response_headers")]
             elif suppressed_composite and asynchronous and "before_create_documents_count" in text:
-                mapped("Original async suppression composite persists FOUR creates: generated with response, explicit "
-                       "ID using implicit client suppression, explicit suppression, explicit response override. Current "
-                       "replacement persists THREE with explicit no_response values; exact original default/override "
-                       "four-write sequence remains unmapped.",
-                       assertions("tests\\create_item\\_contract_cases.py", "assert_stored_sequence"),
-                       partial=True, pending=("exact-four-write-implicit-and-explicit-suppression-sequence",))
+                mapped("Four ordered creates preserve generated-ID response, client-default suppression, explicit "
+                       "suppression and explicit response override. After duplicate rejection, a partition-scoped "
+                       "query carries the last write's session token and verifies exactly four stored IDs and "
+                       "their original fields. Read-all paging itself "
+                       "is not claimed equivalent.",
+                       assertions(replacement, symbol2, "len(stored)") +
+                       assertions(replacement, symbol2, "for item in stored") +
+                       assertions(replacement, symbol2, "assert_fields(item"))
+            elif suppressed_composite and asynchronous and (
+                    kind == "create-call" or "self.assertDictEqual(created_document, {})" in text):
+                creates = sorted(
+                    (call for call in ast.walk(function) if isinstance(call, ast.Call)
+                     and getattr(call.func, "attr", "") == "create_item" and call.lineno < first_query),
+                    key=lambda call: call.lineno,
+                )
+                index = max(index for index, call in enumerate(creates) if call.lineno <= node.lineno)
+                checks = (
+                    "assert_fields(generated", "default_suppressed == {}",
+                    "explicit_suppressed == {}", "assert_fields(explicit",
+                )
+                mapped("The original create is retained in order, including omission of no_response on the "
+                       "client-default suppressed write. Returned bodies or empty mappings are asserted per call.",
+                       assertions(replacement, symbol2, checks[index]))
             elif suppressed_composite and ("self.assertDictEqual(created_document, {})" in text or kind == "create-call"):
-                mapped("Suppression and response override exist in the three-write replacement, but this original "
-                       "branch includes client-default suppression of an explicit-ID write; exact sequence/persistence "
-                       "correspondence remains partial, not native parity.",
+                mapped("The three-write replacement checks explicit per-call no_response=True/False only. It does "
+                       "not establish client-default suppression when no_response is omitted; exact original "
+                       "suppression-branch/persistence correspondence remains partial, not native parity.",
                        assertions(replacement, symbol2, "no_response=True"), partial=True,
                        pending=("exact-suppression-branch-and-persistence",))
             elif suppressed_composite and "created_document is not {}" in text:
@@ -455,7 +480,7 @@ def disposition(path, symbol, kind, node):
                        "create propagation and excluded-region enforcement require separate native assertions. "
                        "No blanket availability-suite exclusion.", pending=("split-hedging-from-supported-error-outcome",))
     elif "test_session" in path:
-        helper_names = ["assert_no_session_token", "assert_session_token"]
+        helper_names = ["no_token_response_hook", "token_response_hook"]
         row["helper_sources"] = [reference("tests\\test_config.py", helper) for helper in helper_names]
         create = next(n for n in ast.walk(function) if isinstance(n, ast.Call)
                       and getattr(n.func, "attr", "") == "create_item")
@@ -470,27 +495,41 @@ def disposition(path, symbol, kind, node):
         else:
             other("Control-plane/upsert/replace/read/batch/delete session observation outside the create boundary.")
     elif "test_user_configs" in path:
+        target = "tests\\create_item\\sync\\test_user_configs.py"
+        target_symbol = "TestUserConfigs.test_default_account_consistency_rust"
         if "assertNotEqual(session_token, session_token2)" in text or kind == "create-call":
-            set_result("unresolved", "Without explicitly requesting Session, successive creates must return updated "
-                       "distinct session tokens. Generic explicit-token or cached-policy tests do not assert this "
-                       "account-default inheritance sequence.", pending=("native-default-account-session-sequence",))
+            mapped("Normally collected sync Rust copy retains the hard Session-account assertion, /id partition "
+                   "key and original get_test_item payloads. Its configured-auth data client omits consistency "
+                   "overrides; both creates are guarded by run_on_rust and their response tokens must differ. "
+                   "Static correspondence is separate from the recorded key-auth execution; AAD and the actual "
+                   "fixed-account configuration still require verification.",
+                   assertions(target, target_symbol, "self.assertNotEqual(session_token, session_token2)"),
+                   pending=("live-AAD-session-account-run", "fixed-session-account-configuration-verification"))
+            row["helper_sources"] = [reference(path, "get_test_item")]
         elif "session_token2, read_session_token" in text:
-            set_result("unresolved", "Read after second create retains its session token under account-default Session. "
-                       "Retain as create-session persistence verification, not arbitrary read functionality.",
-                       pending=("native-default-account-session-sequence",))
+            mapped("The normally collected copy reads the second item with its id as the partition key and "
+                   "requires the read response token to equal the second create response token. Both operations "
+                   "use the same Rust data client without a consistency override. The hard Session-account "
+                   "prerequisite must pass before this sequence can provide native execution evidence.",
+                   assertions(target, target_symbol, "self.assertEqual(session_token2, read_session_token)"),
+                   pending=("live-AAD-session-account-run", "fixed-session-account-configuration-verification"))
         else:
             other("Account configuration prerequisite or Eventual/Strong read override; no create-policy parity claim.")
     contexts = set()
     for replacement_ref in row["replacements"]:
         contexts.add((replacement_ref["path"], replacement_ref["symbol"]))
+    if "test_headers" in path and row["replacements"]:
+        contexts.add(("tests\\create_item\\test_header_wire_unit.py", "_create_response"))
+        contexts.add(("tests\\common\\local_cosmos_server.py", "local_cosmos_server"))
+    if "test_user_configs" in path and row["replacements"]:
+        contexts.add(("tests\\create_item\\sync\\test_user_configs.py", "get_test_item"))
+        contexts.add(("tests\\common\\_rust_checks.py", "run_on_rust"))
     if row["execution_level"] == "public-installed-native" and (
             "test_crud" in path or "test_cosmos_responses" in path):
         if "test_cosmos_responses" in path:
             test = "test_create_response_headers_advance_lsn_rust"
         elif "response_payload_on_write_disabled" not in path:
             test = "test_document_crud_create_persistence_rust"
-        elif "enabled_via_override" in name:
-            test = "test_document_crud_response_payload_enabled_via_override_rust"
         else:
             test = "test_document_crud_response_payload_on_write_disabled_rust"
         contexts.add((replacement, test))
@@ -711,8 +750,8 @@ def annotation_audit(scope, rows):
                 "finding": "Boundary tests inherit four sync/async x legacy/Rust cases from point_read fixture params; "
                            "Rust regression module overrides point_read with only two Rust cases. Fake units omit "
                            "live feature gates intentionally, without establishing native execution. Client-default "
-                           "suppression gets False/True vectors and LSN gets no_response False/True, but the original "
-                           "four-write async suppression sequence is still not replaced by the three-write sequence.",
+                           "suppression gets False/True vectors and LSN gets no_response False/True. The async "
+                           "suppression composite separately retains the original four-write default/override sequence.",
             },
         ],
         "limitations": [
@@ -817,9 +856,9 @@ def create_copy_annotation_audit(rows):
                     "Retired Python fault-suite blanket skip would disable the genuine Rust replacement."
                 )
             elif "_skip" in snippet and "test_aad" in source["path"]:
-                status, reason = "intentional-token-gate-broadening", (
-                    "Emulator-only credential skip is replaced by localhost-or-complete-real-AAD-credentials gate; "
-                    "the replacement supports both emulator and real token credentials."
+                status, reason = "driver-gap40-method-skip", (
+                    "Dedicated token cases are skipped before fixture setup with a numbered Gap 40 reason. "
+                    "They do not establish live AAD parity until credential isolation is fixed."
                 )
             elif "parametrize" in snippet and "test_excluded_locations" in source["path"]:
                 status, reason = "preserved-twelve-write-vectors-changed-region-binding", (
@@ -917,7 +956,7 @@ def create_copy_annotation_audit(rows):
             vectors.append(GUARD_MODULE._reference(path, name, "annotation-value", node, text))  # pylint: disable=protected-access
     adaptations = {
         "intentional-offline-replacement-level", "intentional-legacy-skip-omission",
-        "intentional-token-gate-broadening", "preserved-twelve-write-vectors-changed-region-binding",
+        "driver-gap40-method-skip", "preserved-twelve-write-vectors-changed-region-binding",
         "intentional-isolated-resource-fixture", "intentional-function-scoped-async-runner",
         "intentional-asyncio-run-wrapper", "intentional-pytest-runner-replacement",
     }
@@ -951,8 +990,8 @@ def create_copy_annotation_audit(rows):
             "region variables; native topology behavior and deployed multi-region execution are separate.",
             "Primary Source-comment lineage does not imply all secondary scalar/HPK/shared-policy assertions "
             "or every original composite sequence is replaced, even where secondary annotations are reviewed. "
-            "Four-write async suppression remains distinct "
-            "from the three-write replacement despite expanded suppression parameterization.",
+            "The async suppression composite retains its original four-write sequence separately from the "
+            "three-write helper used by other CRUD scenarios.",
         ],
         "parameter_review": [
             "Excluded-location copies preserve all twelve logical write-routing vectors; a guard compares "
@@ -965,8 +1004,8 @@ def create_copy_annotation_audit(rows):
             "surfaces. Added suppression/compact/backend cross-products are extensions, not lost vectors.",
             "Fault copies replace retired injection implementation with inject False/True and regional guard "
             "controls. Async regional wrapper is synchronous asyncio.run and must not receive pytest.asyncio.",
-            "AAD compact/token copies intentionally broaden the original localhost-only credential gate to "
-            "real configured AAD. Copying the original emulator-only skip would remove supported coverage.",
+            "AAD compact/token copies retain their cases but skip before fixture setup for Gap 40. "
+            "This is blocked coverage, not a passing token-authenticated run.",
         ],
         "summary": {
             "inventoried_create_item_test_functions": len(inventory),
@@ -985,7 +1024,7 @@ def create_copy_annotation_audit(rows):
     }
 
 
-def build(discovery=None, reviewed_annotation_refresh=False):
+def build(discovery=None, reviewed_annotation_refresh=False, reviewed_main_refresh=False):
     ledger_path = GUARD.with_name("assertion_correspondence.json")
     if discovery:
         candidates = [
@@ -998,13 +1037,17 @@ def build(discovery=None, reviewed_annotation_refresh=False):
     selected = select()
     if ledger_path.exists() and not discovery:
         prior = json.loads(ledger_path.read_text(encoding="utf-8"))
-        for reviewed in prior["reviewed_functions"]:
+        baseline_changed = prior.get("source_revision") != GUARD_MODULE.MAIN_REVISION
+        if baseline_changed and not reviewed_main_refresh:
+            raise ValueError("Review the pinned main sources before using --reviewed-main-refresh.")
+        for reviewed in (() if baseline_changed else prior["reviewed_functions"]):
             original = reviewed["source"]
             current = reference(original["path"], original["symbol"])
             if current["ast_sha256"] != original["ast_sha256"]:
                 raise ValueError(f"Review changed source and its disposition rules before regeneration: "
                                  f"{original['path']}::{original['symbol']}")
-        for reviewed in prior.get("create_copy_annotation_audit", {}).get("lineage_reviews", []):
+        for reviewed in (() if baseline_changed else
+                         prior.get("create_copy_annotation_audit", {}).get("lineage_reviews", [])):
             original = reviewed["source"]
             if reference(original["path"], original["symbol"])["ast_sha256"] != original["ast_sha256"]:
                 raise ValueError(f"Review changed copy source before regeneration: "
@@ -1035,8 +1078,16 @@ def build(discovery=None, reviewed_annotation_refresh=False):
             rows.append(row)
     inventory = []
     removed = []
+    for path in {path for path, _ in selected}:
+        for symbol, function in functions(path)[1].items():
+            if function.name.startswith("test_") and any(
+                isinstance(node, ast.Attribute) and node.attr == "create_item"
+                or isinstance(node, ast.Call) and GUARD_MODULE._call_name(node) == "_perform_write_operation"
+                for node in ast.walk(function)
+            ):
+                candidates.append((path, symbol))
     for path, symbol in sorted(set(candidates)):
-        if not ROOT.joinpath(*path.split("\\")).exists() or symbol not in functions(path)[1]:
+        if path not in GUARD_MODULE._main_sources() or symbol not in functions(path)[1]:
             removed.append({"path": path, "symbol": symbol, "disposition": "historical-source-no-longer-present"})
             continue
         inventory.append({
@@ -1049,6 +1100,7 @@ def build(discovery=None, reviewed_annotation_refresh=False):
         inventory.append({"source": reference(path, symbol), "review": "reviewed"})
     ledger = {
         "schema_version": 1,
+        "source_revision": GUARD_MODULE.MAIN_REVISION,
         "purpose": "Assertion/branch correspondence, not test-name matching or an execution report.",
         "verification": {
             "kind": "static-correspondence-with-separately-recorded-targeted-execution",
@@ -1117,6 +1169,26 @@ def build(discovery=None, reviewed_annotation_refresh=False):
                 "driver_head_prefix": "52ffc977",
                 "driver_subtree": "clean (parent-reported; not independently inspected by this audit)",
             },
+            "default_session_account": {
+                "reported_on": "2026-11-26",
+                "provenance": "Executed in this session, not inherited from the earlier parent-agent report.",
+                "test": "tests\\create_item\\sync\\test_user_configs.py"
+                        "::TestUserConfigs::test_default_account_consistency_rust",
+                "account": "consistency-levels",
+                "account_consistency": "Session",
+                "authentication": "key",
+                "backend": "rust",
+                "result": "1 passed",
+                "native_observation": "Both creates and all item reads are guarded by run_on_rust.",
+                "limitations": [
+                    "Live AAD and isolated V4 parity were not rerun.",
+                    "The existing native build was used; no rebuild was performed.",
+                    "The local rust-migration target reports BoundedStaleness and fails the Session prerequisite; "
+                    "it is not established as a pipeline target. cosmosAADLong provisions an account with the "
+                    "Bicep default Session; cosmosLong selects the fixed single-session account. The actual "
+                    "secret-backed fixed account remains unverified. No routing change is established as necessary.",
+                ],
+            },
             "indexing_service_effect": {
                 "test": "test_service_applies_create_indexing_directive_rust",
                 "reported_result": "Known local service-effect failure on both baseline backends; not passing.",
@@ -1161,7 +1233,8 @@ def build(discovery=None, reviewed_annotation_refresh=False):
             },
         ],
         "limitations": [
-            "Candidate inventory is the historical 556-function discovery plus explicitly reviewed helpers. "
+            "Candidate inventory combines historical discovery, pinned-main create candidates in the reviewed "
+            "source files, and explicitly reviewed helpers. "
             "Unreviewed candidates are NOT claimed create-relevant or migrated; many are setup/other-API false positives.",
             "Every observation in reviewed_functions is mapped or explicitly unresolved. This is not completion "
             "of every candidate's semantic audit; candidate_inventory records exact remaining scope.",
@@ -1206,5 +1279,7 @@ if __name__ == "__main__":
     parser.add_argument("--reviewed-annotation-refresh", action="store_true",
                         help="Explicitly accept manually reviewed annotation/fixture snapshot changes; "
                              "reviewed original assertion/function AST changes remain prohibited.")
+    parser.add_argument("--reviewed-main-refresh", action="store_true",
+                        help="Accept a reviewed change to the pinned main source revision.")
     args = parser.parse_args()
-    build(args.discovery, args.reviewed_annotation_refresh)
+    build(args.discovery, args.reviewed_annotation_refresh, args.reviewed_main_refresh)

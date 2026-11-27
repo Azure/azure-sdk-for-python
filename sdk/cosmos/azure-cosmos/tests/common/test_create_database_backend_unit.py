@@ -26,7 +26,7 @@ from types import SimpleNamespace
 from unittest.mock import ANY, AsyncMock, MagicMock
 
 import pytest
-from common.database_backend_stubs import _BindingAdapter, _AsyncBindingAdapter, _created_response
+from common.database_backend_stubs import _FakeBackend, _AsyncFakeBackend, _created_response
 from common.typed_requests import legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 
@@ -130,7 +130,7 @@ def test_sync_helper_routes_to_rust_and_parses_response_rust():
     returns the created database, records the response headers on the connection, and
     fires ``response_hook`` once with the headers and the created database."""
     connection = SimpleNamespace(last_response_headers={})
-    backend = _BindingAdapter()
+    backend = _FakeBackend()
     hooks = []
 
     result = DatabaseHelper(connection, backend).create_database(
@@ -179,7 +179,7 @@ def test_sync_helper_maps_conflict_to_resource_exists_rust():
     """A 409 from the backend (the database id is already taken) surfaces as
     ``CosmosResourceExistsError`` -- the same typed error a customer catches to handle
     "this database already exists"."""
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         BackendResponse(
             status_code=409,
             headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
@@ -208,7 +208,7 @@ def test_sync_if_not_exists_reads_through_rust_without_core_python_calls_rust():
         CreateDatabase=MagicMock(),
         last_response_headers={"x-ms-request-charge": "1.0"},
     )
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         BackendResponse(
             status_code=200,
             headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
@@ -247,7 +247,7 @@ def test_sync_if_not_exists_rust_404_then_rust_create_without_core_python_calls_
         CreateDatabase=MagicMock(side_effect=AssertionError("legacy create called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         responses=[
             BackendResponse(
                 status_code=404,
@@ -292,7 +292,7 @@ def test_sync_if_not_exists_rust_create_race_reads_winning_database_rust():
         CreateDatabase=MagicMock(side_effect=AssertionError("legacy create called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         responses=[
             BackendResponse(
                 status_code=404,
@@ -401,7 +401,7 @@ def test_async_helper_routes_to_rust():
     async def run():
         """Run the async create through the Rust backend and assert the hook and returned database."""
         connection = SimpleNamespace(last_response_headers={})
-        backend = _AsyncBindingAdapter()
+        backend = _AsyncFakeBackend()
         hook_calls = []
         result = await AsyncDatabaseHelper(connection, backend).create_database(
             {"id": "db1"},
@@ -464,7 +464,7 @@ def test_async_helper_does_not_call_response_hook_on_failure_rust():
     """
     async def run():
         """Trigger a 409 from the async backend and confirm the response hook is never called."""
-        backend = _AsyncBindingAdapter(
+        backend = _AsyncFakeBackend(
             BackendResponse(
                 status_code=409,
                 headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
@@ -574,7 +574,7 @@ def test_sync_public_create_database_returns_proxy_and_properties_rust():
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(last_response_headers={})
     client._inference_client = MagicMock()
-    client._adapter = _BindingAdapter()
+    client._adapter = _FakeBackend()
     from azure.cosmos._helpers._client_context import CosmosClientContext
     client._client_context = CosmosClientContext(client._adapter)
     hook_calls = []
@@ -599,7 +599,7 @@ def test_sync_public_create_database_preserves_zero_autoscale_increment_rust():
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(last_response_headers={})
     client._inference_client = None
-    backend = _BindingAdapter()
+    backend = _FakeBackend()
     client._adapter = backend
     from azure.cosmos._helpers._client_context import CosmosClientContext
     client._client_context = CosmosClientContext(backend)
@@ -626,7 +626,7 @@ def test_async_public_create_database_returns_proxy_and_properties_rust():
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = SimpleNamespace(last_response_headers={})
         client._inference_client = MagicMock()
-        client._adapter = _AsyncBindingAdapter()
+        client._adapter = _AsyncFakeBackend()
         from azure.cosmos._helpers._client_context import CosmosClientContext
         client._client_context = CosmosClientContext(client._adapter)
         hook_calls = []
@@ -662,7 +662,7 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
         CreateDatabase=MagicMock(),
         last_response_headers={},
     )
-    sync_backend = _BindingAdapter(
+    sync_backend = _FakeBackend(
         BackendResponse(
             status_code=200,
             headers=CaseInsensitiveDict({}),
@@ -691,7 +691,7 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
             CreateDatabase=AsyncMock(),
             last_response_headers={},
         )
-        async_backend = _AsyncBindingAdapter(
+        async_backend = _AsyncFakeBackend(
             BackendResponse(
                 status_code=200,
                 headers=CaseInsensitiveDict({}),
@@ -731,7 +731,7 @@ def create_database_client(request):
         CreateDatabase=MagicMock(side_effect=AssertionError("legacy create called")),
         ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
     )
-    client._adapter = _AsyncBindingAdapter() if request.param else _BindingAdapter()
+    client._adapter = _AsyncFakeBackend() if request.param else _FakeBackend()
     from azure.cosmos._helpers._client_context import CosmosClientContext
     client._client_context = CosmosClientContext(client._adapter)
     return client
@@ -1329,7 +1329,7 @@ def test_create_async_timeout_drains_pending_work_rust():
 
     async def run():
         cancelled = asyncio.Event()
-        backend = _AsyncBindingAdapter()
+        backend = _AsyncFakeBackend()
 
         async def execute(prepared, *, deadline=None):
             try:
@@ -1779,7 +1779,7 @@ def test_async_if_not_exists_uses_python_coordinator_with_rust_selected_rust():
             CreateDatabase=AsyncMock(),
             last_response_headers={"x-ms-request-charge": "1.0"},
         )
-        backend = _AsyncBindingAdapter(
+        backend = _AsyncFakeBackend(
             BackendResponse(
                 status_code=200,
                 headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
@@ -1821,7 +1821,7 @@ def test_async_if_not_exists_rust_404_then_rust_create_without_core_python_calls
             CreateDatabase=AsyncMock(side_effect=AssertionError("legacy create called")),
             last_response_headers={},
         )
-        backend = _AsyncBindingAdapter(
+        backend = _AsyncFakeBackend(
             responses=[
                 BackendResponse(
                     status_code=404,
@@ -1873,7 +1873,7 @@ def test_async_if_not_exists_rust_create_race_reads_winning_database_rust():
             CreateDatabase=AsyncMock(side_effect=AssertionError("legacy create called")),
             last_response_headers={},
         )
-        backend = _AsyncBindingAdapter(
+        backend = _AsyncFakeBackend(
             responses=[
                 BackendResponse(
                     status_code=404,
@@ -2462,7 +2462,7 @@ def test_if_not_exists_async_timeout_or_cancellation_drains_each_stage_rust(stag
 
     async def run():
         entered, drained = asyncio.Event(), asyncio.Event()
-        backend = _AsyncBindingAdapter(responses=_get_or_create_responses([404, 409, 200]))
+        backend = _AsyncFakeBackend(responses=_get_or_create_responses([404, 409, 200]))
         execute = backend.execute
         calls = []
 
@@ -2823,7 +2823,7 @@ def delete_database_client(request):
         body=b"",
         diagnostics="activity=delete-one requests=1",
     )
-    client._adapter = _AsyncBindingAdapter(response) if is_async else _BindingAdapter(response)
+    client._adapter = _AsyncFakeBackend(response) if is_async else _FakeBackend(response)
     client._adapter.execute = delete_mock(wraps=client._adapter.execute)
     client._client_context = CosmosClientContext(client._adapter)
     return client
@@ -3489,7 +3489,7 @@ def test_sync_delete_database_routes_to_rust_and_never_calls_core_python_rust():
         DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(_deleted_response())
+    backend = _FakeBackend(_deleted_response())
 
     result = DatabaseHelper(connection, backend).delete_database(
         "dbs/db1",
@@ -3513,7 +3513,7 @@ def test_sync_delete_database_raises_not_found_for_a_missing_database_rust():
         DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(
+    backend = _FakeBackend(
         BackendResponse(
             status_code=404,
             headers=CaseInsensitiveDict({}),
@@ -3535,7 +3535,7 @@ def test_async_delete_database_routes_to_rust_and_never_calls_core_python_rust()
             DeleteDatabase=AsyncMock(side_effect=AssertionError("legacy delete called")),
             last_response_headers={},
         )
-        backend = _AsyncBindingAdapter(_deleted_response())
+        backend = _AsyncFakeBackend(_deleted_response())
 
         result = await AsyncDatabaseHelper(connection, backend).delete_database(
             "dbs/db1",
@@ -3568,7 +3568,7 @@ def test_public_sync_delete_database_accepts_every_argument_form_rust(database_a
         DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(_deleted_response())
+    backend = _FakeBackend(_deleted_response())
     client._adapter = backend
     client._client_context = CosmosClientContext(backend)
 
@@ -3584,7 +3584,7 @@ def test_public_sync_delete_database_accepts_a_proxy_rust():
         DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(_deleted_response())
+    backend = _FakeBackend(_deleted_response())
     client._adapter = backend
     client._client_context = CosmosClientContext(backend)
 
@@ -3601,7 +3601,7 @@ def test_public_sync_delete_database_fires_response_hook_with_headers_only_rust(
         DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
         last_response_headers={},
     )
-    client._adapter = _BindingAdapter(_deleted_response())
+    client._adapter = _FakeBackend(_deleted_response())
     client._client_context = CosmosClientContext(client._adapter)
     hook_calls = []
 
@@ -3618,7 +3618,7 @@ def test_sync_delete_database_preserves_access_conditions_without_warnings_rust(
         DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(_deleted_response())
+    backend = _FakeBackend(_deleted_response())
     client._adapter = backend
     client._client_context = CosmosClientContext(backend)
 
@@ -3646,7 +3646,7 @@ def test_sync_delete_database_preserves_wildcard_guard_without_fallback_rust():
         DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(_deleted_response())
+    backend = _FakeBackend(_deleted_response())
     client._adapter = backend
     client._client_context = CosmosClientContext(backend)
 
@@ -3672,7 +3672,7 @@ def test_async_delete_database_preserves_access_conditions_without_warnings_rust
             DeleteDatabase=AsyncMock(side_effect=AssertionError("legacy delete called")),
             last_response_headers={},
         )
-        backend = _AsyncBindingAdapter(_deleted_response())
+        backend = _AsyncFakeBackend(_deleted_response())
         client._adapter = backend
         client._client_context = CosmosClientContext(backend)
 

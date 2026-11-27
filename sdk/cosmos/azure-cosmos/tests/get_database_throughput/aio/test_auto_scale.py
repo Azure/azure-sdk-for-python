@@ -52,7 +52,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     async def test_autoscale_create_database_async_rust(self):
         """``get_throughput`` reports back the autoscale settings a database was created with.
 
-        Two databases, one at a 5000 request unit ceiling with a 2 percent
+        Two databases, one at a 5000 request unit ceiling with a 0 percent
         increment, one created through ``create_database_if_not_exists`` at
         9000 and 11 percent.
 

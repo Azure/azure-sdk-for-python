@@ -29,8 +29,9 @@ They check seven invariants:
 3. Every ``# Source:`` reference resolves to its original or an explicitly
    approved retained replacement, unless marked ``(new)`` for a test with
    no v4 ancestor.
-4. Every migrated test file pins the Rust backend with the literal
-   ``_backend="rust"``, except named files for features with no Rust path.
+4. Every migrated test file pins the Rust backend directly or inherits a
+   verified shared setup that pins both clients. Named files for features
+   with no Rust path remain exempt.
 5. No migrated test is skipped without a structured reason, so
    every skip names a category a reviewer can act on.
 6. Every copied test keeps the original's ``cosmos*`` lane markers (module,
@@ -251,6 +252,65 @@ def _class_method_exists(src_tree, class_name, method_name):
     return False
 
 
+def _uses_shared_rust_setup(tree, setup_tree):
+    """Recognize the read fixtures only when their client pins and delegation hold."""
+    setup_names = {
+        "SyncContainerReadCase": ("setUp", ""),
+        "AsyncContainerReadCase": ("asyncSetUp", "_async"),
+    }
+    pinned = {}
+    for cls in setup_tree.body:
+        if not isinstance(cls, ast.ClassDef) or cls.name not in setup_names:
+            continue
+        method_name, suffix = setup_names[cls.name]
+        method = next((node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                       and node.name == method_name), None)
+        if method is None:
+            continue
+        calls = [
+            node for node in ast.walk(method)
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Name) and node.func.value.id == "clients"
+            and node.func.attr in {"create_setup_client" + suffix, "create_data_client" + suffix}
+        ]
+        if (len(calls) == 2
+                and {node.func.attr for node in calls} == {
+                    "create_setup_client" + suffix, "create_data_client" + suffix,
+                }
+                and all(any(keyword.arg == "_backend" and isinstance(keyword.value, ast.Constant)
+                            and keyword.value.value == "rust" for keyword in call.keywords) for call in calls)):
+            pinned[cls.name] = method_name
+
+    imports = {
+        alias.asname or alias.name: alias.name
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom) and node.level == 0
+        and node.module == "read_container._container_setup"
+        for alias in node.names if alias.name in pinned
+    }
+    classes = {node.name: node for node in tree.body if isinstance(node, ast.ClassDef)}
+    tests = list(_iter_test_functions(tree))
+    if not tests:
+        return False
+    for class_name, _ in tests:
+        cls = classes.get(class_name)
+        if cls is None or len(cls.bases) != 1 or not isinstance(cls.bases[0], ast.Name):
+            return False
+        base = imports.get(cls.bases[0].id)
+        if base is None:
+            return False
+        method_name = pinned[base]
+        for method in cls.body:
+            if not isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef)) or method.name != method_name:
+                continue
+            body = method.body[1:] if ast.get_docstring(method) is not None else method.body
+            prefix = "await " if method_name == "asyncSetUp" else ""
+            expected = ast.parse(f"{prefix}super().{method_name}()").body[0]
+            if not body or ast.dump(body[0]) != ast.dump(expected):
+                return False
+    return True
+
+
 class LegacyMigrationEnforcerTests(unittest.TestCase):
     """Check the copies' source structure and marker-based collection."""
 
@@ -377,19 +437,60 @@ class TestExample:
         )
 
     def test_every_migrated_file_pins_rust_backend_rust(self):
-        """Invariant 4: each migrated file carries the literal _backend pin."""
+        """Invariant 4: direct pins or verified inherited setup select Rust."""
         violations = []
+        setup = ast.parse((_TESTS_DIR / "read_container" / "_container_setup.py").read_text(encoding="utf-8"))
         for path in _source_linked_test_files():
             if _rel(path) in _PIN_EXEMPT_FILES:
                 continue
             text = path.read_text(encoding="utf-8")
-            if not any(pin in text for pin in _PIN_LITERALS):
+            if not any(pin in text for pin in _PIN_LITERALS) and not _uses_shared_rust_setup(ast.parse(text), setup):
                 violations.append(_rel(path))
         self.assertEqual(
             violations, [],
-            'migrated files missing the literal _backend="rust" pin (without it '
-            "the rust column silently runs core-python):\n  - " + "\n  - ".join(violations),
+            'migrated files missing a direct _backend="rust" pin or verified shared Rust setup:\n  - '
+            + "\n  - ".join(violations),
         )
+
+    def test_shared_setup_requires_real_inheritance_and_super_delegation_rust(self):
+        setup = ast.parse((_TESTS_DIR / "read_container" / "_container_setup.py").read_text(encoding="utf-8"))
+        for base, method, prefix in (
+            ("SyncContainerReadCase", "setUp", ""),
+            ("AsyncContainerReadCase", "asyncSetUp", "async "),
+        ):
+            awaited = "await " if prefix else ""
+            source = (
+                f"from read_container._container_setup import {base} as Shared\n"
+                "class TestCopy(Shared):\n"
+                f"    {prefix}def {method}(self):\n"
+                f"        {awaited}super().{method}()\n"
+                "    def test_case_rust(self): pass\n"
+            )
+            with self.subTest(base=base):
+                self.assertTrue(_uses_shared_rust_setup(ast.parse(source), setup))
+                for changed in (
+                    source.replace("TestCopy(Shared)", "TestCopy(unittest.TestCase)"),
+                    source.replace(f"{awaited}super().{method}()", "pass"),
+                    source.replace("read_container._container_setup", "untrusted_setup"),
+                    source + "def test_without_shared_setup_rust(): pass\n",
+                ):
+                    self.assertFalse(_uses_shared_rust_setup(ast.parse(changed), setup))
+
+    def test_shared_setup_requires_both_explicit_rust_pins_rust(self):
+        setup_text = (_TESTS_DIR / "read_container" / "_container_setup.py").read_text(encoding="utf-8")
+        for base, suffix in (("SyncContainerReadCase", ""), ("AsyncContainerReadCase", "_async")):
+            tree = ast.parse(
+                f"from read_container._container_setup import {base}\n"
+                f"class TestCopy({base}):\n"
+                "    def test_case_rust(self): pass\n"
+            )
+            for factory in ("create_setup_client", "create_data_client"):
+                for replacement in ('_backend="core-python"', ""):
+                    changed = setup_text.replace(
+                        f'{factory}{suffix}(_backend="rust")', f"{factory}{suffix}({replacement})",
+                    )
+                    with self.subTest(base=base, factory=factory, replacement=replacement):
+                        self.assertFalse(_uses_shared_rust_setup(tree, ast.parse(changed)))
 
     def test_no_unstructured_skips_rust(self):
         """Invariant 5: every skip in a migrated file has a structured reason."""

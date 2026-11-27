@@ -178,16 +178,15 @@ class PreparedFaultInjectionRule(_ValidatedSettings):  # pylint: disable=too-man
 @dataclass(frozen=True)
 # Field names and layout form the native driver-acquisition contract.
 class PreparedClientConfig(_ValidatedSettings):  # pylint: disable=too-many-instance-attributes
-    """Client settings passed to the binding when acquiring a driver handle.
+    """The client's checked settings, kept for all of its operations.
 
-    build_client_config checks the supplied options and prepares this read-only
+    build_client_config checks the supplied options and creates this read-only
     record. For example, the customer app's preferred_locations=["West US"]
-    becomes preferred_locations=("West US",). Appending "East US" to the
-    original list afterward does not change this record's saved preference.
+    becomes preferred_locations=("West US",). Adding "East US" to the
+    original list afterward does not change this record.
 
-    The binding uses these settings with the endpoint and credential to choose
-    a shared CosmosDriver or create one. Proxy and connection timeout settings
-    belong to ConnectionPoolOptions on the selected CosmosRuntime, not this record.
+    Proxy and connection timeout settings are not part of this record. Set them
+    with ConnectionPoolOptions on a CosmosRuntime.
     """
 
     #: Regions in the customer's preferred order, such as ("West US", "East US").

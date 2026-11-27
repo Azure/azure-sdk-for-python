@@ -9,8 +9,9 @@ container and how much it costs them. If Rust returned a different partition
 key path or dropped the indexing policy, application code that branches on
 those fields would take the wrong branch.
 
-What it does: original legacy tests copied from ``tests/test_crud_container.py``,
-changed in one place -- the client is built with ``_backend="rust"``.
+What it does: original tests copied from main's ``tests/test_crud_container.py``.
+Key authentication provisions resources; reads use the configured Rust data
+credential (key or AAD).
 ``test_collection_crud`` creates a container, reads it back and checks the
 indexing mode and partition key survived the round trip.
 
@@ -30,53 +31,20 @@ Run with::
 
     pytest --noconftest tests/read_container/sync/test_crud_container.py -v
 """
-import os
 import unittest
 import uuid
-from functools import wraps
-from unittest.mock import patch
 
 import pytest
 
 import azure.cosmos.exceptions as exceptions
 import azure.cosmos.documents as documents
-from azure.cosmos import CosmosClient, ContainerProxy
-from common._rust_checks import run_on_rust
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from read_container._container_setup import SyncContainerReadCase
 
 
 @pytest.mark.cosmosLong
-class TestCRUDContainerOperations(unittest.TestCase):
-
-    def setUp(self) -> None:
-        self.key_client = CosmosClient(HOST, KEY, _backend="rust")
-        self.addCleanup(self.key_client.close)
-        self._database_id = "read_container_legacy_" + str(uuid.uuid4())
-        self.addCleanup(self._delete_owned_database)
-        self.databaseForTest = self.key_client.create_database(self._database_id)
-        original_read = ContainerProxy.read
-
-        @wraps(original_read)
-        def guarded_read(container, *args, **kwargs):
-            return run_on_rust(self.key_client, lambda: original_read(container, *args, **kwargs))
-
-        read_patch = patch.object(ContainerProxy, "read", guarded_read)
-        read_patch.start()
-        self.addCleanup(read_patch.stop)
-
-    def _delete_owned_database(self) -> None:
-        try:
-            self.key_client.delete_database(self._database_id)
-        except exceptions.CosmosResourceNotFoundError:
-            pass
+class TestCRUDContainerOperations(SyncContainerReadCase):
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         try:
@@ -97,8 +65,9 @@ class TestCRUDContainerOperations(unittest.TestCase):
         A read layer that keeps serving a container that no longer exists is a
         correctness bug a customer would hit immediately.
 
-        The same legacy test is also copied into ``list_containers`` and
-        ``query_containers``, each pinning the part of it they own.
+        The same scenario remains in ``query_containers`` for combined listing
+        and query checks. This copy's setup additionally guards container reads
+        against legacy fallback and requires Rust binding execution.
         """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_collection_crud
         created_db = self.databaseForTest

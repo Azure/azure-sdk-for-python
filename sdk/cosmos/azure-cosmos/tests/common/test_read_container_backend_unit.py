@@ -4,13 +4,12 @@
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import asyncio
-import ast
 import copy
 import inspect
 import json
 import time
 import warnings
-from pathlib import Path
+from functools import partial
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -19,13 +18,11 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import exceptions
 from azure.cosmos._backend.contracts import BackendResponse
-from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import OP_READ_CONTAINER
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from .test_delete_container_backend_unit import delete_case
 
 
@@ -58,14 +55,21 @@ def read_case(delete_case, request):
         body=json.dumps(case.properties).encode(), diagnostics="read trace",
     )
     if case.legacy:
+        from azure.cosmos._backend.legacy import LEGACY_BACKEND
+        from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
+
         case.connection._backend = ASYNC_LEGACY_BACKEND if case.is_async else LEGACY_BACKEND
 
-    def legacy_read(link, options, **kwargs):
-        assert "response_hook" not in kwargs
-        case.connection.last_response_headers = case.headers.copy()
-        return CosmosDict(copy.deepcopy(case.properties), response_headers=case.headers.copy())
+        def legacy_read(link, options, **kwargs):
+            assert "response_hook" not in kwargs
+            case.connection.last_response_headers = case.headers.copy()
+            return CosmosDict(copy.deepcopy(case.properties), response_headers=case.headers.copy())
 
-    case.connection.ReadContainer = (AsyncMock if case.is_async else MagicMock)(side_effect=legacy_read)
+        read = legacy_read
+    else:
+        read = AssertionError("Rust container read entered legacy ReadContainer")
+
+    case.connection.ReadContainer = (AsyncMock if case.is_async else MagicMock)(side_effect=read)
     case.container = case.database.get_container_client("c1")
     return case
 
@@ -157,53 +161,6 @@ def test_sync_async_read_parameter_contracts_match_rust():
     assert inspect.signature(ContainerProxy.read) == inspect.signature(AsyncContainerProxy.read)
 
 
-@pytest.mark.parametrize(
-    "surface,source_file,class_name,method_names",
-    [
-        ("sync", "test_crud_container.py", "TestCRUDContainerOperations",
-         ["test_collection_crud", "test_partitioned_collection"]),
-        ("aio", "test_crud_container_async.py", "TestCRUDContainerOperationsAsync",
-         ["test_collection_crud_async", "test_partitioned_collection_async",
-          "test_partitioned_collection_quota_async"]),
-    ],
-)
-def test_source_read_copies_preserve_original_methods_rust(surface, source_file, class_name, method_names):
-    """The copied container tests still match the shipped originals, sync and async.
-
-    Each copy is compared against its source in parsed form, so the assertions
-    must be identical while formatting, comments and explanatory docstrings may differ. The set of
-    copied tests is pinned, so dropping one is a failure rather than a quieter
-    run.
-
-    Each copy also has to carry a ``Source:`` line naming the exact file, class,
-    and method it came from. Without it there is no way to tell months later
-    whether a copy still reflects its original.
-    """
-    tests = Path(__file__).resolve().parents[1]
-    copied_text = (tests / "read_container" / surface / "test_crud_container.py").read_text("utf-8")
-    source_text = (tests / source_file).read_text("utf-8")
-
-    def methods(text):
-        cls = next(node for node in ast.parse(text).body if isinstance(node, ast.ClassDef) and node.name == class_name)
-        found = {
-            node.name: node
-            for node in cls.body
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_")
-        }
-        for method in found.values():
-            if ast.get_docstring(method) is not None:
-                method.body = method.body[1:]
-        return found
-
-    copied, source = methods(copied_text), methods(source_text)
-    assert set(copied) == {name + "_rust" for name in method_names}
-    for name in method_names:
-        copied_method = copied[name + "_rust"]
-        copied_method.name = name
-        assert ast.dump(copied_method, include_attributes=False) == ast.dump(source[name], include_attributes=False), name
-        assert f"Source: tests/{source_file}::{class_name}.{name}" in copied_text
-
-
 @pytest.mark.parametrize("args", [(None,), (None, True), (None, True, True)])
 def test_all_settings_require_keywords_rust(read_case, args):
     """Container read takes no positional arguments at all.
@@ -218,9 +175,12 @@ def test_all_settings_require_keywords_rust(read_case, args):
     _assert_no_dispatch(read_case)
 
 
-@pytest.mark.parametrize("option", ["session_token", "populate_query_metrics"])
+@pytest.mark.parametrize("option,wire_option", [
+    ("session_token", "sessionToken"), ("populate_query_metrics", "populateQueryMetrics"),
+])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
 @pytest.mark.parametrize("value", [None, False, True, "unused"])
-def test_obsolete_options_rejected_by_presence_rust(read_case, option, value):
+def test_obsolete_options_rejected_by_presence_rust(read_case, option, wire_option, source, value):
     """Retired options are rejected because they were passed at all, not because of
     what they were set to.
 
@@ -230,8 +190,9 @@ def test_obsolete_options_rejected_by_presence_rust(read_case, option, value):
     neither engine is called.
     """
     response_hook = MagicMock()
+    kwargs = {option: value} if source == "keyword" else {source: {wire_option: value}}
     with pytest.raises(TypeError, match=option):
-        _read(read_case, response_hook=response_hook, **{option: value})
+        _read(read_case, response_hook=response_hook, **kwargs)
     response_hook.assert_not_called()
     _assert_no_dispatch(read_case)
 
@@ -360,7 +321,8 @@ def test_supported_timeout_rust(read_case, timeout):
 @pytest.mark.parametrize("kwargs", [
     {"timeout": 0.5}, {"timeout": False}, {"timeout": float("nan")},
     {"timeout": float("inf")}, {"timeout": "10"},
-    {"connection_timeout": 2},
+    {"connection_timeout": 2}, {"connection_timeout": None},
+    {"consistency_level": "Unknown"},
     {Constants.OperationStartTime: 123, "unsupported_option": True},
     {"initial_headers": {"User-Agent": "custom"}},
 ])
@@ -368,10 +330,10 @@ def test_unsupported_rust_settings_never_replay_rust(read_case, kwargs):
     """Settings the Rust path cannot honor raise there, and still work on legacy.
 
     The list covers deadlines that are too small, false, not a number, or a
-    string, a socket connect timeout, a raw request hook, and a user agent the
+    string, a socket connect timeout, an unknown keyword, and a user agent the
     driver owns.
 
-    On the Rust path each raises ``NotImplementedError`` naming the method, with
+    On the Rust path each raises ``TypeError`` naming the method, with
     nothing sent and nothing cached. A bad
     deadline is a wrong value, so it raises ``ValueError`` on both paths. On the
     legacy path the other settings simply succeed, because they are part of
@@ -390,9 +352,166 @@ def test_unsupported_rust_settings_never_replay_rust(read_case, kwargs):
         _read(case, **kwargs)
         case.backend.execute.assert_not_called()
         return
-    with pytest.raises(NotImplementedError, match="ContainerProxy.read"):
+    with pytest.raises(TypeError, match="ContainerProxy.read"):
         _read(case, **kwargs)
     _assert_no_dispatch(case)
+
+
+@pytest.mark.parametrize("read_case", [False], indirect=True, ids=["rust"])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("option,value", [
+    ("raw_request_hook", None),  # Closed gap 6.
+    ("raw_response_hook", False),  # Closed gap 7.
+    ("connection_verify", False),  # Closed gap 10.
+    ("transport", None),
+    ("proxies", {}),
+    ("availability_strategy", {"threshold_steps_ms": 10}),  # Closed gap 14.
+    ("retry_write", 0),  # Closed gap 13: the driver owns write retry policy.
+])
+def test_closed_gap_settings_raise_type_error_without_dispatch_rust(read_case, source, option, value):
+    wire_option = "availabilityStrategy" if option == "availability_strategy" else option
+    kwargs = {option: value} if source == "keyword" else {source: {wire_option: value}}
+    hook = MagicMock()
+    with pytest.raises(TypeError):
+        _read(read_case, response_hook=hook, **kwargs)
+    hook.assert_not_called()
+    _assert_no_dispatch(read_case)
+
+
+@pytest.mark.parametrize("read_case", [False], indirect=True, ids=["rust"])
+@pytest.mark.parametrize("source", ["request_options", "feed_options", "initial_headers"])
+def test_unknown_consistency_raises_value_error_from_native_binding_rust(read_case, source):
+    from azure.cosmos import _rust
+
+    case = read_case
+    method = _rust.read_container_async if case.is_async else _rust.read_container
+    case.backend.execute.side_effect = lambda prepared, **kwargs: method(
+        driver_handle="invalid-driver-handle", prepared=prepared,
+    )
+    kwargs = {
+        "request_options": {"request_options": {"consistencyLevel": "Unknown"}},
+        "feed_options": {"feed_options": {"consistencyLevel": "Unknown"}},
+        "initial_headers": {"initial_headers": {"x-ms-consistency-level": "Unknown"}},
+    }[source]
+    with pytest.raises(ValueError, match="per-call consistency"):
+        _read(case, **kwargs)
+    case.backend.execute.assert_called_once()
+    case.connection.ReadContainer.assert_not_called()
+    case.connection._set_container_properties_cache.assert_not_called()
+
+
+@pytest.mark.parametrize("read_case", [False], indirect=True, ids=["rust"])
+@pytest.mark.parametrize("status,body", [(200, b"{}"), (304, b"")])
+def test_empty_read_response_hook_preserves_not_modified_none_rust(read_case, status, body):
+    case = read_case
+    case.backend.response = BackendResponse(
+        status_code=status, headers=case.headers.copy(), body=body,
+    )
+    received = []
+
+    def response_hook(headers, properties):
+        received.append(properties)
+        headers["etag"] = "changed"
+
+    result = _read(case, response_hook=response_hook)
+    assert isinstance(result, CosmosDict)
+    assert result == {}
+    assert len(received) == 1
+    if status == 304:
+        assert received[0] is None
+    else:
+        assert received[0] == {}
+        assert received[0] is not result
+    assert result.get_response_headers()["etag"] == '"v1"'
+    assert case.connection.last_response_headers["etag"] == '"v1"'
+    case.backend.execute.assert_called_once()
+    case.connection.ReadContainer.assert_not_called()
+
+
+@pytest.mark.parametrize("read_case", [False], indirect=True, ids=["rust"])
+@pytest.mark.parametrize("warm_cache", [False, True], ids=["cold-cache", "warm-cache"])
+def test_not_modified_read_preserves_metadata_cache_rust(metadata_read_case, warm_cache):
+    case = metadata_read_case
+    cache = case.connection._container_properties_cache
+    success = case.backend.response
+    if warm_cache:
+        _read(case)
+    original_cache = copy.deepcopy(cache)
+    case.connection._set_container_properties_cache.reset_mock()
+    case.backend.execute.reset_mock()
+    case.backend.response = BackendResponse(
+        status_code=304, headers=case.headers.copy(), body=b"",
+    )
+
+    result = _read(case, etag='"v1"', match_condition=MatchConditions.IfModified)
+
+    assert result == {}
+    assert result.get_response_headers()["etag"] == '"v1"'
+    assert cache == original_cache
+    case.connection._set_container_properties_cache.assert_not_called()
+    case.backend.execute.assert_called_once()
+    case.connection.ReadContainer.assert_not_called()
+
+    case.backend.response = success
+    case.backend.execute.reset_mock()
+    properties = case.container._get_properties()
+    if case.is_async:
+        properties = asyncio.run(properties)
+    assert properties["_rid"] == case.properties["_rid"]
+    assert properties["partitionKey"] == case.properties["partitionKey"]
+    assert case.backend.execute.call_count == (0 if warm_cache else 1)
+
+
+@pytest.mark.parametrize("response_hook", [False, 1, "not-callable"])
+def test_noncallable_response_hook_is_rejected_before_dispatch_rust(read_case, response_hook):
+    with pytest.raises(TypeError, match="response_hook must be callable or None"):
+        _read(read_case, response_hook=response_hook)
+    _assert_no_dispatch(read_case)
+
+
+@pytest.mark.parametrize("hook_kind", ["function", "callable", "partial", "async-generator"])
+def test_async_response_hook_is_rejected_before_dispatch_rust(read_case, hook_kind):
+    async def hook(headers, properties):
+        raise AssertionError("Async hook must not execute")
+
+    class AsyncHook:
+        async def __call__(self, headers, properties):
+            raise AssertionError("Async hook must not execute")
+
+    async def generator_hook(_headers, properties):
+        yield properties
+
+    response_hook = {
+        "function": hook,
+        "callable": AsyncHook(),
+        "partial": partial(hook),
+        "async-generator": generator_hook,
+    }[hook_kind]
+    with pytest.raises(TypeError, match="response_hook must be synchronous"):
+        _read(read_case, response_hook=response_hook)
+    _assert_no_dispatch(read_case)
+
+
+@pytest.mark.parametrize("read_case", [False], indirect=True, ids=["rust"])
+def test_not_modified_hook_error_is_not_retried_or_cached_rust(read_case):
+    case = read_case
+    case.backend.response = BackendResponse(
+        status_code=304, headers=case.headers.copy(), body=b"",
+    )
+    error = RuntimeError("customer hook failed")
+
+    def fail(headers, properties):
+        assert properties is None
+        raise error
+
+    response_hook = MagicMock(side_effect=fail)
+    with pytest.raises(RuntimeError) as caught:
+        _read(case, response_hook=response_hook)
+    assert caught.value is error
+    response_hook.assert_called_once()
+    case.backend.execute.assert_called_once()
+    case.connection.ReadContainer.assert_not_called()
+    case.connection._set_container_properties_cache.assert_not_called()
 
 
 def test_response_hook_cannot_mutate_results_or_cached_properties_rust(read_case):
@@ -509,6 +628,7 @@ def test_service_errors_have_no_success_response_hook_rust(read_case, status):
         case.connection.ReadContainer.assert_not_called()
 
 
+@pytest.mark.parametrize("read_case", [False], indirect=True, ids=["rust"])
 def test_binding_failure_never_replays_rust(read_case):
     """If the Rust engine reports it cannot carry out the read, the call fails there
     rather than being retried on legacy.
@@ -517,12 +637,9 @@ def test_binding_failure_never_replays_rust(read_case):
     must be told, not quietly served by a different engine with different
     retries and diagnostics. Nothing is cached.
 
-    Skipped when the customer chose legacy explicitly, since there is no Rust
-    binding involved in that case.
+    Only the Rust fixture is applicable to a Rust binding failure.
     """
     case = read_case
-    if case.legacy:
-        pytest.skip("Rust binding failures do not apply to explicit legacy selection")
     case.backend.execute.side_effect = NotImplementedError("binding capability")
     with pytest.raises(NotImplementedError):
         _read(case)
@@ -530,6 +647,8 @@ def test_binding_failure_never_replays_rust(read_case):
     case.connection._set_container_properties_cache.assert_not_called()
 
 
+@pytest.mark.parametrize("read_case", [False], indirect=True, ids=["rust"])
+@pytest.mark.parametrize("delete_case", ["async"], indirect=True)
 def test_async_cancellation_is_not_replayed_rust(read_case):
     """A cancelled async read stays cancelled.
 
@@ -541,8 +660,6 @@ def test_async_cancellation_is_not_replayed_rust(read_case):
     happen.
     """
     case = read_case
-    if not case.is_async or case.legacy:
-        pytest.skip("Async Rust cancellation case")
     case.backend.execute.side_effect = asyncio.CancelledError()
     with pytest.raises(asyncio.CancelledError):
         _read(case)

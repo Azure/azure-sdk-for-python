@@ -119,25 +119,18 @@ def test_create_helper_requires_an_explicit_optional_budget_rust(helper_type):
 )
 @pytest.mark.parametrize("deadline", [None, 101.0])
 def test_create_budget_is_explicit_not_inferred_from_a_marker_rust(normalize, deadline):
-    """The deadline comes from the argument, and a stray internal marker in the options is
-    ignored and removed.
-
-    Both paths are given options carrying an old internal deadline marker with a
-    conspicuous value, and both use the argument instead -- including when the
-    argument is nothing at all. The marker does not survive into what gets sent.
-
-    That marker is how the deadline used to travel. Still reading it would mean
-    a caller who reuses an options object from an earlier call silently inherits
-    the old call's deadline, which by then is in the past, and their new call
-    times out immediately for no visible reason.
-    """
+    """Rust rejects a stray deadline marker; legacy discards it. Neither adopts it."""
+    arguments = {"container_link": "dbs/d/colls/c", "body": {"id": "item"}}
+    if normalize is normalize_item_arguments:
+        with pytest.raises(TypeError, match="_item_operation_deadline"):
+            normalize(
+                "create_item", {**arguments, "_item_operation_deadline": 999.0}, deadline=deadline,
+            )
+    else:
+        arguments["_item_operation_deadline"] = 999.0
     args, _ = normalize(
         "create_item",
-        {
-            "container_link": "dbs/d/colls/c",
-            "body": {"id": "item"},
-            "_item_operation_deadline": 999.0,
-        },
+        arguments,
         deadline=deadline,
     )
     assert args["deadline"] == deadline

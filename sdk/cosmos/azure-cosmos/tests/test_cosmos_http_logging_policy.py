@@ -125,9 +125,9 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Test if we can log into from creating a database
         database_id = test_config.unique_database_id("logging")
         self.client_default.create_database(id=database_id)
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
-        messages_request = self.mock_handler_default.messages[0].message.split("\n")
-        messages_response = self.mock_handler_default.messages[1].message.split("\n")
+        assert all(m.levelname == 'INFO' for m in self.mock_handler_default.records)
+        messages_request = self.mock_handler_default.records[0].message.split("\n")
+        messages_response = self.mock_handler_default.records[1].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
         assert 'Request headers:' in messages_request[2]
         assert messages_request[-1] == 'No body was attached to the request'
@@ -143,10 +143,10 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Test if we can log info from reading a database
         database_id = test_config.unique_database_id("logging")
         self.client_diagnostic.create_database(id=database_id)
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
+        assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.records)
         # Check that we made a databaseaccount read request only once and that we only logged it once
-        messages_request = self.mock_handler_diagnostic.messages[0]
-        messages_response = self.mock_handler_diagnostic.messages[1]
+        messages_request = self.mock_handler_diagnostic.records[0]
+        messages_response = self.mock_handler_diagnostic.records[1]
         elapsed_time = messages_response.duration
         assert "databaseaccount" == messages_request.resource_type
         assert messages_request.verb == "GET"
@@ -155,11 +155,11 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
         # Verify we only have a total of 6 logged messages: 2 from databaseaccount read, 2 from health check, and 2 from create database
-        assert len(self.mock_handler_diagnostic.messages) == 6
+        assert len(self.mock_handler_diagnostic.records) == 6
         # Test if we can log into from creating a database
         # The request to create database should follow the health check request immediately
-        messages_request = self.mock_handler_diagnostic.messages[4]
-        messages_response = self.mock_handler_diagnostic.messages[5]
+        messages_request = self.mock_handler_diagnostic.records[4]
+        messages_response = self.mock_handler_diagnostic.records[5]
         elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.verb == "POST"
@@ -174,9 +174,9 @@ class TestCosmosHttpLogger(unittest.TestCase):
             self.client_diagnostic.create_database(id=database_id)
         except:
             pass
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
-        messages_request = self.mock_handler_diagnostic.messages[0]
-        messages_response = self.mock_handler_diagnostic.messages[1]
+        assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.records)
+        messages_request = self.mock_handler_diagnostic.records[0]
+        messages_response = self.mock_handler_diagnostic.records[1]
         elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.operation_type == "Create"
@@ -207,12 +207,12 @@ class TestCosmosHttpLogger(unittest.TestCase):
             pass
 
         # Assert that the filtered logger only captured the error
-        request_log = self.mock_handler_filtered_diagnostic.messages[0]
-        response_log = self.mock_handler_filtered_diagnostic.messages[1]
+        request_log = self.mock_handler_filtered_diagnostic.records[0]
+        response_log = self.mock_handler_filtered_diagnostic.records[1]
         assert response_log.status_code == 404
         assert request_log.resource_type == "docs"
         assert request_log.operation_type == "Read"
-        assert len(self.mock_handler_filtered_diagnostic.messages) == 2
+        assert len(self.mock_handler_filtered_diagnostic.records) == 2
 
         self.mock_handler_filtered_diagnostic.reset()
 
@@ -223,12 +223,12 @@ class TestCosmosHttpLogger(unittest.TestCase):
             pass
 
         # Assert that the filtered logger captured the error
-        request_log = self.mock_handler_filtered_diagnostic.messages[0]
-        response_log = self.mock_handler_filtered_diagnostic.messages[1]
+        request_log = self.mock_handler_filtered_diagnostic.records[0]
+        response_log = self.mock_handler_filtered_diagnostic.records[1]
         assert response_log.status_code == 400
         assert request_log.resource_type == "docs"
         assert request_log.operation_type == "Create"
-        assert len(self.mock_handler_filtered_diagnostic.messages) == 2
+        assert len(self.mock_handler_filtered_diagnostic.records) == 2
 
         # Clean up
         self.client_filtered_diagnostic.delete_database(database_id)
@@ -279,7 +279,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         container.create_item(body=document_definition)
 
         # Verify endpoint locations
-        messages_split = mock_handler.messages[1].message.split("\n")
+        messages_split = mock_handler.records[1].message.split("\n")
         for message in messages_split:
             if "Preferred Regions:" in message:
                 locations = get_locations_list(message)
@@ -328,8 +328,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Verify that the request activity ID matches the response activity ID
         # Having the Request Activity confirms we generated one from SDK
         # Having it match the response means it was passed successfully
-        log_record_request = self.mock_handler_activity_id.messages[0]
-        log_record_response = self.mock_handler_activity_id.messages[1]
+        log_record_request = self.mock_handler_activity_id.records[0]
+        log_record_response = self.mock_handler_activity_id.records[1]
         assert log_record_request.activity_id == log_record_response.activity_id
 
         # Upsert another item with the custom activity ID in the initial headers
@@ -340,7 +340,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
         # Verify that the custom activity ID does not match the request activity ID from the log record
         # Users should not be able to pass in their own activity ID.
-        log_record_request_2 = self.mock_handler_activity_id.messages[2]
+        log_record_request_2 = self.mock_handler_activity_id.records[2]
         assert log_record_request_2.activity_id != custom_activity_id
 
         # Clean up by deleting the database
@@ -389,7 +389,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
             pytest.fail("Expected exception not thrown")
         except CosmosHttpResponseError as cosmosError:
             # Verify that the logger captured the 502 error and was called from on_exception
-            assert any(m.status_code == 502 and "on_exception" in m.funcName for m in mock_handler.messages)
+            assert any(m.status_code == 502 and "on_exception" in m.funcName for m in mock_handler.records)
 
     def test_hierarchical_logger_with_filter(self):
         # Reset the mock handler before the test
@@ -407,8 +407,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
             pass
 
         # Verify that the error was logged by the root logger's mock handler
-        assert len(self.root_mock_handler.messages) == 2
-        log_record = self.root_mock_handler.messages[0]
+        assert len(self.root_mock_handler.records) == 2
+        log_record = self.root_mock_handler.records[0]
         assert hasattr(log_record, "status_code")
         assert log_record.status_code == 404
         assert log_record.name == "rootLogger.child.grandchild"

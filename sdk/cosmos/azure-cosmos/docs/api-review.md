@@ -688,6 +688,8 @@ clients.
 | Reject `populate_query_metrics`, `session_token`, `etag`, and `match_condition` when supplied | These arguments do not provide their corresponding query or item-operation behavior for database creation | Remove the keywords, including entries containing `None` or `False` in dictionaries passed with `**settings`. |
 | Reject conflicting or incomplete throughput settings before creation | The request must specify one capacity mode rather than leave conflicting instructions for the service backend | Choose manual throughput or autoscale. Mixed modes, an empty `ThroughputProperties`, or an autoscale increment without a maximum raise `ValueError`. |
 
+<a id="database-create-keyword-options"></a>
+
 For the positional-argument change:
 
 ```python
@@ -785,6 +787,8 @@ await client.create_database("sales", response_hook="on_created")
 # Correct: this supplies the function defined above.
 await client.create_database("sales", response_hook=on_created)
 ```
+
+<a id="database-create-callback-snapshots"></a>
 
 **The response hook observes the result; it does not change it**
 
@@ -1806,10 +1810,14 @@ Per-call `connection_timeout` is also rejected; configure
 connection establishment through `ConnectionPoolOptions.connection_timeout`
 on the client's `CosmosRuntime` instead.
 
+<a id="database-read-unsupported-settings"></a>
+
 Unsupported keyword arguments and unsupported `initial_headers` overrides,
 such as `User-Agent`, `Accept`, `Cache-Control` and `x-ms-version`, raise
 `TypeError` naming the setting before the read is sent. The SDK does not
 silently ignore these settings or switch execution paths to accept them.
+
+<a id="database-read-option-mappings"></a>
 
 **Reusing a settings dictionary**
 
@@ -2807,56 +2815,59 @@ async def replace_container(
 
 **Why the customer calls this API**
 
-The customer wants to inspect the `orders` container's configuration or
-resource usage. `container.read()` returns the container's properties, not
-the contents of `order-42`. The customer can also request additional
-partition-range statistics or quota and usage information.
-
-For example, an administration tool can inspect the configured partition-key
-path and record the response's usage headers. The review must preserve those
-requests and ensure a response callback cannot accidentally change the
-properties returned to the customer or cached by the SDK.
+Alpha Bank wants to inspect the `orders` container's partition-key definition
+and storage usage. `container.read()` returns container properties, not the
+contents of `order-42`. The customer can also request partition-range
+statistics and quota/usage information.
 
 **Why the Python contract changes:** Sync accepted `populate_query_metrics`,
 `populate_partition_key_range_statistics`, and `populate_quota_info` as its
 first three positional arguments, in that order. Async required optional
-arguments by keyword. Inapplicable metrics/session settings were handled
-inconsistently. Supplying quota/statistics options or an unused ETag alongside
-a wildcard condition could unnecessarily switch a Rust-selected read to legacy
-Python. A response hook could edit the same nested properties subsequently
-returned to the caller and saved in the SDK's partition-key cache.
+arguments by keyword. Both clients now use the same keyword-only contract
+and reject settings that do not apply to a container-properties read.
 
 **Decision and reasoning:** Require all optional arguments by keyword
-(`name=value`) on both clients. Reject `populate_query_metrics` and
-`session_token` whenever supplied, including `None` or `False`; neither belongs
-on this metadata read. Honor quota/statistics requests through the Rust driver;
-`None` and `False` request no extra data. Remove only an unused ETag after
-constructing the condition: `IfMissing` still sends `If-None-Match: *`, and
-version-specific conditions retain their supplied ETag. Give the response hook
-independent deep copies so observing or annotating a response cannot change
-the SDK's local view of the container.
+(`name=value`) on both clients. Extra positional arguments, `session_token`,
+and `populate_query_metrics` raise `TypeError`. Retired keywords are rejected
+even when set to `None` or `False`; this also covers `sessionToken` and
+`populateQueryMetrics` inside `request_options` or `feed_options`.
+Unsupported per-call settings and header overrides raise `TypeError`, not
+`NotImplementedError`. Invalid values, such as an unrecognized consistency
+name in request options, raise `ValueError`. The customer app must remove or
+correct the unsupported input.
 
 **Customer migration:** Pass supported options by keyword, for example
 `container.read(populate_quota_info=True)`, and remove retired keywords.
-Read requested statistics from `properties["statistics"]` and quota/usage from
-`properties.get_response_headers()`. Keep `response_hook(headers, properties)`,
-but do not rely on edits to either argument changing returned properties,
-cached partition-key metadata, or SDK-owned headers. Such local edits never
-changed the actual Cosmos DB container.
+`retry_write` does not apply to this read: omit it or pass `None`.
+Keep supported `etag` and `match_condition` arguments. Version-specific
+conditions use the supplied ETag; wildcard conditions still use `*`, even
+when an ETag is also supplied.
 
-**Other public changes:** Reject removed `read_timeout` on both execution
-paths, including `None`. Runtime HTTP-attempt limits are distinct. Unsupported Rust
-settings now raise rather than silently change backends. Response hooks still
-run synchronously after success, including callable objects that evaluate to
-`False`; this concerns the object itself, not its return value. Header
-isolation and false-valued callable support already worked and are preserved.
-A response-hook error does not replay the read or populate the cache.
-The result remains a `CosmosDict`; a missing container still raises
-`CosmosResourceNotFoundError`.
+**Shared settings:** For `timeout`, removed `read_timeout`, and connection
+settings, see the [shared timeout contract](#timeout-settings-are-explicit-about-their-scope).
+Invalid `timeout` values raise `ValueError`.
 
-**Illustration - ask for extra metadata without changing request implementation:**
+<a id="container-read-response-hook"></a>
+
+**Response hook:** Keep a synchronous `response_hook(headers, properties)`,
+including when using the async client. It receives independent copies:
+editing nested properties or headers does not change the returned result.
+A callable that evaluates to `False` is still invoked; this concerns the
+callable object, not its return value. Use `None` to omit the hook.
+Non-callable values, including `False`, and async hooks raise `TypeError`
+before the request is sent. Use an ordinary `def` callback, not `async def`.
+If the hook raises, its exception propagates without repeating the read.
+
+For HTTP 304 ("not modified"), the hook receives `None` for properties,
+while `read()` returns an empty `CosmosDict`. Keep the previously saved
+properties rather than treating that empty result as new container settings.
+A missing container still raises `CosmosResourceNotFoundError`.
+
+**Illustration - inspect container statistics and usage:**
 
 ```python
+database = client.get_database_client("sales")
+container = database.get_container_client("orders")
 properties = container.read(
     populate_partition_key_range_statistics=True,
     populate_quota_info=True,
@@ -2866,17 +2877,13 @@ headers = properties.get_response_headers()
 ```
 
 Partition-range statistics describe the storage ranges used by the container;
-quota/usage headers describe limits and consumption. `False` or `None` asks for
-no additional information, rather than selecting legacy Python.
-For wildcard conditions, `IfMissing` means send `If-None-Match: *`; an unused
-ETag must not replace the `*` or change the selected implementation.
-For example, if a hook edits its copy of
-`properties["partitionKey"]["paths"]`, neither the returned properties nor the
-SDK's saved partition-key definition changes. The deep-copy example is in
-database creation (`CosmosClient.create_database`). Argument naming and socket-setting
-rules follow reading database properties (`DatabaseProxy.read`).
+quota/usage headers describe limits and consumption. Setting either metadata
+flag to `False` or `None` requests no extra information for that flag.
 
-**New contract (async-client signature):**
+**Public calling contract (async client):**
+
+Use `await container.read(...)`. The synchronous client accepts the same
+arguments without `await`; both return a `CosmosDict`.
 
 ```python
 async def read(
@@ -2886,7 +2893,7 @@ async def read(
     populate_quota_info: Optional[bool] = None,
     priority: Optional[Literal["High", "Low"]] = None,
     initial_headers: Optional[dict[str, str]] = None,
-    response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+    response_hook: Optional[Callable[[Mapping[str, str], Optional[dict[str, Any]]], None]] = None,
     **kwargs: Any
 ) -> CosmosDict:
     ...
@@ -2985,28 +2992,22 @@ scope, option-map ownership, and custom-header handling.
 
 **Proposed API changes; approval is not recorded**
 
-The following changes are implemented for review; approval is not recorded.
-Existing behavior and fixes that only restore legacy compatibility are not
-presented as new contract decisions. Ordinary usage is covered in
-migration status.
+Shared contracts are linked below; only create-specific differences are
+explained here. Existing behavior and fixes that restore compatibility are
+not additional API decisions.
 
 <a id="create-item-keyword-options"></a>
 
 **1. Require keyword arguments for all options**
 
-**Why:** A customer switching from synchronous to asynchronous calls should
-not also have to change how options are supplied. In `create_item(order, 1)`,
-the meaning of `1` is hidden; `create_item(order, indexing_directive=1)`
-makes the intended option explicit and works with the same argument rules on
-both clients. V5 adopts the keyword-only rule rather than introducing optional
-positional arguments on the asynchronous client.
-
-**V5 contract:** Only `body` may be positional. Name every option, for example
-`indexing_directive=1`; optional positional arguments are not supported.
+Apply the [database-creation calling-convention change](#database-create-keyword-options).
+For this API, only `body` may be positional. Replace
+`orders.create_item(order, 1)` with
+`orders.create_item(order, indexing_directive=1)` on either client.
 
 <a id="create-item-inapplicable-options"></a>
 
-**2. Reject `populate_query_metrics`, `etag`, and `match_condition` on create**
+**2. Reject options that do not apply to create**
 
 **Why these arguments do not apply:**
 
@@ -3027,6 +3028,20 @@ that create performs a query or offers conditional-update behavior.
 
 **V5 contract:** Remove `populate_query_metrics`, `etag`, and `match_condition`.
 Supplying any of them raises `TypeError`, including `None` or `False`.
+
+The same rule applies to options for other operations. For example,
+`filter_predicate="FROM c WHERE false"` is a patch condition, not a way to
+prevent a create. Supplying it to `create_item` raises `TypeError`
+before any request and does not create the item.
+`patch_operations`, query page sizes such as `max_item_count`, and query
+continuation options are also rejected, including `None` or `False`.
+
+These restrictions also apply inside the selected `request_options` or
+`feed_options` dictionary and to corresponding header forms. Conditional
+aliases such as `if_match`, `if_none_match`, `access_condition`, and nested
+`accessCondition` do not enable conditional creation; they raise `TypeError`,
+as do `If-Match` and `If-None-Match` headers. Ordinary custom headers remain
+supported under the [header rules below](#create-item-custom-headers).
 
 **3. Reject invalid item bodies and IDs before service requests**
 
@@ -3055,19 +3070,8 @@ inputs previously created usable items.
 
 **4. Give `response_hook` separate copies of headers and item data**
 
-**Why:** A callback is customer code invoked with response information.
-For example, a logging callback might remove `customerId` from its copy of
-an order before logging it. That must not remove `customerId` from the item
-returned to the application. The same protection applies if the callback
-changes a nested property such as `shipping.address` or edits a header.
-Legacy passed response headers and the decoded body directly to the callback
-before constructing the returned item. Callback edits could therefore affect
-what the application received. Customers who relied on those edits must
-transform the returned result explicitly instead.
-
-**V5 contract:** A callback receives independent copies of headers and the
-result, including nested item properties. Editing those copies does not
-change the returned item or SDK state.
+Apply the [database-creation snapshot contract and customer migration](#database-create-callback-snapshots),
+with the created item as the callback's second argument.
 
 The callback's result argument is now a `CosmosDict`, a dictionary with access
 to response headers, instead of the legacy decoded dictionary or `None`.
@@ -3079,24 +3083,11 @@ with headers for a suppressed response.
 
 <a id="create-item-callback-validation"></a>
 
-**5. Require `response_hook` to be callable or `None`**
+**5. Require a synchronous `response_hook` or `None`**
 
-**Why:** Passing `response_hook="log_order"` supplies text, not a function
-the SDK can call. Discovering that mistake only after saving `order-42`
-would make the customer see an error even though the write succeeded,
-potentially encouraging an unnecessary retry. V5 rejects that configuration
-before the write.
-
-A valid function can still fail while running, for example if its logging
-destination is unavailable. Input validation cannot prevent that later failure;
-the callback error must reach the customer without causing another create.
-
-**V5 contract:** `response_hook` must be `None` or callable; other values are
-rejected before sending requests. Legacy skipped false-valued hooks and
-could discover a truthy non-callable hook only after the write. V5 invokes
-every supplied callable even if it evaluates to false in a Boolean check,
-and rejects non-callable values such as `False` rather than silently skipping
-them. Use `None` to disable the hook.
+Apply the [container-read hook-validation rules](#container-read-response-hook):
+invalid hooks raise `TypeError` before any request, including the container
+lookup. This includes async hooks even when the create itself is awaited.
 
 Success-only invocation and propagating callback exceptions without retrying
 the write already existed; they are not additional V5 changes.
@@ -3104,6 +3095,9 @@ the write already existed; they are not additional V5 changes.
 <a id="create-item-operation-timeout"></a>
 
 **6. Include container lookup in the create timeout**
+
+Use the [database-creation timeout range, default and error rules](#database-create-operation-timeout).
+The create-specific change below concerns which work shares that budget.
 
 **Why:** Before creating an item, the SDK may need to fetch the container's
 properties, including its partition-key definition, to determine the item's
@@ -3124,61 +3118,34 @@ These timings illustrate the budget, not measured performance.
 
 **7. Do not modify the customer's reusable request options**
 
-**Why:** A customer may reuse the same options dictionary across creates:
+Apply the [database-read dictionary-ownership contract](#database-read-option-mappings).
+Explicit `None` is also accepted as an empty option selection.
 
-```python
-settings = {"timeout": 2}
-orders.create_item(order, request_options=settings, timeout=5)
-```
-
-Legacy could overwrite `settings["timeout"]` with `5` and insert SDK
-bookkeeping, such as the operation's start time and the container's internal
-resource ID, into that same customer-supplied dictionary. The dictionary
-therefore no longer contained just the settings the customer supplied, and
-reusing it could unintentionally change later calls.
-
-V5 uses five seconds for this call but leaves `settings` as `{"timeout": 2}`.
-SDK bookkeeping stays separate from the customer's reusable configuration.
-
-**V5 contract:** Neither `request_options` nor `feed_options` is modified.
-Code that inspected SDK-added entries in those mappings must stop relying
-on that side effect. Explicit `None` is also accepted as an empty option
-selection rather than failing when the SDK tries to update it.
-
-The precedence of `request_options` over `feed_options`, selection of an empty
-mapping, and an explicit `timeout=None` overriding a nested timeout already
-existed. They are preserved behavior, not new decisions.
+Unlike `DatabaseProxy.read`, create accepts `timeout` inside the selected
+options dictionary. A directly supplied timeout takes precedence. These
+calling forms are retained behavior, not additional API changes.
 
 <a id="create-item-custom-headers"></a>
 
 **8. Reject SDK-controlled header overrides**
 
-**Why:** Not all headers are application-specific information.
-`Accept` describes the response format the caller can handle,
-`Cache-Control` expresses caching directives, `User-Agent` identifies the
-calling software, and `x-ms-version` selects the service API version.
-Overriding these through an arbitrary header mapping can request behavior
-different from the SDK's supported contract.
-
-V5 keeps these settings under SDK control while still allowing ordinary
-application headers. This is a restriction on particular overrides, not a
-removal of `initial_headers` or all header customization.
-
-**V5 contract:** `initial_headers` rejects overrides of `Accept`,
-`Cache-Control`, `User-Agent`, and `x-ms-version`.
-Remove those overrides; ordinary custom headers remain supported.
+Apply the [database-read header-override restriction](#database-read-unsupported-settings).
+Header names are checked case-insensitively; ordinary custom headers remain
+supported.
 
 **Other V5 changes that affect `create_item`**
 
 | Feature or option | V5 support |
 |---|---|
-| Pre- and post-triggers | Not supported. Trigger arguments are rejected. |
-| `raw_request_hook` and `raw_response_hook` | Not supported. Supplying either raises `TypeError`, including explicit `None`. `response_hook` remains supported. |
-| Per-call `retry_write` | The Rust driver controls automatic retries. Per-call retry configuration is not supported; non-`None` `retry_write` values, including zero, are rejected. |
-| Write hedging | Not supported. `availability_strategy` cannot enable an additional regional write while the first is still pending. |
-| Per-call connection and response-inactivity timeouts | Not supported. Use runtime settings for connection and complete HTTP-attempt limits, and `timeout` for the overall operation. These are not response-inactivity timers. |
-| Older partitionless/system-key containers | Not supported. |
-| Complete original service response headers | V5 exposes selected response headers, not every header returned by the service. |
+| Pre- and post-triggers | See the [trigger exclusion](#triggers). |
+| `raw_request_hook` and `raw_response_hook` | See the [shared raw-hook removal](#raw-pipeline-hooks-are-removed-from-both-backends). |
+| Unknown keywords and unsupported transport controls | Apply the [database-read unsupported-keyword rule](#database-read-unsupported-settings). Misspellings such as `retry_writes`, and per-call `proxy` or `stream`, raise `TypeError` before any request, including `None` or `False`. These settings are also rejected inside the selected options dictionary. To disable tracing, use `tracing_options={"enabled": False}`, not `tracing_enable=False`. |
+| Per-call `retry_write` | Apply the [container-creation retry-setting contract](#container-write-retry-setting). |
+| Per-call retry-policy controls | `retry_total`, `retry_connect`, `retry_read`, `retry_status`, `retry_backoff_factor`, `retry_backoff_max`, and `retry_on_methods` raise `TypeError` before any request, including when set to `None` or zero. This also applies inside the selected `request_options` or `feed_options` mapping. Omit these controls; accepting them would incorrectly suggest they configure retries for this create. |
+| Write hedging | Not supported. Passing `availability_strategy=True` or a strategy dictionary, including an empty dictionary, raises `TypeError` before any request. Omit the option or pass `None` or `False`; a create cannot enable an additional regional write while the first is still pending. |
+| Per-call connection and response-inactivity timeouts | Use the [shared timeout settings](#timeout-settings-are-explicit-about-their-scope). For create, non-`None` `connection_timeout` values, including zero and `False`, raise `TypeError` before any request; omitting the keyword or passing `None` supplies no override. |
+| Older partitionless/system-key containers | See the [container compatibility exclusion](#containerproxyis_system_key). |
+| Complete original service response headers | See the [shared response-header contract](#rust-success-responses-expose-modeled-metadata-not-a-generic-raw-header-map). |
 
 A failed or timed-out create does not prove the order was not saved. If the
 service backend saves `order-42` but its response is lost, a repeated create
@@ -3212,16 +3179,6 @@ async def create_item(
 ) -> CosmosDict:
     ...
 ```
-
-**Remaining migration gaps and verification**
-
-This entry requests review of the public contract; it does not record approval
-or declare migration complete. Remaining behavior after container recreation,
-response retry metadata, and item ID/text compatibility is tracked in
-migration status.
-Executed comparisons and pending service scenarios belong in
-live verification,
-not in the contract decision.
 
 <a id="16---reading-an-item"></a>
 <a id="containerproxyread_item"></a>

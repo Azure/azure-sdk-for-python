@@ -74,7 +74,7 @@ class AsyncItemHelper:
             op, arguments, compact_utf8=self._defaults.enable_compact_utf8_item_writes,
             deadline=deadline,
         )
-        validate_rust_item_options(args, options)
+        validate_rust_item_options(args, options, operation=op)
         self._defaults.apply_to_options(options)
         prepared = build_item_request(op, args, options, self._defaults)
         if op == "patch_item":

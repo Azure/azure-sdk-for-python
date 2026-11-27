@@ -58,18 +58,16 @@ class TestCRUDContainerOperations(unittest.TestCase):
             self.assertEqual(inst.status_code, status_code)
 
     def test_collection_crud_rust(self):
-        """A newly created container can be found by querying for its id.
+        """Container creation updates listing counts and yields a nonempty id-filtered query.
 
-        The full legacy lifecycle test, kept here for the query half. After
-        creating a container, a parameterised query filtering on the id must
-        return it.
+        This full legacy lifecycle checks the listing count before and after
+        creation, reads the stored settings, queries by id, and verifies a 404
+        when reading after deletion. It retains the listing checks formerly
+        repeated in the sync list_containers copy.
 
-        This is the query path rather than the listing path, and the two are
-        served differently, so a container that shows up in a plain list can
-        still go missing from a filtered query.
-
-        The same legacy test is also copied into ``list_containers`` and
-        ``read_container``, each pinning the part of it they own.
+        The read_container copy keeps the same scenario with separate setup
+        that guards container reads against legacy fallback and requires Rust
+        binding execution.
         """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_collection_crud
         created_db = self.databaseForTest

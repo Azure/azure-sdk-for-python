@@ -7,9 +7,59 @@ from __future__ import annotations
 import time
 from typing import Any, Mapping, Optional
 
-from ._request_settings import get_match_headers, is_supported_operation_timeout
+from ._request_settings import (
+    COMMON_OPTIONS, OPTION_HEADER_NAMES, build_customer_headers,
+    get_match_headers, is_supported_operation_timeout, reject_unsupported_feed_options,
+)
 from ._response_parse import validate_response_hook_is_synchronous
 from ._wire_encoding import serialize_body_to_bytes
+
+
+_CREATE_ITEM_OPTIONS = frozenset({
+    "partitionKey", "indexingDirective", "sessionToken", "initialHeaders",
+    "priorityLevel", "responsePayloadOnWriteDisabled", "throughputBucket",
+    "excludedLocations", "timeout", "contentType", "utf8DecodingMode",
+    "consistencyLevel", "correlatedActivityId", "retry_write", "availabilityStrategy",
+})
+_CREATE_ITEM_KWARGS = frozenset({
+    "container_link", "body", "indexing_directive", "enable_automatic_id_generation",
+    "request_options", "feed_options", "timeout", "connection_timeout", "response_hook",
+    "tracing_options", "tracing_attributes", "logger", "logging_enable",
+}) | frozenset(name for name, option in COMMON_OPTIONS.items() if option in _CREATE_ITEM_OPTIONS)
+_CREATE_ITEM_UNSUPPORTED_HEADERS = frozenset({
+    "if-match", "if-none-match",
+}) | frozenset(header for option, header in OPTION_HEADER_NAMES.items() if option not in _CREATE_ITEM_OPTIONS)
+
+
+def validate_create_item_arguments(arguments: Mapping[str, Any]) -> None:
+    """Check create's option names before shared normalization consumes them.
+
+    Value checks still apply to accepted names: retry_write permits only None,
+    for example. Only the selected option mapping is used, preserving
+    request_options precedence over feed_options.
+
+    :param Mapping[str, Any] arguments: Create arguments, including request option mappings.
+    :return: None. Unsupported arguments raise TypeError before request preparation.
+    :rtype: None
+    """
+    reject_unsupported_feed_options("create_item", arguments.keys() - _CREATE_ITEM_KWARGS, {})
+    options = dict(arguments.get("request_options", arguments.get("feed_options")) or {})
+    unsupported = set()
+    for name in options:
+        if not isinstance(name, str):
+            raise TypeError("create_item() request option names must be strings.")
+        if name in _CREATE_ITEM_OPTIONS:
+            continue
+        if name.lower() not in _CREATE_ITEM_UNSUPPORTED_HEADERS and (
+            name.lower().startswith("x-ms-") or name.lower() == "prefer"
+        ):
+            continue
+        unsupported.add(name)
+    reject_unsupported_feed_options("create_item", unsupported, {})
+    for headers in (arguments.get("initial_headers"), options.get("initialHeaders")):
+        for name in build_customer_headers(headers):
+            if name in _CREATE_ITEM_UNSUPPORTED_HEADERS:
+                raise TypeError(f"create_item() does not support initial_headers option '{name}'.")
 
 
 def prepare_item_deadline(

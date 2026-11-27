@@ -516,7 +516,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 for i in range(10)
             ]
             await asyncio.gather(*tasks)
-        assert sum("'x-ms-thinclient-proxy-resource-type': 'colls'" in response.message for response in mock_handler.messages) == 1
+        assert sum("'x-ms-thinclient-proxy-resource-type': 'colls'" in response.message for response in mock_handler.records) == 1
 
     # TODO: Skipping this test to debug later
     @unittest.skip

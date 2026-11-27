@@ -291,6 +291,63 @@ def test_telemetry_lane_rejects_offline_skip_allowances_rust(tmp_path, monkeypat
     assert any("Unexpected skip" in error for error in report["errors"]) == (suite == "telemetry")
 
 
+@pytest.mark.parametrize(
+    "platform,suite,module,reason,accepted",
+    [
+        ("linux", "offline", "toxiproxy/test_toxiproxy_local_unit.py", "Windows process-tree ownership", True),
+        ("darwin", "offline", "toxiproxy/test_toxiproxy_local_unit.py", "Windows process-tree ownership", True),
+        ("win32", "offline", "toxiproxy/test_toxiproxy_local_unit.py", "Windows process-tree ownership", False),
+        ("freebsd", "offline", "toxiproxy/test_toxiproxy_local_unit.py", "Windows process-tree ownership", False),
+        ("linux", "telemetry", "toxiproxy/test_toxiproxy_local_unit.py", "Windows process-tree ownership", False),
+        ("linux", "offline", "toxiproxy/test_toxiproxy_local_unit.py", "missing dependency", False),
+        ("linux", "offline", "common/test_other_unit.py", "Windows process-tree ownership", False),
+    ],
+)
+def test_offline_windows_skip_allowance_is_platform_suite_file_and_reason_scoped_rust(
+    tmp_path, monkeypatch, platform, suite, module, reason, accepted
+):
+    test = tmp_path / "tests" / module
+    test.parent.mkdir(parents=True)
+    test.write_text(
+        "import pytest\n"
+        f"@pytest.mark.skipif(True, reason={reason!r})\ndef test_platform_case(): pass\n"
+        "def test_control(): pass\n",
+        encoding="utf-8",
+    )
+    results = tmp_path / "results"
+    native = SimpleNamespace(
+        __file__=str(tmp_path / "_rust.pyd"),
+        **{probe: Mock() for probe in runner.DEBUG_PROBE_EXPORTS},
+    )
+    monkeypatch.setattr(runner, "PACKAGE", tmp_path)
+    monkeypatch.setattr(runner, "discover_tests", lambda root, selected: [test])
+    monkeypatch.setattr(runner, "importlib", SimpleNamespace(import_module=Mock(return_value=native)))
+    # Model the runner's OS without changing pytest's host-platform behavior.
+    monkeypatch.setattr(runner.sys, "argv", ["run_rust_ci.py", suite, "--results", str(results)])
+    monkeypatch.setattr(
+        runner, "sys",
+        SimpleNamespace(platform=platform, path=list(runner.sys.path)),
+    )
+    monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+    monkeypatch.chdir(tmp_path)
+    pytest_main = pytest.main
+    # Distinct import names prevent earlier nested runs from supplying cached test bodies.
+    monkeypatch.setattr(
+        runner.pytest, "main",
+        lambda args, plugins: pytest_main(
+            [*args, "--noconftest", "-q", f"--rootdir={tmp_path.parent}"], plugins=plugins
+        ),
+    )
+
+    status = runner.main()
+    report = json.loads((results / "coverage.json").read_text(encoding="utf-8"))
+    assert status == (pytest.ExitCode.OK if accepted else pytest.ExitCode.TESTS_FAILED)
+    assert report["passed"] == 1
+    if accepted:
+        assert len(report["explicit_skips"]) == 1
+    assert any("Unexpected skip" in error for error in report["errors"]) == (not accepted)
+
+
 def test_telemetry_without_eager_task_factory_runs_supported_cases_rust(pytester):
     pytester.makepyfile(
         "import asyncio\n"
@@ -442,9 +499,10 @@ def test_native_runner_requires_actual_unfiltered_tests_rust(tmp_path, monkeypat
         assert len(commands) == 1
     elif passed and not filtered:
         assert commands[1:] == [
-            ["cargo", "test", "--workspace", "--locked", "--", "--test-threads=1"],
+            ["cargo", "test", "--workspace", "--locked", "--no-default-features", "--", "--test-threads=1"],
             [
-                "cargo", "test", "--workspace", "--locked", "--features", "azure_cosmos_rust/test-probes",
+                "cargo", "test", "--workspace", "--locked", "--no-default-features",
+                "--features", "azure_cosmos_rust/test-probes",
                 "--", "--test-threads=1",
             ],
         ]
@@ -509,6 +567,7 @@ def test_native_variants_run_only_their_feature_set_rust(tmp_path, monkeypatch, 
     monkeypatch.setattr(runner.subprocess, "run", execute)
     assert runner.run_native(tmp_path, variant) == exitcode
     assert [command[1] for command in commands] == expected_commands
+    assert "--no-default-features" in commands[-1]
     assert ("--features" in commands[-1]) == (variant == "probes")
     if variant == "probes":
         assert "azure_cosmos_rust/test-probes" in commands[-1]
@@ -702,15 +761,82 @@ def test_pipeline_wires_toxiproxy_through_existing_central_hook_rust():
     assert "llm-artifacts/cosmos-toxiproxy" in template
 
 
-@pytest.mark.parametrize("template", ["rust-tests.yml", "telemetry-tests.yml", "toxiproxy-tests.yml"])
+@pytest.mark.parametrize(
+    "template",
+    ["rust-tests.yml", "rust-native-tests.yml", "rust-offline-tests.yml", "telemetry-tests.yml", "toxiproxy-tests.yml"],
+)
 def test_supplemental_checks_run_on_every_standard_python_job_rust(template):
-    steps = yaml.safe_load((PACKAGE.parent / "templates" / template).read_text())["steps"]
+    config = yaml.safe_load((PACKAGE.parent / "templates" / template).read_text())
     condition = (
         "and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), "
         "eq(variables['ChecksOverride'], 'whl,sdist'))"
     )
-    for step in steps:
+    if template in ("rust-native-tests.yml", "rust-offline-tests.yml", "telemetry-tests.yml"):
+        assert config["parameters"] == [{"name": "Condition", "type": "string", "default": condition}]
+        condition = "${{ parameters.Condition }}"
+    for step in config["steps"]:
+        if "template" in step:
+            assert step in [
+                {"template": "/sdk/cosmos/templates/rust-native-tests.yml"},
+                {"template": "/sdk/cosmos/templates/rust-offline-tests.yml"},
+            ]
+            continue
         assert step["condition"] == condition, step["displayName"]
+
+
+def test_live_supplemental_checks_select_one_linux_and_one_macos_job_rust():
+    live = yaml.safe_load((PACKAGE.parent / "tests.yml").read_text())["extends"]["parameters"]
+    native, bash, offline, telemetry, publish, publish_telemetry = live["PostSteps"]
+    condition = (
+        "and(succeededOrFailed(), in(variables['Agent.OS'], 'Linux', 'Darwin'), "
+        "eq(variables['CosmosRunSupplementalTests'], 'true'))"
+    )
+    assert native == {
+        "template": "/sdk/cosmos/templates/rust-native-tests.yml",
+        "parameters": {"Condition": condition},
+    }
+    assert bash["condition"] == (
+        "and(succeededOrFailed(), eq(variables['Agent.OS'], 'Darwin'), "
+        "eq(variables['CosmosRunSupplementalTests'], 'true'))"
+    )
+    script = bash["pwsh"]
+    assert "$PSNativeCommandUseErrorActionPreference = $true" in script
+    assert script.index("brew install bash") < script.index("brew --prefix bash")
+    assert script.index("[[ -v value ]]") < script.index("##vso[task.prependpath]$bashDirectory")
+    assert bash["env"] == {"HOMEBREW_NO_AUTO_UPDATE": "1"}
+    assert offline == {
+        "template": "/sdk/cosmos/templates/rust-offline-tests.yml",
+        "parameters": {"Condition": condition},
+    }
+    assert telemetry == {
+        "template": "/sdk/cosmos/templates/telemetry-tests.yml",
+        "parameters": {"Condition": condition},
+    }
+    assert publish["condition"] == condition
+    assert publish["task"] == "1ES.PublishPipelineArtifact@1"
+    assert publish["inputs"] == {
+        "targetPath": "$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust",
+        "artifactName": "cosmos-rust-supplemental-$(System.JobId)-$(System.JobAttempt)",
+    }
+    assert publish_telemetry["condition"] == condition
+    assert publish_telemetry["task"] == "1ES.PublishPipelineArtifact@1"
+    assert publish_telemetry["inputs"] == {
+        "targetPath": "$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-telemetry",
+        "artifactName": "cosmos-telemetry-$(System.JobId)-$(System.JobAttempt)",
+    }
+    selected = []
+    for matrix in live["MatrixConfigs"] + live["FixedAccountMatrixConfigs"]:
+        config = json.loads((PACKAGE.parents[2] / matrix["Path"]).read_text())
+        for group in config["include"]:
+            for jobs in group.values():
+                selected.extend(job for job in jobs.values() if job.get("CosmosRunSupplementalTests") == "true")
+    assert sorted((job["OSVmImage"], job["PythonVersion"]) for job in selected) == [
+        ("env:LINUXVMIMAGE", "3.10"),
+        ("env:MACVMIMAGE", "3.11"),
+    ]
+    # Supplemental checks must use a hook the live job actually invokes.
+    job = (PACKAGE.parents[2] / "eng/pipelines/templates/jobs/live.tests.yml").read_text()
+    assert "- ${{ parameters.PostSteps }}" in job
 
 
 def test_supplemental_rust_checks_reuse_existing_standard_test_jobs_rust():
@@ -735,7 +861,15 @@ def test_supplemental_rust_checks_reuse_existing_standard_test_jobs_rust():
 def test_supplemental_rust_checks_require_built_wheel_and_save_results_rust():
     repository = PACKAGE.parents[2]
     parsed = yaml.safe_load((repository / "sdk/cosmos/templates/rust-tests.yml").read_text())
-    prepare, native, native_probes, offline, publish, cancellation, publish_cancellation = parsed["steps"]
+    prepare, native_template, offline_template, cancellation, publish_cancellation = parsed["steps"]
+    assert native_template == {"template": "/sdk/cosmos/templates/rust-native-tests.yml"}
+    assert offline_template == {"template": "/sdk/cosmos/templates/rust-offline-tests.yml"}
+    native, native_probes = yaml.safe_load(
+        (PACKAGE.parent / "templates" / "rust-native-tests.yml").read_text()
+    )["steps"]
+    offline, publish = yaml.safe_load(
+        (PACKAGE.parent / "templates" / "rust-offline-tests.yml").read_text()
+    )["steps"]
     results = "$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust"
     assert results in prepare["pwsh"]
     assert "uploadLlmArtifacts" in prepare["pwsh"]
@@ -750,12 +884,15 @@ def test_supplemental_rust_checks_require_built_wheel_and_save_results_rust():
     assert f"--results '{results}/native'" in native_probes["pwsh"]
     assert "$env:PYO3_PYTHON = '$(CosmosProbePython)'" in native_probes["pwsh"]
     assert "exit $LASTEXITCODE" in native_probes["pwsh"]
+    build = yaml.safe_load(
+        (PACKAGE.parent / "templates" / "prepare-test-probes.yml").read_text()
+    )["steps"][-1]
+    assert native["env"] == native_probes["env"] == build["env"]
     assert "run_rust_ci.py offline" in offline["pwsh"]
     assert "--require-installed-wheel" in offline["pwsh"]
     assert f"--results '{results}/offline'" in offline["pwsh"]
     assert "exit $LASTEXITCODE" in offline["pwsh"]
     assert offline["env"] == {
-        "COSMOS_BACKEND": "core-python",
         "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
         "COSMOSDBCONNECTIONSTRING": "",
     }

@@ -1,11 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Reusable policy builders and response/log observers, independent of legacy setup."""
+"""Shared test helpers:
+
+- functions that build container settings for vector and full-text search;
+- ResponseHookCaller, a response hook that counts how many responses the SDK received;
+- MockHandler, a log handler that saves every log entry so a test can check what the SDK logged.
+"""
 
 import logging
 
 
 def get_vector_indexing_policy(embedding_type):
+    """Indexing policy that indexes every path and adds a vector index of the
+    given type (for example "flat" or "diskANN") on /embedding."""
     return {
         "indexingMode": "consistent",
         "includedPaths": [{"path": "/*"}],
@@ -17,6 +24,8 @@ def get_vector_indexing_policy(embedding_type):
 
 
 def get_vector_embedding_policy(distance_function, data_type, dimensions):
+    """Vector embedding policy for /embedding: how vectors are compared, the
+    number type they use, and how many numbers each vector holds."""
     return {
         "vectorEmbeddings": [
             {
@@ -30,6 +39,7 @@ def get_vector_embedding_policy(distance_function, data_type, dimensions):
 
 
 def get_full_text_indexing_policy(path):
+    """Indexing policy that indexes every path and adds a full-text index on ``path``."""
     return {
         "indexingMode": "consistent",
         "includedPaths": [{"path": "/*"}],
@@ -41,6 +51,7 @@ def get_full_text_indexing_policy(path):
 
 
 def get_full_text_policy(path):
+    """Full-text policy that treats the text at ``path`` as English (en-US)."""
     return {
         "defaultLanguage": "en-US",
         "fullTextPaths": [
@@ -53,6 +64,8 @@ def get_full_text_policy(path):
 
 
 class ResponseHookCaller:
+    """Response hook that counts how many times the SDK calls it."""
+
     def __init__(self):
         self.count = 0
 
@@ -61,13 +74,14 @@ class ResponseHookCaller:
 
 
 class MockHandler(logging.Handler):
+    """Log handler that saves every log entry in ``records``."""
 
     def __init__(self):
         super(MockHandler, self).__init__()
-        self.messages = []
+        self.records = []
 
     def reset(self):
-        self.messages = []
+        self.records = []
 
     def emit(self, record):
-        self.messages.append(record)
+        self.records.append(record)

@@ -4072,14 +4072,14 @@ def test_resolve_backend_name_non_string_raises_valueerror_rust(monkeypatch, bad
 def test_build_client_config_rejects_bare_string_locations_rust(arg_name):
     """A bare string region is rejected: tuple('West US') would silently become
     seven one-character 'regions', which is never what the customer meant."""
-    with pytest.raises(ValueError, match="sequence of region-name strings"):
+    with pytest.raises(ValueError, match=r"list of region names, such as \['West US'\], not a single string"):
         build_client_config(**{arg_name: "West US"})
 
 
 @pytest.mark.parametrize("arg_name", ["preferred_locations", "excluded_locations"])
 def test_build_client_config_rejects_bytes_locations_rust(arg_name):
     """Bytes are rejected for the same reason a bare string is."""
-    with pytest.raises(ValueError, match="sequence of region-name strings"):
+    with pytest.raises(ValueError, match=r"list of region names, such as \['West US'\], not a single string"):
         build_client_config(**{arg_name: b"West US"})
 
 
@@ -4090,17 +4090,18 @@ def test_build_client_config_accepts_single_region_in_a_list_rust():
     assert config == PreparedClientConfig(preferred_locations=("West US",))
 
 
-@pytest.mark.parametrize("bad_master_key", [None, 123, b"key", {"k": "v"}, ""])
+@pytest.mark.parametrize("bad_master_key", [None, 123, b"key", {"k": "v"}, "", "   "])
 def test_resolve_credential_rejects_non_string_master_key_in_dict_rust(bad_master_key):
-    """The resolver rejects a dictionary whose account key is empty or not a string."""
+    """The resolver rejects a dictionary whose account key is empty, blank, or not a string."""
     with pytest.raises(ValueError, match="'masterKey' entry to be a non-empty string"):
         resolve_credential({"masterKey": bad_master_key})
 
 
-def test_resolve_credential_rejects_empty_master_key_string_rust():
-    """The resolver rejects an empty account-key string."""
+@pytest.mark.parametrize("blank_key", ["", "   ", "\n"])
+def test_resolve_credential_rejects_empty_master_key_string_rust(blank_key):
+    """The resolver rejects an empty or blank account-key string."""
     with pytest.raises(ValueError, match=r"^The account key must be a non-empty string\.$"):
-        resolve_credential("")
+        resolve_credential(blank_key)
 
 
 def test_resolve_credential_iterable_non_sequence_gets_generic_message_rust():

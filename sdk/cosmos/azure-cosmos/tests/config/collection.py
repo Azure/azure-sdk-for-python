@@ -229,6 +229,8 @@ def exclude_parameters(path, parameters):
     relative = relative_test_path(path)
     if relative == "common/test_replace_container_backend_unit.py":
         return parameters.get("replace_case") is True
+    if relative == "common/test_read_container_backend_unit.py":
+        return parameters.get("read_case") is True
     if relative not in ADAPTER_PARAMETER_MODULES:
         return False
     return any(parameters.get(name) in ("core-python", "core_python") for name in ("backend", "backend_name"))

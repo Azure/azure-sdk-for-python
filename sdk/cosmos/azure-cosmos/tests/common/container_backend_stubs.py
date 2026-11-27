@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Container backend stand-ins shared by maintained and temporary legacy tests."""
+"""Fakes for container create tests.
+
+The fakes stand in for the part of the SDK that sends requests to the service.
+They keep the request they receive and return a prepared reply, so a test can
+check what would have been sent and what the caller gets back, without a network.
+"""
 
 import inspect
 import json
@@ -21,9 +26,7 @@ from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 
 def _created_container_response() -> BackendResponse:
-    """Return a canned 201 Created reply carrying a new container body and a request-charge header."""
-    # A canned "201 Created" reply: the new container's body plus a
-    # request-charge header, used by the fake backends below.
+    """Return a "201 Created" reply with the new container's body and a request charge header."""
     return BackendResponse(
         status_code=201,
         headers=CaseInsensitiveDict({"x-ms-request-charge": "5.25"}),
@@ -31,59 +34,57 @@ def _created_container_response() -> BackendResponse:
     )
 
 
-class _BindingAdapter(CosmosBackend):
-    """Stand-in Rust backend: records the request it was handed and returns a
-    canned reply, so a test can check what would have gone on the wire."""
+class _FakeBackend(CosmosBackend):
+    """Fake that keeps the request it receives and returns a prepared reply."""
 
     name = "rust"
 
     def __init__(self, response=None):
-        """Store an optional canned reply; default to a 201 Created container response."""
+        """Store the reply to return. By default, a "201 Created" container reply."""
         self.response = response or _created_container_response()
         self.prepared = None
 
     def execute(self, prepared, *, deadline=None):
-        """Record the prepared request and return the canned reply."""
+        """Keep the request and return the prepared reply."""
         self.prepared = prepared
         return self.response
 
 
-class _AsyncBindingAdapter(AsyncCosmosBackend):
-    """Async stand-in Rust backend: records the request it was handed and returns
-    a canned reply.
+class _AsyncFakeBackend(AsyncCosmosBackend):
+    """Async version of ``_FakeBackend``.
 
-    Subclasses the real ``AsyncCosmosBackend`` and overrides only ``execute``, so
-    the routing and no-fallback logic under test is the shipping one
-    rather than a copy of it that could drift.
+    It extends the real ``AsyncCosmosBackend`` and replaces only ``execute``, so
+    tests still run the SDK's real code for everything else.
     """
 
     name = "rust"
 
     def __init__(self, response=None):
-        """Store an optional canned reply; default to a 201 Created container response."""
+        """Store the reply to return. By default, a "201 Created" container reply."""
         self.response = response or _created_container_response()
         self.prepared = None
 
     async def execute(self, prepared, *, deadline=None):
-        """Record the prepared request and return the canned reply."""
+        """Keep the request and return the prepared reply."""
         self.prepared = prepared
         return self.response
 
 
 def make_container_create_case(is_async):
-    """Build a container create that runs once as a sync client and once as async.
+    """Set up a database object whose ``create_container`` calls go to a fake.
 
-    Both clients are driven through the same tests because the sync and async
-    paths build their requests through separate code and could drift apart.
+    Tests run once with a sync client and once with an async client, because the
+    two clients build their requests in separate code that could drift apart.
 
-    The connection is a stand-in with a recording ``CreateContainer`` for the
-    legacy route and a recording cache write, so a test can prove which route ran
-    and whether the new container's properties were remembered.
-
-    No legacy implementation is imported or constructed. Temporary comparisons
-    supply their own legacy backend separately.
+    Returns the setup for one test case:
+    - ``database``: the database to call ``create_container`` on.
+    - ``backend``: the fake. ``backend.execute`` is a mock, so a test can check
+      how many requests were sent and what they contained.
+    - ``connection``: ``CreateContainer`` and ``_set_container_properties_cache``
+      are mocks, so a test can check whether they were called.
+    - ``client_context``: the context the database uses to send requests.
     """
-    backend = _AsyncBindingAdapter() if is_async else _BindingAdapter()
+    backend = _AsyncFakeBackend() if is_async else _FakeBackend()
     mock_type = AsyncMock if is_async else MagicMock
     backend.execute = mock_type(wraps=backend.execute)
     headers = CaseInsensitiveDict({"x-ms-request-charge": "5.25"})
@@ -110,6 +111,8 @@ def _call_container_create(case, *args, method="create_container", **kwargs):
     The method name is an argument because plain create and get-or-create share
     almost all of their rules, so most tests here run against both.
     """
+    # Some tests replace connection._backend after setup. Point the database at
+    # the replacement so the call uses it.
     if case.client_context.adapter is not case.connection._backend:
         case.client_context = CosmosClientContext(case.connection._backend)
         case.database._client_context = case.client_context
@@ -118,19 +121,21 @@ def _call_container_create(case, *args, method="create_container", **kwargs):
 
 
 def make_container_get_or_create_case(case, missing):
-    """Extend the create setup to cover both outcomes of get-or-create.
+    """Extend the setup from ``make_container_create_case`` to cover both outcomes of get-or-create.
 
-    Each test runs twice: once where the container already exists and once where
-    it does not. Those are two genuinely different paths -- one request or two --
-    and the method has to return the same shape either way.
+    Adds ``missing`` and ``existing_properties`` to the setup and returns it.
 
-    The existing container is deliberately given settings that differ from what
-    the tests ask for: a different partition key path and a different time to
-    live. That lets a test prove the existing definition is returned untouched
-    rather than quietly overwritten with the caller's arguments.
+    Each test runs twice: once where the container already exists (one request)
+    and once where it does not (two requests). The method must return the
+    same shape either way.
 
-    The missing case is staged as a not-found reply followed by a created reply,
-    which is the real two-step sequence.
+    The existing container is given a different partition key path and a
+    different time to live from what the tests ask for. That lets a test
+    check that the existing container is returned unchanged, not overwritten
+    with the caller's arguments.
+
+    When the container is missing, the fake first replies "404 Not Found" and
+    then "201 Created", the same order the real service would reply in.
     """
     case.missing = missing
     case.existing_properties = CosmosDict(

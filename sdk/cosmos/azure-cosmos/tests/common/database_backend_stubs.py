@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Database backend stand-ins shared by read, create, and delete unit tests."""
+"""Fakes for database create, read and delete tests.
+
+The fakes stand in for the part of the SDK that sends requests to the service.
+They keep each request they receive and return prepared replies, without a network.
+"""
 
 import inspect
 from types import SimpleNamespace
@@ -16,9 +20,7 @@ from azure.cosmos.database import DatabaseProxy
 
 
 def _created_response() -> BackendResponse:
-    """Return a successful fake database-create response."""
-    # A canned "201 Created" reply from the Rust backend: the new database's body
-    # plus a request-charge header, used by the fake backends below.
+    """Return a "201 Created" reply with the new database's body and a request charge header."""
     return BackendResponse(
         status_code=201,
         headers=CaseInsensitiveDict({"x-ms-request-charge": "5.25"}),
@@ -26,19 +28,27 @@ def _created_response() -> BackendResponse:
     )
 
 
-class _BindingAdapter(CosmosBackend):
-    """Record prepared inputs and return canned replies, without native execution or I/O."""
+class _FakeBackend(CosmosBackend):
+    """Fake that keeps each request it receives and returns prepared replies."""
 
     name = "rust"
 
     def __init__(self, response=None, responses=None):
-        """Store the canned reply (or queue of replies) the stub will return on each ``execute`` call."""
+        """Store the replies to return.
+
+        Pass one ``response``, or a list of ``responses`` to return in order. Once
+        the list is down to its last reply, that reply is returned for every later
+        call. By default, a "201 Created" database reply.
+        """
         self.responses = list(responses or [response or _created_response()])
         self.prepared = None
         self.prepared_requests = []
 
     def execute(self, prepared, *, deadline=None):
-        """Record the prepared request and return the next canned reply from the queue."""
+        """Keep the request and return the next reply.
+
+        ``prepared`` holds the latest request, and ``prepared_requests`` holds all of them.
+        """
         self.prepared = prepared
         self.prepared_requests.append(prepared)
         if len(self.responses) > 1:
@@ -46,19 +56,19 @@ class _BindingAdapter(CosmosBackend):
         return self.responses[0]
 
 
-class _AsyncBindingAdapter(AsyncCosmosBackend):
-    """Async stand-in Rust backend: records the request and returns the canned reply."""
+class _AsyncFakeBackend(AsyncCosmosBackend):
+    """Async version of ``_FakeBackend``."""
 
     name = "rust"
 
     def __init__(self, response=None, responses=None):
-        """Store the canned reply (or queue of replies) the async stub will return on each ``execute`` call."""
+        """Store the replies to return. Works the same as ``_FakeBackend``."""
         self.prepared = None
         self.prepared_requests = []
         self.responses = list(responses or [response or _created_response()])
 
     async def execute(self, prepared, *, deadline=None):
-        """Record the prepared request and return the next canned reply from the queue."""
+        """Keep the request and return the next reply. Works the same as ``_FakeBackend``."""
         self.prepared = prepared
         self.prepared_requests.append(prepared)
         if len(self.responses) > 1:
@@ -67,7 +77,18 @@ class _AsyncBindingAdapter(AsyncCosmosBackend):
 
 
 def make_database_read_case(is_async):
-    """Build a Rust-backed proxy with stale properties and a forbidden legacy call."""
+    """Set up a database object whose ``read`` calls go to a fake.
+
+    Returns the setup for one test case:
+    - ``proxy``: the database to call ``read`` on.
+    - ``backend``: the fake. ``backend.execute`` is a mock, so a test can check
+      how many requests were sent and what they contained.
+    - ``connection``: ``connection.ReadDatabase`` fails the test if it is called.
+
+    The database starts with saved properties whose ``_etag`` is ``"old"``, while
+    the fake replies with ``"v1"``. Tests use this to check that a successful read
+    replaces the saved properties and a failed read leaves them unchanged.
+    """
     response = BackendResponse(
         status_code=200,
         headers=CaseInsensitiveDict(
@@ -76,13 +97,13 @@ def make_database_read_case(is_async):
         body=b'{"id":"db1","_etag":"v1"}',
         diagnostics="activity=read-one requests=1",
     )
-    backend = _AsyncBindingAdapter(response) if is_async else _BindingAdapter(response)
+    backend = _AsyncFakeBackend(response) if is_async else _FakeBackend(response)
     mock_type = AsyncMock if is_async else MagicMock
     backend.execute = mock_type(wraps=backend.execute)
     connection = SimpleNamespace(
         _backend=backend,
         last_response_headers={},
-        ReadDatabase=mock_type(side_effect=AssertionError("legacy read called")),
+        ReadDatabase=mock_type(side_effect=AssertionError("ReadDatabase should not be called")),
     )
     proxy_type = AsyncDatabaseProxy if is_async else DatabaseProxy
     return SimpleNamespace(

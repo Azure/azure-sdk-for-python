@@ -30,11 +30,14 @@ from .._constants import _Constants as Constants
 from ..http_constants import HttpHeaders
 
 
-# Recognized legacy transport/policy controls and a scope unavailable to some feeds.
-_LEGACY_FEED_KWARGS = frozenset({
-    "connection_timeout", "stream", "proxy", "feed_range",
+LEGACY_RETRY_OPTIONS = frozenset({
     "retry_total", "retry_connect", "retry_read", "retry_status",
     "retry_backoff_factor", "retry_backoff_max", "retry_on_methods",
+})
+
+# Recognized legacy transport/policy controls and a scope unavailable to some feeds.
+_LEGACY_FEED_KWARGS = LEGACY_RETRY_OPTIONS | frozenset({
+    "connection_timeout", "stream", "proxy", "feed_range",
 })
 
 
@@ -414,7 +417,7 @@ def overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
     """Return whether prepared ``initialHeaders`` overrides a driver-owned header.
 
     Callers use this result to avoid silently replacing customer header values.
-    The Rust item path raises ``NotImplementedError`` for these overrides.
+    The operation's validator chooses the exception for these overrides.
     This check only returns a boolean; it does not select a backend or execute
     a legacy fallback.
 

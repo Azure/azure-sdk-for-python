@@ -47,8 +47,8 @@ from common.container_backend_stubs import (
     make_container_get_or_create_case,
 )
 from common.container_feed_stubs import (
-    _CapturingPagedBackend,
-    _CapturingAsyncPagedBackend,
+    _FakePagedBackend,
+    _AsyncFakePagedBackend,
     _new_sync_connection,
     _new_async_connection,
 )
@@ -1027,7 +1027,7 @@ def test_sync_list_containers_dispatches_to_the_container_feed_legacy():
     ``DocumentCollections`` envelope. A database feed uses ``Databases``; reading
     the wrong key yields an empty list instead of an error."""
     conn = _new_sync_connection()
-    backend = _CapturingPagedBackend(_CONTAINER_PAGE)
+    backend = _FakePagedBackend(_CONTAINER_PAGE)
     conn._backend = backend
 
     result, _headers = conn._CosmosClientConnection__QueryFeed(
@@ -1048,7 +1048,7 @@ def test_sync_list_containers_dispatches_to_the_container_feed_legacy():
 def test_sync_query_containers_dispatches_to_the_container_query_feed_legacy():
     """The query arm keys on ``Collection`` and a query payload, producing a ``OP_QUERY_CONTAINERS`` request."""
     conn = _new_sync_connection()
-    backend = _CapturingPagedBackend(_CONTAINER_PAGE)
+    backend = _FakePagedBackend(_CONTAINER_PAGE)
     conn._backend = backend
 
     result, _headers = conn._CosmosClientConnection__QueryFeed(
@@ -1073,7 +1073,7 @@ def test_async_list_containers_dispatches_to_the_container_feed_legacy():
     async def _run():
         """Drive the async routing branch for a list feed so it can be verified independently."""
         conn = _new_async_connection()
-        backend = _CapturingAsyncPagedBackend(_CONTAINER_PAGE)
+        backend = _AsyncFakePagedBackend(_CONTAINER_PAGE)
         conn._backend = backend
 
         result = await conn._CosmosClientConnection__QueryFeed(
@@ -1099,7 +1099,7 @@ def test_async_query_containers_dispatches_to_the_container_query_feed_legacy():
     async def _run():
         """Drive the async routing for a query feed."""
         conn = _new_async_connection()
-        backend = _CapturingAsyncPagedBackend(_CONTAINER_PAGE)
+        backend = _AsyncFakePagedBackend(_CONTAINER_PAGE)
         conn._backend = backend
 
         result = await conn._CosmosClientConnection__QueryFeed(

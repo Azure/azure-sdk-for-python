@@ -140,6 +140,7 @@ def test_unsupported_requests_never_fall_back_for_any_operation_rust(dispatch, o
         TypeError
         if op in {
             "read_database",
+            "read_container",
             "delete_database",
             "create_container",
             "create_container_if_not_exists",

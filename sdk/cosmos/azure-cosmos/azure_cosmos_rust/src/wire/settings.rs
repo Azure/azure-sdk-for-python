@@ -427,7 +427,7 @@ mod tests {
                     request.getattr("settings").unwrap()
                         .setattr("consistency_level", invalid).unwrap();
                     assert!(extract_settings(&request).err().unwrap()
-                        .is_instance_of::<pyo3::exceptions::PyNotImplementedError>(py),
+                        .is_instance_of::<PyValueError>(py),
                         "{operation}: {invalid}");
                 }
             }

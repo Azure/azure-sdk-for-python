@@ -1476,11 +1476,12 @@ The package builder rejects wheels without exactly one nonempty compiled
 `_rust` extension, but file presence does not prove that the extension loads
 or that SDK operations work.
 
-Validate wheels locally and in the pipeline:
+Validate wheels locally and in the pipeline. The steps are in
+[Validating the wheel](wheel_validation.md):
 
 - Local validation follows
   one exact wheel through archive inspection, clean installation, import
-  checks, offline suites, and sync/async emulator operations.
+  checks, the customer wheel tests, and optional sync/async emulator operations.
 - Pipeline validation
   identifies the final release files, checks each platform/Python combination,
   and separates implemented checks from missing release evidence.

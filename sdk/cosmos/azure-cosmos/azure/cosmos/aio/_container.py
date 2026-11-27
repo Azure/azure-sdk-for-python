@@ -47,7 +47,7 @@ from ._helpers._read_all_items import read_all_items as _read_all_items
 from ._helpers._query_items import query_items as _query_items
 from .._helpers._query_items import uses_rust
 from .._helpers._batch_operations import execute_batch_async
-from .._helpers._response_parse import complete_item_response
+from .._helpers._response_parse import complete_item_response, validate_response_hook_is_synchronous
 from .._operation_deadline import async_deadline_lock, remaining_timeout
 from .._helpers._item_arguments import (
     merge_create_item_explicit_kwargs,
@@ -59,7 +59,7 @@ from .._helpers._item_arguments import (
 )
 from ._helpers._item_operations import AsyncItemHelper
 from ._helpers._container_operations import AsyncContainerHelper
-from .._helpers._request_container import validate_container_create_kwargs
+from .._helpers._request_database import validate_obsolete_resource_options
 from .._helpers._feed_range_operations import (
     feed_range_from_partition_key_async as _feed_range_from_partition_key,
     is_feed_range_subset_async as _is_feed_range_subset,
@@ -236,7 +236,7 @@ class ContainerProxy:
         populate_quota_info: Optional[bool] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], Optional[dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Read the container properties.
@@ -251,21 +251,25 @@ class ContainerProxy:
             statistics in the returned container properties.
         :keyword bool populate_quota_info: Include collection storage quota and usage response headers.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A response hook invoked after success with copied headers and properties.
-        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
+        :keyword response_hook: A response hook invoked after success with copied headers and properties,
+            or ``None`` for the properties when the container is not modified (HTTP 304).
+            Must be synchronous; non-callable values and async hooks are rejected before sending the request.
+        :paramtype response_hook: Callable[[Mapping[str, str], Optional[dict[str, Any]]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
-        :raises TypeError: A positional argument or retired option is supplied.
-        :raises NotImplementedError: Rust cannot honor the requested settings.
+        :raises TypeError: A positional argument, retired option, unsupported setting, or invalid hook is supplied.
         :returns: Container properties with response headers available through ``get_response_headers()``.
         :rtype: ~azure.cosmos.CosmosDict
         """
         deadline = kwargs.pop("_item_operation_deadline", None)
         prepare_operation_kwargs(self, kwargs, headers=initial_headers)
-        validate_container_create_kwargs(kwargs, method_name="ContainerProxy.read")
+        validate_obsolete_resource_options(kwargs, "ContainerProxy.read")
+        if response_hook is not None and not callable(response_hook):
+            raise TypeError("ContainerProxy.read response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(response_hook, "ContainerProxy.read")
         if priority is not None:
             kwargs['priority'] = priority
         if initial_headers is not None:
@@ -287,9 +291,10 @@ class ContainerProxy:
             deadline=deadline,
         )
         _normalize_gsi_container_properties(container)
-        # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
-                                                               _build_properties_cache(container, self.container_link))
+        # A not-modified response contains no properties to update the cache.
+        if container:
+            self.client_connection._set_container_properties_cache(
+                self.container_link, _build_properties_cache(container, self.container_link))
         return container
 
     @trace_operation_async(binding_operation="create_item")
@@ -319,6 +324,10 @@ class ContainerProxy:
         even when supplied as ``None``. Automatically generated IDs are available
         in the returned item when a response body is requested.
 
+        On Rust-backed clients, options for other operations, such as patch
+        filters or query page sizes, raise ``TypeError`` before any request.
+        This also applies to the selected options dictionary and corresponding headers.
+
         :param dict[str, str] body: A dict-like object representing the item to create.
         :keyword indexing_directive: Enumerates the possible values to indicate whether the document should
             be omitted from indexing. Possible values include: 0 for Default, 1 for Exclude, or 2 for Include.
@@ -341,15 +350,15 @@ class ContainerProxy:
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
         :keyword int retry_write: Per-call retry configuration is not supported on Rust-backed clients.
-            Non-None values, including zero, raise ``NotImplementedError``. Omit this option or pass ``None``;
+            Non-None values, including zero and False, raise ``TypeError``. Omit this option or pass ``None``;
             the Rust driver controls automatic retries, so ``None`` does not disable retries.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Write hedging is not supported on Rust-backed clients.
-            This option cannot enable it for ``create_item``.
+            True or a strategy dictionary raises ``TypeError``. Omit this option or pass None or False.
         :keyword float timeout: One metadata-plus-write budget, finite and at least one second.
-        :raises NotImplementedError: A non-None ``retry_write`` was supplied on a Rust-backed client.
         :raises TypeError: A retired keyword, invalid body type, non-string ID, or non-callable or async
-            response hook was supplied.
+            response hook was supplied, or an unsupported retry setting, connection timeout, header override,
+            or write-hedging strategy was supplied.
         :raises ValueError: The ID, JSON body, or timeout is invalid.
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: The ID already exists in the logical partition.
         :returns: A CosmosDict containing the returned item, or an empty CosmosDict

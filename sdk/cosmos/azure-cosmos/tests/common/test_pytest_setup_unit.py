@@ -12,7 +12,7 @@ for the ones that do not: it costs money, it needs credentials, and it means a d
 with no account cannot run the offline tests at all.
 
 The rule is that setup is skipped when the run is only listing tests, when it has already
-given up, when it collected nothing, or when everything collected is an offline unit test.
+given up, when it collected nothing, or when everything collected is an offline unit or customer-wheel test.
 This file checks each of those, and checks that a run which does need resources still
 gets them, in the right order.
 """
@@ -39,7 +39,9 @@ def setup_module_under_test():
     return module
 
 
-def _session(collect_only=False, failures=0, names=("test_crud.py",), continue_on_errors=False):
+def _session(
+    collect_only=False, failures=0, names=("test_crud.py",), continue_on_errors=False, customer_wheel_names=(),
+):
     """Build a stand-in for a pytest run, holding only the four things the hook reads.
 
     The default is a run that does need resources: nothing has failed, it is not just
@@ -51,7 +53,15 @@ def _session(collect_only=False, failures=0, names=("test_crud.py",), continue_o
             collectonly=collect_only, continue_on_collection_errors=continue_on_errors,
         )),
         testsfailed=failures,
-        items=[SimpleNamespace(path=Path(name)) for name in names],
+        items=[
+            SimpleNamespace(
+                path=Path(name),
+                get_closest_marker=Mock(
+                    return_value=pytest.mark.cosmosCustomerWheel.mark if name in customer_wheel_names else None
+                ),
+            )
+            for name in names
+        ],
     )
 
 
@@ -62,13 +72,18 @@ def _session(collect_only=False, failures=0, names=("test_crud.py",), continue_o
         _session(failures=1),
         _session(names=()),
         _session(names=("test_fault_rules_unit.py", "test_known_failures_check_unit.py")),
+        _session(names=("test_customer_wheel.py",), customer_wheel_names=("test_customer_wheel.py",)),
+        _session(
+            names=("test_fault_rules_unit.py", "test_customer_wheel.py"),
+            customer_wheel_names=("test_customer_wheel.py",),
+        ),
     ],
 )
 def test_nonexecuting_runs_do_not_create_live_resources_rust(setup_module_under_test, monkeypatch, session):
-    """Four kinds of run that must not touch an account: each is checked here.
+    """Nonexecuting and offline selections must not touch an account.
 
     Listing tests without running them, a run that has already given up, a run that
-    collected nothing, and a run where everything collected is an offline unit test. The
+    collected nothing, and a run containing only unit or customer-wheel tests. The
     last is the one developers feel every day -- it is what lets the whole offline suite
     run with no account and no emulator.
 
@@ -83,7 +98,15 @@ def test_nonexecuting_runs_do_not_create_live_resources_rust(setup_module_under_
     assert not setup_module_under_test._live_resources_initialized
 
 
-@pytest.mark.parametrize("session", [_session(), _session(failures=1, continue_on_errors=True)])
+@pytest.mark.parametrize("session", [
+    _session(),
+    _session(failures=1, continue_on_errors=True),
+    _session(names=("test_customer_wheel.py",)),
+    _session(
+        names=("test_fault_rules_unit.py", "test_customer_wheel.py", "test_crud.py"),
+        customer_wheel_names=("test_customer_wheel.py",),
+    ),
+])
 def test_live_run_still_creates_shared_resources_rust(setup_module_under_test, monkeypatch, session):
     """A run that needs resources provisions them in order with one Rust client.
 

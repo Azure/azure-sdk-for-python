@@ -76,8 +76,8 @@ from azure.cosmos.offer import ThroughputProperties
 
 
 from common.container_backend_stubs import (
-    _BindingAdapter,
-    _AsyncBindingAdapter,
+    _FakeBackend,
+    _AsyncFakeBackend,
     _created_container_response,
     _call_container_create,
     _call_get_or_create,
@@ -2275,7 +2275,7 @@ def test_sync_create_container_routes_to_rust_and_fires_the_hook_once_rust():
         CreateContainer=MagicMock(side_effect=AssertionError("legacy create called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter()
+    backend = _FakeBackend()
     hooks = []
 
     result = ContainerHelper(connection, backend).create_container(
@@ -2301,7 +2301,7 @@ def test_async_create_container_routes_to_rust():
         CreateContainer=MagicMock(side_effect=AssertionError("legacy create called")),
         last_response_headers={},
     )
-    backend = _AsyncBindingAdapter()
+    backend = _AsyncFakeBackend()
 
     result = asyncio.run(
         AsyncContainerHelper(connection, backend).create_container(
@@ -2514,7 +2514,7 @@ def test_sync_read_container_routes_to_rust_and_fires_the_hook_once_rust():
         ReadContainer=MagicMock(side_effect=AssertionError("legacy read called")),
         last_response_headers={},
     )
-    backend = _BindingAdapter(_read_container_response())
+    backend = _FakeBackend(_read_container_response())
     hooks = []
 
     result = ContainerHelper(connection, backend).read_container(
@@ -2536,7 +2536,7 @@ def test_async_read_container_routes_to_rust():
         ReadContainer=MagicMock(side_effect=AssertionError("legacy read called")),
         last_response_headers={},
     )
-    backend = _AsyncBindingAdapter(_read_container_response())
+    backend = _AsyncFakeBackend(_read_container_response())
 
     result = asyncio.run(
         AsyncContainerHelper(connection, backend).read_container(
@@ -2562,7 +2562,7 @@ def test_async_create_container_fires_the_hook_once_on_the_rust_path_rust():
     hooks = []
 
     result = asyncio.run(
-        AsyncContainerHelper(connection, _AsyncBindingAdapter()).create_container(
+        AsyncContainerHelper(connection, _AsyncFakeBackend()).create_container(
             "dbs/db1",
             {"id": "c1"},
             {},
@@ -2586,7 +2586,7 @@ def test_async_read_container_fires_the_hook_once_on_the_rust_path_rust():
     hooks = []
 
     result = asyncio.run(
-        AsyncContainerHelper(connection, _AsyncBindingAdapter(_read_container_response())).read_container(
+        AsyncContainerHelper(connection, _AsyncFakeBackend(_read_container_response())).read_container(
             "dbs/db1/colls/c1",
             {},
             response_hook=lambda headers, body: hooks.append((headers, body)),

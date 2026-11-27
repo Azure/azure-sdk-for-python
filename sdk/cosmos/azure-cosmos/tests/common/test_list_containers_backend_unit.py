@@ -46,7 +46,7 @@ from azure.cosmos._backend.operations import OP_LIST_CONTAINERS
 from azure.cosmos._query_rust_routing import can_use_rust_query_containers
 from azure.cosmos.http_constants import ResourceType
 from .container_feed_stubs import (
-    _CapturingPagedBackend, _CapturingAsyncPagedBackend,
+    _FakePagedBackend, _AsyncFakePagedBackend,
     _new_sync_connection, _new_async_connection,
 )
 
@@ -100,13 +100,13 @@ def listing_case(request):
             raise case.failure
         return case.responses[token or ""]
 
-    class Backend(_CapturingPagedBackend):
+    class Backend(_FakePagedBackend):
         name = "rust"
 
         def execute_pages(self, prepared, *, deadline=None):
             yield response(prepared.continuation, prepared)
 
-    class AsyncBackend(_CapturingAsyncPagedBackend):
+    class AsyncBackend(_AsyncFakePagedBackend):
         name = "rust"
 
         async def execute_pages(self, prepared, *, deadline=None):

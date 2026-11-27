@@ -335,15 +335,18 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request_rust(monke
     """
     assert async_execute_item_builder is build_item_request
     body = {"id": "order-42", "customerId": "customer-17", "total": 125.50}
-    args, options = normalize_item_arguments(op, {
+    arguments = {
         "container_link": "dbs/Contoso/colls/Orders",
         "body": body,
-        "item_id": "order-42",
-        "patch_operations": [{"op": "replace", "path": "/total", "value": 150}],
         "no_response": True,
         "enable_automatic_id_generation": True,
         "request_options": {"partitionKey": "customer-17"},
-    })
+    }
+    if op not in ("create_item", "upsert_item"):
+        arguments["item_id"] = "order-42"
+    if op == "patch_item":
+        arguments["patch_operations"] = [{"op": "replace", "path": "/total", "value": 150}]
+    args, options = normalize_item_arguments(op, arguments)
     prepared = PreparedRequest(op, args["container_link"], b"", key_from_legacy_header('["customer-17"]'))
     builder = MagicMock(return_value=prepared)
     monkeypatch.setattr(_request_item, f"build_{op}_request", builder)

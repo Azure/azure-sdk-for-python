@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Share setup, driver acquisition, binding checks, and cleanup between the wrappers.
+"""Code shared by the sync and async adapters, BindingAdapter and AsyncBindingAdapter.
 
-BindingAdapter and AsyncBindingAdapter reuse this Python code, but retain separate
-per-client fields. Each client selects an explicit CosmosRuntime or the default
-singleton. Construction rejects retired client-level network settings; it does
-not acquire a driver or initialize the default runtime.
+This covers client setup, connecting to the service, converting errors, and
+cleanup. Each client keeps its own settings. Creating a client checks its
+settings but does not connect to the service.
 """
 from __future__ import annotations
 
@@ -393,8 +392,8 @@ class BindingAdapterShared:
     There is no additional BindingAdapterShared object holding the settings.
     The classes share this implementation, not one set of client fields.
 
-    The two classes separately decide how to wait for driver acquisition
-    and operations. Acquisition may reuse an existing CosmosDriver object.
+    The sync and async classes each decide how a caller waits for the client
+    to connect and for operations to finish.
     """
 
     # Concrete constructors initialize these fields through _init_shared.
@@ -416,12 +415,10 @@ class BindingAdapterShared:
         token_credential: Optional[Any],
         runtime: Optional[CosmosRuntime] = None,
     ) -> None:
-        """Retain this client's inputs and reject retired network settings.
+        """Save this client's inputs so later operations can use them.
 
-        The customer app supplies these values once during client construction.
-        Later driver acquisition uses the saved values.
-
-        The Python wrapper retains them like this::
+        The customer app supplies these values once, when it creates the client.
+        They are kept like this::
 
             CosmosClient
                 -> _adapter: BindingAdapter object
@@ -430,14 +427,15 @@ class BindingAdapterShared:
                     -> _client_config: PreparedClientConfig
                         -> preferred_locations: ("West US",)
 
-        This example uses account-key authentication. The asynchronous
-        CosmosClient retains an AsyncBindingAdapter with the same fields.
-        Both adapter classes are Python wrapper code, not the Rust driver.
+        This example uses an account key. The async CosmosClient keeps the same
+        fields on an AsyncBindingAdapter.
 
-        A custom runtime is already initialized and retained by reference.
-        None selects the default singleton when a driver is first acquired.
-        The native validation guard rejects old prepared client configurations
-        containing network overrides, rather than silently ignoring them.
+        If a runtime is passed in, it is kept and used later. If not, the default
+        runtime is used when the client first connects to the service.
+
+        Raise ValueError if the settings contain connection timeout, read timeout,
+        or proxy settings, which belong to CosmosRuntime. Also raise ValueError for
+        fault injection rules unless the SDK was built for testing.
 
         :param endpoint: Cosmos account endpoint URL.
         :type endpoint: str
@@ -497,7 +495,7 @@ class BindingAdapterShared:
                 )
             validate_runtime(client_config)
         except BaseException:
-            # Construction acquired no bridge; discard the borrowed credential reference.
+            # Creating the client failed, so drop the saved credential.
             self._token_credential = None
             raise
 
