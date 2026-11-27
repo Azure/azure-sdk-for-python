@@ -173,7 +173,7 @@ These samples require additional setup or Azure services:
 | [sample_eval_catalog_code_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_code_based_evaluators.py) | Custom code-based (inline) evaluators (preview) |
 | [sample_eval_catalog_prompt_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_prompt_based_evaluators.py) | Custom prompt-based evaluators (preview) |
 
-Creating custom code-based, prompt-based, or endpoint-based evaluators is in preview. Pass `headers={"Foundry-Features": "Evaluations=V1Preview"}` to `evaluators.create_version`, as these samples do.
+Creating custom code-based, prompt-based, or endpoint-based evaluators is in preview. Construct the client with `allow_preview=True`, or pass `headers={"Foundry-Features": "Evaluations=V1Preview"}` to `evaluators.create_version` as these samples do.
 
 ### Rubric Evaluators
 

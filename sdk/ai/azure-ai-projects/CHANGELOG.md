@@ -2,6 +2,10 @@
 
 ## 2.12.0 (Unreleased)
 
+### Bugs Fixed
+
+* `.evaluators.create_version()` and `.evaluators.update_version()` now send the `Foundry-Features: Evaluations=V1Preview` header when the client is constructed with `allow_preview=True`. The service requires this header to create or update custom prompt-based, code-based, and endpoint-based evaluators, which are in preview.
+
 ### Sample updates
 
 * Fixed Realtime Voice Agent samples to defer tool execution until responses succeed, surface microphone send failures, clean up audio devices after startup failures, and report unsuccessful responses or failed conversation persistence.

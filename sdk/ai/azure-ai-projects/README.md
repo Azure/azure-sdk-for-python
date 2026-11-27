@@ -36,7 +36,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Upload documents and create Datasets** to reference them using `.datasets` operations.
 * **Create and enumerate Search Indexes** using `.indexes` operations.
 * **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using `.evaluation_rules`,
-`.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations. Creating custom code-based, prompt-based, or endpoint-based evaluators with `.evaluators.create_version` is in preview and needs the `headers={"Foundry-Features": "Evaluations=V1Preview"}` argument. See [Custom evaluators](https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/custom-evaluators) for service requirements and setup.
+`.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations. Creating custom code-based, prompt-based, or endpoint-based evaluators with `.evaluators.create_version` is in preview and needs `allow_preview=True` on the client, or the `headers={"Foundry-Features": "Evaluations=V1Preview"}` argument. See [Custom evaluators](https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/custom-evaluators) for service requirements and setup.
 * **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.
 * **Register and manage local AI model weights (preview)** using `.beta.models` operations.
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
