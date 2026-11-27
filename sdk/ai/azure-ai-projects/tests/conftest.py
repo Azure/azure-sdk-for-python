@@ -15,6 +15,7 @@ import json
 import os
 import re
 import sys
+from pathlib import Path
 import pytest
 from dotenv import find_dotenv, load_dotenv
 from devtools_testutils import (
@@ -61,7 +62,10 @@ def _has_cli_env_options() -> bool:
 
 
 _CLI_ENV_MODE = _has_cli_env_options()
-if _CLI_ENV_MODE:
+_LIVE_TEST_STATE_PATH = os.environ.get("AZURE_AI_PROJECTS_LIVE_TEST_STATE")
+_LIVE_TEST_NODES = set()
+_LIVE_TEST_PASSED = set()
+if _CLI_ENV_MODE or _LIVE_TEST_STATE_PATH is not None:
     os.environ["PYTHON_DOTENV_DISABLED"] = "true"
 elif not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
@@ -79,6 +83,18 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
+    global _LIVE_TEST_NODES
+    _LIVE_TEST_PASSED.clear()
+    if _LIVE_TEST_STATE_PATH is not None:
+        from live_test_job import load_live_test_state
+
+        try:
+            state = load_live_test_state(Path(_LIVE_TEST_STATE_PATH))
+            os.environ.update(state["environment"])
+            _LIVE_TEST_NODES = {test["node_id"] for test in state["plan"]["selectedTests"]}
+        except (KeyError, OSError, TypeError, ValueError) as error:
+            raise pytest.UsageError(f"Invalid Foundry live-test deployment state: {error}") from None
+
     if not _CLI_ENV_MODE:
         return
 
@@ -92,7 +108,24 @@ def pytest_configure(config):
             os.environ[environment_variable] = value
 
 
-def pytest_collection_modifyitems(items):
+def pytest_collection_modifyitems(config, items):
+    if _LIVE_TEST_STATE_PATH is not None:
+        from live_test_job import normalize_collected_node
+
+        package_root = Path(__file__).resolve().parents[1]
+        selected, seen, deselected = [], set(), []
+        for item in items:
+            node_id = normalize_collected_node(Path(item.path), item.nodeid, package_root)
+            if node_id in _LIVE_TEST_NODES:
+                selected.append(item)
+                seen.add(node_id)
+            else:
+                deselected.append(item)
+        if seen != _LIVE_TEST_NODES or len(selected) != len(_LIVE_TEST_NODES):
+            raise pytest.UsageError("The queue deployment plan must match exactly the collected sample tests.")
+        config.hook.pytest_deselected(items=deselected)
+        items[:] = selected
+
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
         return
     for item in items:
@@ -107,6 +140,28 @@ def pytest_collection_modifyitems(items):
                     reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to Microsoft Foundry project settings"
                 )
             )
+
+
+def pytest_runtest_logreport(report):
+    if _LIVE_TEST_STATE_PATH is None or report.when != "call" or not report.passed:
+        return
+    matched = [node for node in _LIVE_TEST_NODES if report.nodeid.endswith(node)]
+    if len(matched) == 1:
+        _LIVE_TEST_PASSED.add(matched[0])
+
+
+def pytest_sessionfinish(session):
+    if _LIVE_TEST_STATE_PATH is None or session.config.option.collectonly:
+        return
+    missing = _LIVE_TEST_NODES - _LIVE_TEST_PASSED
+    if not missing:
+        return
+    reporter = session.config.pluginmanager.get_plugin("terminalreporter")
+    if reporter is not None:
+        reporter.write_sep("=", "selected live samples did not all pass")
+        for node in sorted(missing):
+            reporter.write_line(node)
+    session.exitstatus = pytest.ExitCode.TESTS_FAILED
 
 
 class SanitizedValues:
