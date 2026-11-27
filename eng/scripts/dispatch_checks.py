@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import re
 from dataclasses import dataclass
-from typing import IO, List, Optional
+from typing import IO, List, Optional, Sequence
 
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
@@ -55,6 +55,16 @@ INSTALL_AND_TEST_CHECKS = {
     "latestdependency",
     "mindependency",
 }
+# Checks that actually emit package coverage data consumed by the post-dispatch
+# coverage report. Only these justify preserving isolate directories; other checks
+# (e.g. pylint, pyright, samples) produce no coverage, so their environments must be
+# cleaned up immediately even when coverage is not explicitly disabled.
+COVERAGE_PRODUCING_CHECKS = {
+    "whl",
+    "whl_no_aio",
+    "sdist",
+    "devtest",
+}
 SHARED_RESTORE_ENV = "__shared_restore__"
 
 
@@ -71,6 +81,24 @@ def _cleanup_isolate_dirs() -> None:
             except Exception:
                 logger.warning(f"Failed to remove isolate dir {path}")
     ISOLATE_DIRS_TO_CLEAN.clear()
+
+
+def _finalize_isolate_dirs(checks: Sequence[str], coverage_enabled: bool) -> None:
+    # Azure Pipelines generates the combined coverage report after dispatch completes.
+    # Only preserve isolate directories when the selected checks actually produce
+    # coverage; otherwise (e.g. pylint/pyright/samples runs) clean them up immediately
+    # so they do not accumulate for the remainder of the job.
+    produces_coverage = bool(set(checks) & COVERAGE_PRODUCING_CHECKS)
+    if coverage_enabled and produces_coverage and in_ci() == 1:
+        if ISOLATE_DIRS_TO_CLEAN:
+            logger.info(
+                "Preserving isolate directories for coverage report generation; "
+                "the CI cleanup step removes them afterward."
+            )
+        ISOLATE_DIRS_TO_CLEAN.clear()
+        return
+
+    _cleanup_isolate_dirs()
 
 
 def _normalize_newlines(text: str) -> str:
@@ -387,6 +415,8 @@ async def run_all_checks(
     injected_packages: str,
     dest_dir: Optional[str] = None,
     service: Optional[str] = None,
+    *,
+    disablecov: bool = False,
 ):
     """Run all checks for all packages concurrently and return the worst exit code.
 
@@ -399,10 +429,14 @@ async def run_all_checks(
     :param wheel_dir: The directory where wheels should be located and stored when built.
         In CI should correspond to `$(Build.ArtifactStagingDirectory)`.
     :type wheel_dir: str
+    :param disablecov: Disable coverage collection in test checks. Defaults to False.
+    :type disablecov: bool
     :returns: The worst exit code from all checks (0 if all passed).
     :rtype: int
     """
     base_args = [sys.executable, "-m", "azpysdk.main"]
+    if disablecov:
+        base_args.append("--disablecov")
     tasks = []
     semaphore = asyncio.Semaphore(max_parallel)
     combos = [(p, c) for p in packages for c in checks]
@@ -741,11 +775,12 @@ In the case of an environment invoking `pytest`, results can be collected in a j
                 args.injected_packages,
                 args.dest_dir,
                 effective_service,
+                disablecov=args.disablecov,
             )
         )
     except KeyboardInterrupt:
         logger.error("Aborted by user.")
         exit_code = 130
     finally:
-        _cleanup_isolate_dirs()
+        _finalize_isolate_dirs(checks, coverage_enabled=not args.disablecov)
     sys.exit(exit_code)
