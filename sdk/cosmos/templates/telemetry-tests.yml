@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+parameters:
+  - name: Condition
+    type: string
+    default: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+
 steps:
   - pwsh: |
       $ErrorActionPreference = 'Stop'
@@ -21,14 +26,14 @@ steps:
       exit $LASTEXITCODE
     displayName: Telemetry Unit Tests
     timeoutInMinutes: 20
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    condition: ${{ parameters.Condition }}
     env:
       COSMOS_BACKEND: rust
       APPLICATIONINSIGHTS_CONNECTION_STRING: ''
       COSMOSDBCONNECTIONSTRING: ''
   - task: PublishTestResults@2
     displayName: Publish Telemetry Unit Test Results
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    condition: ${{ parameters.Condition }}
     inputs:
       testResultsFormat: JUnit
       testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-telemetry/pytest.xml

@@ -13,44 +13,8 @@ steps:
       & '$(CosmosProbePython)' -I -c "from azure.cosmos import _rust; assert hasattr(_rust, '_AsyncOperationProbe')"
     displayName: Prepare Supplemental Test Environment
     condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
-  - pwsh: |
-      $ErrorActionPreference = 'Stop'
-      $env:PYO3_PYTHON = '$(CosmosProbePython)'
-      & '$(CosmosProbePython)' -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py native `
-        --native-variant default `
-        --results '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/native'
-      exit $LASTEXITCODE
-    displayName: Rust Unit Tests - Default Features and Clippy
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
-  - pwsh: |
-      $ErrorActionPreference = 'Stop'
-      $env:PYO3_PYTHON = '$(CosmosProbePython)'
-      & '$(CosmosProbePython)' -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py native `
-        --native-variant probes `
-        --results '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/native'
-      exit $LASTEXITCODE
-    displayName: Rust Unit Tests - Test Probes
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
-  - pwsh: |
-      & '$(CosmosProbePython)' -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py offline `
-        --require-installed-wheel `
-        --results '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/offline'
-      exit $LASTEXITCODE
-    displayName: Python Unit Tests
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
-    env:
-      COSMOS_BACKEND: core-python
-      APPLICATIONINSIGHTS_CONNECTION_STRING: ''
-      COSMOSDBCONNECTIONSTRING: ''
-  - task: PublishTestResults@2
-    displayName: Publish Python Unit Test Results
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
-    inputs:
-      testResultsFormat: JUnit
-      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/offline/pytest.xml
-      testRunTitle: Cosmos Rust offline Python
-      failTaskOnFailedTests: true
-      failTaskOnMissingResultsFile: true
+  - template: /sdk/cosmos/templates/rust-native-tests.yml
+  - template: /sdk/cosmos/templates/rust-offline-tests.yml
   # Reuse the isolated probe environment; customer artifacts stay unchanged.
   - pwsh: |
       $ErrorActionPreference = 'Stop'
