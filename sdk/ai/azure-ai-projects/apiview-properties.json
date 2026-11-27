@@ -8,6 +8,8 @@
         "azure.ai.projects.models.A2AProtocolConfiguration": "Azure.AI.Projects.A2AProtocolConfiguration",
         "azure.ai.projects.models.A2ATool": "Azure.AI.Projects.A2ATool",
         "azure.ai.projects.models.A2AToolboxTool": "Azure.AI.Projects.A2AToolboxTool",
+        "azure.ai.projects.models.AgentEndpointAuthorizationScheme": "Azure.AI.Projects.AgentEndpointAuthorizationScheme",
+        "azure.ai.projects.models.AccessBoundaryAuthorizationScheme": "Azure.AI.Projects.AccessBoundaryAuthorizationScheme",
         "azure.ai.projects.models.ActivityProtocolConfiguration": "Azure.AI.Projects.ActivityProtocolConfiguration",
         "azure.ai.projects.models.AgentBlueprintReference": "Azure.AI.Projects.AgentBlueprintReference",
         "azure.ai.projects.models.AgentCard": "Azure.AI.Projects.AgentCard",
@@ -20,7 +22,6 @@
         "azure.ai.projects.models.AgentDataGenerationJobSource": "Azure.AI.Projects.AgentDataGenerationJobSource",
         "azure.ai.projects.models.AgentDefinition": "Azure.AI.Projects.AgentDefinition",
         "azure.ai.projects.models.AgentDetails": "Azure.AI.Projects.AgentObject",
-        "azure.ai.projects.models.AgentEndpointAuthorizationScheme": "Azure.AI.Projects.AgentEndpointAuthorizationScheme",
         "azure.ai.projects.models.AgentEndpointConfig": "Azure.AI.Projects.AgentEndpointConfig",
         "azure.ai.projects.models.EvaluatorGenerationJobSource": "Azure.AI.Projects.EvaluatorGenerationJobSource",
         "azure.ai.projects.models.AgentEvaluatorGenerationJobSource": "Azure.AI.Projects.AgentEvaluatorGenerationJobSource",
@@ -584,6 +585,7 @@
         "azure.ai.projects.models.RaiInvocationModeration": "Azure.AI.Projects.RaiInvocationModeration",
         "azure.ai.projects.models.RaiSseTextSelector": "Azure.AI.Projects.RaiSseTextSelector",
         "azure.ai.projects.models.RankingOptions": "OpenAI.RankingOptions",
+        "azure.ai.projects.models.ReadAccessPolicy": "Azure.AI.Projects.ReadAccessPolicy",
         "azure.ai.projects.models.RealtimeAudioFormats": "OpenAI.RealtimeAudioFormats",
         "azure.ai.projects.models.RealtimeAudioFormatsAudioPcm": "OpenAI.RealtimeAudioFormatsAudioPcm",
         "azure.ai.projects.models.RealtimeAudioFormatsAudioPcma": "OpenAI.RealtimeAudioFormatsAudioPcma",
@@ -1138,6 +1140,7 @@
         "azure.ai.projects.models.VersionSelectorType": "Azure.AI.Projects.VersionSelectorType",
         "azure.ai.projects.models.ActivityProtocolAccessBoundary": "Azure.AI.Projects.ActivityProtocolAccessBoundary",
         "azure.ai.projects.models.AgentEndpointAuthorizationSchemeType": "Azure.AI.Projects.AgentEndpointAuthorizationSchemeType",
+        "azure.ai.projects.models.ReadAccessResponder": "Azure.AI.Projects.ReadAccessResponder",
         "azure.ai.projects.models.PublishApprovalStatus": "Azure.AI.Projects.PublishApprovalStatus",
         "azure.ai.projects.models.DigitalWorkerType": "Azure.AI.Projects.DigitalWorkerType",
         "azure.ai.projects.models.VersionIndicatorType": "Azure.AI.Projects.VersionIndicatorType",
@@ -1428,5 +1431,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "8ce385f49141"
+    "CrossLanguageVersion": "ba822fe3c82f"
 }

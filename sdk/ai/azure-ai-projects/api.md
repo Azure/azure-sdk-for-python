@@ -3585,6 +3585,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.AccessBoundaryAuthorizationScheme(AgentEndpointAuthorizationScheme, discriminator='AccessBoundary'):
+        read: ReadAccessPolicy
+        type: Literal[AgentEndpointAuthorizationSchemeType.ACCESS_BOUNDARY]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                read: ReadAccessPolicy
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
         READ1_ON1_DEVELOPERS = "read.1on1.developers"
@@ -3793,6 +3808,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCESS_BOUNDARY = "AccessBoundary"
         BOT_SERVICE = "BotService"
         BOT_SERVICE_RBAC = "BotServiceRbac"
         BOT_SERVICE_TENANT = "BotServiceTenant"
@@ -14678,6 +14694,24 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ReadAccessPolicy(_Model):
+        responds_to: list[Union[str, ReadAccessResponder]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                responds_to: list[Union[str, ReadAccessResponder]]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ReadAccessResponder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALLOWLISTED = "allowlisted"
 
 
     class azure.ai.projects.models.RealtimeAudioFormats(_Model):

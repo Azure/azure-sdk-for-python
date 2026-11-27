@@ -127,6 +127,8 @@ class AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveE
     """BOT_SERVICE_RBAC."""
     BOT_SERVICE_TENANT = "BotServiceTenant"
     """BOT_SERVICE_TENANT."""
+    ACCESS_BOUNDARY = "AccessBoundary"
+    """Use the Autopilot's instance read policy to authorize inbound Activity Protocol messages."""
 
 
 class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1375,7 +1377,7 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "cancelled"
     """Job was cancelled by the caller."""
     SKIPPED = "skipped"
-    """Job was skipped."""
+    """Job was skipped. This is terminal, but does not indicate that the requested work was performed."""
 
 
 class LiveAudioFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1916,6 +1918,15 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AUTO."""
     DEFAULT_2024_11_15 = "default-2024-11-15"
     """DEFAULT_2024_11_15."""
+
+
+class ReadAccessResponder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A category of senders allowed to prompt an Autopilot. Additional values may be returned in
+    future responses.
+    """
+
+    ALLOWLISTED = "allowlisted"
+    """Uses the instance's existing interaction allowlist, including implicit manager access."""
 
 
 class RealtimeAudioFormatsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
