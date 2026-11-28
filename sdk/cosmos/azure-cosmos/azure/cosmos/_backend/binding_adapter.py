@@ -3,27 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Execute synchronous requests through the compiled Python/Rust binding.
+"""Run sync client operations through the compiled Rust part of the SDK.
 
-A customer app reading database "sales" needs properties held by the service
-backend. BindingAdapter is Python wrapper code: it passes the prepared read
-to azure.cosmos._rust, the Python-callable module exposed by the binding.
+For example, when the customer app reads database "sales", BindingAdapter
+passes the prepared read to azure.cosmos._rust, the compiled Rust part of the
+SDK. It sends the request to the service backend and turns the result into
+Python values, or into a Python exception if the read failed::
 
-The binding translates the prepared inputs into a Rust driver call. The
-separately owned Rust driver performs the service operation. The binding
-converts its result into Python values, which the Python wrapper uses to
-produce the database properties returned to the customer app.
-
-The responsibilities are::
-
-    Python wrapper: prepare the read for database "sales"
-        -> binding: translate the prepared inputs into a Rust driver call
-        -> Rust driver: request database properties from the service backend
+    BindingAdapter: prepare the read for database "sales"
+        -> azure.cosmos._rust: send the request to the service backend
         -> service backend: return the database properties
+        -> azure.cosmos._rust: turn the response into Python values
 
-Importing without the compiled binding remains possible for migration checks.
-Construction still requires the binding to reject retired client settings;
-a missing binding is not a supported release mode.
+If azure.cosmos._rust is missing, this module still imports, but creating a
+client raises ImportError.
 """
 from __future__ import annotations
 import logging
@@ -145,19 +138,18 @@ def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[
 
 
 class BindingAdapter(BindingAdapterShared, CosmosBackend):
-    """Retain one client's settings and execute its prepared requests.
+    """Keep one client's settings and run its operations.
 
-    A driver handle is an opaque binding object retaining a specific CosmosDriver.
-    This adapter acquires one on first use and reuses it::
+    The adapter connects to the service on first use and reuses that
+    connection for later operations::
 
-        construct -> store settings, no driver handle
-        first operation -> acquire handle H -> execute
-        later operation -> reuse H -> execute
-        close -> release this client's acquisition of H
+        create client -> save settings, not connected yet
+        first operation -> connect -> run
+        later operation -> reuse the connection -> run
+        close -> release this client's hold on the connection
 
-    H is an illustration, not an actual handle. Clients with matching account,
-    credential, configuration, and runtime can share a CosmosDriver. BindingAdapterShared
-    supplies common setup and cleanup code, not a shared Python settings object.
+    BindingAdapterShared supplies the common setup and cleanup code, not
+    shared settings.
     """
 
     name = BACKEND_NAME_RUST
@@ -170,16 +162,10 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         token_credential: Optional[Any] = None,
         runtime: Optional[CosmosRuntime] = None,
     ) -> None:
-        """Remember the client's inputs without acquiring a CosmosDriver.
+        """Save the client's inputs. This does not connect to the service.
 
-        A customer app's endpoint and region preference follow this path::
-
-            endpoint + credential + PreparedClientConfig
-                -> save on this BindingAdapter
-                -> reject retired client-level network settings
-
-        Construction retains a custom runtime or selects the default for later
-        acquisition; it does not initialize the default runtime.
+        See BindingAdapterShared._init_shared for what is saved and which
+        settings are rejected.
         """
         self._init_shared(endpoint, master_key, client_config, token_credential, runtime)
 

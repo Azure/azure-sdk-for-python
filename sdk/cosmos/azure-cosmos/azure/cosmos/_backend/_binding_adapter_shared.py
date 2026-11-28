@@ -459,11 +459,13 @@ class BindingAdapterShared:
                 client_config = replace(
                     client_config or PreparedClientConfig(), aad_scope_override=override
                 )
-        # Pass these settings, such as preferred regions, when acquiring a driver.
+        # These settings, such as preferred regions, are used when the client connects.
         self._client_config = client_config
         self._runtime = runtime
-        # Acquire during async __aenter__() or the first operation needing the driver.
-        # Reuse the handle until close; subclasses coordinate changes with this lock.
+        # Connect at async __aenter__() or at the first operation, then reuse the
+        # connection until close. Several operations may try to connect at once, so
+        # read or change _init_future and _driver_handle only while holding
+        # _driver_handle_lock. This makes sure only one connection attempt starts.
         self._init_future: Optional[Future[_DriverHandle]] = None
         self._driver_handle: Optional[_DriverHandle] = None
         self._driver_handle_lock = threading.Lock()

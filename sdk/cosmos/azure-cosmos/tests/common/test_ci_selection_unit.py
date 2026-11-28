@@ -1,6 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Account for every maintained pytest case against the configured CI selections."""
+"""Check that every test in this package is run by at least one CI pipeline.
+
+A pipeline chooses tests in one of two ways: by file (the suites in
+scripts/run_rust_ci.py) or by pytest marker (the --mark_arg expressions in
+ci.yml, tests.yml and the templates they use). We call the tests a pipeline
+runs its "CI selection". A test that no pipeline runs is allowed only if it
+is listed in CI_SELECTION_GAPS with a reason; we call such a test a "gap".
+"""
 
 import importlib.util
 import json
@@ -20,7 +27,8 @@ from common.sdk_subprocess import sdk_python_command
 pytest_plugins = ["pytester"]
 PACKAGE = Path(__file__).resolve().parents[2]
 
-# These are uncovered cases, not skips or evidence of service execution.
+# Tests that no CI pipeline runs yet, each with the reason. These tests are not
+# skipped; they are simply not run in CI.
 _RERANKER_GAP = "environment-gap: no semanticReranker CI job with a configured inference service"
 CI_SELECTION_GAPS = {
     "semantic_rerank/sync/test_semantic_reranker.py::TestSemanticReranker::test_semantic_reranker_rust": _RERANKER_GAP,
@@ -38,6 +46,7 @@ CI_SELECTION_GAPS = {
 
 
 def _config_nodes(value):
+    """Yield every dict inside a loaded YAML file, at any depth."""
     if isinstance(value, dict):
         yield value
         for child in value.values():
@@ -48,6 +57,12 @@ def _config_nodes(value):
 
 
 def _pipeline_selections():
+    """Read ci.yml and tests.yml, follow the Cosmos templates they use, and return
+    the test files and marker expressions that CI runs.
+
+    The ``native`` suite is left out because it runs compiled-module tests, not
+    pytest.
+    """
     repository = PACKAGE.parents[2]
     pending = [PACKAGE.parent / "ci.yml", PACKAGE.parent / "tests.yml"]
     visited, expressions, suites = set(), set(), set()
@@ -79,6 +94,13 @@ def _pipeline_selections():
 
 
 class SelectionAudit:
+    """A pytest plugin that, after tests are collected, sorts each test into: run
+    by CI, listed as a gap, or not run at all.
+
+    If emulator job expressions are given, it also checks that each emulator test
+    is in exactly one emulator job.
+    """
+
     def __init__(self, root, files, expressions, gaps, emulator_expressions=()):
         self.root = root
         self.files = files
@@ -93,7 +115,7 @@ class SelectionAudit:
         partition_counts = [0] * len(self.emulator_expressions)
         for item in session.items:
             nodeid = item.path.relative_to(self.root).as_posix() + "::" + item.nodeid.split("::", 1)[1]
-            definition = nodeid.split("[", 1)[0]
+            nodeid_without_params = nodeid.split("[", 1)[0]
             matcher = MarkMatcher.from_markers(item.iter_markers())
             if self.emulator_expressions:
                 matches = [expression.evaluate(matcher) for expression in self.emulator_expressions]
@@ -103,10 +125,10 @@ class SelectionAudit:
                 if sum(matches) != expected:
                     partition_errors.append(f"{nodeid}: expected {expected} emulator category, got {sum(matches)}")
                 partition_counts = [count + int(match) for count, match in zip(partition_counts, matches)]
-            if item.path.resolve() in self.files or any(expr.evaluate(matcher) for expr in self.expressions):
+            if item.path.resolve() in self.files or any(expression.evaluate(matcher) for expression in self.expressions):
                 selected.append(nodeid)
-            elif definition in self.gaps:
-                gaps[nodeid] = self.gaps[definition]
+            elif nodeid_without_params in self.gaps:
+                gaps[nodeid] = self.gaps[nodeid_without_params]
             else:
                 unselected.append(nodeid)
         observed_gaps = {nodeid.split("[", 1)[0] for nodeid in gaps}
@@ -122,6 +144,8 @@ class SelectionAudit:
 
 
 def collect_ci_selection(report_path):
+    """Collect every test in the package without running it, audit it against the
+    CI selections, and write the result to ``report_path`` as JSON."""
     files, expressions = _pipeline_selections()
     template = yaml.safe_load((PACKAGE.parent / "templates" / "emulator-probe-tests.yml").read_text())
     emulator_expressions = [
@@ -130,17 +154,25 @@ def collect_ci_selection(report_path):
     ]
     assert len(emulator_expressions) == 2, "Functional and SDK fault-injection selections are required"
     audit = SelectionAudit(PACKAGE / "tests", files, expressions, CI_SELECTION_GAPS, emulator_expressions)
-    status = pytest.main([
+    exit_code = pytest.main([
         str(PACKAGE / "tests"), "--collect-only", "--import-mode=importlib",
         "-o", "addopts=", "-m", "", "-k", "", "-q", "-p", "no:cacheprovider",
     ], plugins=[audit])
     Path(report_path).write_text(json.dumps(audit.report, indent=2), encoding="utf-8")
-    return int(status)
+    return int(exit_code)
 
 
-def test_every_maintained_case_has_a_ci_selection_or_explicit_gap_rust(tmp_path):
+def test_every_test_is_run_by_ci_or_listed_as_gap_rust(tmp_path):
+    """Every test is run by a CI pipeline or listed as a gap.
+
+    Gap entries for tests that now run or no longer exist must be removed. Each
+    emulator test must be in exactly one of the two emulator jobs, and both jobs
+    must run at least one test. Remaining gaps are shown as a warning.
+    """
     report_path = tmp_path / "ci-selection.json"
     env = dict(os.environ)
+    # Collect in a separate process with no extra pytest options, so this run's
+    # settings do not change the result.
     env.pop("PYTEST_ADDOPTS", None)
     result = subprocess.run(
         sdk_python_command(
@@ -166,8 +198,14 @@ def test_every_maintained_case_has_a_ci_selection_or_explicit_gap_rust(tmp_path)
         )
 
 
-def test_selection_audit_checks_cases_not_just_files_rust(pytester):
-    offline = pytester.makepyfile(test_offline="def test_without_marker(): pass")
+def test_audit_checks_each_test_not_just_each_file_rust(pytester):
+    """A marker on a class applies to all its tests; a marker on one parameter
+    applies to that case only.
+
+    Here ``test_partial[2]`` has no marker, so it is reported as not run, even
+    though ``test_partial[1]`` in the same function is run.
+    """
+    offline_file = pytester.makepyfile(test_offline="def test_without_marker(): pass")
     pytester.makepyfile(test_cases="""
         import pytest
 
@@ -187,7 +225,7 @@ def test_selection_audit_checks_cases_not_just_files_rust(pytester):
         def test_unowned(): pass
     """)
     gaps = {"test_cases.py::test_gap": "environment-gap: test environment unavailable"}
-    audit = SelectionAudit(pytester.path, {offline.resolve()}, {"service and not excluded"}, gaps)
+    audit = SelectionAudit(pytester.path, {offline_file.resolve()}, {"service and not excluded"}, gaps)
     result = pytester.runpytest_inprocess(
         "--collect-only", "--noconftest", "-q", plugins=[audit],
     )
@@ -200,13 +238,15 @@ def test_selection_audit_checks_cases_not_just_files_rust(pytester):
     assert audit.report["stale_gaps"] == []
 
 
-def test_selection_audit_rejects_stale_gap_records_rust(pytester):
-    offline = pytester.makepyfile(test_offline="def test_now_selected(): pass")
+def test_audit_reports_outdated_gap_entries_rust(pytester):
+    """A gap entry is outdated if its test is now run by CI or no longer exists.
+    Both kinds are reported."""
+    offline_file = pytester.makepyfile(test_offline="def test_now_selected(): pass")
     gaps = {
         "test_offline.py::test_now_selected": "environment-gap: previously unavailable",
         "test_removed.py::test_deleted": "environment-gap: previously unavailable",
     }
-    audit = SelectionAudit(pytester.path, {offline.resolve()}, set(), gaps)
+    audit = SelectionAudit(pytester.path, {offline_file.resolve()}, set(), gaps)
     result = pytester.runpytest_inprocess("--collect-only", "--noconftest", "-q", plugins=[audit])
     assert result.ret == 0
     assert audit.report["selected"] == 1
@@ -218,7 +258,13 @@ def test_selection_audit_rejects_stale_gap_records_rust(pytester):
     ("cosmosEmulator", 2),
     ("never_selected", 1),
 ])
-def test_emulator_categories_reject_overlap_and_missing_cases_rust(pytester, fault_expression, errors):
+def test_each_emulator_test_is_in_exactly_one_emulator_job_rust(pytester, fault_expression, errors):
+    """Each emulator test must be in exactly one emulator job.
+
+    Network-fault (``cosmosToxiproxy``) and special-build (``cosmosRustProbes``)
+    tests are in neither. A fault-injection expression that also picks functional
+    and network-fault tests gives 2 errors; one that picks nothing gives 1 error.
+    """
     pytester.makepyfile(test_cases="""
         import pytest
         @pytest.mark.cosmosEmulator

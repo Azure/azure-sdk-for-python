@@ -3,84 +3,66 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Offline examples for serialize_body_to_bytes.
-
-Assert exact bytes or errors for the listed inputs and compare a finite
-input table with an inline reproduction of the legacy serializer.
-No network transmission, stored-item representation, or exhaustive
-serializer equivalence is established.
+"""Tests for serialize_body_to_bytes, which turns a request body into the bytes
+the SDK sends. Each test checks the exact bytes, or the error, for one kind of
+input.
 """
-import json
 import unittest
 
 from azure.cosmos._helpers._wire_encoding import serialize_body_to_bytes
 
 
 class TestEmptyAndPrimitiveBodies(unittest.TestCase):
-    """Inputs that skip ``json.dumps`` entirely — passthrough cases.
+    """Bodies that are not turned into JSON: None, bytes, bytearray and str.
 
-    ``None``, ``str``, ``bytes`` and ``bytearray`` are all already
-    "already in byte form" (or carry the explicit "no body" signal), so the
-    helper just normalises them to ``bytes`` without re-serialising.
-    These tests cover that passthrough behaviour.
+    They are returned as bytes without changing their content.
     """
 
     def test_none_returns_empty_bytes_rust(self):
-        """``body=None`` → ``b""`` (the "no payload" signal for ops like delete)."""
+        """``None`` means "no body" (as for delete) and gives ``b""``."""
         self.assertEqual(serialize_body_to_bytes(None), b"")
 
     def test_bytes_input_passes_through_unchanged_rust(self):
-        """A ``bytes`` body (e.g. pre-encoded by a future Rust path) is returned as-is."""
+        """A ``bytes`` body is returned as it is."""
         payload = b'{"id":"x","total":1}'
         result = serialize_body_to_bytes(payload)
         self.assertEqual(result, payload)
         self.assertIsInstance(result, bytes)
 
     def test_bytearray_input_returns_bytes_rust(self):
-        """A ``bytearray`` body returns an immutable ``bytes`` copy.
-
-        The helper must hand back ``bytes`` (not ``bytearray``) so that
-        downstream code can rely on ``body_bytes`` not changing under
-        it if the original buffer is later mutated.
-        """
-        ba = bytearray(b'{"k":1}')
-        result = serialize_body_to_bytes(ba)
+        """A ``bytearray`` body is returned as a separate ``bytes`` copy, so later
+        changes to the bytearray do not change the request body."""
+        buffer = bytearray(b'{"k":1}')
+        result = serialize_body_to_bytes(buffer)
         self.assertEqual(result, b'{"k":1}')
         self.assertIsInstance(result, bytes)
-        # Mutating the original bytearray must not change the result.
-        ba[0] = ord("X")
+        # Changing the bytearray must not change the result.
+        buffer[0] = ord("X")
         self.assertEqual(result, b'{"k":1}')
 
     def test_str_input_is_utf8_encoded_rust(self):
-        """A ``str`` body is assumed to already be valid JSON text and is just UTF-8 encoded."""
+        """A ``str`` body is taken to be JSON text and is UTF-8 encoded. An empty
+        string gives ``b""``."""
         self.assertEqual(serialize_body_to_bytes('{"id":"x"}'), b'{"id":"x"}')
+        self.assertEqual(serialize_body_to_bytes(""), b"")
 
 
 class TestDictListSerialization(unittest.TestCase):
-    """The common case: ``dict`` / ``list`` / ``tuple`` is JSON-serialised.
+    """Bodies that are turned into JSON: dict, list and tuple.
 
-    The output must use compact separators (no space after ``,`` or
-    ``:``), preserve dict insertion order, keep ints as ints, render
-    booleans lowercase, render ``None`` as ``null``, and escape
-    non-ASCII characters as ``\\uXXXX``. All of those are the existing
-    core-python pipeline's behaviour and the rest of the SDK (and
-    customer fixtures) depend on it byte-for-byte.
+    The JSON is compact (no spaces after "," or ":"), keeps the order of dict
+    keys, and by default escapes non-ASCII characters as ``\\uXXXX``.
     """
 
     def test_simple_dict_compact_no_spaces_rust(self):
-        """Dict → compact JSON with no incidental whitespace anywhere."""
+        """A dict becomes compact JSON with no spaces."""
         self.assertEqual(
             serialize_body_to_bytes({"id": "order-42", "total": 99.5}),
             b'{"id":"order-42","total":99.5}',
         )
 
     def test_dict_key_insertion_order_preserved_rust(self):
-        """Keys appear in the exact order the caller inserted them.
-
-        Python dicts preserve insertion order since 3.7. The Cosmos
-        service does not care about key order, but customer fixtures
-        often do (string compare). This test locks the order in.
-        """
+        """Keys appear in the order they were added to the dict."""
         body = {"z": 1, "a": 2, "m": 3}
         self.assertEqual(
             serialize_body_to_bytes(body),
@@ -88,39 +70,36 @@ class TestDictListSerialization(unittest.TestCase):
         )
 
     def test_integer_stays_integer_not_float_rust(self):
-        """The sample integer is encoded as 123 rather than 123.0."""
+        """An integer stays an integer: ``123``, not ``123.0``."""
         self.assertEqual(
             serialize_body_to_bytes({"n": 123}),
             b'{"n":123}',
         )
 
     def test_float_with_simple_decimal_keeps_decimal_rust(self):
-        """``99.5`` stays ``99.5`` — no scientific notation, no rounding."""
+        """``99.5`` stays ``99.5``, with no rounding and no scientific notation."""
         self.assertEqual(
             serialize_body_to_bytes({"price": 99.5}),
             b'{"price":99.5}',
         )
 
     def test_booleans_render_lowercase_rust(self):
-        """Python ``True`` / ``False`` → JSON ``true`` / ``false`` (lowercase)."""
+        """``True`` and ``False`` become ``true`` and ``false``."""
         self.assertEqual(
             serialize_body_to_bytes({"flag": True, "off": False}),
             b'{"flag":true,"off":false}',
         )
 
     def test_none_value_renders_as_json_null_rust(self):
-        """A ``None`` *value* inside the body becomes JSON ``null``.
-
-        Distinct from the top-level ``None`` case (which means "no
-        body at all" and returns empty bytes).
-        """
+        """A ``None`` value inside the body becomes ``null``. This is different from
+        a body that is ``None``, which means "no body"."""
         self.assertEqual(
             serialize_body_to_bytes({"v": None}),
             b'{"v":null}',
         )
 
     def test_nested_dict_serializes_recursively_rust(self):
-        """Nested dicts are serialised recursively with the same compact rules."""
+        """Nested dicts follow the same rules."""
         body = {"id": "x", "meta": {"region": "us-east", "count": 3}}
         self.assertEqual(
             serialize_body_to_bytes(body),
@@ -128,96 +107,55 @@ class TestDictListSerialization(unittest.TestCase):
         )
 
     def test_list_input_serializes_as_json_array_rust(self):
-        """A bare ``list`` is a legal JSON document and serialises to a JSON array."""
+        """A list becomes a JSON array."""
         self.assertEqual(
             serialize_body_to_bytes([1, 2, 3]),
             b"[1,2,3]",
         )
 
     def test_tuple_input_serializes_as_json_array_rust(self):
-        """A ``tuple`` takes the same path as a list — ``json.dumps`` treats them identically."""
+        """A tuple becomes a JSON array, like a list."""
         self.assertEqual(
             serialize_body_to_bytes(("a", "b")),
             b'["a","b"]',
         )
 
     def test_non_ascii_string_value_uses_unicode_escape_rust(self):
-        """Check escaped Unicode bytes for the supplied string with ensure_ascii enabled."""
+        """By default, non-ASCII characters are escaped: ``"café"`` becomes
+        ``"caf\\u00e9"``."""
         self.assertEqual(
             serialize_body_to_bytes({"name": "café"}),
             b'{"name":"caf\\u00e9"}',
         )
 
 
-class TestUnknownTypeRaisesLoudly(unittest.TestCase):
-    """Unsupported input types must raise ``TypeError`` immediately.
+class TestUnsupportedTypeRaises(unittest.TestCase):
+    """Any other type raises TypeError before a request is sent.
 
-    The legacy serializer silently returned ``None`` for unknown
-    types, which produced a quiet "request had no body" bug
-    downstream. The new helper raises at the boundary so the caller
-    learns about the mistake during development instead of debugging
-    a confusing 400 from the service.
+    The message names the type and lists the types that are accepted.
     """
 
     def test_object_input_raises_type_error_rust(self):
-        """A custom class instance is not a body shape we accept; the error names the type."""
+        """An instance of a custom class raises TypeError, and the message names
+        the class."""
         class Custom:
-            """Represent an unsupported request-body type."""
+            """A class the serializer does not accept."""
 
             pass
 
-        with self.assertRaises(TypeError) as ctx:
+        with self.assertRaises(TypeError) as raised:
             serialize_body_to_bytes(Custom())
-        self.assertIn("Custom", str(ctx.exception))
+        self.assertIn("Custom", str(raised.exception))
 
     def test_int_input_raises_type_error_rust(self):
-        """A bare integer is not a valid Cosmos document — caught here, not by the service."""
+        """A plain integer as the whole body raises TypeError."""
         with self.assertRaises(TypeError):
             serialize_body_to_bytes(42)
 
     def test_set_input_raises_type_error_rust(self):
-        """A ``set`` has no JSON representation; we raise with a clearer message than ``json.dumps``."""
+        """A set raises TypeError, because JSON has no set type."""
         with self.assertRaises(TypeError):
             serialize_body_to_bytes({"a", "b"})
-
-
-class TestParityWithLegacySerializer(unittest.TestCase):
-    """Compare selected inputs with an inline legacy-style serializer.
-
-    This reference is not a call into the legacy transport and does not
-    establish byte parity for every possible SDK input.
-    """
-
-    @staticmethod
-    def _legacy_serialize_to_bytes(data):
-        """Inline reproduction of the legacy dict/list branch + transport encode step."""
-        if isinstance(data, (dict, list, tuple)):
-            return json.dumps(data, separators=(",", ":")).encode("utf-8")
-        if isinstance(data, str):
-            return data.encode("utf-8")
-        if data is None:
-            return b""
-        raise TypeError("test-only helper does not handle this input")
-
-    def test_parity_for_full_input_table_rust(self):
-        """Helper bytes equal the inline reference for each input in this table."""
-        for value in [
-            None,
-            "",
-            '{"id":"x"}',
-            {"id": "order-42", "total": 99.5},
-            {"z": 1, "a": 2, "m": 3},
-            {"flag": True, "off": False, "v": None},
-            {"meta": {"region": "us-east", "count": 3}},
-            [1, 2, 3],
-            ("a", "b"),
-            {"name": "café"},
-        ]:
-            with self.subTest(value=value):
-                self.assertEqual(
-                    serialize_body_to_bytes(value),
-                    self._legacy_serialize_to_bytes(value),
-                )
 
 
 if __name__ == "__main__":

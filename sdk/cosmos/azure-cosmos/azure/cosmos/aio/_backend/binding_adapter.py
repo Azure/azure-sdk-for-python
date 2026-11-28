@@ -3,17 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Execute asynchronous requests through the binding and convert its results.
 
-A customer app awaiting a read of database "sales" needs properties held by
-the service backend. AsyncBindingAdapter is Python wrapper code: it passes
-the prepared read to the binding's read_database_async function and awaits
-the result.
 
-The binding translates the prepared inputs into a Rust driver call. The
-separately owned Rust driver performs the service operation. The binding
-converts its result into Python values, which the Python wrapper uses to
-produce the database properties returned to the customer app.
+"""Run async client operations through the compiled Rust part of the SDK.
+
+For example, when the customer app awaits a read of database "sales",
+AsyncBindingAdapter passes the prepared read to read_database_async in
+azure.cosmos._rust and awaits the result. azure.cosmos._rust sends the request
+to the service backend and turns the result into Python values, or into a
+Python exception if the read failed.
 
 The binding runs Rust work with the Tokio runtime; service I/O does not use
 a Python executor worker per request. Driver acquisition is different: it can
@@ -135,20 +133,19 @@ def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[
 
 
 class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
-    """Retain one client's settings and execute its prepared requests.
+    """Keep one client's settings and run its operations.
 
-    As with BindingAdapter, the opaque driver handle owns a specific CosmosDriver
-    independently of its cache entry. The client's __aenter__() acquires it before running
-    the statements inside async with; later operations reuse it.
-    Without prior initialization, the first operation needing the driver
-    acquires the handle.
-    Closing releases this client's acquisition, not another client's or an
-    in-flight operation's reference.
+    The adapter connects to the service at the start of ``async with client:``,
+    or at the first operation if ``async with`` is not used. Later operations
+    reuse that connection. Closing releases only this client's hold on the
+    connection. It does not affect other clients or operations still running.
 
-    Callers share one acquisition attempt, including callers on different loops
-    when the credential permits it.
-    Close callers share _close_future; each loop uses its own awaitable for
-    that shared result.
+    If several operations start before the client has connected, it makes only
+    one connection attempt, and they all wait for it. If close is called several
+    times at once, the cleanup runs once, and every caller waits for it to finish.
+
+    A client that uses an async token credential must stay on the event loop
+    where it was first used. A client that uses an account key has no such limit.
     """
 
     name = BACKEND_NAME_RUST
@@ -161,12 +158,11 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         token_credential: Optional[Any] = None,
         runtime: Optional[CosmosRuntime] = None,
     ) -> None:
-        """Store inputs and select a runtime without acquiring a driver handle.
+        """Save the client's inputs. This does not connect to the service.
 
-        BindingAdapterShared performs the same setup as for BindingAdapter, including
-        rejecting retired client-level network settings. This constructor
-        also creates locks and empty future fields. Acquisition and close create
-        their futures later; construction does not initialize the default runtime.
+        See BindingAdapterShared._init_shared for what is saved and which
+        settings are rejected. This constructor also sets up the fields used
+        by close.
         """
         # Fields must exist even if shared validation fails and the finalizer runs.
         self._close_lock = threading.Lock()

@@ -1313,35 +1313,46 @@ def test_create_driver_setup_consumes_budget_rust(native_create_database_client,
     client.client_connection.ReadDatabase.assert_not_called()
 
 
-def test_create_async_timeout_drains_pending_work_rust():
+def test_create_async_timeout_drains_pending_work_rust(monkeypatch):
     """When an async create times out, the work already in flight is cancelled and
     waited on before the error is raised.
 
-    The engine is made to hang forever. The deadline passes, a client timeout
-    error is raised, and the hanging task is confirmed cancelled rather than
+    The engine is made to hang forever. Once it starts, the test expires the timer.
+    A client timeout error is raised, and the hanging task is confirmed cancelled rather than
     left running. The success hook does not fire, since nothing succeeded.
 
     Abandoning the task instead would leak it for the life of the event loop and
     produce warnings about a task that was never retrieved.
     """
+    from azure.cosmos import _operation_deadline
     from azure.cosmos.exceptions import CosmosClientTimeoutError
-    import time
+
+    real_wait = asyncio.wait
+    monkeypatch.setattr(_operation_deadline, "time", SimpleNamespace(monotonic=lambda: 0.0))
 
     async def run():
+        started = asyncio.Event()
         cancelled = asyncio.Event()
         backend = _AsyncFakeBackend()
 
         async def execute(prepared, *, deadline=None):
             try:
+                started.set()
                 await asyncio.Event().wait()
             finally:
+                await asyncio.sleep(0)
                 cancelled.set()
 
+        async def expire_after_start(tasks, **_kwargs):
+            await asyncio.wait_for(started.wait(), timeout=5)
+            return await real_wait(tasks, timeout=0)
+
+        monkeypatch.setattr(_operation_deadline.asyncio, "wait", expire_after_start)
         backend.execute = execute
         hook = MagicMock()
         with pytest.raises(CosmosClientTimeoutError):
             await AsyncDatabaseHelper(SimpleNamespace(), backend).create_database(
-                {"id": "db1"}, {}, response_hook=hook, deadline=time.monotonic() + 0.01,
+                {"id": "db1"}, {}, response_hook=hook, deadline=1.0,
             )
         assert cancelled.is_set()
         hook.assert_not_called()

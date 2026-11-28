@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Explicitly configure and share the Rust driver's connection resources."""
+"""Network connection settings that clients can share: CosmosRuntime and ConnectionPoolOptions."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -13,23 +13,40 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True, kw_only=True)
 class ConnectionPoolOptions:
-    """Immutable connection settings for :class:`CosmosRuntime`.
+    """Connection settings for :class:`CosmosRuntime`. They can't be changed after creation.
 
-    Durations are seconds. ``None`` uses the Rust driver's environment/default
-    value. Without overrides, connection, data HTTP-request, and metadata
-    HTTP-request timeouts are respectively 5, 6, and 65 seconds.
-    HTTP-request timeouts cover one attempt, not retries or read inactivity.
+    Times are in seconds. A setting left as ``None`` uses its environment
+    variable if that is set, and otherwise uses the default. A value set here
+    always wins over the environment variable. Environment variables use
+    milliseconds and are read when the runtime is created. A bad environment
+    variable value raises ValueError.
 
-    :keyword float connection_timeout: Connection establishment limit (0.1-6 seconds).
-    :keyword float data_http_request_timeout: Complete data HTTP-attempt limit,
-        at least 0.1 seconds.
-    :keyword float metadata_http_request_timeout: Complete metadata HTTP-attempt limit,
-        between 0.1 and 65 seconds.
-    :keyword float idle_connection_timeout: Time to retain an idle connection,
-        at least 300 seconds.
-    :keyword int max_idle_connections_per_endpoint: Idle connections retained per endpoint,
-        between 10 and 64000.
-    :keyword bool proxy_allowed: Whether the driver may use the environment proxy.
+    Data requests read or write items, or run a stored procedure. All other
+    requests, such as reading the account, databases, or containers, are
+    metadata requests.
+
+    A request timeout covers one try at sending a request and getting the
+    whole response. If the SDK retries, each retry gets its own timeout.
+
+    :keyword float connection_timeout: How long to wait when opening a new
+        connection. Between 0.1 and 6 seconds. Default 5.
+        Environment variable: AZURE_COSMOS_CONNECTION_POOL_MAX_CONNECT_TIMEOUT_MS.
+    :keyword float data_http_request_timeout: How long one try of a data request
+        can take. At least 0.1 seconds. Default 6.
+        Environment variable: AZURE_COSMOS_CONNECTION_POOL_MAX_DATAPLANE_REQUEST_TIMEOUT_MS.
+    :keyword float metadata_http_request_timeout: How long one try of a metadata
+        request can take. Between 0.1 and 65 seconds. Default 65.
+        Environment variable: AZURE_COSMOS_CONNECTION_POOL_MAX_METADATA_REQUEST_TIMEOUT_MS.
+    :keyword float idle_connection_timeout: How long to keep an unused connection
+        open. At least 300 seconds. Default 90.
+        Environment variable: AZURE_COSMOS_CONNECTION_POOL_IDLE_CONNECTION_TIMEOUT_MS.
+    :keyword int max_idle_connections_per_endpoint: The most unused connections
+        to keep open for each service address. Between 10 and 64000. Default 1000,
+        or 10000 if AZURE_COSMOS_CONNECTION_POOL_IS_HTTP2_ALLOWED is false.
+        Environment variable: AZURE_COSMOS_CONNECTION_POOL_MAX_IDLE_CONNECTIONS_PER_ENDPOINT.
+    :keyword bool proxy_allowed: Whether the SDK can use a proxy set in the
+        environment. Default False.
+        Environment variable: AZURE_COSMOS_CONNECTION_POOL_IS_PROXY_ALLOWED.
     """
 
     connection_timeout: Optional[float] = None
@@ -71,9 +88,11 @@ class ConnectionPoolOptions:
             if isinstance(value, bool) or not isinstance(value, (int, float)):
                 raise TypeError(f"{name} must be a number of seconds or None.")
             if value < minimum or value > maximum or value >= 2**64 or not math.isfinite(value):
-                raise ValueError(
-                    f"{name} must be finite seconds in the supported range {minimum}-{maximum}."
-                )
+                if maximum == 2**64:
+                    message = f"{name} must be a finite number of seconds, at least {minimum}."
+                else:
+                    message = f"{name} must be a finite number of seconds, between {minimum} and {maximum}."
+                raise ValueError(message)
         count = self.max_idle_connections_per_endpoint
         if count is not None:
             if isinstance(count, bool) or not isinstance(count, int):
@@ -86,15 +105,19 @@ class ConnectionPoolOptions:
 
 @dataclass(frozen=True, init=False, eq=False)
 class CosmosRuntime:
-    """An initialized runtime explicitly shared by synchronous or async clients.
+    """Holds the network connections and their settings, which several clients can share.
 
-    Use :meth:`create` or :meth:`create_async`; direct construction is not
-    supported. Pass the result as ``CosmosClient(..., runtime=runtime)``.
-    Omitting that client option uses the default process-wide singleton.
+    Create one with :meth:`create` or :meth:`create_async`, then pass it to each
+    client, for example ``CosmosClient(url, credential=key, runtime=runtime)``.
+    Sync and async clients can both use it. Calling ``CosmosRuntime()`` directly
+    raises TypeError.
 
-    Clients retain the runtime independently of the customer's reference.
-    There is no runtime ``close()``: releasing one client does not shut down
-    other clients, and native ownership keeps in-flight operations alive.
+    If a client is not given a runtime, it uses a default runtime with default
+    settings. The default runtime is created the first time such a client
+    connects, and all such clients share it.
+
+    A runtime has no close() method. Closing one client does not stop other
+    clients that use the same runtime, or operations that are still running.
     """
 
     _handle: _CosmosRuntime = field(repr=False, compare=False)
@@ -122,7 +145,7 @@ class CosmosRuntime:
     def create(cls, *, connection_pool: Optional[ConnectionPoolOptions] = None) -> CosmosRuntime:
         """Build a custom runtime synchronously, raising if initialization fails.
 
-        :keyword connection_pool: Immutable connection settings, or driver defaults.
+        :keyword connection_pool: Connection settings. If omitted, default settings are used.
         :paramtype connection_pool: ~azure.cosmos.ConnectionPoolOptions
         :returns: A new initialized runtime, not the default singleton.
         :rtype: ~azure.cosmos.CosmosRuntime
@@ -138,7 +161,7 @@ class CosmosRuntime:
     ) -> CosmosRuntime:
         """Build a custom runtime without blocking the Python event loop.
 
-        :keyword connection_pool: Immutable connection settings, or driver defaults.
+        :keyword connection_pool: Connection settings. If omitted, default settings are used.
         :paramtype connection_pool: ~azure.cosmos.ConnectionPoolOptions
         :returns: A new initialized runtime, usable by sync or async clients.
         :rtype: ~azure.cosmos.CosmosRuntime

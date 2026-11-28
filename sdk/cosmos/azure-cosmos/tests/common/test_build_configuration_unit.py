@@ -3,16 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Offline checks that the files describing how this package is built still say what the
-release process needs them to say.
+"""Tests that read the package's build configuration files and check key settings.
 
-No test compiles Rust. These tests read the build configuration files and check
-the values that, if changed by accident, would produce a package that looks fine and is
-wrong: built for the wrong Python, missing an architecture, or built against a driver
-from somebody's laptop instead of a fixed revision.
-
-Those mistakes are expensive because they are usually found after publishing. Reading the
-files takes no time and catches them in every run.
+Nothing is compiled. A wrong value here, such as the wrong Python version, a
+missing processor type, or the wrong library version, would produce a package
+that installs but is wrong, and such mistakes are often found only after release.
 """
 
 from pathlib import Path
@@ -35,7 +30,7 @@ except ImportError:
 PACKAGE_ROOT = Path(__file__).resolve().parents[2]
 
 with pytest.MonkeyPatch.context() as _build_imports:
-    # Build helpers belong to the checkout, not to the installed SDK wheel.
+    # The build scripts are in the package folder, not in the installed SDK.
     _build_imports.syspath_prepend(str(PACKAGE_ROOT))
     import azure_cosmos_package_builder as build_backend
     import azure_cosmos_build_metadata as build_metadata
@@ -43,7 +38,8 @@ with pytest.MonkeyPatch.context() as _build_imports:
 
 @pytest.fixture(name="setuptools_source")
 def _setuptools_source(tmp_path):
-    """Copy only packaging inputs so rejected commands cannot affect the checkout."""
+    """Copy only the files setup.py needs into a temporary folder, so the tests
+    cannot change the checkout."""
     for relative in (
         "setup.py",
         "azure_cosmos_build_metadata.py",
@@ -74,7 +70,10 @@ def _setuptools_source(tmp_path):
         ["egg_info", "bdist_wheel"],
     ],
 )
-def test_setuptools_artifact_commands_fail_closed_rust(setuptools_source, commands):
+def test_setup_py_refuses_build_commands_rust(setuptools_source, commands):
+    """setup.py only describes the package. Commands that build it (such as
+    bdist_wheel or sdist) fail with a message that points to ``python -m build``,
+    and leave no build output behind."""
     result = subprocess.run(
         [sys.executable, "setup.py", *commands],
         cwd=setuptools_source,
@@ -94,9 +93,11 @@ def test_setuptools_artifact_commands_fail_closed_rust(setuptools_source, comman
 @pytest.mark.parametrize(
     "commands", [["--name"], ["--version"], ["egg_info"], ["dist_info"]]
 )
-def test_setuptools_metadata_commands_remain_available_rust(
+def test_setup_py_still_answers_metadata_commands_rust(
     setuptools_source, commands
 ):
+    """Commands that only read package information (``--name``, ``--version``,
+    ``egg_info``, ``dist_info``) still work and build nothing."""
     result = subprocess.run(
         [sys.executable, "setup.py", *commands],
         cwd=setuptools_source,
@@ -119,7 +120,8 @@ def test_setuptools_metadata_commands_remain_available_rust(
 
 
 @pytest.mark.parametrize("command", ["install", "develop"])
-def test_setuptools_install_commands_never_execute_rust(monkeypatch, command):
+def test_setup_py_refuses_install_commands_rust(monkeypatch, command):
+    """``install`` and ``develop`` raise SetupError before any command runs."""
     monkeypatch.chdir(PACKAGE_ROOT)
     with patch("setuptools.setup") as setup:
         runpy.run_path(str(PACKAGE_ROOT / "setup.py"))
@@ -137,50 +139,44 @@ def _read_toml(path):
         return tomllib.load(stream)
 
 
-def test_python_metadata_stays_aligned_rust(monkeypatch):
-    """The two places that describe this package agree with each other and with the version file.
-
-    The package is described both in the modern configuration file and in the older build
-    script, which is still there for tooling that expects it. Every field written in both
-    has to match, including the version, which comes from a third place again.
-
-    The older script is run with the function that would actually build replaced, so what
-    it was about to be told can be read back. Two descriptions that drift apart produce a
-    package whose declared dependencies or supported Python versions depend on which tool
-    did the building.
+def test_pyproject_and_setup_py_metadata_match_rust(monkeypatch):
+    """pyproject.toml and setup.py give the same name, version, Python requirement,
+    dependencies and other fields, and the version matches ``_version.py``. If they
+    differed, the package's details would depend on which tool built it.
     """
     project = _read_toml(PACKAGE_ROOT / "pyproject.toml")["project"]
     version = runpy.run_path(str(PACKAGE_ROOT / "azure" / "cosmos" / "_version.py"))["VERSION"]
     monkeypatch.chdir(PACKAGE_ROOT)
     with patch("setuptools.setup") as setup:
         runpy.run_path(str(PACKAGE_ROOT / "setup.py"))
-    legacy = setup.call_args.kwargs
+    setup_py_args = setup.call_args.kwargs
 
-    assert project["name"] == legacy["name"] == "azure-cosmos"
-    assert project["version"] == legacy["version"] == version
-    assert project["requires-python"] == legacy["python_requires"] == ">=3.10"
-    assert project["dependencies"] == legacy["install_requires"]
-    assert project["optional-dependencies"] == legacy["extras_require"]
-    assert project["classifiers"] == legacy["classifiers"]
-    assert project["description"] == legacy["description"]
-    assert project["license"] == {"text": legacy["license"]}
-    assert project["authors"] == [{"name": legacy["author"], "email": legacy["author_email"]}]
+    assert project["name"] == setup_py_args["name"] == "azure-cosmos"
+    assert project["version"] == setup_py_args["version"] == version
+    assert project["requires-python"] == setup_py_args["python_requires"] == ">=3.10"
+    assert project["dependencies"] == setup_py_args["install_requires"]
+    assert project["optional-dependencies"] == setup_py_args["extras_require"]
+    assert project["classifiers"] == setup_py_args["classifiers"]
+    assert project["description"] == setup_py_args["description"]
+    assert project["license"] == {"text": setup_py_args["license"]}
+    assert project["authors"] == [{"name": setup_py_args["author"], "email": setup_py_args["author_email"]}]
     assert project["maintainers"] == [
-        {"name": legacy["maintainer"], "email": legacy["maintainer_email"]}
+        {"name": setup_py_args["maintainer"], "email": setup_py_args["maintainer_email"]}
     ]
-    assert project["keywords"] == [word.strip() for word in legacy["keywords"].split(",")]
-    assert project["urls"] == {"Homepage": legacy["url"], **legacy["project_urls"]}
+    assert project["keywords"] == [word.strip() for word in setup_py_args["keywords"].split(",")]
+    assert project["urls"] == {"Homepage": setup_py_args["url"], **setup_py_args["project_urls"]}
     assert "Changelog" in project["urls"]
     readme = (PACKAGE_ROOT / project["readme"]).read_text(encoding="utf-8")
-    assert legacy["long_description"] == readme
+    assert setup_py_args["long_description"] == readme
     assert build_metadata.validate_version_metadata(PACKAGE_ROOT) == version
 
 
-def test_prototype_wheel_targets_rust():
-    """Check declared wheel targets, builder version, and locked-build settings.
-
-    These assertions do not build wheels, prove binary reproducibility, or
-    establish that the resulting packages run on every listed platform.
+def test_wheel_targets_and_build_settings_rust():
+    """pyproject.toml lists the expected wheels: one wheel per platform for Python
+    3.10 and later, for Windows (x64, ARM64), Linux (x64, ARM64; none for
+    musl-based Linux such as Alpine) and macOS (ARM64). It also pins maturin
+    1.15.0 as the build tool and builds with the exact library versions in
+    Cargo.lock. No wheel is built.
     """
     config = _read_toml(PACKAGE_ROOT / "pyproject.toml")
     wheels = config["tool"]["cibuildwheel"]
@@ -199,15 +195,12 @@ def test_prototype_wheel_targets_rust():
     assert config["tool"]["maturin"]["features"] == ["pyo3/extension-module"]
 
 
-def test_driver_source_and_features_are_preserved_rust():
-    """The driver comes from one pinned GitHub commit, so CI needs no Rust checkout.
-
-    Both dependency groups inherit the same source. The lock must record that
-    same commit, with no second copy of the driver from a local folder.
-    The optional features are listed explicitly because they change what the driver can
-    do. Query planning and PATCH support are on for normal use; fault injection
-    requires test-probes or native Rust tests. The built-in test service is a
-    development dependency, so it is absent from customer builds.
+def test_driver_library_is_pinned_with_expected_features_rust():
+    """The compiled module is built from the azure_data_cosmos_driver library at
+    one fixed GitHub commit. Cargo.lock records the same commit, and no local copy
+    is used. Customer builds turn on only the expected features. The test-only
+    features (fault injection and an in-memory test service) are used only in
+    development builds or with the test-probes feature.
     """
     workspace = _read_toml(PACKAGE_ROOT / "Cargo.toml")
     binding = _read_toml(PACKAGE_ROOT / "azure_cosmos_rust" / "Cargo.toml")
@@ -241,27 +234,20 @@ def test_driver_source_and_features_are_preserved_rust():
     )
 
 
-def test_declared_minimum_rust_matches_the_toolchain_rust():
-    """``rust-version`` names the only compiler CI builds with, so the promise stays true.
-
-    Changing the ``rust-toolchain.toml`` channel without updating ``rust-version``
-    fails here.
+def test_minimum_compiler_version_matches_toolchain_rust():
+    """The minimum compiler version in Cargo.toml (``rust-version``) matches the
+    version in rust-toolchain.toml, without its ``ms-prod-`` prefix.
     """
     workspace = _read_toml(PACKAGE_ROOT / "Cargo.toml")["workspace"]["package"]
     channel = _read_toml(PACKAGE_ROOT / "rust-toolchain.toml")["toolchain"]["channel"]
     assert channel.removeprefix("ms-prod-") == workspace["rust-version"]
 
 
-def test_windows_cross_build_has_target_and_import_library_inputs_rust():
-    """Building for Windows on ARM needs two settings, and both are still there.
-
-    This build happens on an Intel machine producing a package for a different processor,
-    so the compiler has to be told what it is aiming at and where to find the matching
-    Python library. Without them the build either fails outright or quietly produces
-    something for the wrong processor.
-
-    The whole list is compared rather than just these entries, so an added override that
-    happens to match first cannot go unnoticed.
+def test_windows_arm64_build_settings_rust():
+    """Windows ARM64 wheels are built on an x64 machine, so the build must name the
+    target processor (``CARGO_BUILD_TARGET``) and the folder with the ARM64 Python
+    library (``PYO3_CROSS_LIB_DIR``). The whole override list is compared, so an
+    extra override is also caught.
     """
     config = _read_toml(PACKAGE_ROOT / "pyproject.toml")
     overrides = config["tool"]["cibuildwheel"]["overrides"]
@@ -274,11 +260,9 @@ def test_windows_cross_build_has_target_and_import_library_inputs_rust():
     }]
 
 
-def test_source_archive_declares_its_build_and_ci_inputs_rust():
-    """Check declared source-archive inputs and the named scripts on disk.
-
-    No archive is built or installed, so this does not verify actual archive
-    contents or a successful source installation.
+def test_source_archive_lists_build_files_rust():
+    """The source archive settings include the build scripts, version files, tests
+    and samples, and the two scripts named there exist. No archive is built.
     """
     config = _read_toml(PACKAGE_ROOT / "pyproject.toml")
     source_inputs = {
@@ -300,7 +284,8 @@ def test_source_archive_declares_its_build_and_ci_inputs_rust():
 
 
 def test_wheel_leaves_out_shared_azure_namespace_file_rust():
-    """Other azure-* packages share the azure folder, so the wheel must not own it."""
+    """The azure folder is shared by all azure-* packages, so the wheel must not
+    include ``azure/__init__.py``."""
     excludes = _read_toml(PACKAGE_ROOT / "pyproject.toml")["tool"]["maturin"]["exclude"]
     namespace_rules = [
         entry for entry in excludes
@@ -329,7 +314,11 @@ def test_wheel_leaves_out_shared_azure_namespace_file_rust():
         "setup",
     ],
 )
-def test_build_routes_reject_version_drift_rust(monkeypatch, tmp_path, stale_file, build_hook):
+def test_every_build_entry_point_rejects_version_mismatch_rust(monkeypatch, tmp_path, stale_file, build_hook):
+    """If the version in pyproject.toml, api.metadata.yml, CHANGELOG.md or
+    ``_version.py`` differs from the others, every way of building the package
+    (each build hook, and setup.py) raises "Package version mismatch" before
+    building anything."""
     version = build_metadata.validate_version_metadata(PACKAGE_ROOT)
     for relative in ("pyproject.toml", "api.metadata.yml", "CHANGELOG.md", Path("azure") / "cosmos" / "_version.py"):
         destination = tmp_path / relative

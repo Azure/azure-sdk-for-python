@@ -189,10 +189,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword float timeout: Default overall operation budget in seconds, including retries.
         Rust requires a finite value >= 1 and < 2**64; individual calls may override it.
-    :keyword runtime: An initialized Rust runtime. Omit to use the default process-wide singleton.
-        Configure connection and data/metadata HTTP-request timeouts on its ConnectionPoolOptions.
+    :keyword runtime: A CosmosRuntime with the network connection settings, such as timeouts and
+        proxy use. Several clients can share one. If omitted, the client uses a shared default
+        runtime with default settings.
     :paramtype runtime: ~azure.cosmos.CosmosRuntime
-    :keyword float connection_timeout: Legacy-only connection timeout. Rust clients require runtime configuration.
+    :keyword float connection_timeout: Not supported here. Passing it raises TypeError.
+        To set how long to wait when opening a connection, use
+        ConnectionPoolOptions(connection_timeout=...) with CosmosRuntime.create(),
+        then pass that runtime with runtime=.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword int retry_total: Maximum retry attempts for throttle (429) and connection retries on the legacy
         Python backend. Rust-backed clients reject this keyword with ``TypeError``; use ``retry_throttle_total``.

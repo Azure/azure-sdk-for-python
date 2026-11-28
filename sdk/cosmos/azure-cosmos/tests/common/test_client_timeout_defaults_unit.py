@@ -3,7 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Client budgets at the public boundary, with no service requests."""
+"""Offline tests for the time limit on CosmosClient operations.
+
+The ``timeout`` setting is the most time, in seconds, that one operation may
+take, including retries. It can be set on the client as the default for every
+operation, or on a single call. When the time runs out, the operation raises
+``CosmosClientTimeoutError``.
+
+Terms used in this file:
+
+- compiled module: the part of the SDK that sends most requests to the service.
+- adapter: the Python object that passes the client's requests to the compiled
+  module.
+- handle: the object the compiled module returns when the client first
+  connects to the account. The client uses it for every later request.
+- connect thread: the background thread the async client uses to connect, so
+  the event loop is not blocked. Every caller waiting for the connect shares it.
+- feed range: a part of a container's data, set by a range of partition key
+  values.
+- diagnostics recording: when turned on, the SDK records details of each
+  request attempt, such as retries, for logging.
+- throttled: the service replied 429 (too many requests) and the SDK waits
+  before retrying.
+
+Most tests replace the compiled module with a fake. No request reaches a real
+account.
+"""
 
 import asyncio
 import inspect
@@ -19,8 +44,8 @@ import pytest
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos._backend import _binding_adapter_shared as shared
-from azure.cosmos._backend import binding_adapter as sync_binding
-from azure.cosmos.aio._backend import binding_adapter as async_binding
+from azure.cosmos._backend import binding_adapter as sync_adapter_module
+from azure.cosmos.aio._backend import binding_adapter as async_adapter_module
 from azure.cosmos._backend.operations import OP_TO_BINDING_FUNCTION_NAME, get_page_binding_function_name
 from azure.cosmos._backend.contracts import PreparedPageRequest, PreparedRequest
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
@@ -28,60 +53,83 @@ from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponse
 from azure.cosmos._backend.errors import BindingProtocolError
 
 
-def _complete(value):
+def _await_if_needed(value):
+    """Return the value, first running it to the end if it is an async call.
+
+    This lets one test cover both the sync and async clients.
+    """
     return asyncio.run(value) if inspect.isawaitable(value) else value
 
 
-def _response(status=201, headers=None, body=None):
+def _fake_reply(status=201, headers=None, body=None):
+    """Build a fake reply from the compiled module: status code, sub-status,
+    headers, body and diagnostics (None here)."""
     return status, 0, headers or {}, json.dumps(body or {"id": "sales"}).encode(), None
 
 
 @pytest.fixture
-def cold_async_client(monkeypatch):
+def async_client_still_connecting(monkeypatch):
+    """Async client with a 1-second default time limit. Its connect stays in
+    progress until the test sets ``let_connect_finish``."""
     client = AsyncCosmosClient("https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust")
-    entered = threading.Event()
-    finish = threading.Event()
-    handle = object()
-    workers = []
+    connect_started = threading.Event()
+    let_connect_finish = threading.Event()
+    fake_handle = object()
+    connect_threads = []
 
-    def make_worker(*, target, args=(), name, daemon):
-        worker = threading.Thread(target=target, args=args, name=name, daemon=daemon)
-        workers.append(worker)
-        return worker
+    def record_connect_thread(*, target, args=(), name, daemon):
+        thread = threading.Thread(target=target, args=args, name=name, daemon=daemon)
+        connect_threads.append(thread)
+        return thread
 
-    def acquire(*_args):
-        entered.set()
-        assert finish.wait(10), "test did not release acquisition"
-        return handle
+    def slow_open_handle(*_args):
+        connect_started.set()
+        assert let_connect_finish.wait(10), "test did not let the connect finish"
+        return fake_handle
 
-    native = SimpleNamespace(
-        acquire_driver_handle=MagicMock(side_effect=acquire),
+    fake_module = SimpleNamespace(
+        acquire_driver_handle=MagicMock(side_effect=slow_open_handle),
         release_driver_handle=MagicMock(),
         _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
         _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
     )
-    monkeypatch.setattr(async_binding, "_rust_module", native)
-    monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=make_worker, Lock=threading.Lock))
+    monkeypatch.setattr(async_adapter_module, "_rust_module", fake_module)
+    monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=record_connect_thread, Lock=threading.Lock))
     try:
-        yield SimpleNamespace(client=client, entered=entered, finish=finish, handle=handle, native=native)
+        yield SimpleNamespace(
+            client=client,
+            connect_started=connect_started,
+            let_connect_finish=let_connect_finish,
+            fake_handle=fake_handle,
+            fake_module=fake_module,
+        )
     finally:
-        # Let acquisition finish before restoring the binding used by this test.
-        finish.set()
-        for worker in workers:
-            worker.join(timeout=5)
+        # Let the connect finish before the fake module is removed.
+        let_connect_finish.set()
+        for thread in connect_threads:
+            thread.join(timeout=5)
         asyncio.run(client.close())
-        assert all(not worker.is_alive() for worker in workers)
+        assert all(not thread.is_alive() for thread in connect_threads)
 
 
 @pytest.mark.parametrize(
     "operation", ["create_item", "read_item", "upsert_item", "replace_item", "patch_item", "delete_item"]
 )
 @pytest.mark.parametrize("client_default", [False, True], ids=["per-call", "client-default"])
-def test_cold_async_item_timeout_returns_before_acquisition_finishes_rust(cold_async_client, operation, client_default):
-    case = cold_async_client
-    dispatch = AsyncMock(return_value=_response())
-    setattr(case.native, operation + "_async", dispatch)
-    container = case.client.get_database_client("sales").get_container_client("orders")
+def test_async_item_call_times_out_while_client_is_still_connecting_rust(
+    async_client_still_connecting, operation, client_default
+):
+    """An item call whose time limit runs out while the client is still
+    connecting raises ``CosmosClientTimeoutError`` straight away.
+
+    The connect keeps going. A later caller waits for that same connect and
+    gets its handle, so the client connects to the account only once. The time
+    limit comes from either the call or the client default.
+    """
+    setup = async_client_still_connecting
+    send_request = AsyncMock(return_value=_fake_reply())
+    setattr(setup.fake_module, operation + "_async", send_request)
+    container = setup.client.get_database_client("sales").get_container_client("orders")
     body = {"id": "order-42", "pk": "A"}
     arguments = {
         "create_item": (body,),
@@ -101,202 +149,227 @@ def test_cold_async_item_timeout_returns_before_acquisition_finishes_rust(cold_a
         try:
             with pytest.raises(CosmosClientTimeoutError):
                 await asyncio.wait_for(getattr(container, operation)(*arguments[operation], **options), 2)
-            assert not case.finish.is_set()
-            pending = case.client._adapter._init_future
-            assert pending is not None and not pending.done()
-            dispatch.assert_not_called()
-            # A later caller shares initialization rather than starting another worker.
-            survivor = asyncio.create_task(case.client._adapter.initialize())
-            case.finish.set()
-            await asyncio.wait_for(survivor, 2)
-            assert case.client._adapter._driver_handle is case.handle
-            case.native.acquire_driver_handle.assert_called_once()
+            assert not setup.let_connect_finish.is_set()
+            connect_result = setup.client._adapter._init_future
+            assert connect_result is not None and not connect_result.done()
+            send_request.assert_not_called()
+            # A later caller waits for the same connect instead of starting a new one.
+            later_caller = asyncio.create_task(setup.client._adapter.initialize())
+            setup.let_connect_finish.set()
+            await asyncio.wait_for(later_caller, 2)
+            assert setup.client._adapter._driver_handle is setup.fake_handle
+            setup.fake_module.acquire_driver_handle.assert_called_once()
         finally:
-            case.finish.set()
-            pending = case.client._adapter._init_future
-            if pending is not None:
-                await asyncio.gather(asyncio.wrap_future(pending), return_exceptions=True)
-            await case.client.close()
-        case.native.release_driver_handle.assert_called_once_with(case.handle)
+            setup.let_connect_finish.set()
+            connect_result = setup.client._adapter._init_future
+            if connect_result is not None:
+                await asyncio.gather(asyncio.wrap_future(connect_result), return_exceptions=True)
+            await setup.client.close()
+        setup.fake_module.release_driver_handle.assert_called_once_with(setup.fake_handle)
 
     asyncio.run(run())
 
 
 @pytest.mark.parametrize("outcome", ["reuse", "close", "failure"])
-def test_timed_out_async_acquisition_preserves_late_worker_ownership_rust(cold_async_client, outcome):
-    case = cold_async_client
-    adapter = case.client._adapter
-    request = PreparedRequest(
+def test_connect_that_finishes_after_a_timeout_is_handled_correctly_rust(async_client_still_connecting, outcome):
+    """A request times out while the client is still connecting, and the
+    connect finishes afterwards. Three cases:
+
+    - reuse: the connect succeeds, and the next request uses its handle
+      without connecting again.
+    - close: the client was closed in the meantime, so the handle is released
+      and the connect raises "closed during initialization".
+    - failure: the connect fails, and the next request starts a new connect.
+
+    No case leaves an unhandled error on the event loop.
+    """
+    setup = async_client_still_connecting
+    adapter = setup.client._adapter
+    read_request = PreparedRequest(
         op="read_item",
         container_link="dbs/sales/colls/orders",
         body_bytes=b"",
         partition_key=BindingPartitionKey("components", ("A",)),
         item_id="order-42",
     )
-    case.native.read_item_async = AsyncMock(return_value=_response(200))
-    error = RuntimeError("late acquisition failure")
+    setup.fake_module.read_item_async = AsyncMock(return_value=_fake_reply(200))
+    connect_error = RuntimeError("late connect failure")
     if outcome == "failure":
 
-        def fail(*_args):
-            case.entered.set()
-            assert case.finish.wait(10)
-            raise error
+        def failing_open_handle(*_args):
+            setup.connect_started.set()
+            assert setup.let_connect_finish.wait(10)
+            raise connect_error
 
-        case.native.acquire_driver_handle.side_effect = fail
+        setup.fake_module.acquire_driver_handle.side_effect = failing_open_handle
 
     async def run():
-        loop_errors = []
+        unhandled_loop_errors = []
         loop = asyncio.get_running_loop()
-        loop.set_exception_handler(lambda _loop, context: loop_errors.append(context))
-        pending = None
+        loop.set_exception_handler(lambda _loop, context: unhandled_loop_errors.append(context))
+        connect_result = None
         try:
             with pytest.raises(CosmosClientTimeoutError):
-                await asyncio.wait_for(adapter.execute(request, deadline=time.monotonic() + 0.05), 2)
-            pending = adapter._init_future
-            assert pending is not None and not pending.done()
-            case.native.read_item_async.assert_not_called()
+                await asyncio.wait_for(adapter.execute(read_request, deadline=time.monotonic() + 0.05), 2)
+            connect_result = adapter._init_future
+            assert connect_result is not None and not connect_result.done()
+            setup.fake_module.read_item_async.assert_not_called()
             if outcome == "close":
                 await adapter.close()
-            case.finish.set()
-            result = (await asyncio.gather(asyncio.wrap_future(pending), return_exceptions=True))[0]
+            setup.let_connect_finish.set()
+            connect_outcome = (await asyncio.gather(asyncio.wrap_future(connect_result), return_exceptions=True))[0]
             await asyncio.sleep(0)
             if outcome == "reuse":
-                assert result is case.handle
-                await adapter.execute(request, deadline=time.monotonic() + 2)
-                case.native.acquire_driver_handle.assert_called_once()
-                assert 0 < case.native.read_item_async.call_args.kwargs["timeout_seconds"] <= 2
+                assert connect_outcome is setup.fake_handle
+                await adapter.execute(read_request, deadline=time.monotonic() + 2)
+                setup.fake_module.acquire_driver_handle.assert_called_once()
+                assert 0 < setup.fake_module.read_item_async.call_args.kwargs["timeout_seconds"] <= 2
             elif outcome == "close":
-                assert isinstance(result, RuntimeError) and "closed during initialization" in str(result)
+                assert isinstance(connect_outcome, RuntimeError)
+                assert "closed during initialization" in str(connect_outcome)
                 assert adapter._driver_handle is None
-                case.native.release_driver_handle.assert_called_once_with(case.handle)
+                setup.fake_module.release_driver_handle.assert_called_once_with(setup.fake_handle)
             else:
-                assert result is error
+                assert connect_outcome is connect_error
                 assert adapter._driver_handle is None
-                case.native.acquire_driver_handle.side_effect = None
-                case.native.acquire_driver_handle.return_value = case.handle
-                await adapter.execute(request)
-                assert case.native.acquire_driver_handle.call_count == 2
-            assert not loop_errors
+                setup.fake_module.acquire_driver_handle.side_effect = None
+                setup.fake_module.acquire_driver_handle.return_value = setup.fake_handle
+                await adapter.execute(read_request)
+                assert setup.fake_module.acquire_driver_handle.call_count == 2
+            assert not unhandled_loop_errors
         finally:
-            case.finish.set()
-            if pending is not None:
-                await asyncio.gather(asyncio.wrap_future(pending), return_exceptions=True)
+            setup.let_connect_finish.set()
+            if connect_result is not None:
+                await asyncio.gather(asyncio.wrap_future(connect_result), return_exceptions=True)
             await adapter.close()
             loop.set_exception_handler(None)
-        case.native.release_driver_handle.assert_called_once_with(case.handle)
+        setup.fake_module.release_driver_handle.assert_called_once_with(setup.fake_handle)
 
     asyncio.run(run())
 
 
-def test_async_acquisition_starts_with_default_pool_busy_rust(cold_async_client):
-    """A busy default pool blocks neither acquisition nor release of its late handle."""
-    case = cold_async_client
-    case.native.read_item_async = AsyncMock(return_value=_response(200))
-    occupied = threading.Event()
-    unblock = threading.Event()
+def test_async_connect_works_while_event_loop_thread_pool_is_busy_rust(async_client_still_connecting):
+    """The event loop's default thread pool is kept busy for the whole test.
 
-    def occupy():
-        occupied.set()
-        assert unblock.wait(10), "test did not free the default pool"
+    The client can still connect, time out, close and release the handle that
+    arrives later, because it connects on its own connect thread.
+    """
+    setup = async_client_still_connecting
+    setup.fake_module.read_item_async = AsyncMock(return_value=_fake_reply(200))
+    pool_busy = threading.Event()
+    free_pool = threading.Event()
+
+    def keep_pool_busy():
+        pool_busy.set()
+        assert free_pool.wait(10), "test did not free the default pool"
 
     async def run():
         loop = asyncio.get_running_loop()
         loop.set_default_executor(ThreadPoolExecutor(max_workers=1))
-        blocker = loop.run_in_executor(None, occupy)
-        pending = None
+        pool_task = loop.run_in_executor(None, keep_pool_busy)
+        connect_result = None
         try:
-            assert occupied.wait(2), "the default pool worker did not start"
-            container = case.client.get_database_client("sales").get_container_client("orders")
+            assert pool_busy.wait(2), "the default pool thread did not start"
+            container = setup.client.get_database_client("sales").get_container_client("orders")
             with pytest.raises(CosmosClientTimeoutError):
                 await asyncio.wait_for(container.read_item("order-42", partition_key="A", timeout=1), 2)
-            pending = case.client._adapter._init_future
-            assert pending is not None and not pending.done()
-            assert case.entered.is_set()
-            assert not blocker.done()
-            case.native.acquire_driver_handle.assert_called_once()
-            case.native.release_driver_handle.assert_not_called()
-            case.native.read_item_async.assert_not_called()
-            # Keep the pool busy while close finishes and the acquisition thread releases the handle.
-            await asyncio.wait_for(case.client.close(), 2)
-            assert case.client._adapter._closing
-            assert case.client._adapter._driver_handle is None
-            case.finish.set()
+            connect_result = setup.client._adapter._init_future
+            assert connect_result is not None and not connect_result.done()
+            assert setup.connect_started.is_set()
+            assert not pool_task.done()
+            setup.fake_module.acquire_driver_handle.assert_called_once()
+            setup.fake_module.release_driver_handle.assert_not_called()
+            setup.fake_module.read_item_async.assert_not_called()
+            # Keep the pool busy while the client closes and the connect thread releases the handle.
+            await asyncio.wait_for(setup.client.close(), 2)
+            assert setup.client._adapter._closing
+            assert setup.client._adapter._driver_handle is None
+            setup.let_connect_finish.set()
             with pytest.raises(RuntimeError, match="closed during initialization"):
-                await asyncio.wait_for(asyncio.wrap_future(pending), 2)
-            case.native.release_driver_handle.assert_called_once_with(case.handle)
-            case.native.read_item_async.assert_not_called()
-            assert not blocker.done()
+                await asyncio.wait_for(asyncio.wrap_future(connect_result), 2)
+            setup.fake_module.release_driver_handle.assert_called_once_with(setup.fake_handle)
+            setup.fake_module.read_item_async.assert_not_called()
+            assert not pool_task.done()
         finally:
-            unblock.set()
-            case.finish.set()
-            await blocker
-            if pending is not None:
-                await asyncio.gather(asyncio.wrap_future(pending), return_exceptions=True)
-            await case.client.close()
+            free_pool.set()
+            setup.let_connect_finish.set()
+            await pool_task
+            if connect_result is not None:
+                await asyncio.gather(asyncio.wrap_future(connect_result), return_exceptions=True)
+            await setup.client.close()
 
     asyncio.run(run())
 
 
 @pytest.mark.parametrize("cancel_first", [False, True], ids=["timeout", "cancellation"])
-def test_one_async_waiter_leaving_does_not_cancel_shared_acquisition_rust(cold_async_client, cancel_first):
-    case = cold_async_client
-    adapter = case.client._adapter
-    request = PreparedRequest(
+def test_one_caller_giving_up_does_not_stop_the_shared_connect_rust(async_client_still_connecting, cancel_first):
+    """Two requests wait for the same connect. If the first one times out or
+    is cancelled, the connect keeps going, and the second request still
+    completes using its handle."""
+    setup = async_client_still_connecting
+    adapter = setup.client._adapter
+    read_request = PreparedRequest(
         op="read_item",
         container_link="dbs/sales/colls/orders",
         body_bytes=b"",
         partition_key=BindingPartitionKey("components", ("A",)),
         item_id="order-42",
     )
-    dispatch = AsyncMock(return_value=_response(200))
-    case.native.read_item_async = dispatch
+    send_request = AsyncMock(return_value=_fake_reply(200))
+    setup.fake_module.read_item_async = send_request
 
     async def run():
-        first = asyncio.create_task(adapter.execute(request, deadline=time.monotonic() + (5 if cancel_first else 0.1)))
-        survivor = asyncio.create_task(adapter.execute(request, deadline=time.monotonic() + 5))
+        first_deadline = time.monotonic() + (5 if cancel_first else 0.1)
+        first_request = asyncio.create_task(adapter.execute(read_request, deadline=first_deadline))
+        second_request = asyncio.create_task(adapter.execute(read_request, deadline=time.monotonic() + 5))
         try:
-            while not case.entered.is_set():
+            while not setup.connect_started.is_set():
                 await asyncio.sleep(0)
             if cancel_first:
-                first.cancel()
+                first_request.cancel()
             with pytest.raises(asyncio.CancelledError if cancel_first else CosmosClientTimeoutError):
-                await asyncio.wait_for(first, 2)
-            assert not survivor.done()
+                await asyncio.wait_for(first_request, 2)
+            assert not second_request.done()
             assert adapter._init_future is not None and not adapter._init_future.done()
-            dispatch.assert_not_called()
-            case.finish.set()
-            await asyncio.wait_for(survivor, 2)
-            case.native.acquire_driver_handle.assert_called_once()
-            dispatch.assert_awaited_once()
-            assert dispatch.call_args.args[0] is case.handle
+            send_request.assert_not_called()
+            setup.let_connect_finish.set()
+            await asyncio.wait_for(second_request, 2)
+            setup.fake_module.acquire_driver_handle.assert_called_once()
+            send_request.assert_awaited_once()
+            assert send_request.call_args.args[0] is setup.fake_handle
         finally:
-            case.finish.set()
-            await asyncio.gather(first, survivor, return_exceptions=True)
+            setup.let_connect_finish.set()
+            await asyncio.gather(first_request, second_request, return_exceptions=True)
             await adapter.close()
-        case.native.release_driver_handle.assert_called_once_with(case.handle)
+        setup.fake_module.release_driver_handle.assert_called_once_with(setup.fake_handle)
 
     asyncio.run(run())
 
 
-@pytest.mark.parametrize("path", ["execute", "metadata", "page"])
-@pytest.mark.parametrize("expired", [False, True])
-def test_async_auxiliary_paths_bound_acquisition_with_same_deadline_rust(cold_async_client, path, expired):
-    case = cold_async_client
-    adapter = case.client._adapter
-    dispatch = AsyncMock()
-    name = {
-        "execute": "read_item_async",
-        "metadata": "get_container_metadata_async",
+@pytest.mark.parametrize("request_kind", ["item", "container-details", "page"])
+@pytest.mark.parametrize("time_already_up", [False, True])
+def test_every_request_kind_counts_connect_time_against_its_time_limit_rust(
+    async_client_still_connecting, request_kind, time_already_up
+):
+    """Item requests, container-detail reads and page fetches all count time
+    spent connecting against their time limit. If the time is already used up,
+    no connect is started at all."""
+    setup = async_client_still_connecting
+    adapter = setup.client._adapter
+    send_request = AsyncMock()
+    function_name = {
+        "item": "read_item_async",
+        "container-details": "get_container_metadata_async",
         "page": get_page_binding_function_name("list_databases", uses_cursor=False) + "_async",
-    }[path]
-    setattr(case.native, name, dispatch)
+    }[request_kind]
+    setattr(setup.fake_module, function_name, send_request)
 
     async def run():
-        deadline = time.monotonic() + (-1 if expired else 0.05)
+        deadline = time.monotonic() + (-1 if time_already_up else 0.05)
         pages = None
         try:
-            if path == "execute":
-                operation = adapter.execute(
+            if request_kind == "item":
+                call = adapter.execute(
                     PreparedRequest(
                         op="read_item",
                         container_link="dbs/sales/colls/orders",
@@ -306,23 +379,23 @@ def test_async_auxiliary_paths_bound_acquisition_with_same_deadline_rust(cold_as
                     ),
                     deadline=deadline,
                 )
-            elif path == "metadata":
-                operation = adapter.get_container_metadata("dbs/sales/colls/orders", deadline=deadline)
+            elif request_kind == "container-details":
+                call = adapter.get_container_metadata("dbs/sales/colls/orders", deadline=deadline)
             else:
                 pages = adapter.execute_pages(
                     PreparedPageRequest(op="list_databases", container_link=""), deadline=deadline
                 )
-                operation = pages.__anext__()
+                call = pages.__anext__()
             with pytest.raises(CosmosClientTimeoutError):
-                await asyncio.wait_for(operation, 2)
-            dispatch.assert_not_called()
-            if expired:
+                await asyncio.wait_for(call, 2)
+            send_request.assert_not_called()
+            if time_already_up:
                 assert adapter._init_future is None
-                case.native.acquire_driver_handle.assert_not_called()
+                setup.fake_module.acquire_driver_handle.assert_not_called()
             else:
                 assert adapter._init_future is not None and not adapter._init_future.done()
         finally:
-            case.finish.set()
+            setup.let_connect_finish.set()
             if adapter._init_future is not None:
                 await asyncio.gather(asyncio.wrap_future(adapter._init_future), return_exceptions=True)
             if pages is not None:
@@ -333,72 +406,89 @@ def test_async_auxiliary_paths_bound_acquisition_with_same_deadline_rust(cold_as
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-@pytest.mark.parametrize("name", sorted(OP_TO_BINDING_FUNCTION_NAME.values()))
-def test_native_execute_exports_accept_generic_adapter_keywords_rust(name, asynchronous):
+@pytest.mark.parametrize("function_name", sorted(OP_TO_BINDING_FUNCTION_NAME.values()))
+def test_compiled_request_functions_accept_time_limit_and_attempt_details_rust(function_name, asynchronous):
+    """Every request function in the compiled module, sync and async, accepts
+    two keyword-only arguments from the adapter: ``timeout_seconds`` (the time
+    left, default None) and ``include_attempts`` (also return details of each
+    request attempt, default False).
+
+    Each real function is called with both keywords and a request for the
+    wrong operation, to show that the keywords are accepted and the request is
+    still checked.
+    """
     from azure.cosmos import _rust
 
-    function = getattr(_rust, name + ("_async" if asynchronous else ""))
-    parameters = inspect.signature(function).parameters
+    request_function = getattr(_rust, function_name + ("_async" if asynchronous else ""))
+    parameters = inspect.signature(request_function).parameters
     for keyword, default in (("timeout_seconds", None), ("include_attempts", False)):
-        assert keyword in parameters, f"{function.__name__} must accept {keyword}"
+        assert keyword in parameters, f"{request_function.__name__} must accept {keyword}"
         assert parameters[keyword].kind == inspect.Parameter.KEYWORD_ONLY
         assert parameters[keyword].default is default
-    # Reach request validation through the real export, not a permissive mock.
-    prepared = SimpleNamespace(protocol_version=PreparedRequest.protocol_version, op="wrong-operation")
+    # Call the real function, not a fake, so the request check really runs.
+    wrong_request = SimpleNamespace(protocol_version=PreparedRequest.protocol_version, op="wrong-operation")
     with pytest.raises(ValueError, match="PreparedRequest.op"):
-        function(None, prepared, timeout_seconds=0.125, include_attempts=True)
+        request_function(None, wrong_request, timeout_seconds=0.125, include_attempts=True)
 
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
-def case(request, monkeypatch):
+def client_setup(request, monkeypatch):
+    """Sync or async client with a 1-second default time limit.
+
+    Connecting is replaced by a fake that returns the handle ``"fake-handle"``
+    straight away. ``add_fake_request(name, ...)`` adds a fake request function
+    to a fake compiled module.
+    """
     asynchronous = request.param
     client_type = AsyncCosmosClient if asynchronous else CosmosClient
     client = client_type("https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust")
-    module = async_binding if asynchronous else sync_binding
-    native = SimpleNamespace()
+    adapter_module = async_adapter_module if asynchronous else sync_adapter_module
+    fake_module = SimpleNamespace()
     mock_type = AsyncMock if asynchronous else MagicMock
-    monkeypatch.setattr(module, "_rust_module", native)
-    acquisition = mock_type(return_value="test-driver")
-    monkeypatch.setattr(client._adapter, "_ensure_driver_handle", acquisition)
+    monkeypatch.setattr(adapter_module, "_rust_module", fake_module)
+    open_handle = mock_type(return_value="fake-handle")
+    monkeypatch.setattr(client._adapter, "_ensure_driver_handle", open_handle)
 
-    def install(name, *, side_effect=None, result=None):
-        function = mock_type(side_effect=side_effect, return_value=result)
-        setattr(native, name + ("_async" if asynchronous else ""), function)
-        return function
+    def add_fake_request(name, *, side_effect=None, result=None):
+        fake_function = mock_type(side_effect=side_effect, return_value=result)
+        setattr(fake_module, name + ("_async" if asynchronous else ""), fake_function)
+        return fake_function
 
     yield SimpleNamespace(
         client=client,
-        install=install,
+        add_fake_request=add_fake_request,
         asynchronous=asynchronous,
-        acquisition=acquisition,
-        native=native,
+        open_handle=open_handle,
+        fake_module=fake_module,
     )
-    _complete(client.close())
+    _await_if_needed(client.close())
 
 
 @pytest.fixture(params=[
     "create_item", "read_item", "upsert_item", "replace_item", "patch_item", "delete_item",
 ])
-def item_timeout_case(case, request):
+def item_call(client_setup, request):
+    """One of the six item operations on container ``orders``, with a faked
+    reply. ``call(options)`` runs it with the given options."""
     operation = request.param
-    container = case.client.get_database_client("sales").get_container_client("orders")
+    container = client_setup.client.get_database_client("sales").get_container_client("orders")
     body = {"id": "order-42", "pk": "A"}
-    dispatch = case.install(
-        operation, result=_response(204 if operation == "delete_item" else 200, body=body),
+    send_request = client_setup.add_fake_request(
+        operation, result=_fake_reply(204 if operation == "delete_item" else 200, body=body),
     )
 
     def call(options):
         kwargs = dict(options)
         if operation in ("create_item", "upsert_item"):
-            return _complete(getattr(container, operation)(body, **kwargs))
+            return _await_if_needed(getattr(container, operation)(body, **kwargs))
         kwargs["partition_key"] = "A"
         if operation == "replace_item":
-            return _complete(container.replace_item("order-42", body, **kwargs))
+            return _await_if_needed(container.replace_item("order-42", body, **kwargs))
         if operation == "patch_item":
             kwargs["patch_operations"] = [{"op": "set", "path": "/value", "value": 1}]
-        return _complete(getattr(container, operation)("order-42", **kwargs))
+        return _await_if_needed(getattr(container, operation)("order-42", **kwargs))
 
-    return SimpleNamespace(call=call, dispatch=dispatch, acquisition=case.acquisition)
+    return SimpleNamespace(call=call, send_request=send_request, open_handle=client_setup.open_handle)
 
 
 @pytest.mark.parametrize("nested", [False, True], ids=["keyword", "request-options"])
@@ -408,65 +498,87 @@ def item_timeout_case(case, request):
     ids=["zero", "negative", "subsecond", "true", "false", "nan", "infinity",
          "negative-infinity", "string", "upper-bound", "overflow"],
 )
-def test_invalid_item_timeout_is_value_error_before_driver_acquisition_rust(
-    item_timeout_case, timeout, nested,
+def test_invalid_item_time_limit_raises_value_error_before_connecting_rust(
+    item_call, timeout, nested,
 ):
+    """An item time limit must be None, or a finite number of seconds that is
+    at least 1 and less than 2**64.
+
+    Any other value, including True and False, raises ValueError before the
+    client connects or sends anything. This applies to ``timeout=`` and to the
+    timeout inside ``request_options``.
+    """
     options = {"request_options": {"timeout": timeout}} if nested else {"timeout": timeout}
     with pytest.raises(ValueError, match="timeout must be None or a finite number of seconds"):
-        item_timeout_case.call(options)
-    item_timeout_case.acquisition.assert_not_called()
-    item_timeout_case.dispatch.assert_not_called()
+        item_call.call(options)
+    item_call.open_handle.assert_not_called()
+    item_call.send_request.assert_not_called()
 
 
 @pytest.mark.parametrize("nested", [False, True], ids=["keyword", "request-options"])
 @pytest.mark.parametrize("timeout", [None, 1, 1.5])
-def test_valid_item_timeout_preserves_default_and_override_rust(item_timeout_case, timeout, nested):
+def test_valid_item_time_limit_is_used_and_none_means_client_default_rust(item_call, timeout, nested):
+    """A valid time limit on an item call is passed on as given. None means
+    the client default (1 second here)."""
     options = {"request_options": {"timeout": timeout}} if nested else {"timeout": timeout}
-    item_timeout_case.call(options)
-    item_timeout_case.dispatch.assert_called_once()
-    prepared = item_timeout_case.dispatch.call_args.args[1]
-    assert prepared.settings.timeout_seconds == (1 if timeout is None else timeout)
+    item_call.call(options)
+    item_call.send_request.assert_called_once()
+    sent_request = item_call.send_request.call_args.args[1]
+    assert sent_request.settings.timeout_seconds == (1 if timeout is None else timeout)
 
 
-def test_explicit_item_timeout_overrides_invalid_nested_timeout_rust(item_timeout_case):
-    item_timeout_case.call({"timeout": 1.5, "request_options": {"timeout": float("nan")}})
-    item_timeout_case.dispatch.assert_called_once()
-    assert item_timeout_case.dispatch.call_args.args[1].settings.timeout_seconds == 1.5
+def test_timeout_keyword_wins_over_request_options_timeout_rust(item_call):
+    """When ``timeout=`` is given, the timeout inside ``request_options`` is
+    ignored, even if it is invalid."""
+    item_call.call({"timeout": 1.5, "request_options": {"timeout": float("nan")}})
+    item_call.send_request.assert_called_once()
+    assert item_call.send_request.call_args.args[1].settings.timeout_seconds == 1.5
 
 
 @pytest.fixture
 def clock(monkeypatch):
+    """Fake clock for ``time.monotonic``. A test moves time forward by adding
+    seconds to ``clock[0]``."""
     now = [100.0]
     monkeypatch.setattr(time, "monotonic", lambda: now[0])
     return now
 
 
-def test_local_feed_range_uses_real_export_with_timeout_and_telemetry_rust(case, monkeypatch):
+def test_feed_range_subset_check_runs_locally_with_diagnostics_rust(client_setup, monkeypatch):
+    """Checking whether one feed range is inside another is worked out by the
+    compiled module without calling the service.
+
+    This test uses the real compiled module. It checks the answer, and that
+    diagnostics recording gets the result with no request-attempt details,
+    because no request was sent.
+    """
     from azure.cosmos import _rust
 
-    module = async_binding if case.asynchronous else sync_binding
-    monkeypatch.setattr(module, "_rust_module", _rust)
-    if case.asynchronous:
+    adapter_module = async_adapter_module if client_setup.asynchronous else sync_adapter_module
+    monkeypatch.setattr(adapter_module, "_rust_module", _rust)
+    if client_setup.asynchronous:
+        # Async calls need the compiled module's background runtime to be
+        # started first. Normally connecting does this.
         _rust._create_runtime()
-    contribution = MagicMock()
-    contribution.response.side_effect = lambda envelope: envelope[0]
-    operation = MagicMock()
-    operation.begin_contribution.return_value = contribution
-    monkeypatch.setattr(module, "get_operation", lambda *_: operation)
+    diagnostics_entry = MagicMock()
+    diagnostics_entry.response.side_effect = lambda recorded_reply: recorded_reply[0]
+    diagnostics_recording = MagicMock()
+    diagnostics_recording.begin_contribution.return_value = diagnostics_entry
+    monkeypatch.setattr(adapter_module, "get_operation", lambda *_: diagnostics_recording)
     feed_range = {"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}}
-    prepared = PreparedRequest(
+    subset_request = PreparedRequest(
         op="is_feed_range_subset",
         container_link="dbs/sales/colls/orders",
         body_bytes=json.dumps({"parent": feed_range, "child": feed_range}).encode(),
         partition_key=BindingPartitionKey("cross_partition"),
     )
-    response = _complete(case.client._adapter.execute(prepared))
+    response = _await_if_needed(client_setup.client._adapter.execute(subset_request))
     assert json.loads(response.body) == {"IsSubset": True}
-    contribution.response.assert_called_once()
-    envelope = contribution.response.call_args.args[0]
-    assert len(envelope) == 2
-    assert envelope[1] is None
-    contribution.error.assert_not_called()
+    diagnostics_entry.response.assert_called_once()
+    recorded_reply = diagnostics_entry.response.call_args.args[0]
+    assert len(recorded_reply) == 2
+    assert recorded_reply[1] is None
+    diagnostics_entry.error.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -481,28 +593,37 @@ def test_local_feed_range_uses_real_export_with_timeout_and_telemetry_rust(case,
         ({"timeout": None, "request_options": {"timeout": 3}}, 1),
     ],
 )
-def test_default_override_and_next_call_reset_rust(case, clock, options, expected):
-    original = json.loads(json.dumps(options))
-    dispatch = case.install("create_database", result=_response())
-    _complete(case.client.create_database("sales", **options))
-    _complete(case.client.create_database("sales"))
-    assert [call.kwargs["timeout_seconds"] for call in dispatch.call_args_list] == [expected, 1]
-    assert options == original
+def test_call_time_limit_applies_to_that_call_only_rust(client_setup, clock, options, expected):
+    """A time limit given on one call applies to that call only, and the next
+    call goes back to the client default.
+
+    ``timeout=`` wins over ``request_options``, and ``timeout=None`` means the
+    client default. The caller's options are not changed.
+    """
+    options_before = json.loads(json.dumps(options))
+    send_request = client_setup.add_fake_request("create_database", result=_fake_reply())
+    _await_if_needed(client_setup.client.create_database("sales", **options))
+    _await_if_needed(client_setup.client.create_database("sales"))
+    assert [call.kwargs["timeout_seconds"] for call in send_request.call_args_list] == [expected, 1]
+    assert options == options_before
 
 
-def test_driver_setup_consumes_default_budget_before_dispatch_rust(case, clock):
-    def setup(**_kwargs):
+def test_time_spent_connecting_counts_against_time_limit_rust(client_setup, clock):
+    """Connecting takes 1.25 seconds, longer than the 1-second default, so the
+    call times out before any request is sent."""
+    def slow_connect(**_kwargs):
         clock[0] += 1.25
-        return "test-driver"
+        return "fake-handle"
 
-    case.acquisition.side_effect = setup
-    dispatch = case.install("create_database", result=_response())
+    client_setup.open_handle.side_effect = slow_connect
+    send_request = client_setup.add_fake_request("create_database", result=_fake_reply())
     with pytest.raises(CosmosClientTimeoutError):
-        _complete(case.client.create_database("sales"))
-    dispatch.assert_not_called()
+        _await_if_needed(client_setup.client.create_database("sales"))
+    send_request.assert_not_called()
 
 
 def _collect_feed_ranges(result, asynchronous):
+    """Read all feed ranges from a sync list or an async iterator."""
     async def collect():
         return [value async for value in result]
 
@@ -511,157 +632,217 @@ def _collect_feed_ranges(result, asynchronous):
 
 @pytest.mark.parametrize("options,expected", [({}, 1), ({"timeout": 5}, 5), ({"timeout": None}, 1)])
 @pytest.mark.parametrize("force_refresh", [False, True])
-def test_feed_range_discovery_keeps_default_and_override_budgets_rust(case, clock, options, expected, force_refresh):
-    def setup(**_kwargs):
+def test_read_feed_ranges_time_limit_starts_when_reading_begins_rust(
+    client_setup, clock, options, expected, force_refresh
+):
+    """``read_feed_ranges`` does nothing until its results are read, so the
+    time limit starts then, not when it is called.
+
+    Time spent connecting (0.25 seconds here) comes out of the limit. The
+    ``force_refresh`` choice is passed on, and a later call without options
+    uses the client default.
+    """
+    def slow_connect(**_kwargs):
         clock[0] += 0.25
-        return "test-driver"
+        return "fake-handle"
 
-    case.acquisition.side_effect = setup
-    dispatch = case.install(
+    client_setup.open_handle.side_effect = slow_connect
+    send_request = client_setup.add_fake_request(
         "read_feed_ranges",
-        result=_response(200, body={"PartitionKeyRanges": [{"minInclusive": "", "maxExclusive": "FF"}]}),
+        result=_fake_reply(200, body={"PartitionKeyRanges": [{"minInclusive": "", "maxExclusive": "FF"}]}),
     )
-    container = case.client.get_database_client("sales").get_container_client("orders")
-    result = container.read_feed_ranges(force_refresh=force_refresh, **options)
-    case.acquisition.assert_not_called()
-    dispatch.assert_not_called()
+    container = client_setup.client.get_database_client("sales").get_container_client("orders")
+    feed_ranges = container.read_feed_ranges(force_refresh=force_refresh, **options)
+    client_setup.open_handle.assert_not_called()
+    send_request.assert_not_called()
+    # Time that passes before the results are read does not count.
     clock[0] += 100
-    values = _collect_feed_ranges(result, case.asynchronous)
-    assert values == [{"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}}]
-    assert dispatch.call_args.kwargs["timeout_seconds"] == expected - 0.25
-    assert json.loads(dispatch.call_args.args[1].body_bytes) == {"forceRefresh": force_refresh}
+    ranges = _collect_feed_ranges(feed_ranges, client_setup.asynchronous)
+    assert ranges == [{"Range": {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}}]
+    assert send_request.call_args.kwargs["timeout_seconds"] == expected - 0.25
+    assert json.loads(send_request.call_args.args[1].body_bytes) == {"forceRefresh": force_refresh}
 
     clock[0] += 100
-    _collect_feed_ranges(container.read_feed_ranges(), case.asynchronous)
-    assert dispatch.call_args.kwargs["timeout_seconds"] == 0.75
-    assert dispatch.call_count == 2
+    _collect_feed_ranges(container.read_feed_ranges(), client_setup.asynchronous)
+    assert send_request.call_args.kwargs["timeout_seconds"] == 0.75
+    assert send_request.call_count == 2
 
 
-def test_feed_range_discovery_does_not_restart_budget_after_setup_rust(case, clock):
-    def setup(**_kwargs):
+def test_read_feed_ranges_times_out_when_connecting_uses_all_the_time_rust(client_setup, clock):
+    """Connecting takes longer than the time limit. The limit does not start
+    again after connecting, so reading feed ranges times out and no request is
+    sent."""
+    def slow_connect(**_kwargs):
         clock[0] += 1.25
-        return "test-driver"
+        return "fake-handle"
 
-    case.acquisition.side_effect = setup
-    dispatch = case.install("read_feed_ranges")
-    container = case.client.get_database_client("sales").get_container_client("orders")
+    client_setup.open_handle.side_effect = slow_connect
+    send_request = client_setup.add_fake_request("read_feed_ranges")
+    container = client_setup.client.get_database_client("sales").get_container_client("orders")
     with pytest.raises(CosmosClientTimeoutError):
-        _collect_feed_ranges(container.read_feed_ranges(), case.asynchronous)
-    dispatch.assert_not_called()
+        _collect_feed_ranges(container.read_feed_ranges(), client_setup.asynchronous)
+    send_request.assert_not_called()
 
 
 @pytest.mark.parametrize("conflict", [False, True])
-def test_get_or_create_shares_default_across_read_create_and_recovery_rust(case, clock, conflict):
-    calls = []
+def test_create_database_if_not_exists_shares_one_time_limit_rust(client_setup, clock, conflict):
+    """``create_database_if_not_exists`` reads the database, creates it if it
+    is missing, and reads again if another client created it first (409
+    conflict). All steps share one time limit, so each step gets only the time
+    that is left."""
+    steps = []
 
-    def read(*args, **kwargs):
-        calls.append(("read", kwargs["timeout_seconds"]))
+    def fake_read(*args, **kwargs):
+        steps.append(("read", kwargs["timeout_seconds"]))
         clock[0] += 0.25
-        return _response(404 if len(calls) == 1 else 200)
+        return _fake_reply(404 if len(steps) == 1 else 200)
 
-    def create(*args, **kwargs):
-        calls.append(("create", kwargs["timeout_seconds"]))
+    def fake_create(*args, **kwargs):
+        steps.append(("create", kwargs["timeout_seconds"]))
         clock[0] += 0.25
-        return _response(409 if conflict else 201)
+        return _fake_reply(409 if conflict else 201)
 
-    case.install("read_database", side_effect=read)
-    case.install("create_database", side_effect=create)
-    result = _complete(case.client.create_database_if_not_exists("sales"))
+    client_setup.add_fake_request("read_database", side_effect=fake_read)
+    client_setup.add_fake_request("create_database", side_effect=fake_create)
+    result = _await_if_needed(client_setup.client.create_database_if_not_exists("sales"))
     assert result.id == "sales"
-    assert calls == [("read", 1), ("create", 0.75)] + ([("read", 0.5)] if conflict else [])
+    assert steps == [("read", 1), ("create", 0.75)] + ([("read", 0.5)] if conflict else [])
 
 
-def test_get_or_create_does_not_reset_default_after_not_found_rust(case, clock):
-    calls = []
+def test_create_database_if_not_exists_times_out_when_steps_use_all_the_time_rust(client_setup, clock):
+    """Each step takes 0.75 seconds. The read gets the full 1 second, and the
+    create gets only the 0.25 seconds left.
 
-    def dispatch(status, **kwargs):
-        calls.append(kwargs["timeout_seconds"])
+    The time is used up when the create finishes, so the call raises
+    ``CosmosClientTimeoutError``, even though the create worked. The limit does
+    not start again after the "not found" reply.
+    """
+    time_given = []
+
+    def fake_step(status, **kwargs):
+        time_given.append(kwargs["timeout_seconds"])
         clock[0] += 0.75
-        return _response(status)
+        return _fake_reply(status)
 
-    case.install("read_database", side_effect=lambda *a, **kw: dispatch(404, **kw))
-    case.install("create_database", side_effect=lambda *a, **kw: dispatch(201, **kw))
+    client_setup.add_fake_request("read_database", side_effect=lambda *a, **kw: fake_step(404, **kw))
+    client_setup.add_fake_request("create_database", side_effect=lambda *a, **kw: fake_step(201, **kw))
     with pytest.raises(CosmosClientTimeoutError):
-        _complete(case.client.create_database_if_not_exists("sales"))
-    assert calls == [1, 0.25]
+        _await_if_needed(client_setup.client.create_database_if_not_exists("sales"))
+    assert time_given == [1, 0.25]
 
 
-def test_native_default_expiration_uses_public_exception_rust(case):
-    failure = TimeoutError("native operation deadline")
-    case.install("create_database", side_effect=failure)
+def test_time_out_in_compiled_module_raises_cosmos_client_timeout_error_rust(client_setup):
+    """When the compiled module runs out of time it raises Python's ``TimeoutError``.
+    The caller gets ``CosmosClientTimeoutError`` instead, with the original error
+    as its cause.
+    """
+    time_out = TimeoutError("operation time ran out")
+    client_setup.add_fake_request("create_database", side_effect=time_out)
     with pytest.raises(CosmosClientTimeoutError) as caught:
-        _complete(case.client.create_database("sales"))
-    assert caught.value.__cause__ is failure
+        _await_if_needed(client_setup.client.create_database("sales"))
+    assert caught.value.__cause__ is time_out
 
 
 @pytest.mark.parametrize("operation", ["get_or_create", "metadata", "page"])
-@pytest.mark.parametrize("status", [None, (429, 0), (429, 3200)])
-def test_driver_timeout_preserves_only_available_throttle_cause_rust(case, operation, status):
-    failure = TimeoutError("driver operation deadline")
+@pytest.mark.parametrize(
+    "status",
+    [None, (429, 0), (429, 3200)],
+    ids=["not-throttled", "throttled-no-substatus", "throttled-with-substatus"],
+)
+def test_time_out_while_throttled_keeps_the_429_as_the_cause_rust(client_setup, operation, status):
+    """If the last request before the time ran out was throttled,
+    ``CosmosClientTimeoutError.inner_exception`` is a ``CosmosHttpResponseError``
+    with status 429 and the sub-status, if there was one. It has no headers, and
+    its message says the response details are unavailable. Otherwise
+    ``inner_exception`` is the original ``TimeoutError``.
+
+    This holds for ``create_database_if_not_exists``, container-detail reads and
+    page fetches. The response hook is not called, and no create is tried after
+    the time-out.
+    """
+    time_out = TimeoutError("operation time ran out")
     if status is not None:
-        failure.__dict__["_cosmos_timeout_throttle_status"] = status
-    hook = MagicMock()
-    create = case.install("create_database", result=_response())
+        # The compiled module attaches the last throttle status to the error like this.
+        time_out.__dict__["_cosmos_timeout_throttle_status"] = status
+    response_hook = MagicMock()
+    fake_create = client_setup.add_fake_request("create_database", result=_fake_reply())
     if operation == "get_or_create":
-        case.install("read_database", side_effect=failure)
-        call = lambda: _complete(case.client.create_database_if_not_exists("sales", response_hook=hook))
+        client_setup.add_fake_request("read_database", side_effect=time_out)
+        run_call = lambda: _await_if_needed(
+            client_setup.client.create_database_if_not_exists("sales", response_hook=response_hook)
+        )
     elif operation == "metadata":
-        case.install("get_container_metadata", side_effect=failure)
-        call = lambda: _complete(case.client._adapter.get_container_metadata("dbs/sales/colls/orders"))
+        client_setup.add_fake_request("get_container_metadata", side_effect=time_out)
+        run_call = lambda: _await_if_needed(
+            client_setup.client._adapter.get_container_metadata("dbs/sales/colls/orders")
+        )
     else:
         name = get_page_binding_function_name("list_databases", uses_cursor=False)
-        case.install(name, side_effect=failure)
-        pages = case.client.list_databases(response_hook=hook).by_page()
-        call = lambda: _complete(pages.__anext__()) if case.asynchronous else next(pages)
+        client_setup.add_fake_request(name, side_effect=time_out)
+        pages = client_setup.client.list_databases(response_hook=response_hook).by_page()
+        run_call = lambda: _await_if_needed(pages.__anext__()) if client_setup.asynchronous else next(pages)
     with pytest.raises(CosmosClientTimeoutError) as caught:
-        call()
-    assert caught.value.__cause__ is failure
+        run_call()
+    assert caught.value.__cause__ is time_out
     if status is None:
-        assert caught.value.inner_exception is failure
+        assert caught.value.inner_exception is time_out
     else:
-        inner = caught.value.inner_exception
-        assert isinstance(inner, CosmosHttpResponseError)
-        assert inner.status_code == 429
-        assert inner.sub_status == (status[1] or None)
-        assert inner.headers == {}
-        assert "response details are unavailable" in inner.message
-    hook.assert_not_called()
-    create.assert_not_called()
+        cause = caught.value.inner_exception
+        assert isinstance(cause, CosmosHttpResponseError)
+        assert cause.status_code == 429
+        assert cause.sub_status == (status[1] or None)
+        assert cause.headers == {}
+        assert "response details are unavailable" in cause.message
+    response_hook.assert_not_called()
+    fake_create.assert_not_called()
 
 
 @pytest.mark.parametrize("status", [(503, 0), (429, -1), (429, True), (429,), None])
-def test_driver_timeout_rejects_malformed_throttle_metadata_rust(status):
-    failure = TimeoutError("driver operation deadline")
-    failure.__dict__["_cosmos_timeout_throttle_status"] = status
+def test_invalid_throttle_status_on_time_out_is_reported_rust(status):
+    """The throttle status attached to a time-out must be exactly
+    ``(429, sub-status)``. Anything else means the compiled module sent back bad
+    data, so the SDK raises ``BindingProtocolError`` instead of guessing.
+    """
+    time_out = TimeoutError("operation time ran out")
+    time_out.__dict__["_cosmos_timeout_throttle_status"] = status
     with pytest.raises(BindingProtocolError, match="invalid timeout throttle status"):
-        shared.operation_timeout_error(failure)
+        shared.operation_timeout_error(time_out)
 
 
-def test_response_hook_timeout_is_not_reclassified_rust(case):
-    failure = TimeoutError("customer callback")
-    hook = MagicMock(side_effect=failure)
-    case.install("create_database", result=_response())
+def test_timeout_error_from_response_hook_is_not_changed_rust(client_setup):
+    """A ``TimeoutError`` raised by the customer's own response hook reaches the
+    caller unchanged. It is not turned into ``CosmosClientTimeoutError``.
+    """
+    hook_error = TimeoutError("customer callback")
+    response_hook = MagicMock(side_effect=hook_error)
+    client_setup.add_fake_request("create_database", result=_fake_reply())
     with pytest.raises(TimeoutError) as caught:
-        _complete(case.client.create_database("sales", response_hook=hook))
-    assert caught.value is failure
-    hook.assert_called_once()
+        _await_if_needed(client_setup.client.create_database("sales", response_hook=response_hook))
+    assert caught.value is hook_error
+    response_hook.assert_called_once()
 
 
-def test_metadata_default_covers_setup_and_converts_native_expiration_rust(case, clock):
-    failure = TimeoutError("metadata deadline")
-    dispatch = case.install("get_container_metadata", side_effect=failure)
+def test_container_details_read_uses_client_default_and_reports_time_out_rust(client_setup, clock):
+    """Reading container details uses the client default time limit (1 second here).
+    If the compiled module times out, the caller gets ``CosmosClientTimeoutError``.
+    """
+    time_out = TimeoutError("metadata deadline")
+    send_request = client_setup.add_fake_request("get_container_metadata", side_effect=time_out)
     with pytest.raises(CosmosClientTimeoutError) as caught:
-        _complete(case.client._adapter.get_container_metadata("dbs/sales/colls/orders"))
-    assert caught.value.__cause__ is failure
-    assert dispatch.call_args.kwargs["timeout_seconds"] == 1
+        _await_if_needed(client_setup.client._adapter.get_container_metadata("dbs/sales/colls/orders"))
+    assert caught.value.__cause__ is time_out
+    assert send_request.call_args.kwargs["timeout_seconds"] == 1
 
 
 @pytest.mark.parametrize("operation", ["create", "read", "upsert", "replace", "patch", "delete"])
-def test_item_operations_inherit_client_default_rust(case, clock, operation):
+def test_item_operations_use_client_default_time_limit_rust(client_setup, clock, operation):
+    """Create, read, upsert, replace, patch and delete use the client default time
+    limit when the call does not give one.
+    """
     body = {"id": "order-42", "customerId": "customer-17"}
-    case.install("get_container_metadata", result=("orders-rid", ("/customerId",), "Hash", False))
-    dispatch = case.install(operation + "_item", result=_response(200, body=body))
-    container = case.client.get_database_client("sales").get_container_client("orders")
+    client_setup.add_fake_request("get_container_metadata", result=("orders-rid", ("/customerId",), "Hash", False))
+    send_request = client_setup.add_fake_request(operation + "_item", result=_fake_reply(200, body=body))
+    container = client_setup.client.get_database_client("sales").get_container_client("orders")
     if operation in ("create", "upsert"):
         kwargs = {"body": body}
     elif operation == "replace":
@@ -674,131 +855,153 @@ def test_item_operations_inherit_client_default_rust(case, clock, operation):
         }
     else:
         kwargs = {"item": "order-42", "partition_key": "customer-17"}
-    _complete(getattr(container, operation + "_item")(**kwargs))
-    assert dispatch.call_args.kwargs["timeout_seconds"] == 1
+    _await_if_needed(getattr(container, operation + "_item")(**kwargs))
+    assert send_request.call_args.kwargs["timeout_seconds"] == 1
 
 
 @pytest.mark.parametrize(
     "options,expected",
     [({}, 1), ({"timeout": 3}, 3), ({"feed_options": {"timeout": 2}}, 2)],
 )
-def test_each_page_gets_fresh_default_after_application_delay_rust(case, clock, options, expected):
-    budgets = []
+def test_each_page_fetch_gets_the_full_time_limit_rust(client_setup, clock, options, expected):
+    """Each page fetch gets the full time limit. Time the customer app spends between
+    pages does not count. The limit comes from the client default, ``timeout=``
+    or ``feed_options``, and the caller's options are not changed.
+    """
+    time_given = []
 
-    def fetch(*args, **kwargs):
-        budgets.append(kwargs["timeout_seconds"])
+    def fake_fetch_page(*args, **kwargs):
+        time_given.append(kwargs["timeout_seconds"])
         clock[0] += 0.25
-        return _response(
+        return _fake_reply(
             200,
-            {"x-ms-continuation": "next"} if len(budgets) == 1 else {},
+            {"x-ms-continuation": "next"} if len(time_given) == 1 else {},
             {"Databases": [{"id": "sales"}]},
         )
 
-    name = get_page_binding_function_name("list_databases", uses_cursor=False)
-    case.install(name, side_effect=fetch)
-    original = json.loads(json.dumps(options))
-    pages = case.client.list_databases(**options).by_page()
+    function_name = get_page_binding_function_name("list_databases", uses_cursor=False)
+    client_setup.add_fake_request(function_name, side_effect=fake_fetch_page)
+    options_before = json.loads(json.dumps(options))
+    pages = client_setup.client.list_databases(**options).by_page()
 
     async def next_async_page():
         page = await pages.__anext__()
         return [item async for item in page]
 
     def next_page():
-        return asyncio.run(next_async_page()) if case.asynchronous else list(next(pages))
+        return asyncio.run(next_async_page()) if client_setup.asynchronous else list(next(pages))
 
     assert next_page() == [{"id": "sales"}]
+    # The customer app takes a long time before asking for the next page.
     clock[0] += 100
     assert next_page() == [{"id": "sales"}]
-    assert budgets == [expected, expected]
-    assert options == original
+    assert time_given == [expected, expected]
+    assert options == options_before
 
 
-def test_page_default_expiration_uses_public_exception_rust(case):
-    failure = TimeoutError("native page deadline")
-    name = get_page_binding_function_name("list_databases", uses_cursor=False)
-    case.install(name, side_effect=failure)
-    pages = case.client.list_databases().by_page()
+def test_page_fetch_time_out_raises_cosmos_client_timeout_error_rust(client_setup):
+    """When a page fetch runs out of time, the caller gets
+    ``CosmosClientTimeoutError``, with the original error as its cause.
+    """
+    time_out = TimeoutError("page time ran out")
+    function_name = get_page_binding_function_name("list_databases", uses_cursor=False)
+    client_setup.add_fake_request(function_name, side_effect=time_out)
+    pages = client_setup.client.list_databases().by_page()
     with pytest.raises(CosmosClientTimeoutError) as caught:
-        if case.asynchronous:
+        if client_setup.asynchronous:
             asyncio.run(pages.__anext__())
         else:
             next(pages)
-    assert caught.value.__cause__ is failure
+    assert caught.value.__cause__ is time_out
 
 
 @pytest.mark.parametrize("resource", ["database", "container"])
 @pytest.mark.parametrize("operation", ["get", "replace"])
-def test_default_does_not_become_unsupported_explicit_throughput_option_rust(case, monkeypatch, resource, operation):
-    database = case.client.get_database_client("sales")
+def test_throughput_calls_use_client_default_time_limit_rust(
+    client_setup, monkeypatch, resource, operation
+):
+    """``get_throughput`` and ``replace_throughput`` on a database or container use
+    the client default time limit (1 second here) when the call does not give one.
+    Calling them does not change the client's default.
+    """
+    database = client_setup.client.get_database_client("sales")
     if resource == "container":
-        if case.asynchronous:
-            from azure.cosmos.aio import _container as module
+        if client_setup.asynchronous:
+            from azure.cosmos.aio import _container as throughput_module
         else:
-            from azure.cosmos import container as module
-        helper = "_get_throughput" if operation == "get" else "_replace_container_throughput"
-        proxy = database.get_container_client("orders")
+            from azure.cosmos import container as throughput_module
+        helper_name = "_get_throughput" if operation == "get" else "_replace_container_throughput"
+        resource_client = database.get_container_client("orders")
     else:
-        if case.asynchronous:
-            from azure.cosmos.aio import _database as module
+        if client_setup.asynchronous:
+            from azure.cosmos.aio import _database as throughput_module
         else:
-            from azure.cosmos import database as module
-        helper = operation + "_database_throughput" + ("_async" if case.asynchronous else "")
-        proxy = database
-    replacement = AsyncMock(return_value="throughput") if case.asynchronous else MagicMock(return_value="throughput")
-    monkeypatch.setattr(module, helper, replacement)
-    method = proxy.get_throughput if operation == "get" else proxy.replace_throughput
-    assert _complete(method(*(() if operation == "get" else (400,)))) == "throughput"
-    assert replacement.call_args.kwargs["kwargs"]["timeout"] == 1
-    assert case.client._adapter._client_config.operation_timeout_seconds == 1
+            from azure.cosmos import database as throughput_module
+        helper_name = operation + "_database_throughput" + ("_async" if client_setup.asynchronous else "")
+        resource_client = database
+    mock_type = AsyncMock if client_setup.asynchronous else MagicMock
+    fake_helper = mock_type(return_value="throughput")
+    monkeypatch.setattr(throughput_module, helper_name, fake_helper)
+    throughput_call = resource_client.get_throughput if operation == "get" else resource_client.replace_throughput
+    assert _await_if_needed(throughput_call(*(() if operation == "get" else (400,)))) == "throughput"
+    assert fake_helper.call_args.kwargs["kwargs"]["timeout"] == 1
+    assert client_setup.client._adapter._client_config.operation_timeout_seconds == 1
 
 
-def test_async_cancellation_remains_cancellation_rust(monkeypatch):
+def test_cancelled_async_call_raises_cancelled_error_not_time_out_rust(monkeypatch):
+    """Cancelling an async call raises ``asyncio.CancelledError``, not a time-out
+    error, and the request in progress is stopped.
+    """
     async def run():
         client = AsyncCosmosClient("https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust")
-        started = asyncio.Event()
-        cancelled = asyncio.Event()
+        request_started = asyncio.Event()
+        request_stopped = asyncio.Event()
 
-        async def dispatch(*args, **kwargs):
-            started.set()
+        async def slow_request(*args, **kwargs):
+            request_started.set()
             try:
                 await asyncio.Future()
             finally:
-                cancelled.set()
+                request_stopped.set()
 
-        monkeypatch.setattr(async_binding, "_rust_module", SimpleNamespace(create_database_async=dispatch))
-        monkeypatch.setattr(client._adapter, "_ensure_driver_handle", AsyncMock(return_value="test-driver"))
-        task = asyncio.create_task(client.create_database("sales"))
+        monkeypatch.setattr(async_adapter_module, "_rust_module", SimpleNamespace(create_database_async=slow_request))
+        monkeypatch.setattr(client._adapter, "_ensure_driver_handle", AsyncMock(return_value="fake-handle"))
+        call_task = asyncio.create_task(client.create_database("sales"))
         try:
-            await started.wait()
-            task.cancel()
+            await request_started.wait()
+            call_task.cancel()
             with pytest.raises(asyncio.CancelledError):
-                await task
-            assert cancelled.is_set()
+                await call_task
+            assert request_stopped.is_set()
         finally:
             await client.close()
 
     asyncio.run(run())
 
 
-def test_async_default_expires_while_waiting_for_driver_setup_rust(monkeypatch):
+def test_async_time_limit_runs_out_while_connecting_rust(monkeypatch):
+    """If the time limit runs out while the async client is still connecting, the
+    call raises ``CosmosClientTimeoutError``. The wait for the connect is stopped,
+    and no request is sent.
+    """
     async def run():
         client = AsyncCosmosClient("https://alpha-bank.documents.azure.com", "key", timeout=1, _backend="rust")
-        cancelled = asyncio.Event()
-        dispatch = AsyncMock(return_value=_response())
+        connect_stopped = asyncio.Event()
+        send_request = AsyncMock(return_value=_fake_reply())
 
-        async def setup():
+        async def never_connects():
             try:
                 await asyncio.Future()
             finally:
-                cancelled.set()
+                connect_stopped.set()
 
-        monkeypatch.setattr(async_binding, "_rust_module", SimpleNamespace(create_database_async=dispatch))
-        monkeypatch.setattr(client._adapter, "_ensure_driver_handle", setup)
+        monkeypatch.setattr(async_adapter_module, "_rust_module", SimpleNamespace(create_database_async=send_request))
+        monkeypatch.setattr(client._adapter, "_ensure_driver_handle", never_connects)
         try:
             with pytest.raises(CosmosClientTimeoutError):
                 await asyncio.wait_for(client.create_database("sales"), timeout=3)
-            assert cancelled.is_set()
-            dispatch.assert_not_called()
+            assert connect_stopped.is_set()
+            send_request.assert_not_called()
         finally:
             await client.close()
 

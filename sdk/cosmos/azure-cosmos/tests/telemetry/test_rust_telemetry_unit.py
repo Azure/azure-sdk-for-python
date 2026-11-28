@@ -3661,9 +3661,14 @@ def database_throughput_replace_harness(database_throughput):
     ],
 )
 def test_database_throughput_replace_owns_all_executed_steps_rust(  # pylint: disable=too-many-statements,too-many-branches
-    database_throughput_replace, recording, cached, outcome, mode
+    database_throughput_replace, recording, monkeypatch, cached, outcome, mode
 ):
     from azure.cosmos import ThroughputProperties
+
+    # Telemetry ownership must not depend on clock resolution or deadline rounding.
+    monkeypatch.setattr(_operation_deadline, "time", SimpleNamespace(monotonic=lambda: 100.0))
+    monkeypatch.setattr("azure.cosmos._backend._binding_adapter_shared.time", _operation_deadline.time)
+    monkeypatch.setattr("azure.cosmos._helpers._database_throughput.time", _operation_deadline.time)
 
     harness = database_throughput_replace
     if cached:

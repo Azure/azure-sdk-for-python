@@ -3,13 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Validate runtime selection, network-setting placement, and operation timeout.
+"""Checks on client keywords, run before the client is built.
 
-Rust clients select an explicit CosmosRuntime or the default singleton.
-Network overrides belong to its ConnectionPoolOptions, not client keywords.
-These checks reject client network overrides and invalid operation timeout
-values before backend construction. Legacy connection timeouts are handled
-separately by the legacy connection-policy builder.
+Connection settings, such as connection_timeout, are set with
+ConnectionPoolOptions on a CosmosRuntime, not on the client. Passing one to
+the client raises TypeError. These checks also check the client's timeout value.
 """
 from __future__ import annotations
 
@@ -21,7 +19,11 @@ from ..runtime import CosmosRuntime
 
 
 def validate_client_runtime_settings(kwargs: Mapping[str, Any]) -> None:
-    """Keep network settings on explicit runtimes; never reconfigure the default.
+    """Check runtime= and reject connection settings passed to the client.
+
+    Raises TypeError if runtime is not a CosmosRuntime, if a connection setting
+    is passed to the client, or if connection_policy.RequestTimeout was changed.
+    Raises ValueError if timeout is not a supported number of seconds.
 
     :param kwargs: Client options containing runtime selection, network settings, and operation timeout.
     :type kwargs: typing.Mapping[str, typing.Any]
