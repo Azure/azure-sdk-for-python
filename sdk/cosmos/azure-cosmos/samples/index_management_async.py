@@ -7,7 +7,6 @@ import azure.cosmos.documents as documents
 from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
-import urllib3
 
 import asyncio
 import config
@@ -31,11 +30,6 @@ PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 # indexingDirective can be either 'Include', 'Exclude' or 'Default'
 
 
-# To run this Demo, please provide your own CA certs file or download one from
-#     http://curl.haxx.se/docs/caextract.html
-# Setup the certificate file in .pem format.
-# If you still get an SSLError, try disabling certificate verification and suppress warnings
-
 find_entity_by_id_query = {
         "query": "SELECT * FROM r WHERE r.id=@id",
         "parameters": [
@@ -44,10 +38,6 @@ find_entity_by_id_query = {
     }
 
 def obtain_client():
-    # Try to setup the cacert.pem
-    # connection_policy.SSLConfiguration.SSLCaCerts = CaCertPath
-    # Else, disable verification
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     return CosmosClient(HOST, MASTER_KEY)
 
 

@@ -15,7 +15,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.aio import CosmosClient
 from _fault_injection_transport import FaultInjectionTransport
 from _fault_injection_transport_async import FaultInjectionTransportAsync
-from test_per_partition_automatic_failover import create_failover_errors, create_threshold_errors, session_retry_hook, ppaf_user_agent_hook
+from test_per_partition_automatic_failover import create_failover_errors, create_threshold_errors, assert_session_retry_region, assert_ppaf_user_agent
 from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_errors_and_boolean
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 
@@ -263,8 +263,11 @@ class TestPerPartitionAutomaticFailoverAsync:
             assert initial_region != partition_info.current_region # west us 3 != west us
 
             # Now we run a read request that runs into a 404.1002 error, which should retry to the read region
-            # We verify that the read request was going to the correct region by using the raw_response_hook
-            await fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
+            # We verify that the read request was going to the correct region by inspecting transport requests
+            with test_config.capture_requests(fault_injection_container, resource_type='docs') as requests:
+                await fault_injection_container.read_item(doc_fail_id, PK_VALUE)
+            for request in requests:
+                assert_session_retry_region(request)
         finally:
             await self.cleanup_method(custom_setup)
             await self.cleanup_method(setup)
@@ -275,8 +278,10 @@ class TestPerPartitionAutomaticFailoverAsync:
         try:
             fault_injection_container = custom_setup['col']
             # Create a document to check the response headers
-            await fault_injection_container.upsert_item(body={'id': doc_success_id, 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
-                                                        raw_response_hook=ppaf_user_agent_hook)
+            with test_config.capture_requests(fault_injection_container, resource_type='docs') as requests:
+                await fault_injection_container.upsert_item(body={'id': doc_success_id, 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'})
+            for request in requests:
+                assert_ppaf_user_agent(request)
         finally:
             await self.cleanup_method(custom_setup)
             await self.cleanup_method(setup)

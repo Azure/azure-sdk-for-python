@@ -64,7 +64,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     _MAX_REBUILD_SPLIT_RETRIES = 3
 
     def __init__(self, client, resource_link, query, options, partitioned_query_ex_info,
-                 response_hook, raw_response_hook):
+                 response_hook):
         super(_MultiExecutionContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -75,7 +75,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
         self._response_hook = response_hook
-        self._raw_response_hook = raw_response_hook
 
         if self._sort_orders:
             self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
@@ -203,8 +202,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             query,
             self._document_producer_comparator,
             self._options,
-            self._response_hook,
-            self._raw_response_hook
+            self._response_hook
         )
 
     async def _get_target_partition_key_range(self):

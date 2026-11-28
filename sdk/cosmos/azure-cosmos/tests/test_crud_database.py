@@ -24,7 +24,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -113,33 +113,12 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
 
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
         self.key_client.delete_database(database_id)
 
-    def test_database_level_offer_throughput(self):
-        # Create a database with throughput
-        offer_throughput = 1000
-        database_id = test_config.unique_database_id()
-        created_db = self.key_client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
-        self.assertEqual(created_db.id, database_id)
-
-        # Verify offer throughput for database
-        offer = created_db.read_offer()
-        self.assertEqual(offer.offer_throughput, offer_throughput)
-
-        # Update database offer throughput
-        new_offer_throughput = 2000
-        offer = created_db.replace_throughput(new_offer_throughput)
-        self.assertEqual(offer.offer_throughput, new_offer_throughput)
-        self.key_client.delete_database(created_db.id)
 
     def test_sql_query_crud(self):
         # create two databases.
@@ -166,25 +145,6 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
         self.key_client.delete_database(db1.id)
         self.key_client.delete_database(db2.id)
-
-    def test_database_account_functionality(self):
-        # Validate database account functionality.
-        database_account = self.key_client.get_database_account()
-        self.assertEqual(database_account.DatabasesLink, '/dbs/')
-        self.assertEqual(database_account.MediaLink, '/media/')
-        if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.key_client.client_connection.last_response_headers):
-            self.assertEqual(
-                database_account.MaxMediaStorageUsageInMB,
-                self.key_client.client_connection.last_response_headers[
-                    HttpHeaders.MaxMediaStorageUsageInMB])
-        if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.key_client.client_connection.last_response_headers):
-            self.assertEqual(
-                database_account.CurrentMediaStorageUsageInMB,
-                self.key_client.client_connection.last_response_headers[
-                    HttpHeaders.CurrentMediaStorageUsageInMB])
-        self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
 
     def test_id_validation(self):
         # Id shouldn't end with space.

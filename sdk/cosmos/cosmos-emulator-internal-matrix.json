@@ -39,6 +39,12 @@
             "TestSamples": "false",
             "ChecksOverride": "whl,sdist"
         },
+        "Emulator Tests Python 3.14 Standard": {
+            "PythonVersion": "3.14",
+            "CoverageArg": "--disablecov",
+            "TestSamples": "false",
+            "ChecksOverride": "whl,sdist"
+        },
 
         "Emulator Tests Python 3.10 Special": {
             "PythonVersion": "3.10",

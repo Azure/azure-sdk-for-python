@@ -1,0 +1,36 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# cspell:ignore clippy msrust msrustup
+
+parameters:
+  - name: Condition
+    type: string
+    default: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+
+steps:
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $env:PYO3_PYTHON = '$(CosmosProbePython)'
+      & '$(CosmosProbePython)' -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py native `
+        --native-variant default `
+        --results '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/native'
+      exit $LASTEXITCODE
+    displayName: Rust Unit Tests - Default Features and Clippy
+    condition: ${{ parameters.Condition }}
+    env:
+      MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $env:PYO3_PYTHON = '$(CosmosProbePython)'
+      & '$(CosmosProbePython)' -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py native `
+        --native-variant probes `
+        --results '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/native'
+      exit $LASTEXITCODE
+    displayName: Rust Unit Tests - Test Probes
+    condition: ${{ parameters.Condition }}
+    env:
+      MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)

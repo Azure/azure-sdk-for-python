@@ -7,4 +7,3 @@ class Configurations(object):
     BASIC_COLLECTION_NAME = "basic_coll"
     MANUAL_COLLECTION_NAME = "manual_coll"
     LWW_COLLECTION_NAME = "lww_coll"
-    UDP_COLLECTION_NAME = "udp_coll"

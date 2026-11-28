@@ -20,6 +20,7 @@ from test_per_partition_circuit_breaker_mm import create_doc, DELETE_ALL_ITEMS_B
 from test_per_partition_circuit_breaker_sm_mrr import \
     validate_unhealthy_partitions as validate_unhealthy_partitions_sm_mrr
 from _fault_injection_transport_async import FaultInjectionTransportAsync
+from _client_transport import create_client_with_transport
 
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture(scope="class", loop_scope="class", autouse=True)
@@ -55,7 +56,7 @@ class TestCircuitBreakerEmulatorAsync:
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     async def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
-        client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
+        client = create_client_with_transport(CosmosClient, default_endpoint, self.master_key, consistency_level="Session",
                               preferred_locations=["Write Region", "Read Region"],
                               transport=custom_transport, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)

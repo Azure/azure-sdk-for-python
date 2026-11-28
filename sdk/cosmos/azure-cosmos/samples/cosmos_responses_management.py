@@ -99,16 +99,20 @@ def read_db(client, id):
 def replace_throughput_db(client, id):
     print("\n1.5 Replace Database Throughput")
 
+    database = None
     try:
         database = client.create_database(id=id+"1", offer_throughput=400)
         replace_throughput_value = 500
         properties = database.replace_throughput(replace_throughput_value)
-        print('Database throughput changed to 800 RU/s')
+        print('Database throughput changed to {0} RU/s'.format(properties.offer_throughput))
         print(properties.get_response_headers())
     except exceptions.CosmosResourceNotFoundError:
         print('Database with id \'{0}\' does not exist'.format(id))
     except exceptions.CosmosHttpResponseError as e:
         print('Error changing database throughput: {0}'.format(e.message))
+    finally:
+        if database is not None:
+            client.delete_database(database.id)
 
 
 def create_container(db, id):
@@ -163,18 +167,20 @@ def read_container(db, id):
 def replace_throughput_container(db, id):
     print("\n2.5 Replace Container Throughput")
 
+    container = None
     try:
         container = db.create_container(id=id,  partition_key=PartitionKey(path="/company"), offer_throughput=400)
         replace_throughput_value = 500
         properties = container.replace_throughput(replace_throughput_value)
-        # Set new throughput to 600 RU/s
-        new_throughput = ThroughputProperties(offer_throughput=600)
-        print('Container throughput changed to 600 RU/s')
+        print('Container throughput changed to {0} RU/s'.format(properties.offer_throughput))
         print(properties.get_response_headers())
     except exceptions.CosmosResourceNotFoundError:
         print('Container with id \'{0}\' does not exist'.format(id))
     except exceptions.CosmosHttpResponseError as e:
         print('Error changing container throughput: {0}'.format(e.message))
+    finally:
+        if container is not None:
+            db.delete_container(container.id)
 
 
 def run_sample():

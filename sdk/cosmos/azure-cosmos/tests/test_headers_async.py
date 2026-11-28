@@ -13,27 +13,27 @@ import azure.cosmos.exceptions as exceptions
 from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
-from test_headers import partition_merge_support_response_hook
+from test_headers import assert_partition_merge_support
 
 client_throughput_bucket_number = 2
 request_throughput_bucket_number = 3
 client_priority = "Low"
 request_priority = "High"
 
-def client_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
+def assert_client_throughput_bucket(response):
+    assert (response.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(client_throughput_bucket_number))
 
-def request_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
+def assert_request_throughput_bucket(response):
+    assert (response.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(request_throughput_bucket_number))
 
-def client_priority_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]
+def assert_client_priority(response):
+    assert (response.headers[http_constants.HttpHeaders.PriorityLevel]
             == client_priority)
 
-def request_priority_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]
+def assert_request_priority(response):
+    assert (response.headers[http_constants.HttpHeaders.PriorityLevel]
             == request_priority)
 
 
@@ -78,40 +78,52 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             await self.client.close()
 
     async def test_client_level_throughput_bucket_async(self):
-        CosmosClient(self.host, self.masterKey,
-            throughput_bucket=client_throughput_bucket_number,
-            raw_response_hook=client_raw_response_hook)
+        async with test_config.TestConfig.create_data_client_async(
+                throughput_bucket=client_throughput_bucket_number) as client:
+            container = client.get_database_client(self.configs.TEST_DATABASE_ID).get_container_client(
+                self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+            with test_config.capture_requests(container) as requests:
+                await container.create_item(body={'id': str(uuid.uuid4()), 'pk': 'mypk'})
+            for request in requests:
+                assert_client_throughput_bucket(request)
 
     async def test_request_precedence_throughput_bucket_async(self):
-        client = CosmosClient(self.host, self.masterKey,
-                                   throughput_bucket=client_throughput_bucket_number)
-        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        client = test_config.TestConfig.create_data_client_async(throughput_bucket=client_throughput_bucket_number)
+        self.addAsyncCleanup(client.close)
+        database = self.database
         # Control-plane container creation.
         created_container_ref = await database.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"))
-        data_container = self.data_database.get_container_client(created_container_ref.id)
-        await data_container.create_item(
-            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        data_container = client.get_database_client(self.configs.TEST_DATABASE_ID).get_container_client(
+            created_container_ref.id)
+        with test_config.capture_requests(data_container, resource_type='docs') as requests:
+            await data_container.create_item(
+                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                throughput_bucket=request_throughput_bucket_number)
+        for request in requests:
+            assert_request_throughput_bucket(request)
         await database.delete_container(created_container_ref.id)
 
     async def test_container_read_item_throughput_bucket_async(self):
         created_document = await self.data_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
-        await self.data_container.read_item(
-             item=created_document['id'],
-             partition_key="mypk",
-             throughput_bucket=request_throughput_bucket_number,
-             raw_response_hook=request_raw_response_hook)
+        with test_config.capture_requests(self.data_container, resource_type='docs') as requests:
+            await self.data_container.read_item(
+                 item=created_document['id'],
+                 partition_key="mypk",
+                 throughput_bucket=request_throughput_bucket_number)
+        for request in requests:
+            assert_request_throughput_bucket(request)
 
     async def test_container_read_all_items_throughput_bucket_async(self):
         for i in range(10):
             await self.data_container.create_item(body={'id': ''.format(i) + str(uuid.uuid4()), 'pk': 'mypk'})
 
-        async for item in self.data_container.read_all_items(throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook):
-            pass
+        with test_config.capture_requests(self.data_container, resource_type='docs') as requests:
+            async for item in self.data_container.read_all_items(throughput_bucket=request_throughput_bucket_number):
+                pass
+        for request in requests:
+            assert_request_throughput_bucket(request)
 
     async def test_container_query_items_throughput_bucket_async(self):
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -119,31 +131,39 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         await self.data_container.create_item(body=document_definition)
 
         query = 'SELECT * from c'
-        query_results = [item async for item in self.data_container.query_items(
-            query=query,
-            partition_key='pk',
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)]
+        with test_config.capture_requests(self.data_container, resource_type='docs') as requests:
+            query_results = [item async for item in self.data_container.query_items(
+                query=query,
+                partition_key='pk',
+                throughput_bucket=request_throughput_bucket_number)]
+        for request in requests:
+            assert_request_throughput_bucket(request)
 
     async def test_container_replace_item_throughput_bucket_async(self):
         created_document = await self.data_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
-        await self.data_container.replace_item(
-            item=created_document['id'],
-            body={'id': '2' + str(uuid.uuid4()), 'pk': 'mypk'},
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        with test_config.capture_requests(self.data_container, resource_type='docs') as requests:
+            await self.data_container.replace_item(
+                item=created_document['id'],
+                body={'id': '2' + str(uuid.uuid4()), 'pk': 'mypk'},
+                throughput_bucket=request_throughput_bucket_number)
+        for request in requests:
+            assert_request_throughput_bucket(request)
 
     async def test_container_upsert_item_throughput_bucket_async(self):
-       await self.data_container.upsert_item(
-            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+       with test_config.capture_requests(self.data_container, resource_type='docs') as requests:
+           await self.data_container.upsert_item(
+                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                throughput_bucket=request_throughput_bucket_number)
+       for request in requests:
+           assert_request_throughput_bucket(request)
 
     async def test_container_create_item_throughput_bucket_async(self):
-        await self.data_container.create_item(
-            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        with test_config.capture_requests(self.data_container, resource_type='docs') as requests:
+            await self.data_container.create_item(
+                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                throughput_bucket=request_throughput_bucket_number)
+        for request in requests:
+            assert_request_throughput_bucket(request)
 
     async def test_container_patch_item_throughput_bucket_async(self):
         pkValue = "patch_item_pk" + str(uuid.uuid4())
@@ -167,12 +187,14 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        await self.data_container.patch_item(
-            item="patch_item",
-            partition_key=pkValue,
-            patch_operations=operations,
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        with test_config.capture_requests(self.data_container, resource_type='docs') as requests:
+            await self.data_container.patch_item(
+                item="patch_item",
+                partition_key=pkValue,
+                patch_operations=operations,
+                throughput_bucket=request_throughput_bucket_number)
+        for request in requests:
+            assert_request_throughput_bucket(request)
 
     async def test_container_execute_item_batch_throughput_bucket_async(self):
         # Control-plane container creation.
@@ -184,22 +206,26 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         for i in range(100):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
 
-        await data_collection.execute_item_batch(
-            batch_operations=batch,
-            partition_key="Microsoft",
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        with test_config.capture_requests(data_collection, resource_type='docs') as requests:
+            await data_collection.execute_item_batch(
+                batch_operations=batch,
+                partition_key="Microsoft",
+                throughput_bucket=request_throughput_bucket_number)
+        for request in requests:
+            assert_request_throughput_bucket(request)
 
         await self.database.delete_container(created_collection_ref)
 
     async def test_container_delete_item_throughput_bucket_async(self):
         created_item = await self.data_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
 
-        await self.data_container.delete_item(
-            created_item['id'],
-            partition_key='mypk',
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        with test_config.capture_requests(self.data_container, resource_type='docs') as requests:
+            await self.data_container.delete_item(
+                created_item['id'],
+                partition_key='mypk',
+                throughput_bucket=request_throughput_bucket_number)
+        for request in requests:
+            assert_request_throughput_bucket(request)
 
     async def test_container_delete_all_items_by_partition_key_throughput_bucket_async(self):
         # Control-plane container creation.
@@ -222,10 +248,12 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
         try:
             # delete all items for partition key 1
-            await data_collection.delete_all_items_by_partition_key(
-                partition_key1,
-                throughput_bucket=request_throughput_bucket_number,
-                raw_response_hook=request_raw_response_hook)
+            with test_config.capture_requests(data_collection, resource_type='operations') as requests:
+                await data_collection.delete_all_items_by_partition_key(
+                    partition_key1,
+                    throughput_bucket=request_throughput_bucket_number)
+            for request in requests:
+                assert_request_throughput_bucket(request)
         except exceptions.CosmosHttpResponseError as e:
             error_text = " ".join(
                 message for message in (getattr(e, "http_error_message", None), str(e))
@@ -274,17 +302,20 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
     async def test_partition_merge_support_header(self):
         # This test only runs read API to verify if the header was set correctly, because all APIs are using the same
         # base method to set the header(GetHeaders).
-        await self.data_container.read(raw_response_hook=partition_merge_support_response_hook)
+        with test_config.capture_requests(self.data_container, resource_type='colls') as requests:
+            await self.data_container.read()
+        for request in requests:
+            assert_partition_merge_support(request)
 
     async def test_client_level_priority_async(self):
         # Test that priority level set at client level is used for all requests
-        async with CosmosClient(self.host, self.masterKey,
-            priority=client_priority,
-            raw_response_hook=client_priority_raw_response_hook) as client:
-            # Make a request to trigger the hook
+        async with test_config.TestConfig.create_data_client_async(priority=client_priority) as client:
             database = client.get_database_client(self.configs.TEST_DATABASE_ID)
             container = database.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-            created_item = await container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+            with test_config.capture_requests(container) as requests:
+                await container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+            for request in requests:
+                assert_client_priority(request)
 
     async def test_request_precedence_priority_async(self):
         # Test that request-level priority takes precedence over client-level priority
@@ -294,10 +325,12 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             created_container = database.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
             
             # Create an item with request-level priority that overrides client-level priority
-            await created_container.create_item(
-                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-                priority=request_priority,
-                raw_response_hook=request_priority_raw_response_hook)
+            with test_config.capture_requests(created_container, resource_type='docs') as requests:
+                await created_container.create_item(
+                    body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                    priority=request_priority)
+            for request in requests:
+                assert_request_priority(request)
 
 if __name__ == "__main__":
     unittest.main()

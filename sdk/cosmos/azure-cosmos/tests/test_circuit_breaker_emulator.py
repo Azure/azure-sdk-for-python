@@ -17,6 +17,7 @@ from test_per_partition_circuit_breaker_mm import create_doc, DELETE_ALL_ITEMS_B
     create_errors, perform_write_operation, validate_unhealthy_partitions as validate_unhealthy_partitions_mm
 from test_per_partition_circuit_breaker_sm_mrr import \
     validate_unhealthy_partitions as validate_unhealthy_partitions_sm_mrr
+from _client_transport import create_client_with_transport
 
 COLLECTION = "created_collection"
 @pytest.fixture(scope="class", autouse=True)
@@ -51,7 +52,7 @@ class TestCircuitBreakerEmulator:
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
-        client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
+        client = create_client_with_transport(CosmosClient, default_endpoint, self.master_key, consistency_level="Session",
                               preferred_locations=["Write Region", "Read Region"],
                               transport=custom_transport, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)

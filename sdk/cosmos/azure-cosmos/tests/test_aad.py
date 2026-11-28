@@ -130,7 +130,7 @@ class TestAAD(unittest.TestCase):
         captured = {}
 
         def capture_body(request):
-            captured['body'] = request.http_request.body
+            captured['body'] = request.body
 
         with cosmos_client.CosmosClient(
             self.host,
@@ -144,10 +144,12 @@ class TestAAD(unittest.TestCase):
             )
             created = None
             try:
-                created = container.create_item(
-                    document,
-                    raw_request_hook=capture_body,
-                )
+                with test_config.capture_requests(container, resource_type='docs') as requests:
+                    created = container.create_item(
+                        document,
+                    )
+                for request in requests:
+                    capture_body(request)
 
                 self.assertEqual(created['content'], document['content'])
                 # Compact bodies reach the transport as UTF-8 bytes, not str.

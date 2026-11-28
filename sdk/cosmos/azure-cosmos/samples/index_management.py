@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import certifi
 
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
@@ -31,17 +30,11 @@ PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 # indexingDirective can be either 'Include', 'Exclude' or 'Default'
 
 
-# To run this Demo, please provide your own CA certs file or download one from
-#     http://curl.haxx.se/docs/caextract.html
-# Setup the certificate file in .pem format.
-CA_CERT_FILE = certifi.where()
-
 def obtain_client():
     return cosmos_client.CosmosClient(
         HOST,
         MASTER_KEY,
         "Session",
-        connection_verify=CA_CERT_FILE
     )
 
 # Query for Entity / Entities

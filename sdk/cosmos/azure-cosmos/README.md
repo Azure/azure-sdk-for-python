@@ -23,6 +23,29 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 
 ## Getting started
 
+### Rust-backed release scope
+
+The Rust-backed APIs exclude Cosmos user and permission management, stored
+procedure definition/execution APIs, trigger definition/invocation APIs, and
+UDF definition management. `ContainerProxy.scripts`, both `ScriptsProxy`
+classes and their modules, and `TriggerType`/`TriggerOperation` have been
+removed from both synchronous and asynchronous clients, including the legacy
+comparison backend. The dedicated legacy connection operations are removed
+too; selecting that backend does not restore scripting. Accessing
+`container.scripts` now raises `AttributeError`, rather than returning a proxy
+or raising a Rust-only `NotImplementedError`.
+
+Rust-backed item operations still reject trigger options and headers before a
+request is sent; silently omitting a trigger would change the write.
+
+Ordinary item queries calling a deployed UDF, such as
+`SELECT VALUE udf.reviewBand(c.total) FROM c`, remain supported. Deploying the
+function and invoking it inside SQL are separate tasks. Legacy partitionless
+container compatibility is outside this release's scope; the driver team has
+no current implementation plans and may reconsider based on customer need.
+This does not deprecate the corresponding service capabilities or migrate
+existing data.
+
 ### Important update on Python 2.x Support
 
 New releases of this SDK won't support Python 2.x starting January 1st, 2022. Please check the [CHANGELOG](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/CHANGELOG.md) for more information.
@@ -31,7 +54,7 @@ New releases of this SDK won't support Python 2.x starting January 1st, 2022. Pl
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
-* [Python 3.8+][python]
+* [Python 3.10+][python]
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
@@ -80,6 +103,60 @@ URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
 client = CosmosClient(URL, credential=KEY)
 ```
+
+### Rust runtime and timeout configuration
+
+Rust-backed clients use one default driver runtime per process. Ordinary clients
+need no runtime argument. To customize connection settings, explicitly create
+an immutable `CosmosRuntime` and share that object between clients:
+
+```python
+from azure.cosmos import ConnectionPoolOptions, CosmosClient, CosmosRuntime
+
+runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+    connection_timeout=2,
+    data_http_request_timeout=6,
+    metadata_http_request_timeout=20,
+    idle_connection_timeout=300,
+    max_idle_connections_per_endpoint=100,
+))
+with CosmosClient(URL, credential=KEY, runtime=runtime, timeout=30) as client:
+    orders = client.get_database_client("sales").get_container_client("orders")
+    order = orders.read_item("order-42", partition_key="customer-17", timeout=2)
+```
+
+For asynchronous initialization use `await CosmosRuntime.create_async(...)`.
+Either creation method returns a runtime usable by sync or async clients.
+Separate creation calls produce separate runtimes even when settings match;
+passing the same runtime deliberately shares it. Runtime sharing does not
+promise a single HTTP connection pool. Clients and active native operations
+retain their own references; there is no runtime `close()` method.
+
+All durations are seconds. Connection timeout limits establishing a connection.
+Data and metadata HTTP-request timeouts each limit one complete HTTP attempt,
+not the retry sequence or inactivity between response bytes. Unset options
+retain Rust environment/default resolution; absent overrides, the three
+timeouts are 5, 6, and 65 seconds respectively. `timeout` is the separate overall
+operation budget, including preparation and retries: set a client default or
+override it with a non-`None` per-call value, with or without a custom runtime.
+`timeout=None` inherits the client default. Paged operations receive a fresh
+budget for each public page fetch, not one budget for consuming all results.
+Rust-backed clients reject budgets
+below one second rather than silently increasing them.
+
+**Migration:** Rust-backed clients reject constructor `connection_timeout`,
+`request_timeout`, and `proxy_allowed`; configure the corresponding runtime
+options instead. The old `request_timeout` alias used milliseconds, so convert
+it to seconds. `read_timeout` and the `ConnectionPolicy` read-timeout fields
+have been removed from both Rust and legacy execution. Explicit use, including
+`None` and nested request options, raises `TypeError`. The new HTTP-request
+timeouts bound whole attempts, not response-read inactivity; they are not
+equivalent replacements. Per-call connection overrides remain unsupported on Rust.
+
+See `samples/runtime_configuration.py` for sharing and async initialization.
+These examples use Rust, the default. The private `_backend` argument and
+`COSMOS_BACKEND` environment variable remain for migration tests, not customer
+configuration. Runtime options are not supported by the retained legacy backend.
 
 ### Compact UTF-8 item writes
 
@@ -168,7 +245,26 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## How to use `enable_cross_partition_query`
 
-The keyword-argument `enable_cross_partition_query` accepts 2 options: `None` (default) or `True`.
+When the customer app asks for orders across all customers, it cannot restrict the query to
+one customer's partition key. Both synchronous and asynchronous `query_items()` enable
+cross-partition execution automatically when neither a partition key nor a feed range is
+supplied and `enable_cross_partition_query` is omitted or `None`.
+
+For an existing `orders` container, the synchronous customer app can consume all orders with:
+
+```python
+for order in orders_container.query_items(query="SELECT * FROM orders"):
+    print(order["id"])
+```
+
+The SDK enables cross-partition execution for this unscoped request and returns the service
+backend's results through the loop. Explicit `True` also permits cross-partition execution;
+explicit `False` keeps it disabled. Enabling it does not override a supplied partition scope:
+`partition_key="customer-501"` still restricts the request to that customer's logical partition.
+
+This changes the legacy synchronous default: an unscoped query that previously required an
+explicit opt-in can now execute. Keep `False` when the customer app must prohibit cross-partition
+execution. It does not select a customer's partition key on the customer app's behalf.
 
 ## Note on using queries by id
 
@@ -237,7 +333,7 @@ This SDK uses the [query_items](https://learn.microsoft.com/python/api/azure-cos
 
 Cosmos DB SQL language allows you to [get subitems by using the FROM clause](https://learn.microsoft.com/azure/cosmos-db/sql-query-from#get-subitems-by-using-the-from-clause), to reduce the source to a smaller subset. As an example, you can use `select * from Families.children` instead of `select * from Families`. But please note that:
 
-* For SQL queries using the `query_items` method, this SDK demands that you specify the `partition_key` or use the `enable_cross_partition_query` flag.
+* SQL queries using `query_items` automatically enable cross-partition execution when neither a partition key nor a feed range is supplied, unless explicitly disabled.
 * If you are getting subitems and specifying the `partition_key`, please make sure that your partition key is included in the subitems, which is not true for most of the cases.
 
 ## Max Item Count
@@ -563,6 +659,17 @@ async def create_products():
 
 Instead of manually opening and closing the client, it is highly recommended to use the `async with` keywords. This creates a context manager that will initialize and later close the client once you're out of the statement, as well as cache important information the SDK needs. The example below shows how to do so.
 
+The customer app can announce account-level readiness inside this block. With
+the Rust-backed client, entering `async with` waits for driver acquisition.
+Creating a driver fetches account properties, prepares account routing, and
+selects the HTTP transport before the block starts. If startup fails, the SDK
+cleans up the client and raises the error instead of entering the block.
+
+This prepares the account, not every container. In the example below, the first
+operation on `products` can still need container metadata and its partition
+map. Account initialization time moves into client entry; it is not eliminated,
+and completing entry does not guarantee a particular read duration.
+
 ```python
 from azure.cosmos.aio import CosmosClient
 import os
@@ -587,7 +694,9 @@ async def create_products():
 
 ### Queries with the asynchronous client
 
-Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
+The asynchronous client uses the same `enable_cross_partition_query` default as the synchronous
+client. See [How to use `enable_cross_partition_query`](#how-to-use-enable_cross_partition_query)
+for automatic execution and explicit opt-out behavior.
 
 Query results can be iterated, but the query's raw output returns an asynchronous iterator. This means that each object from the iterator is an awaitable object, and does not yet contain the true query result. In order to obtain the query results you can use an async for loop, which awaits each result as you iterate on the object, or manually await each query result as you iterate over the asynchronous iterator.
 
@@ -705,7 +814,9 @@ the nature of the overall request - replace, set, and copy for example would be 
 not be idempotent unless combined with patch precondition checks. So, for patch we allow opting-in into automatic
 retries only on the request options level.
 
-The snippet below shows how to enable this feature at the client and request level:
+The snippet below shows how to enable this feature at the client and request level on legacy Python.
+Rust-backed clients reject both: client-level `retry_write` raises `TypeError` and per-call `retry_write`
+raises `NotImplementedError`. The Rust driver retries writes after timeouts and connectivity issues by default.
 ```python
 cosmos_client = CosmosClient(
     url=URL,
@@ -1002,23 +1113,38 @@ Also, requests with an invalid bucket ID (less than 1 or greater than 5) results
 See [here][cosmos_throughput_bucket_configuration] for instructions on configuring throughput buckets through the Azure portal.
 After throughput buckets have been configured, you can find our sync samples [here][cosmos_throughput_bucket_sample] and our async samples [here][cosmos_throughput_bucket_sample_async] as well for additional guidance.
 
-### Per Partition Circuit Breaker 
-Per partition circuit breaker is a feature that allows the SDK to failover requests on a partition level to another region based on client side statistics on 408 and 5xx error codes. This feature is only applicable for 
-reads in single write region accounts and reads and writes for multi-write region accounts. The following are the environment variables to enable per partition circuit breaker and to modify the thresholds for failing over 
-requests to another region:
-- `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`: Default is `False`.
-  - Enables the per partition circuit breaker feature.
-- `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ`: Default is `10` consecutive errors.
-  - After a partition has encountered 10 consecutive errors for read requests, the SDK will send requests routed to that partition to another region.
-- `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE`: Default is `5` consecutive errors.
-    - After a partition has encountered 5 consecutive errors for write requests, the SDK will send requests routed to that partition to another region.
-- `AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED`: Default is a `90` percent failure rate.
-  - After a partition reaches a 90 percent failure rate for all requests, the SDK will send requests routed to that partition to another region.
+### Per Partition Circuit Breaker
+
+When one partition's regional path repeatedly fails, the customer app needs later
+requests to avoid that path without avoiding the entire region. The per-partition
+circuit breaker retains a routing change for that partition. Rust supports this
+for eligible reads and multi-write-account writes when multiple read endpoints
+are available.
+
+**The legacy Python environment variables do not configure Rust-backed requests.**
+The Rust driver has its own controls:
+
+| Legacy Python variable | Available Rust control | Rust behavior |
+|---|---|---|
+| `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER` | `AZURE_COSMOS_PPCB_ENABLED` | Base enablement defaults to `true`, not legacy Python's `False`. Use lowercase `true` or `false`. |
+| `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ` | `AZURE_COSMOS_PPCB_READ_FAILURE_THRESHOLD` | Recorded read-failure count; default `10`, minimum `1`. |
+| `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE` | `AZURE_COSMOS_PPCB_WRITE_FAILURE_THRESHOLD` | Recorded write-failure count; default `5`, minimum `1`. |
+| `AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED` | No equivalent | The legacy percentage-based trigger is not implemented by the current Rust driver. |
+
+For example, set `AZURE_COSMOS_PPCB_READ_FAILURE_THRESHOLD=3` before the app
+acquires a driver to change its read-failure threshold. These settings are read
+when a driver is built; changing the environment does not retune a cached driver.
+The count controls do not establish parity with legacy consecutive-error or
+percentage-based behavior.
+
+Base enablement of `false` does not force the feature off when the account enables
+per-partition automatic failover. The legacy percentage-based trigger is not
+available.
 
 ### Per Partition Automatic Failover (Public Preview)
 Per partition automatic failover enables the SDK to automatically redirect write requests at the partition level to another region based on service-side signals. This feature is available 
-only for single write region accounts that have at least one read-only region. When per partition automatic failover is enabled, per partition circuit breaker and cross-region hedging is enabled by default, meaning 
-all its configurable options also apply to per partition automatic failover. To enable this feature, follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover).
+only for single write region accounts that have at least one read-only region. When per partition automatic failover is enabled, per partition circuit breaker and cross-region hedging is enabled by default.
+Configuration is backend-specific; use the Rust circuit-breaker controls above for Rust-backed clients. To enable this feature, follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover).
 
 ### Cross Region Hedging Availability Strategy
 
@@ -1028,18 +1154,22 @@ Cross region hedging availability strategy improves availability and reduces lat
 
 - **Hedged Requests**: The SDK sends a parallel request to another region if the primary region does not respond within a configured delay.
 - **Configurable**: Hedging can be enabled or disabled, and the delay before sending a hedged request is tunable.
-- **ThreadPoolExecutor**: The sync CosmosClient instance will use a ThreadPoolExecutor under the hood for parallelizing requests. Users can choose whether to use the default ThreadPoolExecutor the SDK uses, or to pass in their own instance. *The async client does not need the executor since it uses asynchronous logic to parallelize requests.*
+- **Execution**: On the Rust-backed path, the Rust driver schedules the primary and one alternate. Legacy Python executor settings are not Rust hedging controls.
 
 #### Enabling Cross Region Hedging
 
 You can enable cross region hedging by passing the `availability_strategy` parameter to the `CosmosClient` or per-request. This parameter accepts:
 
-- **`True`**: Enable hedging with default values (`threshold_ms=500`, `threshold_steps_ms=100`) or override client settings to this default at the request level.
+- **`True`**: Enable hedging with `threshold_ms=500` at client scope. An item-operation override retains the client's configured threshold, or uses 500 ms when none is configured.
 - **`False`**: Explicitly disable hedging at the client or request level (overrides client-level settings)
-- **`dict`**: Enable hedging with custom values. The keys are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests). Missing keys will use default values.
-- **`None`**: Default value only usable at the request level. Use the client-level configurations.
+- **`dict`**: Set `threshold_ms`, the delay before an eligible alternate attempt; omission uses 500 ms. Explicit `threshold_steps_ms` is rejected on the Rust-backed APIs.
+- **`None`**: At client scope, leave hedging disabled. At item-operation scope, inherit the client strategy.
 
-Hedging will also be implicitly enabled when per-partition automatic failover is enabled, in which case the `CrossRegionHedgingStrategy` applies the default values outlined above of 500 ms for `threshold_ms` and 100 ms for `threshold_steps_ms` unless you override them via `availability_strategy`.
+These Rust-backed settings remain subject to driver environment overrides,
+service suppression and operation eligibility. PPAF alone does not override
+an explicitly disabled strategy. Eligible metadata reads use a separate
+1,500-ms threshold; item-level disabling does not disable preceding metadata
+hedging. Writes and document queries are not hedgeable.
 
 #### Client-level configuration
 
@@ -1057,7 +1187,7 @@ client = CosmosClient(
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
-    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50}
+    availability_strategy={"threshold_ms": 150}
 )
 ```
 
@@ -1068,7 +1198,7 @@ client = CosmosClient(
 container.read_item(
     item="item_id",
     partition_key="pk_value",
-    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50}
+    availability_strategy={"threshold_ms": 150}
 )
 
 # Enable with default values for a specific request
@@ -1155,106 +1285,6 @@ HTTP status code 409: The ID (name) provided for the container is already in use
 The container name must be unique within the database.""")
 
 ```
-### Logging Diagnostics
-
-This library uses the standard
-[logging](https://docs.python.org/3.5/library/logging.html) library for logging diagnostics.
-Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
-level.
-**Note: You must use 'azure.cosmos' for the logger**
-Detailed DEBUG level logging, including request/response bodies and unredacted
-headers, can be enabled on a client with the `logging_enable` argument:
-```python
-import sys
-import logging
-from azure.cosmos import CosmosClient
-
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure.cosmos')
-logger.setLevel(logging.DEBUG)
-
-# Configure a console output
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-
-# This client will log detailed information about its HTTP sessions, at DEBUG level
-client = CosmosClient(URL, credential=KEY, logging_enable=True)
-```
-
-Similarly, `logging_enable` can enable detailed logging for a single operation,
-even when it isn't enabled for the client:
-```python
-database = client.create_database(DATABASE_NAME, logging_enable=True)
-```
-Alternatively, you can log using the CosmosHttpLoggingPolicy, which extends from the azure core HttpLoggingPolicy, by passing in your logger to the `logger` argument.
-By default, it will use the behaviour from HttpLoggingPolicy. Passing in the `enable_diagnostics_logging` argument will enable the
-CosmosHttpLoggingPolicy, and will have additional information in the response relevant to debugging Cosmos issues.
-```python
-import logging
-from azure.cosmos import CosmosClient
-
-#Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure.cosmos')
-logger.setLevel(logging.DEBUG)
-
-# Configure a file output
-handler = logging.FileHandler(filename="azure")
-logger.addHandler(handler)
-
-# This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy.
-# Since we passed in the logger to the client, it will log information on every request.
-client = CosmosClient(URL, credential=KEY, logger=logger, enable_diagnostics_logging=True)
-```
-Similarly, logging can be enabled for a single operation by passing in a logger to the singular request.
-However, if you desire to use the CosmosHttpLoggingPolicy to obtain additional information, the `enable_diagnostics_logging` argument needs to be passed in at the client constructor.
-```python
-# This example enables the CosmosHttpLoggingPolicy and uses it with the `logger` passed in to the `create_database` request.
-client = CosmosClient(URL, credential=KEY, enable_diagnostics_logging=True)
-database = client.create_database(DATABASE_NAME, logger=logger)
-```
-**NOTICE: The Following is a Preview Feature.**
-To further customize what gets logged, you can use logger filters to filter out the logs you don't want to see. You are able to filter based on the following attributes in the log record of cosmos diagnostics logs:
-- `status_code`
-- `sub_status_code`
-- `duration`
-- `verb`
-- `database_name`
-- `collection_name`
-- `operation_type`
-- `url`
-- `resource_type`
-- `is_request`
-
-You can take a look at the samples [here][cosmos_diagnostics_filter_sample] or take a quick look at this snippet:
-- Using **filters** from the **logging** library, it is possible to filter the diagnostics logs. Several filterable attributes are made available to the log record of the diagnostics logs when using logging filters.
-```python
-  import logging
-  from azure.cosmos import CosmosClient
-  logger = logging.getLogger('azure.cosmos')
-  logger.setLevel(logging.INFO)
-  file_handler = logging.FileHandler('diagnostics.output')
-  logger.addHandler(file_handler)
-  # Create a filter to filter out logs
-  class CustomFilter(logging.Filter):
-    def filter(self, record):
-        ret = (hasattr(record, 'status_code') and record.status_code > 400
-           and not (record.status_code in [404, 409, 412] and getattr(record, 'sub_status_code', None) in [0, None])
-           and hasattr(record, 'duration') and record.duration > 1000)
-        return ret
-  # Add the filter to the logger
-  logger.addFilter(CustomFilter())
-  client = CosmosClient(endpoint, key,logger=logger, enable_diagnostics_logging=True)
-```
-### Telemetry
-Azure Core provides the ability for our Python SDKs to use OpenTelemetry with them. The only packages that need to be installed
-to use this functionality are the following:
-```bash
-pip install azure-core-tracing-opentelemetry
-pip install opentelemetry-sdk
-```
-For more information on this, we recommend taking a look at this [document](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/README.md) 
-from Azure Core describing how to set it up. We have also added a [sample file][telemetry_sample] to show how it can
-be used with our SDK. This works the same way regardless of the Cosmos client you are using.
 
 ## Next steps
 

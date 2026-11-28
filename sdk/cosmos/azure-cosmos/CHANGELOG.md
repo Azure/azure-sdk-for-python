@@ -10,6 +10,15 @@
 
 #### Bugs Fixed
 
+* The Rust backend now preserves original Python credential exceptions, including
+  their type and identity. Credential timeouts are no longer reported as SDK
+  operation deadline failures.
+
+* `create_item` and `create_database_if_not_exists` now reject asynchronous
+  response hooks before sending any operation request,
+  rather than silently leaving the hook's coroutine unawaited. Sync and async
+  clients continue to invoke synchronous hooks after a successful response.
+
 * Fixed hybrid-search reciprocal rank fusion (RRF) results being ranked incorrectly when component scores are tied.
   Each result now receives a unique ordinal rank, with deterministic tie-breaking based on the decoded document ID
   portion of `_rid`. See [PR 49623](https://github.com/Azure/azure-sdk-for-python/pull/49623).

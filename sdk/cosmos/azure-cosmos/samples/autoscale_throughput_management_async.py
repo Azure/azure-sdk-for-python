@@ -142,7 +142,7 @@ async def read_autoscale_throughput(database, container):
     The throughput properties reveal:
     - Whether autoscale is enabled
     - Maximum throughput setting
-    - Current throughput (if available)
+    - Configured manual throughput when autoscale is disabled
     
     Args:
         database: DatabaseProxy instance
@@ -156,17 +156,15 @@ async def read_autoscale_throughput(database, container):
         db_offer = await database.get_throughput()
         print(f"\nDatabase '{database.id}' throughput:")
         
-        autopilot_settings = db_offer.properties.get('content', {}).get('offerAutopilotSettings')
-        if autopilot_settings:
-            max_throughput = autopilot_settings.get('maxThroughput')
+        max_throughput = db_offer.auto_scale_max_throughput
+        if max_throughput is not None:
             print(f"  - Autoscale enabled: Yes")
             print(f"  - Maximum throughput: {max_throughput} RU/s")
             print(f"  - Minimum throughput: {max_throughput // 10} RU/s")
-            print(f"  - Increment percent: {autopilot_settings.get('autoUpgradePolicy', {}).get('throughputPolicy', {}).get('incrementPercent', 0)}")
+            print(f"  - Increment percent: {db_offer.auto_scale_increment_percent}")
         else:
-            throughput = db_offer.properties.get('content', {}).get('offerThroughput')
             print(f"  - Autoscale enabled: No")
-            print(f"  - Manual throughput: {throughput} RU/s")
+            print(f"  - Manual throughput: {db_offer.offer_throughput} RU/s")
             
     except exceptions.CosmosHttpResponseError as e:
         print(f"Database throughput error: {e.message}")
@@ -176,16 +174,15 @@ async def read_autoscale_throughput(database, container):
         container_offer = await container.get_throughput()
         print(f"\nContainer '{container.id}' throughput:")
         
-        autopilot_settings = container_offer.properties.get('content', {}).get('offerAutopilotSettings')
-        if autopilot_settings:
-            max_throughput = autopilot_settings.get('maxThroughput')
+        max_throughput = container_offer.auto_scale_max_throughput
+        if max_throughput is not None:
             print(f"  - Autoscale enabled: Yes")
             print(f"  - Maximum throughput: {max_throughput} RU/s")
             print(f"  - Minimum throughput: {max_throughput // 10} RU/s")
+            print(f"  - Increment percent: {container_offer.auto_scale_increment_percent}")
         else:
-            throughput = container_offer.properties.get('content', {}).get('offerThroughput')
             print(f"  - Autoscale enabled: No")
-            print(f"  - Manual throughput: {throughput} RU/s")
+            print(f"  - Manual throughput: {container_offer.offer_throughput} RU/s")
             
     except exceptions.CosmosHttpResponseError as e:
         print(f"Container throughput error: {e.message}")
@@ -214,12 +211,12 @@ async def update_autoscale_max_throughput(container, new_max_throughput):
         
         updated_offer = await container.replace_throughput(new_throughput)
         
-        autopilot_settings = updated_offer.properties.get('content', {}).get('offerAutopilotSettings')
-        if autopilot_settings:
-            max_throughput = autopilot_settings.get('maxThroughput')
+        max_throughput = updated_offer.auto_scale_max_throughput
+        if max_throughput is not None:
             print(f"Container '{container.id}' autoscale updated:")
             print(f"  - New maximum throughput: {max_throughput} RU/s")
             print(f"  - New minimum throughput: {max_throughput // 10} RU/s")
+            print(f"  - Increment percent: {updated_offer.auto_scale_increment_percent}")
             print(f"  - Autoscale will now scale within this new range")
         else:
             print(f"Warning: Updated offer does not contain autoscale settings")

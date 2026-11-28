@@ -15,11 +15,10 @@ class MultiMasterScenario(object):
         self.database_name = Configurations.DATABASE_NAME
         self.manual_collection_name = Configurations.MANUAL_COLLECTION_NAME
         self.lww_collection_name = Configurations.LWW_COLLECTION_NAME
-        self.udp_collection_name = Configurations.UDP_COLLECTION_NAME
         self.basic_collection_name = Configurations.BASIC_COLLECTION_NAME
 
         self.workers = []
-        self.conflict_worker = ConflictWorker(self.database_name, self.basic_collection_name, self.manual_collection_name, self.lww_collection_name, self.udp_collection_name)
+        self.conflict_worker = ConflictWorker(self.database_name, self.basic_collection_name, self.manual_collection_name, self.lww_collection_name)
         self.pool = ThreadPool(processes = len(self.regions))
 
         for region in self.regions:
@@ -90,12 +89,4 @@ class MultiMasterScenario(object):
         print("####################################################")
 
         self.conflict_worker.run_LWW_conflict_async()
-        print("####################################################")
-
-    def run_UDP_async(self):
-        print("\n####################################################")
-        print("UDP Conflict Resolution")
-        print("####################################################")
-
-        self.conflict_worker.run_UDP_async()
         print("####################################################")

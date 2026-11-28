@@ -40,11 +40,10 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExpor
 # Simple console exporter
 exporter = ConsoleSpanExporter()
 
-trace.set_tracer_provider(TracerProvider())
+provider = TracerProvider()
+provider.add_span_processor(SimpleSpanProcessor(exporter))
+trace.set_tracer_provider(provider)
 tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(
-    SimpleSpanProcessor(exporter)
-)
 
 # Example with Cosmos SDK
 import os

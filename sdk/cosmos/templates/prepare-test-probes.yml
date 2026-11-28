@@ -1,0 +1,64 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# cspell:ignore msrust msrustup
+parameters:
+  - name: ToolchainFeed
+    type: string
+  - name: UseDownloadedWheel
+    type: boolean
+    default: false
+
+steps:
+  - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+    parameters:
+      ToolchainFeed: ${{ parameters.ToolchainFeed }}
+      WorkingDirectory: $(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      # Never put a probe wheel in the directory used for publish artifacts.
+      $venv = '$(Agent.TempDirectory)/cosmos-test-probes'
+      $wheelDirectory = '$(Agent.TempDirectory)/cosmos-test-probes-wheels'
+      python -m venv $venv
+      $python = if ($IsWindows) { "$venv/Scripts/python.exe" } else { "$venv/bin/python" }
+      # The build backend launches maturin by name, not through $python.
+      $env:PATH = "$(Split-Path -Parent $python)$([IO.Path]::PathSeparator)$env:PATH"
+      $env:PYO3_PYTHON = $python
+      Push-Location sdk/cosmos/azure-cosmos
+      try {
+        & $python -m pip install -r dev_requirements.txt
+        if ('${{ parameters.UseDownloadedWheel }}' -eq 'True') {
+          $customerWheels = @(Get-ChildItem '$(Build.ArtifactStagingDirectory)' -Recurse -Filter 'azure_cosmos-*-win_amd64.whl')
+          if ($customerWheels.Count -ne 1) {
+            throw "Expected one customer wheel; found $($customerWheels.Count)."
+          }
+          New-Item -ItemType Directory -Force $wheelDirectory | Out-Null
+          # Source-install checks rebuild this same archive with probes enabled.
+          Get-ChildItem '$(Build.ArtifactStagingDirectory)' -Recurse -Filter 'azure_cosmos-*.tar.gz' |
+            Copy-Item -Destination $wheelDirectory
+          & $python -m pip install --no-deps $customerWheels[0].FullName
+          & $python -I -c "from azure.cosmos import _rust; assert not hasattr(_rust, '_AsyncOperationProbe'); assert not [name for name in dir(_rust) if name.startswith('_debug_')]"
+          $nativeAssets = & $python -I -c "from pathlib import Path; import azure.cosmos; print(Path(azure.cosmos.__file__).parent / '.libs')"
+          if (Test-Path $nativeAssets -PathType Container) {
+            $env:AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR = $nativeAssets
+          }
+        }
+        & $python -m pip wheel . --no-deps --no-build-isolation `
+          --config-settings 'maturin.build-args=--features test-probes --locked' `
+          --wheel-dir $wheelDirectory
+      } finally {
+        Pop-Location
+      }
+      $wheels = @(Get-ChildItem $wheelDirectory -Filter 'azure_cosmos-*.whl')
+      if ($wheels.Count -ne 1) {
+        throw "Expected exactly one test-probes wheel; found $($wheels.Count)."
+      }
+      & $python -m pip install --no-deps --force-reinstall $wheels[0].FullName
+      & $python -I -c "from azure.cosmos import _rust; assert hasattr(_rust, '_AsyncOperationProbe'); assert all(callable(getattr(_rust, name, None)) for name in ('_debug_operation_count', '_debug_attempt_count', '_debug_retry_count', '_debug_fault_injection_rule_hit_count', '_debug_set_fault_injection_rule_enabled', '_debug_cached_account_regions'))"
+      Write-Host "##vso[task.setvariable variable=CosmosProbePython]$python"
+      Write-Host "##vso[task.setvariable variable=CosmosProbeWheelDirectory]$wheelDirectory"
+    displayName: Build and verify an isolated test-probes wheel
+    env:
+      MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)

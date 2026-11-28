@@ -18,6 +18,7 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 from typing import Callable
+from _client_transport import create_client_with_transport
 
 AAD_MWR_SKIP_REASON = (
     "MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only."
@@ -78,18 +79,20 @@ class TestSession(unittest.TestCase):
         self.assertNotEqual(token_A, manual_session_token)
 
         # At this point, self.client's session is at first token, but we are holding second token. We will now manually use second token in a request on self.client.
-        def manual_token_hook(request):
+        def assert_manual_token(request):
             # Assert that the header contains the manually provided second token not the client's automatic first token.
-            self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
-            self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], manual_session_token)
+            self.assertIn(HttpHeaders.SessionToken, request.headers)
+            self.assertEqual(request.headers[HttpHeaders.SessionToken], manual_session_token)
 
-        #Read an item using the primary client, but manually providing second token. The hook will verify that second token overrides the client's internal first token.
-        self.created_collection.read_item(
-            item=item2['id'],  # Reading the item associated with second token
-            partition_key='mypk',
-            session_token=manual_session_token,  # Manually provide second token
-            raw_request_hook=manual_token_hook
-        )
+        #Read an item using the primary client, but manually providing second token. The transport assertions verify that second token overrides the client's internal first token.
+        with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+            self.created_collection.read_item(
+                item=item2['id'],  # Reading the item associated with second token
+                partition_key='mypk',
+                session_token=manual_session_token,  # Manually provide second token
+            )
+        for request in requests:
+            assert_manual_token(request)
 
     def test_manual_session_token_override(self):
         # Create an item to get a valid session token from the response
@@ -104,19 +107,21 @@ class TestSession(unittest.TestCase):
         self.client.client_connection.session = None
 
         try:
-            # Define a hook to inspect the request headers
-            def manual_token_hook(request):
-                self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
-                self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], session_token)
+            # Inspect the request headers
+            def assert_manual_token(request):
+                self.assertIn(HttpHeaders.SessionToken, request.headers)
+                self.assertEqual(request.headers[HttpHeaders.SessionToken], session_token)
 
             # Read the item, passing the session token manually.
-            # The hook will verify it's correctly added to the request headers.
-            self.created_collection.read_item(
-                item=created_document['id'],
-                partition_key='mypk',
-                session_token=session_token,  # Manually provide the session token
-                raw_request_hook=manual_token_hook
-            )
+            # The transport assertions verify it's correctly added to the request headers.
+            with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+                self.created_collection.read_item(
+                    item=created_document['id'],
+                    partition_key='mypk',
+                    session_token=session_token,  # Manually provide the session token
+                )
+            for request in requests:
+                assert_manual_token(request)
         finally:
             # Restore the original session object to avoid affecting other tests
             self.client.client_connection.session = original_session
@@ -125,22 +130,41 @@ class TestSession(unittest.TestCase):
 
         # Session token should not be sent for control plane operations
         # control-plane container create/read/delete via key_db
-        test_container = self.key_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"), raw_response_hook=test_config.no_token_response_hook)
-        self.key_db.get_container_client(container=self.created_collection).read(raw_response_hook=test_config.no_token_response_hook)
-        self.key_db.delete_container(test_container, raw_response_hook=test_config.no_token_response_hook)
+        with test_config.capture_requests(self.key_db, resource_type='colls') as requests:
+            test_container = self.key_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        for request in requests:
+            test_config.assert_no_session_token(request)
+        with test_config.capture_requests(self.key_db.get_container_client(container=self.created_collection), resource_type='colls') as requests:
+            self.key_db.get_container_client(container=self.created_collection).read()
+        for request in requests:
+            test_config.assert_no_session_token(request)
+        with test_config.capture_requests(self.key_db, resource_type='colls') as requests:
+            self.key_db.delete_container(test_container)
+        for request in requests:
+            test_config.assert_no_session_token(request)
 
         # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
-        up_item = self.created_collection.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                                          raw_response_hook=test_config.no_token_response_hook)
-        replaced_item = self.created_collection.replace_item(item=up_item['id'], body={'id': up_item['id'], 'song': 'song', 'pk': 'mypk'},
-                                                             raw_response_hook=test_config.no_token_response_hook)
-        created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                                               raw_response_hook=test_config.no_token_response_hook)
+        with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+            up_item = self.created_collection.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        for request in requests:
+            test_config.assert_no_session_token(request)
+        with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+            replaced_item = self.created_collection.replace_item(item=up_item['id'], body={'id': up_item['id'], 'song': 'song', 'pk': 'mypk'})
+        for request in requests:
+            test_config.assert_no_session_token(request)
+        with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+            created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        for request in requests:
+            test_config.assert_no_session_token(request)
         response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
-        read_item = self.created_collection.read_item(item=created_document['id'], partition_key='mypk',
-                                                      raw_response_hook=test_config.token_response_hook)
-        read_item2 = self.created_collection.read_item(item=created_document['id'], partition_key='mypk',
-                                                       raw_response_hook=test_config.token_response_hook)
+        with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+            read_item = self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
+        for request in requests:
+            test_config.assert_session_token(request)
+        with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+            read_item2 = self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
+        for request in requests:
+            test_config.assert_session_token(request)
 
         # Since the session hasn't been updated (no write requests have happened) verify session is still the same
         assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
@@ -153,12 +177,18 @@ class TestSession(unittest.TestCase):
             ("read", (replaced_item['id'],)),
             ("upsert", ({"id": str(uuid.uuid4()), "pk": 'mypk'},)),
         ]
-        batch_result = self.created_collection.execute_item_batch(batch_operations, 'mypk', raw_response_hook=test_config.token_response_hook)
+        with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+            batch_result = self.created_collection.execute_item_batch(batch_operations, 'mypk')
+        for request in requests:
+            test_config.assert_session_token(request)
         batch_response_token = batch_result.get_response_headers().get(HttpHeaders.SessionToken)
         assert batch_response_token != response_session_token
 
         # Verify no session tokens are sent for delete requests either - but verify session token is updated
-        self.created_collection.delete_item(replaced_item['id'], replaced_item['pk'], raw_response_hook=test_config.no_token_response_hook)
+        with test_config.capture_requests(self.created_collection, resource_type='docs') as requests:
+            self.created_collection.delete_item(replaced_item['id'], replaced_item['pk'])
+        for request in requests:
+            test_config.assert_no_session_token(request)
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
 
@@ -192,14 +222,16 @@ class TestSession(unittest.TestCase):
             captured_session_token = {}
 
             def capture_session_token(request):
-                captured_session_token['token'] = request.http_request.headers.get(HttpHeaders.SessionToken)
+                captured_session_token['token'] = request.headers.get(HttpHeaders.SessionToken)
 
             # Query with single feed range
-            list(test_container.query_items(
-                query="SELECT * FROM c",
-                feed_range=feed_ranges[0],
-                raw_request_hook=capture_session_token
-            ))
+            with test_config.capture_requests(test_container, resource_type='docs') as requests:
+                list(test_container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range=feed_ranges[0]
+                ))
+            for request in requests:
+                capture_session_token(request)
 
             # Verify only single partition token was sent
             token = captured_session_token.get('token')
@@ -246,16 +278,18 @@ class TestSession(unittest.TestCase):
             captured_tokens = []
 
             def capture_session_token(request):
-                token = request.http_request.headers.get(HttpHeaders.SessionToken)
+                token = request.headers.get(HttpHeaders.SessionToken)
                 if token:
                     captured_tokens.append(token)
 
             # Query with full range feed range (spans all partitions)
-            list(test_container.query_items(
-                query="SELECT * FROM c",
-                feed_range=full_range,
-                raw_request_hook=capture_session_token
-            ))
+            with test_config.capture_requests(test_container, resource_type='docs') as requests:
+                list(test_container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range=full_range
+                ))
+            for request in requests:
+                capture_session_token(request)
 
             # Verify each request sent only a single partition token (no commas)
             self.assertGreater(len(captured_tokens), 0, "Expected at least one request with session token")
@@ -289,13 +323,15 @@ class TestSession(unittest.TestCase):
             captured = {"token": None}
 
             def capture(request):
-                captured["token"] = request.http_request.headers.get(HttpHeaders.SessionToken)
+                captured["token"] = request.headers.get(HttpHeaders.SessionToken)
 
-            list(test_container.query_items(
-                query="SELECT * FROM c",
-                feed_range=feed_ranges[0],
-                raw_request_hook=capture,
-            ))
+            with test_config.capture_requests(test_container, resource_type='docs') as requests:
+                list(test_container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range=feed_ranges[0],
+                ))
+            for request in requests:
+                capture(request)
 
             wire_token = captured["token"]
             self.assertIsNotNone(wire_token, "Expected a SessionToken header to be sent.")
@@ -344,20 +380,22 @@ class TestSession(unittest.TestCase):
             captured_tokens = []
 
             def capture(request):
-                token = request.http_request.headers.get(HttpHeaders.SessionToken)
+                token = request.headers.get(HttpHeaders.SessionToken)
                 if token:
                     captured_tokens.append(token)
 
-            pager = test_container.query_items(
-                query="SELECT * FROM c",
-                feed_range=target_fr,
-                max_item_count=2,
-                raw_request_hook=capture,
-            ).by_page()
-            page_count = 0
-            for page in pager:
-                _ = list(page)
-                page_count += 1
+            with test_config.capture_requests(test_container, resource_type='docs') as requests:
+                pager = test_container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range=target_fr,
+                    max_item_count=2,
+                ).by_page()
+                page_count = 0
+                for page in pager:
+                    _ = list(page)
+                    page_count += 1
+            for request in requests:
+                capture(request)
 
             self.assertGreaterEqual(page_count, 1)
             self.assertGreater(len(captured_tokens), 0,
@@ -395,16 +433,18 @@ class TestSession(unittest.TestCase):
             captured_tokens = []
 
             def capture(request):
-                token = request.http_request.headers.get(HttpHeaders.SessionToken)
+                token = request.headers.get(HttpHeaders.SessionToken)
                 if token:
                     captured_tokens.append(token)
 
-            list(test_container.query_items(
-                query="SELECT * FROM c WHERE c.pk = @pk",
-                parameters=[{"name": "@pk", "value": "pk_0001"}],
-                partition_key="pk_0001",
-                raw_request_hook=capture,
-            ))
+            with test_config.capture_requests(test_container, resource_type='docs') as requests:
+                list(test_container.query_items(
+                    query="SELECT * FROM c WHERE c.pk = @pk",
+                    parameters=[{"name": "@pk", "value": "pk_0001"}],
+                    partition_key="pk_0001",
+                ))
+            for request in requests:
+                capture(request)
 
             self.assertGreater(len(captured_tokens), 0,
                                "Expected at least one request with a SessionToken header.")
@@ -420,26 +460,34 @@ class TestSession(unittest.TestCase):
 
         # Session token should not be sent for control plane operations
         # control-plane container creation
-        test_container_ref = self.key_db.create_container(
-            "Container with space" + str(uuid.uuid4()),
-            PartitionKey(path="/pk"),
-            raw_response_hook=test_config.no_token_response_hook
-        )
+        with test_config.capture_requests(self.key_db, resource_type='colls') as requests:
+            test_container_ref = self.key_db.create_container(
+                "Container with space" + str(uuid.uuid4()),
+                PartitionKey(path="/pk")
+            )
+        for request in requests:
+            test_config.assert_no_session_token(request)
         # Data-plane proxy for data operations
         test_container = self.created_db.get_container_client(test_container_ref.id)
         try:
             # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
-            created_document = test_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                                                   raw_response_hook=test_config.no_token_response_hook)
+            with test_config.capture_requests(test_container, resource_type='docs') as requests:
+                created_document = test_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+            for request in requests:
+                test_config.assert_no_session_token(request)
             response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
-            read_item = test_container.read_item(item=created_document['id'], partition_key='mypk',
-                                                          raw_response_hook=test_config.token_response_hook)
-            query_iterable = test_container.query_items(
-                "SELECT * FROM c WHERE c.id = '" + str(created_document['id']) + "'",
-                partition_key='mypk',
-                raw_response_hook=test_config.token_response_hook)
-            for _ in query_iterable:
-                pass
+            with test_config.capture_requests(test_container, resource_type='docs') as requests:
+                read_item = test_container.read_item(item=created_document['id'], partition_key='mypk')
+            for request in requests:
+                test_config.assert_session_token(request)
+            with test_config.capture_requests(test_container, resource_type='docs') as requests:
+                query_iterable = test_container.query_items(
+                    "SELECT * FROM c WHERE c.id = '" + str(created_document['id']) + "'",
+                    partition_key='mypk')
+                for _ in query_iterable:
+                    pass
+            for request in requests:
+                test_config.assert_session_token(request)
 
             assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
                     response_session_token)
@@ -469,35 +517,55 @@ class TestSession(unittest.TestCase):
         custom_transport.add_response_transformation(
             is_get_account_predicate,
             emulator_as_multi_write_region_account_transformation)
-        client = cosmos_client.CosmosClient(self.host, self.masterKey, consistency_level="Session",
+        client = create_client_with_transport(cosmos_client.CosmosClient, self.host, self.masterKey, consistency_level="Session",
                                             transport=custom_transport, multiple_write_locations=True)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_COLLECTION_ID)
 
         # Session token should not be sent for control plane operations
         # control-plane container create/read/delete
-        test_container = db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"),
-                                                                raw_response_hook=test_config.no_token_response_hook)
-        db.get_container_client(container=self.created_collection).read(
-            raw_response_hook=test_config.no_token_response_hook)
-        db.delete_container(test_container, raw_response_hook=test_config.no_token_response_hook)
+        with test_config.capture_requests(db, resource_type='colls') as requests:
+            test_container = db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        for request in requests:
+            test_config.assert_no_session_token(request)
+        with test_config.capture_requests(db.get_container_client(container=self.created_collection), resource_type='colls') as requests:
+            db.get_container_client(container=self.created_collection).read(
+                )
+        for request in requests:
+            test_config.assert_no_session_token(request)
+        with test_config.capture_requests(db, resource_type='colls') as requests:
+            db.delete_container(test_container)
+        for request in requests:
+            test_config.assert_no_session_token(request)
 
         # Session token should be sent for all document requests since we have mwr configuration
         # First write request won't have since tokens need to be populated on the client first
-        container.upsert_item(body={'id': '0' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                    raw_response_hook=test_config.no_token_response_hook)
-        up_item = container.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                              raw_response_hook=test_config.token_response_hook)
-        replaced_item = container.replace_item(item=up_item['id'], body={'id': up_item['id'], 'song': 'song',
-                                                                         'pk': 'mypk'},
-                                               raw_response_hook=test_config.token_response_hook)
-        created_document = container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                                 raw_response_hook=test_config.token_response_hook)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            container.upsert_item(body={'id': '0' + str(uuid.uuid4()), 'pk': 'mypk'})
+        for request in requests:
+            test_config.assert_no_session_token(request)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            up_item = container.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        for request in requests:
+            test_config.assert_session_token(request)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            replaced_item = container.replace_item(item=up_item['id'], body={'id': up_item['id'], 'song': 'song',
+                                                                             'pk': 'mypk'})
+        for request in requests:
+            test_config.assert_session_token(request)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            created_document = container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        for request in requests:
+            test_config.assert_session_token(request)
         response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
-        read_item = container.read_item(item=created_document['id'], partition_key='mypk',
-                                        raw_response_hook=test_config.token_response_hook)
-        read_item2 = container.read_item(item=created_document['id'], partition_key='mypk',
-                                         raw_response_hook=test_config.token_response_hook)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            read_item = container.read_item(item=created_document['id'], partition_key='mypk')
+        for request in requests:
+            test_config.assert_session_token(request)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            read_item2 = container.read_item(item=created_document['id'], partition_key='mypk')
+        for request in requests:
+            test_config.assert_session_token(request)
 
         # Since the session hasn't been updated (no write requests have happened) verify session is still the same
         assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
@@ -510,14 +578,18 @@ class TestSession(unittest.TestCase):
             ("read", (replaced_item['id'],)),
             ("upsert", ({"id": str(uuid.uuid4()), "pk": 'mypk'},)),
         ]
-        batch_result = container.execute_item_batch(batch_operations, 'mypk',
-                                                    raw_response_hook=test_config.token_response_hook)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            batch_result = container.execute_item_batch(batch_operations, 'mypk')
+        for request in requests:
+            test_config.assert_session_token(request)
         batch_response_token = batch_result.get_response_headers().get(HttpHeaders.SessionToken)
         assert batch_response_token != response_session_token
 
         # Should get sent now that we have mwr configuration
-        container.delete_item(replaced_item['id'], replaced_item['pk'],
-                                                 raw_response_hook=test_config.token_response_hook)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            container.delete_item(replaced_item['id'], replaced_item['pk'])
+        for request in requests:
+            test_config.assert_session_token(request)
         assert db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
 

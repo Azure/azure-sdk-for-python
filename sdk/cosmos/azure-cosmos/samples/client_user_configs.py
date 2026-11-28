@@ -18,9 +18,11 @@ MASTER_KEY = config.settings['master_key']
 # 1. retry_total is the total number of retries to allow. Takes precedence over other counts.
 #    Pass in retry_total=0 if you do not want to retry on requests. Default value is 10
 #
-# 2. retry_connect option determines how many connection-related errors to retry on. Default value is 3
+# 2. retry_connect controls connection-error retries on legacy Python. Default value is 3.
+#    Rust-backed clients currently reject this keyword, including None and zero; omit it.
 #
-# 3. retry_read option determines how many times to retry on read errors. Default value is 3
+# 3. retry_read controls response-read error retries on legacy Python. Default value is 3.
+#    Rust-backed clients currently reject this keyword, including None and zero; omit it.
 #
 # 4. retry_status determines how many times to retry on bad status codes. Default value is 3
 #
@@ -31,18 +33,17 @@ MASTER_KEY = config.settings['master_key']
 #
 # 7. retry_backoff_max option determines the maximum back off time. Default value is 120 seconds (2 minutes)
 #
-# 8. retry_fixed_interval option determines the fixed retry interval in milliseconds.
-#    The default value is None as the SDK has its own retry logic configured where this option is taken care of.
+# 8. retry_fixed_interval selects a fixed throttle retry interval in milliseconds on legacy Python only.
+#    Omit this keyword on Rust-backed clients; even None raises TypeError.
 #
 # Note:
 # While these options can be configured, the SDK by default already has retry mechanisms and we recommend to use those.
 # ----------------------------------------------------------------------------------------------------------
 
 def change_connection_retry_policy_configs():
-    cosmos_client.CosmosClient(url=HOST, credential=MASTER_KEY, retry_total=10, retry_connect=3,
-                               retry_read=3, retry_status=3,
+    cosmos_client.CosmosClient(url=HOST, credential=MASTER_KEY, retry_total=10, retry_status=3,
                                retry_on_status_codes=([]),
-                               retry_backoff_factor=.08, retry_backoff_max=120, retry_fixed_interval=None)
+                               retry_backoff_factor=.08, retry_backoff_max=120)
     print('Client initialized with custom retry options')
 
 if __name__ == "__main__":

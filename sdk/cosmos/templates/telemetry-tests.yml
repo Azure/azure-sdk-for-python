@@ -1,0 +1,42 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+  - name: Condition
+    type: string
+    default: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+
+steps:
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $results = '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-telemetry'
+      New-Item -ItemType Directory -Force $results | Out-Null
+      Write-Host '##vso[task.setvariable variable=uploadLlmArtifacts]true'
+      $python = '$(CosmosProbePython)'
+      Push-Location sdk/cosmos/azure-cosmos
+      try {
+        & $python -m pip install -r dev_requirements.txt -r samples/requirements-telemetry.txt
+      } finally {
+        Pop-Location
+      }
+      & $python -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py telemetry `
+        --require-installed-wheel --results $results 2>&1 |
+        Tee-Object -FilePath "$results/live.txt"
+      exit $LASTEXITCODE
+    displayName: Telemetry Unit Tests
+    timeoutInMinutes: 20
+    condition: ${{ parameters.Condition }}
+    env:
+      COSMOS_BACKEND: rust
+      APPLICATIONINSIGHTS_CONNECTION_STRING: ''
+      COSMOSDBCONNECTIONSTRING: ''
+  - task: PublishTestResults@2
+    displayName: Publish Telemetry Unit Test Results
+    condition: ${{ parameters.Condition }}
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-telemetry/pytest.xml
+      testRunTitle: Cosmos Rust telemetry
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true

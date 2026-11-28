@@ -52,6 +52,9 @@ if TYPE_CHECKING:
     from azure.core.rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
     from ._location_cache import LocationCache
     from .documents import DatabaseAccount, ConnectionPolicy
+    from .aio._global_endpoint_manager_async import _GlobalEndpointManager as _AsyncGlobalEndpointManager
+
+_EndpointManager = Union[_GlobalEndpointManager, "_AsyncGlobalEndpointManager"]
 
 HTTPRequestType = Union["LegacyHttpRequest", "HttpRequest"]
 HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpResponse",
@@ -117,7 +120,7 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
                             response_headers: Optional[dict] = None, error: Optional[Union[CosmosHttpResponseError,
                             ServiceRequestError, ServiceResponseError]] = None,
                             logger_attributes: Optional[dict] = None,
-                            global_endpoint_manager: Optional[_GlobalEndpointManager] = None,
+                            global_endpoint_manager: Optional[_EndpointManager] = None,
                             logger: Optional[Logger] = None):
     """Logs the request and response error details to the logger.
 
@@ -132,7 +135,7 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
     :param logger_attributes: The logger attributes to populate.
     :type logger_attributes: Optional[dict[str, Any]]
     :param global_endpoint_manager: The global endpoint manager instance.
-    :type global_endpoint_manager: Optional[_GlobalEndpointManager]
+    :type global_endpoint_manager: Optional[_EndpointManager]
     :param logger: The logger instance to use.
     :type logger: Optional[logging.Logger]
     """
@@ -168,7 +171,7 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
         logger.info(log_string, extra=logger_attributes)
 
 
-def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManager]) -> str:
+def _get_client_settings(global_endpoint_manager: Optional[_EndpointManager]) -> str:
     # Place any client settings we want to log here
     client_preferred_regions = []
     client_excluded_regions: Optional[list[str]] = []
@@ -197,7 +200,7 @@ def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManage
     return logger_str
 
 
-def _get_database_account_settings(global_endpoint_manager: Optional[_GlobalEndpointManager]) \
+def _get_database_account_settings(global_endpoint_manager: Optional[_EndpointManager]) \
         -> str:
     database_account: Optional["DatabaseAccount"] = None
     if global_endpoint_manager and hasattr(global_endpoint_manager, '_database_account_cache'):
@@ -244,7 +247,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     def __init__(
             self,
             logger: Optional[logging.Logger] = None,
-            global_endpoint_manager: Optional[_GlobalEndpointManager] = None,
+            global_endpoint_manager: Optional[_EndpointManager] = None,
             *,
             enable_diagnostics_logging: bool = False,
             **kwargs

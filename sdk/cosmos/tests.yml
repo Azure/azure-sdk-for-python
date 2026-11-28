@@ -1,3 +1,4 @@
+# cspell:ignore msrustup
 trigger: none
 
 extends:
@@ -21,6 +22,50 @@ extends:
       MaxParallel: 8
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
+      PreSteps:
+        - template: /eng/pipelines/templates/steps/use-python-version.yml
+          parameters:
+            versionSpec: $(PythonVersion)
+        - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+        - template: /sdk/cosmos/templates/prepare-test-probes.yml
+          parameters:
+            ToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
+      AdditionalTestArgs: '--wheel_dir="$(CosmosProbeWheelDirectory)"'
+      # Only the selected Linux and macOS matrix jobs run these extra checks.
+      PostSteps:
+        - template: /sdk/cosmos/templates/rust-native-tests.yml
+          parameters:
+            Condition: and(succeededOrFailed(), in(variables['Agent.OS'], 'Linux', 'Darwin'), eq(variables['CosmosRunSupplementalTests'], 'true'))
+        - pwsh: |
+            $ErrorActionPreference = 'Stop'
+            $PSNativeCommandUseErrorActionPreference = $true
+            brew install bash
+            $bashDirectory = Join-Path (brew --prefix bash) 'bin'
+            & (Join-Path $bashDirectory 'bash') -c 'value=set; [[ -v value ]]'
+            Write-Host "##vso[task.prependpath]$bashDirectory"
+          displayName: Prepare Bash for macOS Offline Tests
+          condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Darwin'), eq(variables['CosmosRunSupplementalTests'], 'true'))
+          env:
+            HOMEBREW_NO_AUTO_UPDATE: '1'
+        - template: /sdk/cosmos/templates/rust-offline-tests.yml
+          parameters:
+            Condition: and(succeededOrFailed(), in(variables['Agent.OS'], 'Linux', 'Darwin'), eq(variables['CosmosRunSupplementalTests'], 'true'))
+        - template: /sdk/cosmos/templates/telemetry-tests.yml
+          parameters:
+            Condition: and(succeededOrFailed(), in(variables['Agent.OS'], 'Linux', 'Darwin'), eq(variables['CosmosRunSupplementalTests'], 'true'))
+        # Keep Cargo logs and Python coverage reports even when a check fails.
+        - task: 1ES.PublishPipelineArtifact@1
+          displayName: Publish Supplemental Test Logs
+          condition: and(succeededOrFailed(), in(variables['Agent.OS'], 'Linux', 'Darwin'), eq(variables['CosmosRunSupplementalTests'], 'true'))
+          inputs:
+            targetPath: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust
+            artifactName: cosmos-rust-supplemental-$(System.JobId)-$(System.JobAttempt)
+        - task: 1ES.PublishPipelineArtifact@1
+          displayName: Publish Telemetry Test Logs
+          condition: and(succeededOrFailed(), in(variables['Agent.OS'], 'Linux', 'Darwin'), eq(variables['CosmosRunSupplementalTests'], 'true'))
+          inputs:
+            targetPath: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-telemetry
+            artifactName: cosmos-telemetry-$(System.JobId)-$(System.JobAttempt)
       VariableGroups:
         - 'Test Secrets for Cosmos Live Tests - user administered'
       # Fixed-account jobs omit provisioning, its Azure login, and cleanup at template expansion.
@@ -30,5 +75,11 @@ extends:
           parameters:
             AccountSelector: $(AccountSelector)
       EnvVars:
+        PYTHONIOENCODING: utf-8
+        COSMOS_REQUIRE_TEST_PROBES: '1'
+        MATURIN_PEP517_ARGS: --features test-probes
+        MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
         GSI_ACCOUNT_HOST: $(gsi-pipeline-uri)
         GSI_ACCOUNT_KEY: $(gsi-pipeline-key)

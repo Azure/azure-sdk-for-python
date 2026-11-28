@@ -76,7 +76,7 @@ class TestUserAgent(unittest.TestCase):
                 test_config.restore_environment_variables(previous_env)
 
             # Examine log messages for User-Agent header
-            for log_message in mock_handler.messages:
+            for log_message in mock_handler.records:
                 msg = log_message.message
                 if msg.startswith("Request URL:"):
                     m = re.search(r"'User-Agent':\s*'([^']+)'", msg, re.MULTILINE)

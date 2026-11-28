@@ -46,6 +46,10 @@ class _Constants:
     # x-ms-cosmos-intended-collection-rid header for container-recreate detection).
     ContainerRID: Literal["containerRID"] = "containerRID"
 
+    # Not used to carry request timeouts; tests check its absence from wire headers.
+    # Prepared request timeout values use settings.timeout_seconds instead.
+    OVERALL_TIMEOUT_SECONDS: Literal["__overall_timeout_seconds"] = "__overall_timeout_seconds"
+
     # GlobalDB related constants
     WritableLocations: Literal["writableLocations"] = "writableLocations"
     ReadableLocations: Literal["readableLocations"] = "readableLocations"
@@ -121,8 +125,6 @@ class _Constants:
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
         AVAILABILITY_STRATEGY: Literal["availabilityStrategy"] = "availabilityStrategy"
         """Availability strategy config. Used either at client level or request level"""
-        READ_TIMEOUT: Literal["read_timeout"] = "read_timeout"
-        """Socket read timeout in seconds. Used either at client level or request level."""
         TIMEOUT: Literal["timeout"] = "timeout"
         """Absolute timeout in seconds for the combined HTTP request and response processing."""
 

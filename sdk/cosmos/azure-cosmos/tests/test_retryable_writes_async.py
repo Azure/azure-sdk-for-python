@@ -17,6 +17,7 @@ from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
 from typing import Callable
 import test_config  # Import test_config for configuration details
+from _client_transport import create_client_with_transport
 
 HPK_CONTAINER = "TestContainerHPK"
 
@@ -59,7 +60,7 @@ class TestRetryableWritesAsync:
             database_id: str = TEST_DATABASE_ID,
             container_id: str = TEST_CONTAINER_SINGLE_PARTITION_ID,
             **kwargs):
-        client = CosmosClient(default_endpoint, key, consistency_level="Session",
+        client = create_client_with_transport(CosmosClient, default_endpoint, key, consistency_level="Session",
                               transport=custom_transport, enable_diagnostics_logging=True, **kwargs)
         await client.__aenter__()
         db: DatabaseProxy = await client.create_database_if_not_exists(database_id)

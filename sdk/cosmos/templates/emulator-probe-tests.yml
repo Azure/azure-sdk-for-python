@@ -1,0 +1,97 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# cspell:ignore msrustup toxiproxy
+steps:
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $results = '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/customer-wheel'
+      New-Item -ItemType Directory -Force $results | Out-Null
+      Copy-Item sdk/cosmos/azure-cosmos/test-junit-*.xml $results
+    displayName: Preserve Customer Package Results
+    condition: succeededOrFailed()
+  - task: PublishTestResults@2
+    displayName: Publish Customer Package Results
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/customer-wheel/test-junit-*.xml
+      testRunTitle: Cosmos customer wheel
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $false
+      $results = '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/emulator-functional'
+      New-Item -ItemType Directory -Force $results | Out-Null
+      # Customer results were archived above; do not republish stale reports.
+      Get-ChildItem sdk/cosmos/azure-cosmos -File -Filter 'test-junit-*.xml' |
+        ForEach-Object { Remove-Item -LiteralPath $_.FullName }
+      $env:AZPYSDK_PIP_IMPL = 'uv'
+      # Wheel and source checks share one emulator; run the suites sequentially.
+      python eng/scripts/run_with_1es_proxy_trust.py python eng/scripts/dispatch_checks.py azure-cosmos `
+        --wheel_dir="$(CosmosProbeWheelDirectory)" --disablecov `
+        --mark_arg="cosmosEmulator and not cosmosSdkFaultInjection and not cosmosToxiproxy and not cosmosRustProbes" `
+        --service=cosmos --checks="$(ChecksOverride)" --max-parallel=1
+      $status = $LASTEXITCODE
+      Copy-Item sdk/cosmos/azure-cosmos/test-junit-*.xml $results
+      exit $status
+    displayName: Emulator Functional Tests and Dependency Checks
+    condition: succeededOrFailed()
+    env:
+      PYTHONIOENCODING: utf-8
+      COSMOS_BACKEND: rust
+      COSMOS_REQUIRE_TEST_PROBES: '1'
+      MATURIN_PEP517_ARGS: --features test-probes
+      MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
+      ACCOUNT_HOST: https://localhost:8081/
+      ACCOUNT_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+  - task: PublishTestResults@2
+    displayName: Publish Emulator Functional Results
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/emulator-functional/test-junit-*.xml
+      testRunTitle: Cosmos emulator functional ($(ChecksOverride), Python $(PythonVersion))
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $false
+      $results = '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/sdk-fault-injection'
+      New-Item -ItemType Directory -Force $results | Out-Null
+      Get-ChildItem sdk/cosmos/azure-cosmos -File -Filter 'test-junit-*.xml' |
+        ForEach-Object { Remove-Item -LiteralPath $_.FullName }
+      # Import-only validation already ran; preserve every test-bearing matrix check.
+      $checks = ('$(ChecksOverride)' -split ',' | Where-Object { $_ -ne 'import_all' }) -join ','
+      if (-not $checks) { throw 'No test-bearing check configured for SDK fault injection.' }
+      $env:AZPYSDK_PIP_IMPL = 'uv'
+      python eng/scripts/run_with_1es_proxy_trust.py python eng/scripts/dispatch_checks.py azure-cosmos `
+        --wheel_dir="$(CosmosProbeWheelDirectory)" --disablecov `
+        --mark_arg="cosmosEmulator and cosmosSdkFaultInjection and not cosmosToxiproxy and not cosmosRustProbes" `
+        --service=cosmos --checks="$checks" --max-parallel=1
+      $status = $LASTEXITCODE
+      Copy-Item sdk/cosmos/azure-cosmos/test-junit-*.xml $results
+      exit $status
+    displayName: SDK Fault-Injection Tests
+    condition: succeededOrFailed()
+    env:
+      PYTHONIOENCODING: utf-8
+      COSMOS_BACKEND: rust
+      COSMOS_REQUIRE_TEST_PROBES: '1'
+      MATURIN_PEP517_ARGS: --features test-probes
+      MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+      CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
+      ACCOUNT_HOST: https://localhost:8081/
+      ACCOUNT_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+  - task: PublishTestResults@2
+    displayName: Publish SDK Fault-Injection Results
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/sdk-fault-injection/test-junit-*.xml
+      testRunTitle: Cosmos SDK fault injection ($(ChecksOverride), Python $(PythonVersion))
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true

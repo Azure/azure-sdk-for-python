@@ -1,0 +1,42 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# cspell:ignore clippy msrust
+
+steps:
+  # Run once per Python version in Standard jobs, not in dependency variations.
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $results = '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust'
+      New-Item -ItemType Directory -Force $results | Out-Null
+      Write-Host '##vso[task.setvariable variable=uploadLlmArtifacts]true'
+      & '$(CosmosProbePython)' -I -c "from azure.cosmos import _rust; assert hasattr(_rust, '_AsyncOperationProbe')"
+    displayName: Prepare Supplemental Test Environment
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+  - template: /sdk/cosmos/templates/rust-native-tests.yml
+  - template: /sdk/cosmos/templates/rust-offline-tests.yml
+  # Reuse the isolated probe environment; customer artifacts stay unchanged.
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $results = '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/cancellation'
+      & '$(CosmosProbePython)' -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py cancellation `
+        --require-installed-wheel --results $results
+      exit $LASTEXITCODE
+    displayName: Native Cancellation Tests
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    env:
+      COSMOS_BACKEND: rust
+      COSMOS_TEST_DATA_AUTH_MODE: key
+      ACCOUNT_HOST: https://localhost:8081/
+      # Public emulator credential; never use the live-account test configuration.
+      ACCOUNT_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+  - task: PublishTestResults@2
+    displayName: Publish Native Cancellation Results
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust/cancellation/pytest.xml
+      testRunTitle: Cosmos Rust native cancellation
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true

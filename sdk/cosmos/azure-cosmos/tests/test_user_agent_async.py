@@ -64,7 +64,7 @@ class TestUserAgentAsync(unittest.IsolatedAsyncioTestCase):
             finally:
                 test_config.restore_environment_variables(previous_env)
 
-            log_messages = mock_handler.messages
+            log_messages = mock_handler.records
             for log_message in log_messages:
                 msg = log_message.message
                 if msg.startswith("Request URL:"):

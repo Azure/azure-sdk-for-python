@@ -56,9 +56,8 @@ except exceptions.CosmosResourceExistsError:
     customer_container = database.get_container_client(customer_container_name)
 # [END create_container_with_settings]
 
-# Retrieve a container by walking down the resource hierarchy
-# (client->database->container), handling the exception generated
-# if no container with the specified ID was found in the database.
+# Create a local container client for later operations.
+# This does not create the container or check whether it exists.
 # [START get_container]
 database = client.get_database_client(database_name)
 container = database.get_container_client(container_name)
@@ -254,16 +253,6 @@ database.replace_container(container, partition_key=PartitionKey(path='/productN
 container_props = database.get_container_client(container_name).read()
 print("New container TTL: {}".format(json.dumps(container_props['defaultTtl'])))
 # [END reset_container_properties]
-
-# Create a user in the database.
-# [START create_user]
-try:
-    database.create_user(dict(id="Walter Harp"))
-except exceptions.CosmosResourceExistsError:
-    print("A user with that ID already exists.")
-except exceptions.CosmosHttpResponseError as failure:
-    print("Failed to create user. Status code:{}".format(failure.status_code))
-# [END create_user]
 
 # [START delete_all_items_by_partition_key]
 container_name = "products"
