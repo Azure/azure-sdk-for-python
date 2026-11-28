@@ -231,6 +231,19 @@ class ApplicationGatewayCustomErrorStatusCode(str, Enum, metaclass=CaseInsensiti
     """HttpStatus504."""
 
 
+class ApplicationGatewayDeploymentTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Deployment tier of the Application Gateway."""
+
+    STANDARD = "Standard"
+    """Default deployment type."""
+    NETWORK_ISOLATED = "NetworkIsolated"
+    """Management NIC deployment type."""
+    ACCELERATED = "Accelerated"
+    """Accelerated deployment type."""
+    ELASTIC = "Elastic"
+    """Accelerated deployment type with reserved capacity and vertical scaling."""
+
+
 class ApplicationGatewayFirewallMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Web application firewall mode."""
 
@@ -996,11 +1009,39 @@ class CustomIpPrefixType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Child."""
 
 
+class DdosContinent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A continent used for DDoS geographic source matching."""
+
+    AFRICA = "Africa"
+    """Matches traffic originating from countries and territories in Africa."""
+    ANTARCTICA = "Antarctica"
+    """Matches traffic originating from Antarctica."""
+    ASIA = "Asia"
+    """Matches traffic originating from countries and territories in Asia."""
+    EUROPE = "Europe"
+    """Matches traffic originating from countries and territories in Europe."""
+    NORTH_AMERICA = "NorthAmerica"
+    """Matches traffic originating from countries and territories in North America."""
+    OCEANIA = "Oceania"
+    """Matches traffic originating from countries and territories in Oceania."""
+    SOUTH_AMERICA = "SouthAmerica"
+    """Matches traffic originating from countries and territories in South America."""
+
+
 class DdosDetectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The detection mode for the DDoS detection rule."""
 
     TRAFFIC_THRESHOLD = "TrafficThreshold"
     """TrafficThreshold."""
+
+
+class DdosMitigationTrafficScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The traffic protocol to which a DDoS mitigation rule applies."""
+
+    TCP = "Tcp"
+    """TCP traffic."""
+    UDP = "Udp"
+    """UDP traffic."""
 
 
 class DdosSettingsProtectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1012,6 +1053,15 @@ class DdosSettingsProtectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enabled."""
     DISABLED = "Disabled"
     """Disabled."""
+
+
+class DdosSourcePolicyActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action applied to traffic matching a source policy override."""
+
+    DENY = "Deny"
+    """Deny traffic from matching sources."""
+    PERMIT = "Permit"
+    """Permit traffic from matching sources."""
 
 
 class DdosTrafficType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1300,6 +1350,15 @@ class ExpressRouteFailoverLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Primary link."""
     SECONDARY = "Secondary"
     """Secondary link."""
+
+
+class ExpressRouteLagAuthorizationUseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authorization use status."""
+
+    AVAILABLE = "Available"
+    """The authorization is available and not currently associated with an ExpressRoute circuit."""
+    IN_USE = "InUse"
+    """The authorization is currently in use by an ExpressRoute circuit."""
 
 
 class ExpressRouteLagBillingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2216,6 +2275,18 @@ class NetworkProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ICMP."""
 
 
+class NetworkVirtualApplianceLoadDistribution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The load distribution policy for a managed Network Virtual Appliance load-balancing rule."""
+
+    DEFAULT = "Default"
+    """Distributes traffic using a five-tuple hash of source IP, destination IP, source port,
+    destination port, and protocol."""
+    SOURCE_IP = "SourceIP"
+    """Distributes traffic using a two-tuple hash of source IP and destination IP."""
+    SOURCE_IP_PROTOCOL = "SourceIPProtocol"
+    """Distributes traffic using a three-tuple hash of source IP, destination IP, and protocol."""
+
+
 class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Next hop type."""
 
@@ -2381,7 +2452,7 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Connection monitor output destination type. Currently, only "Workspace" is supported."""
+    """Connection monitor output destination type. Currently, only \"Workspace\" is supported."""
 
     WORKSPACE = "Workspace"
     """Workspace."""
@@ -3214,6 +3285,34 @@ class VerbosityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Minimum."""
     FULL = "Full"
     """Full."""
+
+
+class VirtualNetworkApplianceCapabilityIpVersion(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The IP versions a virtual network appliance capability can apply to. See ``ipVersion`` on
+    VirtualNetworkApplianceCapabilityProperties for the per-``kind`` constraint.
+    """
+
+    I_PV6 = "IPv6"
+    """Single stack IPv6 only."""
+    DUAL_STACK = "DualStack"
+    """Dual stack (both IPv4 and IPv6)."""
+
+
+class VirtualNetworkApplianceCapabilityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kinds of virtual network appliance capability. The value is the top-level ``kind``
+    discriminator.
+    """
+
+    PL_GATEWAY_FASTPATH = "PLGatewayFastpath"
+    """Private Link Gateway FastPath."""
+    PL_GATEWAY = "PLGateway"
+    """Private Link Gateway (slow-path)."""
+    PLIP_FORWARDERS = "PLIPForwarders"
+    """Private Link IP-forwarders (NVA)."""
+    NAT64 = "NAT64"
+    """NAT64 (stateful IPv6-to-IPv4 translation)."""
 
 
 class VirtualNetworkApplianceIpVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

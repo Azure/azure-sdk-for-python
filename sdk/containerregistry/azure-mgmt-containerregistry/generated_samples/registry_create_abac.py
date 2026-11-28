@@ -35,7 +35,7 @@ def main():
         registry_name="myRegistry",
         registry={
             "location": "westus",
-            "properties": {"roleAssignmentMode": "AbacRepositoryPermissions"},
+            "properties": {"endpointProtocol": "IPv4", "roleAssignmentMode": "AbacRepositoryPermissions"},
             "sku": {"name": "Standard"},
             "tags": {"key": "value"},
         },
@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/RegistryCreateAbac.json
+# x-ms-original-file: 2026-11-01/RegistryCreateAbac.json
 if __name__ == "__main__":
     main()

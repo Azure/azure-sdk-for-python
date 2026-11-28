@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/ScenarioConfigurations_Execute.json
+# x-ms-original-file: 2026-11-01/ScenarioConfigurations_Execute.json
 if __name__ == "__main__":
     main()

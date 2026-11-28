@@ -373,20 +373,29 @@ class sphinx(Check):
         return 0
 
     def sphinx_apidoc(self, target_dir: str, namespace: str, executable: str) -> int:
-        working_doc_folder = os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/doc")
+        source_root = os.path.join(target_dir, UNZIPPPED_DIR_NAME)
+        working_doc_folder = os.path.join(source_root, "doc")
+        import_root = namespace.split(".", maxsplit=1)[0]
+        apidoc_input = os.path.join(source_root, import_root)
+        # Scan only the top-level import root so sdist-only files (e.g. custom build backends) are not
+        # documented. Scanning the root, not the full namespace, preserves full module names.
+        if not import_root or not os.path.isdir(apidoc_input):
+            logger.warning(
+                f"Unable to find the top-level import root '{import_root}' for namespace '{namespace}' "
+                f"in {source_root}. Falling back to scanning the entire extracted sdist."
+            )
+            apidoc_input = source_root
         command_array = [
             "sphinx-apidoc",
             "--no-toc",
             "--module-first",
             "-o",
-            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}"),  # This is the output folder
-            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/"),  # This is the input folder
-            os.path.join(
-                target_dir, f"{UNZIPPPED_DIR_NAME}/test*"
-            ),  # This argument and below are "exclude" directory arguments
-            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/example*"),
-            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/sample*"),
-            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/setup.py"),
+            os.path.join(source_root, DOCGEN_DIR_NAME),  # This is the output folder
+            apidoc_input,  # This is the input folder
+            os.path.join(apidoc_input, "test*"),  # This argument and below are "exclude" arguments
+            os.path.join(apidoc_input, "example*"),
+            os.path.join(apidoc_input, "sample*"),
+            os.path.join(apidoc_input, "setup.py"),
         ]
 
         try:

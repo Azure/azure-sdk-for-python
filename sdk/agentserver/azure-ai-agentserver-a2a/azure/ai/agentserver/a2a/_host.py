@@ -1,0 +1,323 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+"""A2A protocol host for Azure AI Hosted Agents."""
+
+from __future__ import annotations
+
+import logging
+from collections.abc import Awaitable, Callable
+from typing import Any, MutableMapping, Optional
+
+from starlette.datastructures import Headers
+from starlette.middleware import Middleware
+from starlette.responses import JSONResponse
+from starlette.routing import Route
+from starlette.types import ASGIApp, Receive, Scope, Send
+
+from a2a.server.agent_execution import AgentExecutor
+from a2a.server.request_handlers import DefaultRequestHandler, RequestHandler
+from a2a.server.tasks import InMemoryTaskStore, TaskStore
+from a2a.server.routes import (
+    ServerCallContextBuilder,
+    create_agent_card_routes,
+    create_jsonrpc_routes,
+)
+from a2a.types import AgentCard
+
+from azure.ai.agentserver.core import (
+    AgentConfig,
+    AgentServerHost,
+    FoundryAgentRequestContext,
+    build_server_version,
+    reset_request_context,
+    set_request_context,
+)
+from azure.ai.agentserver.core._experimental import experimental
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+    ERROR_DETAIL,
+    ERROR_SOURCE,
+    FOUNDRY_CALL_ID,
+    MAX_ERROR_DETAIL_LENGTH,
+    PLATFORM_ERROR_TAG,
+    USER_ID,
+)
+
+from ._tracing import trace_jsonrpc_endpoint
+from ._foundry_task_store import FoundryTaskStore
+from ._protocol import ProtocolContextBuilder
+from ._version import VERSION as _A2A_VERSION
+
+_A2A_RPC_PATH = "/a2a"
+_A2A_FOUNDRY_COMPAT_RPC_PATH = "/invocations/a2a"
+_A2A_AGENT_CARD_PATH = "/a2a/.well-known/agent-card.json"
+_A2A_FOUNDRY_COMPAT_AGENT_CARD_PATH = _A2A_FOUNDRY_COMPAT_RPC_PATH + "/.well-known/agent-card.json"
+_A2A_PATHS = frozenset(
+    (
+        _A2A_RPC_PATH,
+        _A2A_FOUNDRY_COMPAT_RPC_PATH,
+        _A2A_AGENT_CARD_PATH,
+        _A2A_FOUNDRY_COMPAT_AGENT_CARD_PATH,
+    )
+)
+_ERROR_SOURCE_USER = "user"
+_ERROR_SOURCE_UPSTREAM = "upstream"
+_ERROR_SOURCE_PLATFORM = "platform"
+
+logger = logging.getLogger(__name__)
+
+
+class _A2APlatformContextMiddleware:
+    """Bind Foundry platform headers while a native A2A route is executing."""
+
+    def __init__(self, app: ASGIApp) -> None:
+        self._app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http" or scope.get("path") not in _A2A_PATHS:
+            await self._app(scope, receive, send)
+            return
+
+        headers = Headers(scope=scope)
+        token = set_request_context(
+            FoundryAgentRequestContext(
+                call_id=headers.get(FOUNDRY_CALL_ID),
+                user_id=headers.get(USER_ID),
+            )
+        )
+        try:
+            await self._app(scope, receive, send)
+        finally:
+            reset_request_context(token)
+
+
+class _A2ATransportErrorMiddleware:
+    """Classify transport-level A2A HTTP errors with platform error headers."""
+
+    def __init__(self, app: ASGIApp) -> None:
+        self._app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http" or scope.get("path") not in _A2A_PATHS:
+            await self._app(scope, receive, send)
+            return
+
+        async def send_with_error_source(message: MutableMapping[str, Any]) -> None:
+            if message["type"] == "http.response.start":
+                status = int(message["status"])
+                if status >= 400:
+                    headers = list(message.get("headers", []))
+                    if not any(name.lower() == ERROR_SOURCE.encode() for name, _ in headers):
+                        source = _ERROR_SOURCE_USER if status < 500 else _ERROR_SOURCE_UPSTREAM
+                        headers.append((ERROR_SOURCE.encode(), source.encode()))
+                        message = {**message, "headers": headers}
+            await send(message)
+
+        await self._app(scope, receive, send_with_error_source)
+
+
+class _A2AExceptionMiddleware:
+    """Convert route exceptions before core adds shared response headers."""
+
+    def __init__(self, app: ASGIApp) -> None:
+        self._app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        response_started = False
+
+        async def send_with_response_started(message: MutableMapping[str, Any]) -> None:
+            nonlocal response_started
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+
+        try:
+            await self._app(scope, receive, send_with_response_started)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if response_started:
+                raise
+
+            source = _ERROR_SOURCE_UPSTREAM
+            headers = {ERROR_SOURCE: source}
+            if getattr(exc, PLATFORM_ERROR_TAG, False) is True:
+                source = _ERROR_SOURCE_PLATFORM
+                detail = f"{type(exc).__name__}: {exc}"
+                detail = "".join(character for character in detail if 32 <= ord(character) <= 126)
+                headers = {
+                    ERROR_SOURCE: source,
+                    ERROR_DETAIL: detail[:MAX_ERROR_DETAIL_LENGTH],
+                }
+
+            logger.exception("Unhandled A2A transport error")
+            response = JSONResponse(
+                {"detail": "Internal server error"},
+                status_code=500,
+                headers=headers,
+            )
+            await response(scope, receive, send)
+
+
+def _get_a2a_routes(
+    agent_card: AgentCard,
+    request_handler: RequestHandler,
+    *,
+    card_modifier: Optional[Callable[[AgentCard], Awaitable[AgentCard]]] = None,
+    context_builder: Optional[ServerCallContextBuilder] = None,
+    config: Optional[AgentConfig] = None,
+) -> list[Route]:
+    jsonrpc_routes = create_jsonrpc_routes(
+        request_handler=request_handler,
+        rpc_url=_A2A_RPC_PATH,
+        context_builder=ProtocolContextBuilder(context_builder),
+        enable_v0_3_compat=False,
+    )
+    jsonrpc_route = jsonrpc_routes[0]
+    traced_endpoint = trace_jsonrpc_endpoint(jsonrpc_route.endpoint, agent_card, config=config)
+    agent_card_routes = create_agent_card_routes(
+        agent_card=agent_card,
+        card_modifier=card_modifier,
+        card_url=_A2A_AGENT_CARD_PATH,
+    )
+    agent_card_route = agent_card_routes[0]
+    routes = [
+        Route(
+            _A2A_RPC_PATH,
+            traced_endpoint,
+            methods=["POST"],
+            name=jsonrpc_route.name,
+        ),
+        Route(
+            _A2A_FOUNDRY_COMPAT_RPC_PATH,
+            traced_endpoint,
+            methods=["POST"],
+            name=f"{jsonrpc_route.name}-foundry-compat",
+        ),
+        *agent_card_routes,
+        Route(
+            _A2A_FOUNDRY_COMPAT_AGENT_CARD_PATH,
+            agent_card_route.endpoint,
+            methods=agent_card_route.methods,
+            name=f"{agent_card_route.name}-foundry-compat",
+            include_in_schema=False,
+        ),
+    ]
+    return [
+        Route(
+            route.path,
+            route.endpoint,
+            methods=route.methods,
+            name=route.name,
+            include_in_schema=route.include_in_schema,
+            middleware=[Middleware(_A2AExceptionMiddleware)],
+        )
+        for route in routes
+    ]
+
+
+@experimental
+class A2AAgentServerHost(AgentServerHost):
+    """Host a native A2A SDK handler in an Azure AI Hosted Agent container.
+
+    The host registers the native SDK's JSON-RPC and public agent-card routes
+    at Foundry's canonical container paths. It also supplies the shared Agent
+    Server readiness endpoint, lifecycle, telemetry, and request-scoped
+    Foundry identity context.
+
+    :param agent_card: Native A2A v1.0 agent card to serve to Foundry.
+    :type agent_card: ~a2a.types.AgentCard
+    :param request_handler: Existing native handler, whose storage is preserved.
+        Mutually exclusive with ``agent_executor`` and ``task_store``.
+    :type request_handler: ~a2a.server.request_handlers.RequestHandler or None
+    :keyword agent_executor: Native executor used to build a default handler.
+        Supply exactly one of this or ``request_handler``.
+    :paramtype agent_executor: ~a2a.server.agent_execution.AgentExecutor or None
+    :keyword task_store: Explicit native task store for the built handler.
+        Defaults to Foundry persistence when hosted, otherwise native in-memory storage.
+        Caller-supplied stores remain caller-owned.
+    :paramtype task_store: ~a2a.server.tasks.TaskStore or None
+    :param card_modifier: Optional async callback applied before serving the agent card.
+    :type card_modifier: Optional[Callable[[AgentCard], Awaitable[AgentCard]]]
+    :param context_builder: Optional native A2A server call-context builder.
+    :type context_builder: Optional[~a2a.server.routes.ServerCallContextBuilder]
+    """
+
+    def __init__(
+        self,
+        *,
+        agent_card: AgentCard,
+        request_handler: Optional[RequestHandler] = None,
+        agent_executor: Optional[AgentExecutor] = None,
+        task_store: Optional[TaskStore] = None,
+        card_modifier: Optional[Callable[[AgentCard], Awaitable[AgentCard]]] = None,
+        context_builder: Optional[ServerCallContextBuilder] = None,
+        **kwargs: Any,
+    ) -> None:
+        if (request_handler is None) == (agent_executor is None):
+            raise ValueError("Supply exactly one of request_handler or agent_executor")
+        if request_handler is not None and task_store is not None:
+            raise ValueError("Configure storage on the supplied request_handler instead of passing task_store")
+        self._agent_card = agent_card
+        self._owned_task_store: Optional[FoundryTaskStore] = None
+        self._owned_request_handler: Optional[DefaultRequestHandler] = None
+        existing_routes = list(kwargs.pop("routes", None) or [])
+
+        super().__init__(routes=existing_routes, **kwargs)
+        if request_handler is None:
+            if agent_executor is None:
+                raise ValueError("agent_executor is required to build a request handler")
+            if task_store is None:
+                if self.config.is_hosted:
+                    agent_identity = self.config.agent_guid or self.config.agent_name
+                    if not agent_identity:
+                        raise ValueError("Hosted default task storage requires a Foundry agent identity")
+                    self._owned_task_store = FoundryTaskStore(f"a2a/tasks/{agent_identity}")
+                    task_store = self._owned_task_store
+                else:
+                    task_store = InMemoryTaskStore()
+            request_handler = DefaultRequestHandler(
+                agent_executor=agent_executor,
+                task_store=task_store,
+                agent_card=agent_card,
+            )
+            self._owned_request_handler = request_handler
+        self._request_handler = request_handler
+        a2a_routes = _get_a2a_routes(
+            agent_card,
+            request_handler,
+            card_modifier=card_modifier,
+            context_builder=context_builder,
+            config=self.config,
+        )
+        self.routes[len(existing_routes) : len(existing_routes)] = a2a_routes
+        self.add_middleware(_A2APlatformContextMiddleware)
+        self.add_middleware(_A2ATransportErrorMiddleware)
+        self.register_server_version(build_server_version("azure-ai-agentserver-a2a", _A2A_VERSION))
+
+    async def _dispatch_shutdown(self) -> None:
+        try:
+            if self._owned_request_handler is not None:
+                await self._owned_request_handler.aclose()
+        finally:
+            try:
+                await super()._dispatch_shutdown()
+            finally:
+                if self._owned_task_store is not None:
+                    await self._owned_task_store.aclose()
+
+    @property
+    def agent_card(self) -> AgentCard:
+        """Return the native A2A agent card hosted by this server.
+
+        :return: The native A2A agent card.
+        :rtype: ~a2a.types.AgentCard
+        """
+        return self._agent_card
+
+    @property
+    def request_handler(self) -> RequestHandler:
+        """Return the native A2A request handler hosted by this server.
+
+        :return: The native A2A request handler.
+        :rtype: ~a2a.server.request_handlers.RequestHandler
+        """
+        return self._request_handler

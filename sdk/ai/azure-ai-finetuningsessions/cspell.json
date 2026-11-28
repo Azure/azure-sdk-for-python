@@ -1,0 +1,20 @@
+{
+  "ignoreWords": [
+    "finetuning", "finetuningsessions", "logprobs", "lora", "LoRA", "multimodal", "sampler",
+    "CISPO", "SAPO", "GRPO", "qwen", "deadbeef", "resubmit", "dedup",
+    "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized",
+    "AICLIENT", "TCGC", "pygen", "skyrl", "falsey", "ungated", "rhno",
+    "sess", "coro", "dedups", "unconfigured", "chunker", "aabbccdd", "localns", "kwonlyargs",
+    "xffjpeg", "xffoffline", "xfftest", "xffvalid", "nopolling", "undoc", "gethostbyaddr", "WRONLY", "RDWR", "CREAT"
+  ],
+  "overrides": [
+    {
+      "filename": "{emitter-package-lock,cspell}.json",
+      "words": [
+        "chownr", "cliui", "esbuild", "fastq", "fsevents", "globby", "iojs", "isaacs",
+        "loong", "reusify", "sindresorhus", "sunos", "universalify", "upgrader", "yallist", "yargs"
+      ]
+    }
+  ],
+  "ignorePaths": ["**/__pycache__/**", ".mypy_cache/**", ".pytest_cache/**"]
+}

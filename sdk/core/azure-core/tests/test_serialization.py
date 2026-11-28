@@ -10,6 +10,7 @@ import sys
 import typing
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
+from types import MappingProxyType
 
 import pytest
 from modeltypes._utils.model_base import (
@@ -29,6 +30,8 @@ from azure.core.serialization import (
     is_generated_model,
     attribute_list,
 )
+
+from azure.core.exceptions import ODataV4Format
 
 
 def _expand_value(obj):
@@ -147,6 +150,145 @@ def test_dictionary_basic(json_dumps_with_encoder):
     complex_serialized = json_dumps_with_encoder(test_obj)
     assert json.dumps(test_obj) == complex_serialized
     assert json.loads(complex_serialized) == test_obj
+
+
+def test_generated_model_as_dict_with_odata_v4_format():
+    class TestModel(HybridModel):
+        name: str = rest_field()
+        count: int = rest_field()
+        enabled: bool = rest_field()
+        optional: Optional[str] = rest_field()
+        InnerError: List[ODataV4Format] = rest_field()
+        readonly: List[ODataV4Format] = rest_field(visibility=["read"])
+
+    wire_error = {
+        "code": "BadRequest",
+        "message": "Invalid request",
+        "details": [{"code": "InvalidValue", "message": "Invalid name"}],
+        "innererror": {"trace": {"id": "123", "optional": None}},
+    }
+    minimal_error = {"message": "Missing value", "innererror": None}
+    model = TestModel(
+        {
+            "name": "test",
+            "count": 0,
+            "enabled": False,
+            "optional": None,
+            "InnerError": [wire_error, minimal_error],
+            "readonly": [wire_error],
+        }
+    )
+    assert all(isinstance(error, ODataV4Format) for error in model.InnerError)
+    assert isinstance(model.readonly[0], ODataV4Format)
+    serialized_error = {
+        **wire_error,
+        "target": None,
+        "details": [
+            {"code": "InvalidValue", "message": "Invalid name", "target": None, "details": [], "innererror": {}}
+        ],
+    }
+    expected = {
+        "name": "test",
+        "count": 0,
+        "enabled": False,
+        "optional": None,
+        "InnerError": [
+            serialized_error,
+            {"code": None, "message": "Missing value", "target": None, "details": [], "innererror": None},
+        ],
+        "readonly": [serialized_error],
+    }
+
+    assert json.loads(json.dumps(model.as_dict())) == expected
+
+
+def test_odata_v4_format_as_dict_with_model_innererror():
+    class ContextModel(HybridModel):
+        message: str = rest_field(name="wireMessage")
+        readonly: str = rest_field(visibility=["read"])
+
+    context = ContextModel({"wireMessage": "Context", "readonly": "Diagnostic"})
+    nested_error = ODataV4Format({"message": "Nested error", "innererror": None})
+    innererror = {
+        "direct": context,
+        "nested": MappingProxyType({"items": [context, nested_error, None, {}, []]}),
+        "optional": None,
+        "empty": {},
+    }
+    error = ODataV4Format({"code": "BadRequest", "innererror": innererror})
+    expected = {
+        "code": "BadRequest",
+        "message": None,
+        "target": None,
+        "details": [],
+        "innererror": {
+            "direct": {"wireMessage": "Context", "readonly": "Diagnostic"},
+            "nested": {
+                "items": [
+                    {"wireMessage": "Context", "readonly": "Diagnostic"},
+                    {"code": None, "message": "Nested error", "target": None, "details": [], "innererror": None},
+                    None,
+                    {},
+                    [],
+                ]
+            },
+            "optional": None,
+            "empty": {},
+        },
+    }
+
+    result = error.as_dict()
+    assert result == expected
+    assert json.loads(json.dumps(result)) == expected
+    assert error.innererror is innererror
+    assert innererror["direct"] is context
+    assert innererror["nested"]["items"][1] is nested_error
+
+    expected["innererror"]["direct"].pop("readonly")
+    expected["innererror"]["nested"]["items"][0].pop("readonly")
+    assert json.loads(json.dumps(error.as_dict(exclude_readonly=True))) == expected
+    assert context["readonly"] == "Diagnostic"
+
+
+def test_odata_v4_format_as_dict_with_unsupported_innererror_value():
+    value = object()
+    error = ODataV4Format({"code": "BadRequest", "innererror": {"value": value}})
+
+    result = error.as_dict()
+
+    assert result["innererror"]["value"] is value
+    with pytest.raises(TypeError):
+        json.dumps(result)
+
+
+def test_odata_v4_format_subclass_as_dict_with_mapping_details():
+    class ErrorFormat(ODataV4Format):
+        def __init__(self, json_object):
+            super().__init__(json_object["error"]["innererror"])
+            self.details = json_object["error"].get("details", [])
+
+    message = {
+        "error": {
+            "code": "OuterError",
+            "innererror": {"code": "BadRequest", "message": "Invalid request"},
+            "details": [
+                {"code": "InvalidValue", "message": "Invalid name", "target": None},
+                {"message": "Missing value", "parameters": [], "innererror": None},
+            ],
+        }
+    }
+    error = ErrorFormat(message)
+    expected = {
+        "code": "BadRequest",
+        "message": "Invalid request",
+        "target": None,
+        "details": message["error"]["details"],
+        "innererror": {},
+    }
+
+    assert isinstance(error.details[0], dict)
+    assert json.loads(json.dumps(error.as_dict())) == expected
+    assert error.details is message["error"]["details"]
 
 
 def test_dictionary_set():

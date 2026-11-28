@@ -39,6 +39,24 @@ class TestAgentConfigIsHosted:
         assert config.is_hosted is True
 
 
+class TestAgentConfigSseKeepaliveInterval:
+    """Tests for SSE_KEEPALIVE_INTERVAL resolution."""
+
+    def test_defaults_to_fifteen_seconds(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("SSE_KEEPALIVE_INTERVAL", raising=False)
+
+        config = AgentConfig.from_env()
+
+        assert config.sse_keepalive_interval == 15
+
+    def test_explicit_zero_disables_keepalive(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("SSE_KEEPALIVE_INTERVAL", "0")
+
+        config = AgentConfig.from_env()
+
+        assert config.sse_keepalive_interval == 0
+
+
 class TestAgentConfigAgentGuid:
     """Tests for the FOUNDRY_AGENT_ID (agent_guid) resolution."""
 

@@ -37,7 +37,7 @@ def autocomplete_query():
 
     print("Results: autocomplete for 'bo'")
     for result in results:
-        print(f"  Completion: {result['text']}")
+        print(f"  Completion: {result.text}")
     # [END autocomplete_query]
 
 

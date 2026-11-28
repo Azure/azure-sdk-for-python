@@ -45,6 +45,7 @@ class CustomRequestsTransport(TokenBindingTransportMixin, RequestsTransport):
         """Update the session's adapter with the current SNI and CA data."""
         if not self.session:
             self.session = Session()
+        self.session.trust_env = self._use_env_settings
 
         adapter = SNIAdapter(self._sni, self._ca_data)
         self.session.mount("https://", adapter)

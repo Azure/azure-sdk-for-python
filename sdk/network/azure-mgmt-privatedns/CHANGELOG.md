@@ -1,5 +1,19 @@
 # Release History
 
+## 2.1.0b1 (2026-11-11)
+
+### Features Added
+
+  - Client `PrivateDnsManagementClient` added operation group `private_dns_resource_reference`
+  - Model `RecordSetProperties` added property `provisioning_state`
+  - Model `RecordSetProperties` added property `traffic_management_profile`
+  - Added model `PrivateDnsResourceReference`
+  - Added model `PrivateDnsResourceReferenceRequest`
+  - Added model `PrivateDnsResourceReferenceRequestProperties`
+  - Added model `PrivateDnsResourceReferenceResult`
+  - Added model `PrivateDnsResourceReferenceResultProperties`
+  - Added operation group `PrivateDnsResourceReferenceOperations`
+
 ## 2.0.0 (2026-07-29)
 
 ### Features Added

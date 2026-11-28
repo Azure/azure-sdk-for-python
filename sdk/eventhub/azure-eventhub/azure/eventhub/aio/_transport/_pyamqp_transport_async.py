@@ -277,9 +277,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     # If optional dependency is not installed, do not retry.
                     if isinstance(exception, ImportError):
                         raise exception
-                    if (
-                        isinstance(exception, errors.AMQPLinkError)
-                        and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
+                    if isinstance(exception, errors.AMQPLinkError) and (
+                        exception.condition  # pylint: disable=no-member
+                        in (
+                            errors.ErrorCondition.LinkStolen,  # pylint: disable=no-member
+                            errors.ErrorCondition.InvalidOffset,  # pylint: disable=no-member
+                        )
                     ):
                         raise await consumer._handle_exception(exception)
                     if not consumer.running:  # exit by close

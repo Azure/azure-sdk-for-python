@@ -28,6 +28,7 @@ def test_unknown_authority():
     credential = MsalCredential(
         client_id="CLIENT_ID",
         authority="unknown.authority",
+        use_env_settings=False,
     )
     with pytest.raises(ValueError) as ex:
         credential._get_app()
@@ -37,9 +38,9 @@ def test_unknown_authority():
         client_id="CLIENT_ID",
         authority="unknown.authority",
         disable_instance_discovery=True,
+        use_env_settings=False,
     )
 
     with pytest.raises(ServiceRequestError):
-        # Instance discovery is disabled, so the credential should not attempt to validate the authority, and instead
-        # attempt to use the authority as given. This is fail since unknown.authority is not resolvable.
+        # Instance discovery is disabled, so the credential should use the authority as given rather than validate it.
         credential._get_app()

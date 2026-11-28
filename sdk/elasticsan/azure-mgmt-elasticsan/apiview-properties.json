@@ -2,6 +2,7 @@
     "CrossLanguagePackageId": "Microsoft.ElasticSan",
     "CrossLanguageDefinitionId": {
         "azure.mgmt.elasticsan.models.AutoScaleProperties": "Microsoft.ElasticSan.AutoScaleProperties",
+        "azure.mgmt.elasticsan.models.DeleteRetentionPolicy": "Microsoft.ElasticSan.DeleteRetentionPolicy",
         "azure.mgmt.elasticsan.models.DiskSnapshotList": "Microsoft.ElasticSan.DiskSnapshotList",
         "azure.mgmt.elasticsan.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.elasticsan.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
@@ -17,7 +18,7 @@
         "azure.mgmt.elasticsan.models.Identity": "Microsoft.ElasticSan.Identity",
         "azure.mgmt.elasticsan.models.IscsiTargetInfo": "Microsoft.ElasticSan.IscsiTargetInfo",
         "azure.mgmt.elasticsan.models.KeyVaultProperties": "Microsoft.ElasticSan.KeyVaultProperties",
-        "azure.mgmt.elasticsan.models.ManagedByInfo": "Microsoft.ElasticSan.ManagedByInfo",
+        "azure.mgmt.elasticsan.models.ManagedByResources": "Microsoft.ElasticSan.ManagedByResources",
         "azure.mgmt.elasticsan.models.NetworkRuleSet": "Microsoft.ElasticSan.NetworkRuleSet",
         "azure.mgmt.elasticsan.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
         "azure.mgmt.elasticsan.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
@@ -35,6 +36,7 @@
         "azure.mgmt.elasticsan.models.SKUCapability": "Microsoft.ElasticSan.SKUCapability",
         "azure.mgmt.elasticsan.models.SkuInformation": "Microsoft.ElasticSan.SkuInformation",
         "azure.mgmt.elasticsan.models.SkuLocationInfo": "Microsoft.ElasticSan.SkuLocationInfo",
+        "azure.mgmt.elasticsan.models.SkuZoneDetails": "Microsoft.ElasticSan.SkuZoneDetails",
         "azure.mgmt.elasticsan.models.Snapshot": "Microsoft.ElasticSan.Snapshot",
         "azure.mgmt.elasticsan.models.SnapshotCreationData": "Microsoft.ElasticSan.SnapshotCreationData",
         "azure.mgmt.elasticsan.models.SnapshotProperties": "Microsoft.ElasticSan.SnapshotProperties",
@@ -60,14 +62,20 @@
         "azure.mgmt.elasticsan.models.PrivateEndpointServiceConnectionStatus": "Microsoft.ElasticSan.PrivateEndpointServiceConnectionStatus",
         "azure.mgmt.elasticsan.models.PublicNetworkAccess": "Microsoft.ElasticSan.PublicNetworkAccess",
         "azure.mgmt.elasticsan.models.AutoScalePolicyEnforcement": "Microsoft.ElasticSan.AutoScalePolicyEnforcement",
+        "azure.mgmt.elasticsan.models.ElasticSanVersion": "Microsoft.ElasticSan.ElasticSanVersion",
         "azure.mgmt.elasticsan.models.VolumeCreateOption": "Microsoft.ElasticSan.VolumeCreateOption",
         "azure.mgmt.elasticsan.models.OperationalStatus": "Microsoft.ElasticSan.OperationalStatus",
         "azure.mgmt.elasticsan.models.XMsDeleteSnapshots": "Microsoft.ElasticSan.x-ms-delete-snapshots",
         "azure.mgmt.elasticsan.models.XMsForceDelete": "Microsoft.ElasticSan.x-ms-force-delete",
+        "azure.mgmt.elasticsan.models.DeleteType": "Microsoft.ElasticSan.DeleteType",
+        "azure.mgmt.elasticsan.models.XMsAccessSoftDeletedResources": "Microsoft.ElasticSan.x-ms-access-soft-deleted-resources",
         "azure.mgmt.elasticsan.models.IdentityType": "Microsoft.ElasticSan.IdentityType",
         "azure.mgmt.elasticsan.models.StorageTargetType": "Microsoft.ElasticSan.StorageTargetType",
         "azure.mgmt.elasticsan.models.EncryptionType": "Microsoft.ElasticSan.EncryptionType",
         "azure.mgmt.elasticsan.models.Action": "Microsoft.ElasticSan.Action",
+        "azure.mgmt.elasticsan.models.QualityOfService": "Microsoft.ElasticSan.QualityOfService",
+        "azure.mgmt.elasticsan.models.PolicyState": "Microsoft.ElasticSan.PolicyState",
+        "azure.mgmt.elasticsan.models.SnapshotAccessState": "Microsoft.ElasticSan.SnapshotAccessState",
         "azure.mgmt.elasticsan.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.elasticsan.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.elasticsan.operations.ElasticSansOperations.get": "Microsoft.ElasticSan.ElasticSans.get",
@@ -125,6 +133,9 @@
         "azure.mgmt.elasticsan.operations.VolumeSnapshotsOperations.list_by_volume_group": "Microsoft.ElasticSan.Snapshots.listByVolumeGroup",
         "azure.mgmt.elasticsan.aio.operations.VolumeSnapshotsOperations.list_by_volume_group": "Microsoft.ElasticSan.Snapshots.listByVolumeGroup",
         "azure.mgmt.elasticsan.operations.SkusOperations.list": "Microsoft.ElasticSan.SkusOperationGroup.list",
-        "azure.mgmt.elasticsan.aio.operations.SkusOperations.list": "Microsoft.ElasticSan.SkusOperationGroup.list"
-    }
+        "azure.mgmt.elasticsan.aio.operations.SkusOperations.list": "Microsoft.ElasticSan.SkusOperationGroup.list",
+        "azure.mgmt.elasticsan.ElasticSanMgmtClient.begin_restore_volume": "Microsoft.ElasticSan.restoreVolume",
+        "azure.mgmt.elasticsan.aio.ElasticSanMgmtClient.begin_restore_volume": "Microsoft.ElasticSan.restoreVolume"
+    },
+    "CrossLanguageVersion": "1fe82f8d3435"
 }

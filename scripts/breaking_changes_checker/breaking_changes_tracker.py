@@ -5,11 +5,51 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import ast
 import jsondiff
 import re
 from enum import Enum
 from typing import Any, Dict, List, Union
 from _models import ChangesChecker, Suppression, RegexSuppression, PostProcessingChecker
+
+
+def _normalize_property_type(annotation: str) -> frozenset:
+    aliases = {
+        "List": "list",
+        "Dict": "dict",
+        "Tuple": "tuple",
+        "Set": "set",
+        "FrozenSet": "frozenset",
+        "Type": "type",
+    }
+
+    def _members(node: ast.AST) -> frozenset:
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return _normalize_property_type(node.value)
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+            return _members(node.left) | _members(node.right)
+        if isinstance(node, ast.Subscript):
+            name = ast.unparse(node.value).removeprefix("typing.")
+            if name == "Literal":
+                items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+                return frozenset({("Literal", frozenset(ast.dump(item) for item in items))})
+            if name == "Optional":
+                return _members(node.slice) | frozenset({"None"})
+            if name == "Union":
+                items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+                return frozenset().union(*(_members(item) for item in items))
+            items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+            return frozenset({(aliases.get(name, name), tuple(_members(item) for item in items))})
+        if isinstance(node, ast.List):
+            return frozenset({("arguments", tuple(_members(item) for item in node.elts))})
+        name = ast.unparse(node).removeprefix("typing.")
+        return frozenset({aliases.get(name, name)})
+
+    try:
+        node = ast.parse(annotation, mode="eval").body
+    except SyntaxError:
+        return frozenset({annotation})
+    return _members(node)
 
 
 class BreakingChangeType(str, Enum):
@@ -32,6 +72,7 @@ class BreakingChangeType(str, Enum):
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
     REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
     REQUIRED_PROPERTY = "RequiredProperty"
+    CHANGED_PROPERTY_TYPE = "ChangedPropertyType"
 
 
 class BreakingChangesTracker:
@@ -91,7 +132,11 @@ class BreakingChangesTracker:
         "Function `{}` changed from accepting keyword arguments to not accepting them"
     REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
         "Deleted or renamed client operation group `{}.{}`"
+    REMOVED_OR_RENAMED_OPERATION_GROUP_CLASS_MSG = \
+        "Deleted or renamed operation group `{}`"
     REQUIRED_PROPERTY_MSG = "`{}.{}` is now required."
+    CHANGED_PROPERTY_TYPE_MSG = \
+        "Model `{}` changed type of property `{}` from `{}` to `{}`"
 
     def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
@@ -262,6 +307,7 @@ class BreakingChangesTracker:
                 continue  # class was deleted, abort other checks
             self.check_class_instance_attribute_removed_or_renamed(class_components)
             self.check_property_required(class_components)
+            self.check_property_type_changed(class_components)
 
             for method_name, method_components in class_components.get("methods", {}).items():
                 self._function_name = method_name
@@ -462,6 +508,28 @@ class BreakingChangesTracker:
             )
 
     def check_parameter_ordering(self) -> None:
+        def is_positional_reordering(stable_parameters: Dict, current_parameters: Dict) -> bool:
+            if len(stable_parameters) != len(current_parameters):
+                return False
+
+            positional_kinds = {"positional_only", "positional_or_keyword", "var_positional"}
+            stable_positional_params = [
+                name for name, param in stable_parameters.items()
+                if param["param_type"] in positional_kinds
+            ]
+            current_positional_params = [
+                name for name, param in current_parameters.items()
+                if param["param_type"] in positional_kinds
+            ]
+            current_positions = {
+                name: index for index, name in enumerate(current_positional_params)
+            }
+            return any(
+                index != current_positions[name]
+                for index, name in enumerate(stable_positional_params)
+                if name in current_positions
+            )
+
         modules = self.stable.keys() & self.current.keys()
 
         for module in modules:
@@ -474,41 +542,32 @@ class BreakingChangesTracker:
                     current_method_nodes = current_cls[cls]["methods"]
                     method_keys = stable_method_nodes.keys() & current_method_nodes.keys()
                     for method in method_keys:
-                        stable_params = stable_method_nodes[method]["parameters"].keys()
-                        current_params = current_method_nodes[method]["parameters"].keys()
-                        if len(stable_params) != len(current_params):
-                            # a parameter was deleted and that breaking change was already reported so skip
-                            continue
-                        for key1, key2 in zip(stable_params, current_params):
-                            if key1 != key2:
-                                self.breaking_changes.append(
-                                    (
-                                        self.CHANGED_PARAMETER_ORDERING_MSG,
-                                        BreakingChangeType.CHANGED_PARAMETER_ORDERING,
-                                        module, cls, method, list(stable_params), list(current_params)
-                                    )
+                        stable_parameters = stable_method_nodes[method]["parameters"]
+                        current_parameters = current_method_nodes[method]["parameters"]
+                        if is_positional_reordering(stable_parameters, current_parameters):
+                            self.breaking_changes.append(
+                                (
+                                    self.CHANGED_PARAMETER_ORDERING_MSG,
+                                    BreakingChangeType.CHANGED_PARAMETER_ORDERING,
+                                    module, cls, method,
+                                    list(stable_parameters), list(current_parameters)
                                 )
-                                break
+                            )
             if "function_nodes" in self.stable[module]:
                 stable_funcs = self.stable[module]["function_nodes"]
                 current_funcs = self.current[module]["function_nodes"]
                 func_nodes = stable_funcs.keys() & current_funcs.keys()
                 for func in func_nodes:
-                    stable_params = stable_funcs[func]["parameters"].keys()
-                    current_params = current_funcs[func]["parameters"].keys()
-                    if len(stable_params) != len(current_params):
-                        # a parameter was deleted and that breaking change was already reported so skip
-                        continue
-                    for key1, key2 in zip(stable_params, current_params):
-                        if key1 != key2:
-                            self.breaking_changes.append(
-                                (
-                                    self.CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG,
-                                    BreakingChangeType.CHANGED_PARAMETER_ORDERING,
-                                    module, func, list(stable_params), list(current_params)
-                                )
+                    stable_parameters = stable_funcs[func]["parameters"]
+                    current_parameters = current_funcs[func]["parameters"]
+                    if is_positional_reordering(stable_parameters, current_parameters):
+                        self.breaking_changes.append(
+                            (
+                                self.CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG,
+                                BreakingChangeType.CHANGED_PARAMETER_ORDERING,
+                                module, func, list(stable_parameters), list(current_parameters)
                             )
-                            break
+                        )
 
     def check_parameter_default_value_removed(
         self, default: Union[str, None],
@@ -669,26 +728,16 @@ class BreakingChangesTracker:
         def _is_nullable(annotation: Any) -> bool:
             if annotation == "Optional":
                 return True
-            if not isinstance(annotation, str):
-                return False
-
-            bracket = annotation.find("[")
-            if bracket != -1 and annotation.endswith("]"):
-                name = annotation[:bracket].rsplit(".", 1)[-1]
-                if name == "Optional":
-                    return True
-                if name == "Union":
-                    return any(member.strip() == "None" for member in annotation[bracket + 1:-1].split(","))
-
-            return any(member.strip() == "None" for member in annotation.split("|"))
+            return isinstance(annotation, str) and "None" in _normalize_property_type(annotation)
 
         stable_properties = self.stable[self._module_name]["class_nodes"][self._class_name].get("properties", {})
-        current_properties = components.get("properties", {})
-        for key in current_properties:
+        current_properties = self.current[self._module_name]["class_nodes"][self._class_name].get("properties", {})
+        for key in components.get("properties", {}):
             if isinstance(key, jsondiff.Symbol) or key not in stable_properties or key not in current_properties:
                 continue
             stable_type = _get_property_type(stable_properties[key])
             current_type = _get_property_type(current_properties[key])
+
             if _is_nullable(stable_type) and not _is_nullable(current_type):
                 bc = (
                     self.REQUIRED_PROPERTY_MSG,
@@ -698,6 +747,59 @@ class BreakingChangesTracker:
                     key,
                 )
                 self.breaking_changes.append(bc)
+
+    def check_property_type_changed(self, components: Dict) -> None:
+        def _get_property_type(value: Any) -> Any:
+            return value.get("attr_type") if isinstance(value, dict) else value
+
+        def _is_annotation(value: Any) -> bool:
+            return isinstance(value, dict) and value.get("is_annotation") is True
+
+        stable_class = self.stable[self._module_name]["class_nodes"][self._class_name]
+        if (
+            stable_class.get("type") == "Enum"
+            or self.is_client(self._module_name, self._class_name)
+            or self.is_operation_group(self._module_name, self._class_name)
+        ):
+            return
+
+        stable_properties = stable_class.get("properties", {})
+        current_properties = self.current[self._module_name]["class_nodes"][self._class_name].get("properties", {})
+        for key in components.get("properties", {}):
+            if isinstance(key, jsondiff.Symbol) or key not in stable_properties or key not in current_properties:
+                continue
+            stable_type = _get_property_type(stable_properties[key])
+            current_type = _get_property_type(current_properties[key])
+            if not isinstance(stable_type, str) or not isinstance(current_type, str) or stable_type == current_type:
+                continue
+            if stable_type in {"Optional", "Union"} or current_type in {"Optional", "Union"}:
+                continue
+            if stable_type == key and not _is_annotation(stable_properties[key]):
+                continue
+            if current_type == key and not _is_annotation(current_properties[key]):
+                continue
+
+            stable_members = _normalize_property_type(stable_type)
+            current_members = _normalize_property_type(current_type)
+            if stable_members == current_members:
+                continue
+            if (
+                 "None" in stable_members
+                 and stable_members - {"None"} == current_members
+                 and any(
+                     change[1] == BreakingChangeType.REQUIRED_PROPERTY
+                     and change[2:] == (self._module_name, self._class_name, key)
+                     for change in self.breaking_changes
+                 )
+             ):
+                 continue
+
+            bc = (
+                self.CHANGED_PROPERTY_TYPE_MSG,
+                BreakingChangeType.CHANGED_PROPERTY_TYPE,
+                self._module_name, self._class_name, key, stable_type, current_type,
+            )
+            self.breaking_changes.append(bc)
 
     def check_class_removed_or_renamed(self, class_components: Dict) -> Union[bool, None]:
         if isinstance(self._class_name, jsondiff.Symbol):
@@ -712,6 +814,12 @@ class BreakingChangesTracker:
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT,
+                        self._module_name, name
+                    )
+                elif self.is_operation_group(self._module_name, name):
+                    bc = (
+                        self.REMOVED_OR_RENAMED_OPERATION_GROUP_CLASS_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
                         self._module_name, name
                     )
                 else:

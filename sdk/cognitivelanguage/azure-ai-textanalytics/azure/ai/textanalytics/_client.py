@@ -8,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, TYPE_CHECKING, Union
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -20,17 +20,23 @@ from ._configuration import TextAnalysisClientConfiguration
 from ._operations import _TextAnalysisClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class TextAnalysisClient(_TextAnalysisClientOperationsMixin):
+class TextAnalysisClient(
+    _TextAnalysisClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in <a
-    href=\\"`https://learn.microsoft.com/azure/cognitive-services/language-service/overview\\">https://learn.microsoft.com/azure/cognitive-services/language-service/overview
-    <https://learn.microsoft.com/azure/cognitive-services/language-service/overview\\">https://learn.microsoft.com/azure/cognitive-services/language-service/overview>`_</a>.0.
+    detection and question answering. Further documentation can be found at
+    https://learn.microsoft.com/azure/cognitive-services/language-service/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://<resource-name>.api.cognitiveservices.azure.com). Required.
@@ -39,17 +45,25 @@ class TextAnalysisClient(_TextAnalysisClientOperationsMixin):
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-11-15-preview". Note that overriding this default value may result in unsupported
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-15-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        **kwargs: Any
+    ) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = TextAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = TextAnalysisClientConfiguration(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -65,16 +79,24 @@ class TextAnalysisClient(_TextAnalysisClientOperationsMixin):
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
                 self._config.http_logging_policy,
             ]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: PipelineClient = PipelineClient(
+            base_url=_endpoint, policies=_policies, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -94,10 +116,14 @@ class TextAnalysisClient(_TextAnalysisClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:

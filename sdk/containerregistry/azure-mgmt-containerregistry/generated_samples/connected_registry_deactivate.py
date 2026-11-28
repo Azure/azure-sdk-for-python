@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-09-01-preview/ConnectedRegistryDeactivate.json
+# x-ms-original-file: 2026-11-01/ConnectedRegistryDeactivate.json
 if __name__ == "__main__":
     main()

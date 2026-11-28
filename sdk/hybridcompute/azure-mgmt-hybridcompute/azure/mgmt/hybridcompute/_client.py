@@ -37,6 +37,7 @@ from .operations import (
     PrivateLinkResourcesOperations,
     PrivateLinkScopesOperations,
     SettingsOperations,
+    VmApplicationsOperations,
     _HybridComputeManagementClientOperationsMixin,
 )
 
@@ -52,7 +53,7 @@ if TYPE_CHECKING:
 
 class HybridComputeManagementClient(
     _HybridComputeManagementClientOperationsMixin
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Azure Arc API reference for managing connected machines, machine extensions, run commands,
     gateways, licenses, license profiles, private link scopes, and related HybridCompute resources.
 
@@ -68,6 +69,8 @@ class HybridComputeManagementClient(
     :vartype machine_extensions: azure.mgmt.hybridcompute.operations.MachineExtensionsOperations
     :ivar machine_run_commands: MachineRunCommandsOperations operations
     :vartype machine_run_commands: azure.mgmt.hybridcompute.operations.MachineRunCommandsOperations
+    :ivar vm_applications: VmApplicationsOperations operations
+    :vartype vm_applications: azure.mgmt.hybridcompute.operations.VmApplicationsOperations
     :ivar gateways: GatewaysOperations operations
     :vartype gateways: azure.mgmt.hybridcompute.operations.GatewaysOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
@@ -104,7 +107,7 @@ class HybridComputeManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-07-15"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-09-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -171,6 +174,7 @@ class HybridComputeManagementClient(
         self.machine_run_commands = MachineRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.vm_applications = VmApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.gateways = GatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize

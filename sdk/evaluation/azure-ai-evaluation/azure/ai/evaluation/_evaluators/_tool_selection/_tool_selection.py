@@ -1,21 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
 import logging
 import math
-from typing import Dict, List, Union, TypeVar, Optional
+import os
+from typing import Dict, List, Optional, TypeVar, Union
+
 from typing_extensions import overload, override
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
-from azure.ai.evaluation._exceptions import (
-    ErrorBlame,
-    ErrorCategory,
-    ErrorTarget,
-    EvaluationException,
-)
-from ..._common.utils import check_score_is_valid, reformat_conversation_history
+
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    NO_VALID_SCORE,
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
+)
+from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+
+from ..._common.utils import check_score_is_valid, reformat_conversation_history
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +38,14 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     This evaluation focuses on measuring whether the right tools were chosen for the task,
     regardless of how those tools were executed or their parameter correctness.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword probability_threshold: The decision model probability, in [0, 1], at or above which the score is 1.
+        Defaults to 0.75 and overrides ``probability_threshold`` in a decision ``model_config``. Chat models
+        ignore it with a warning.
+    :paramtype probability_threshold: Optional[float]
 
     .. admonition:: Example:
 
@@ -65,7 +74,10 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_selection.prompty"
+    _DECISION_FILE = "tool_selection.decision.yaml"
     _RESULT_KEY = "tool_selection"
+    _supports_decision_models = True
+    _binary_decision = True
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
@@ -78,7 +90,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=1, credential=None, **kwargs):
+    def __init__(self, model_config, *, threshold=1, credential=None, probability_threshold=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -87,12 +99,17 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator = ToolCallsValidator(error_target=ErrorTarget.TOOL_SELECTION_EVALUATOR)
 
         super().__init__(
-            model_config=model_config,
+            model_config=with_probability_threshold(model_config, probability_threshold, type(self).__name__),
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
             credential=credential,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.TOOL_SELECTION_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     @override
@@ -223,6 +240,10 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
         )
 
+        if self._uses_decision_model:
+            state = {key: eval_input[key] for key in ("query", "tool_calls", "tool_definitions")}
+            return await self._decision.evaluate(state)
+
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
@@ -236,8 +257,10 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
             score = llm_output.get("score", None)
             if score not in [0, 1]:
+                diagnostic = judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
+                log_judge_output_diagnostic(diagnostic)
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected 0 or 1.",
+                    message=f"Invalid score value: {score}. Expected 0 or 1. {diagnostic}",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,
@@ -269,8 +292,10 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return response_dict
 
         else:
+            diagnostic = judge_output_diagnostic(prompty_output_dict)
+            log_judge_output_diagnostic(diagnostic)
             raise EvaluationException(
-                message="Evaluator returned invalid output.",
+                message=f"Evaluator returned invalid output. {diagnostic}",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.EVALUATE,

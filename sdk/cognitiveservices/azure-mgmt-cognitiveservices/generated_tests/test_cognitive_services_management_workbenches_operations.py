@@ -55,9 +55,12 @@ class TestCognitiveServicesManagementWorkbenchesOperations(AzureMgmtRecordedTest
                             "target": "str",
                         }
                     ],
+                    "gpuCount": 0,
                     "idleTimeBeforeShutdown": "str",
+                    "instanceType": "str",
                     "provisioningState": "str",
                     "sshSettings": {"adminEnabled": bool, "sshPublicKey": "str"},
+                    "status": "str",
                     "webEndpoint": "str",
                 },
                 "etag": "str",
@@ -68,7 +71,6 @@ class TestCognitiveServicesManagementWorkbenchesOperations(AzureMgmtRecordedTest
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "location": "str",
                 "name": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -78,7 +80,6 @@ class TestCognitiveServicesManagementWorkbenchesOperations(AzureMgmtRecordedTest
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
-                "tags": {"str": "str"},
                 "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -88,55 +89,27 @@ class TestCognitiveServicesManagementWorkbenchesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_workbenches_begin_update(self, resource_group):
-        response = self.client.workbenches.begin_update(
+    def test_workbenches_update(self, resource_group):
+        response = self.client.workbenches.update(
             resource_group_name=resource_group.name,
             account_name="str",
             project_name="str",
             workbench_name="str",
             properties={
-                "properties": {
-                    "imageLink": "str",
-                    "targetClusterId": "str",
-                    "connectivityEndpoints": {"publicIpAddress": "str", "sshPort": 0},
-                    "creationTime": "2020-02-20 00:00:00",
-                    "datasetId": "str",
-                    "errors": [
-                        {
-                            "additionalInfo": [{"info": {}, "type": "str"}],
-                            "code": "str",
-                            "details": [...],
-                            "message": "str",
-                            "target": "str",
-                        }
-                    ],
-                    "idleTimeBeforeShutdown": "str",
-                    "provisioningState": "str",
-                    "sshSettings": {"adminEnabled": bool, "sshPublicKey": "str"},
-                    "webEndpoint": "str",
-                },
-                "etag": "str",
-                "id": "str",
                 "identity": {
                     "principalId": "str",
                     "tenantId": "str",
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "location": "str",
-                "name": "str",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
+                "properties": {
+                    "gpuCount": 0,
+                    "idleTimeBeforeShutdown": "str",
+                    "instanceType": "str",
+                    "targetClusterId": "str",
                 },
-                "tags": {"str": "str"},
-                "type": "str",
             },
-        ).result()  # call '.result()' to poll until service return final result
+        )
 
         # please add some check logic here by yourself
         # ...

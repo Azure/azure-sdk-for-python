@@ -34,11 +34,11 @@ def main():
         resource_group_name="rgopenapi",
         scheduler_name="testscheduler",
         task_hub_name="testtaskhub",
-        resource={"properties": {}},
+        resource={"properties": {"capabilities": ["ExampleFutureCapability"]}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/TaskHubs_CreateOrUpdate.json
+# x-ms-original-file: 2026-07-01-preview/TaskHubs_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

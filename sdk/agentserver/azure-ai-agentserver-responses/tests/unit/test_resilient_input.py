@@ -18,6 +18,7 @@ from azure.ai.agentserver.responses.hosting._resilient_input import (
     ResilientResponseInput,
     RuntimeRefs,
     platform_context_from_params,
+    user_id_key_from_params,
 )
 from azure.ai.agentserver.responses.models._generated import AgentReference, CreateResponse
 
@@ -113,6 +114,27 @@ def test_runtime_refs_never_serialized() -> None:
     assert refs.record is not None and refs.context is not None
 
 
+def test_incarnation_round_trip_is_private_and_never_regenerated_on_recovery() -> None:
+    original = _make_input(incarnation_id="a" * 32)
+    params = original.to_task_input()
+    assert params["response_incarnation_id"] == "a" * 32
+    assert "response_incarnation_id" not in params["request"]
+    restored = ResilientResponseInput.from_task_input(params)
+    assert restored.incarnation_id == original.incarnation_id
+    assert restored.to_task_input() == params
+    legacy = _make_input().to_task_input()
+    assert "response_incarnation_id" not in legacy
+    assert ResilientResponseInput.from_task_input(legacy).incarnation_id is None
+
+
+@pytest.mark.parametrize("invalid", [None, "", "short", "g" * 32, 42, {}])
+def test_malformed_incarnation_fails_closed(invalid) -> None:
+    params = _make_input().to_task_input()
+    params["response_incarnation_id"] = invalid
+    with pytest.raises(ValueError, match="incarnation"):
+        ResilientResponseInput.from_task_input(params)
+
+
 # --------------------------------------------------------------------------- #
 # FR-002f — fail-closed on malformed persisted input
 # --------------------------------------------------------------------------- #
@@ -159,3 +181,35 @@ def test_isolation_absent_keys_default_to_none() -> None:
     iso = resilient.platform_context()
     assert iso.user_id_key is None
     assert iso.call_id is None
+
+
+@pytest.mark.parametrize("invalid", [[], ["owner"], {}, {"user": "owner"}, 1, True, False, 1.5])
+@pytest.mark.parametrize("reader", ["context", "input", "constructor", "mutated-input", "mutated-context"])
+def test_invalid_persisted_user_partition_is_rejected_before_identity_creation(invalid, reader) -> None:
+    params = _make_input().to_task_input()
+    params["user_id_key"] = invalid
+    with pytest.raises(ValueError, match="user_id_key"):
+        if reader == "context":
+            platform_context_from_params(params)
+        elif reader == "input":
+            ResilientResponseInput.from_task_input(params)
+        elif reader == "constructor":
+            _make_input(user_id_key=invalid)
+        else:
+            value = _make_input()
+            value.user_id_key = invalid
+            if reader == "mutated-context":
+                value.platform_context()
+            else:
+                value.to_task_input()
+
+
+@pytest.mark.parametrize("user", ["owner", "", None])
+def test_valid_user_partition_is_never_coerced(user) -> None:
+    value = _make_input(user_id_key=user)
+    params = value.to_task_input()
+    assert user_id_key_from_params(params) == user
+    assert value.platform_context().user_id_key == user
+    assert platform_context_from_params(params).user_id_key == user
+    assert ResilientResponseInput.from_task_input(params).user_id_key == user
+    assert user_id_key_from_params({}) is None

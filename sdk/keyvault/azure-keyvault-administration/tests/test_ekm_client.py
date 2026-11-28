@@ -8,21 +8,21 @@ import base64
 import pytest
 
 from azure.core.exceptions import HttpResponseError
-from azure.keyvault.administration import KeyVaultEkmClient, KeyVaultEkmConnection
-from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
+from azure.keyvault.administration import ApiVersion, KeyVaultEkmClient, KeyVaultEkmConnection
 
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeyVaultEkmClientPreparer, get_decorator
 
-only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
+only_2026_04_01 = get_decorator(api_versions=[ApiVersion.V2026_04_01])
 
 # Note: These tests require an EKM connection to be established with an EKM Sample Proxy.
 
 
 class TestEkm(KeyVaultTestCase):
-    @pytest.mark.parametrize("api_version", only_latest)
+    @pytest.mark.playback_test_only("Requires an EKM proxy connection; plays back existing 2026-04-01 recordings.")
+    @pytest.mark.parametrize("api_version", only_2026_04_01)
     @KeyVaultEkmClientPreparer()
     @recorded_by_proxy
     def test_ekm_connection(self, client: KeyVaultEkmClient, **kwargs):

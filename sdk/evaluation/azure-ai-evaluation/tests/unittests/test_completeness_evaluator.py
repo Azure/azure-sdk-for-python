@@ -1,6 +1,8 @@
+import math
 from unittest.mock import MagicMock
 
 import pytest
+
 from azure.ai.evaluation import ResponseCompletenessEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
 
@@ -37,6 +39,10 @@ async def completeness_response2_async_mock():
         "sample_input": '[{"role": "user", "content": "{\\"response\\": \\"The capital of Japan is Tokyo.\\", \\"ground_truth\\": \\"The capital of Japan is Tokyo.\\"}"}]',
         "sample_output": '[{"role": "assistant", "content": "<S0>Let\'s think step by step: The ground truth contains a single statement: \\"The capital of Japan is Tokyo.\\" The response exactly matches this statement without omitting or altering any information. There are no additional claims or missing details to consider. According to the definitions, a fully complete response should perfectly contain all necessary and relevant information from the ground truth.</S0>\\n<S1>The response is a perfect match to the ground truth, with no missing or incorrect information.</S1>\\n<S2>5</S2>"}]',
     }
+
+
+async def completeness_response_missing_score_async_mock():
+    return {"llm_output": {"reason": "The judge omitted a score."}}
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -134,6 +140,16 @@ class TestResponseCompletenessEvaluator:
         assert result[f"{prefix}_passed"] is True
         assert result[f"{prefix}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
         assert "The response is a perfect match " in result[f"{prefix}_reason"]
+
+    def test_missing_score_logs_diagnostic_and_preserves_unknown_result(self, mock_model_config, caplog):
+        evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(return_value=completeness_response_missing_score_async_mock())
+
+        result = evaluator(ground_truth="A", response="B")
+
+        assert math.isnan(result["response_completeness"])
+        assert result["response_completeness_result"] == "unknown"
+        assert "no valid score" in caplog.text
 
     def test_evaluate_completeness_missing_ground_truth(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)

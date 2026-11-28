@@ -8,8 +8,7 @@
 
 import functools
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.textanalytics import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -17,29 +16,39 @@ from azure.ai.textanalytics.models import (
     CustomMultiLabelClassificationActionContent,
     CustomMultiLabelClassificationOperationAction,
     TextActions,
+    AnalyzeTextOperationState,
     CustomMultiLabelClassificationOperationResult,
     ClassificationActionResult,
     ClassificationResult,
 )
 
+
+def deserialize_job_state(pipeline_response, _, __):
+    return AnalyzeTextOperationState(pipeline_response.http_response.json())
+
+
 TextAnalysisPreparer = functools.partial(
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
     "text_analysis",
     text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
-    text_analysis_key="fake_key",
 )
 
 
 class TestTextAnalysis(AzureRecordedTestCase):
-    def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
-        return TextAnalysisClient(endpoint, AzureKeyCredential(key))
+    def create_client(self, endpoint: str) -> TextAnalysisClient:
+        credential = self.get_credential(TextAnalysisClient)
+        return self.create_client_from_credential(
+            TextAnalysisClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
 
 
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def test_multi_label_classify(self, text_analysis_endpoint, text_analysis_key):
-        client = self.create_client(text_analysis_endpoint, text_analysis_key)
+    def test_multi_label_classify(self, text_analysis_endpoint):
+        client = self.create_client(text_analysis_endpoint)
 
         project_name = "multi-class-project"
         deployment_name = "multiclassdeployment"
@@ -65,37 +74,36 @@ class TestTextAnalysisCase(TestTextAnalysis):
                     ),
                 )
             ],
+            cls=deserialize_job_state,
         )
 
         assert poller is not None
-        paged_actions = poller.result()
-        details = poller.details
-        assert "operation_id" in details
-        assert details.get("status") is not None
-        assert paged_actions is not None
+        job_state = poller.result()
+        assert job_state is not None
+        assert job_state.job_id is not None
+        assert job_state.status is not None
 
         found_cmc = False
 
-        for actions_page in paged_actions:
-            # Page container holding job results
-            assert isinstance(actions_page, TextActions)
-            assert actions_page.items_property is not None  # wire: "items"
+        actions = job_state.actions
+        assert isinstance(actions, TextActions)
+        assert actions.items_property is not None  # wire: "items"
 
-            for op_result in actions_page.items_property:
-                if isinstance(op_result, CustomMultiLabelClassificationOperationResult):
-                    found_cmc = True
-                    result = op_result.results
-                    assert result is not None
-                    assert result.documents is not None
+        for op_result in actions.items_property:
+            if isinstance(op_result, CustomMultiLabelClassificationOperationResult):
+                found_cmc = True
+                result = op_result.results
+                assert result is not None
+                assert result.documents is not None
 
-                    for doc in result.documents:
-                        assert isinstance(doc, ClassificationActionResult)
-                        assert doc.id is not None
+                for doc in result.documents:
+                    assert isinstance(doc, ClassificationActionResult)
+                    assert doc.id is not None
 
-                        assert doc.class_property is not None
-                        for cls_item in doc.class_property:
-                            assert isinstance(cls_item, ClassificationResult)
-                            assert cls_item.category is not None
-                            assert cls_item.confidence_score is not None
+                    assert doc.class_property is not None
+                    for cls_item in doc.class_property:
+                        assert isinstance(cls_item, ClassificationResult)
+                        assert cls_item.category is not None
+                        assert cls_item.confidence_score is not None
 
         assert found_cmc, "Expected a CustomMultiLabelClassificationOperationResult in TextActions.items_property"

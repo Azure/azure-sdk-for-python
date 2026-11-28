@@ -30,15 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.scheduled_event.acknowledge(
-        resource_group_name="examplerg",
-        resource_type="virtualMachines",
-        resource_name="configuration1",
-        scheduled_event_id="ad6d85cf-2c9e-4eec-9a1e-af3213cc0486",
+    response = client.scheduled_events.acknowledge(
+        resource_group_name="resource-group1",
+        resource_type="resource-type1",
+        resource_name="resource-name1",
+        scheduled_event_id="00000000-0000-0000-0000-000000000000",
     )
     print(response)
 
 
-# x-ms-original-file: 2023-10-01-preview/ScheduledEvents_Acknowledge.json
+# x-ms-original-file: 2025-10-01-preview/ScheduledEvents_Acknowledge.json
 if __name__ == "__main__":
     main()

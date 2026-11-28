@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBTableDelete.json
+# x-ms-original-file: 2026-07-15/CosmosDBTableDelete.json
 if __name__ == "__main__":
     main()

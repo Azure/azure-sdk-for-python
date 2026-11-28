@@ -10,13 +10,24 @@
 from typing import Any, Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import DeviceKind, EdgeDeviceKind, HciEdgeDeviceJobType
+from .models._enums import (
+    DeviceKind,
+    DiskJobType,
+    EdgeDeviceKind,
+    EdgeMachineJobType,
+    HciEdgeDeviceJobType,
+    HciJobType,
+    NetworkAdapterJobType,
+    PrivilegedJobType,
+)
 
 if TYPE_CHECKING:
     from .models import (
         AccessLevel,
         ArcExtensionState,
         ArcSettingAggregateState,
+        Architecture,
+        AuthenticationType,
         AvailabilityType,
         ClusterNodeType,
         ClusterPattern,
@@ -28,29 +39,53 @@ if TYPE_CHECKING:
         DeviceLogCollectionStatus,
         DeviceState,
         DiagnosticLevel,
+        DiskFileSystemType,
+        DiskState,
+        DiskStorageType,
+        DiskType,
         DnsServerConfig,
+        EAPMethod,
         EceSecrets,
+        EdgeMachineConnectivityStatus,
+        EdgeMachineKind,
+        EdgeMachineLifecycleStatus,
+        EdgeMachineState,
         ExtensionAggregateState,
         ExtensionManagedBy,
         HardwareClass,
         HealthState,
         IdentityProvider,
         ImdsAttestation,
+        InterfaceState,
+        IpAssignmentType,
+        IpInterfaceType,
+        IscsiChapType,
         JobStatus,
+        LifecycleOperationStatus,
         LogCollectionJobType,
         LogCollectionStatus,
         ManagedServiceIdentityType,
         NodeArcState,
         NodeExtensionState,
+        NodeStorageType,
+        OSOperationType,
         OemActivation,
+        OnboardingResourceType,
         OperationType,
         OverprovisioningRatio,
+        OwnerKeyType,
+        OwnershipVoucherValidationStatus,
+        ProvisioningOsType,
         ProvisioningState,
         RdmaCapability,
         RebootRequirement,
         RemoteSupportAccessLevel,
         RemoteSupportProvisioningState,
         RemoteSupportType,
+        ResolutionStrategy,
+        SdnIntegrationIntent,
+        SdnStatus,
+        SecretType,
         SecretsType,
         ServiceName,
         Severity,
@@ -59,12 +94,98 @@ if TYPE_CHECKING:
         State,
         Status,
         StatusLevelTypes,
+        StorageInitiatorType,
         StorageType,
         UpdateRunPropertiesState,
         UpdateSummariesPropertiesState,
         VolumeType,
+        WifiSecretType,
         WindowsServerSubscription,
     )
+
+
+class AddServerJobServerDetails(TypedDict, total=False):
+    """Details of servers to be added to the cluster.
+
+    :ivar serverName: Name of server to be added to cluster. Required.
+    :vartype serverName: str
+    :ivar hostIpv4Address: Ip address of server to be added to cluster. Required.
+    :vartype hostIpv4Address: str
+    :ivar localAvailabilityZoneName: Local availability zone name of server to be added to rack
+     aware cluster.
+    :vartype localAvailabilityZoneName: str
+    :ivar serverResourceId: Azure resource id of machine part of cluster for which job will be
+     triggered. Required.
+    :vartype serverResourceId: str
+    """
+
+    serverName: Required[str]
+    """Name of server to be added to cluster. Required."""
+    hostIpv4Address: Required[str]
+    """Ip address of server to be added to cluster. Required."""
+    localAvailabilityZoneName: str
+    """Local availability zone name of server to be added to rack aware cluster."""
+    serverResourceId: Required[str]
+    """Azure resource id of machine part of cluster for which job will be triggered. Required."""
+
+
+class ApplyConfigurationNetworkAdapterJobProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for applying network adapter configuration.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Provisioning state of the job. Known values are: "NotSpecified",
+     "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: Error details if job failed.
+    :vartype error: "ErrorDetail"
+    :ivar reportedProperties: Reported properties for Network Adapter Job.
+    :vartype reportedProperties: "NetworkAdapterJobReportedProperties"
+    :ivar jobType: Job type. Required. Apply configuration to the network adapter.
+    :vartype jobType: Literal[NetworkAdapterJobType.APPLY_CONFIGURATION]
+    :ivar targetConfiguration: The desired network configuration to apply. Required.
+    :vartype targetConfiguration: "NetworkAdapterConfiguration"
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Provisioning state of the job. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Edge device job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """Error details if job failed."""
+    reportedProperties: "NetworkAdapterJobReportedProperties"
+    """Reported properties for Network Adapter Job."""
+    jobType: Required[Literal[NetworkAdapterJobType.APPLY_CONFIGURATION]]
+    """Job type. Required. Apply configuration to the network adapter."""
+    targetConfiguration: Required["NetworkAdapterConfiguration"]
+    """The desired network configuration to apply. Required."""
 
 
 class ArcConnectivityProperties(TypedDict, total=False):
@@ -72,9 +193,9 @@ class ArcConnectivityProperties(TypedDict, total=False):
 
     :ivar enabled: True indicates ARC connectivity is enabled.
     :vartype enabled: bool
-    :ivar service_configurations: Service configurations associated with the connectivity resource.
+    :ivar serviceConfigurations: Service configurations associated with the connectivity resource.
      They are only processed by the server if 'enabled' property is set to 'true'.
-    :vartype service_configurations: list["ServiceConfiguration"]
+    :vartype serviceConfigurations: list["ServiceConfiguration"]
     """
 
     enabled: bool
@@ -95,9 +216,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -123,9 +244,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -140,9 +261,9 @@ class ArcSetting(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: ArcSetting properties.
     :vartype properties: "ArcSettingProperties"
     """
@@ -154,33 +275,33 @@ class ArcSetting(ProxyResource):
 class ArcSettingProperties(TypedDict, total=False):
     """ArcSetting properties.
 
-    :ivar provisioning_state: Provisioning state of the ArcSetting proxy resource. Known values
-     are: "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
+    :ivar provisioningState: Provisioning state of the ArcSetting proxy resource. Known values are:
+     "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
      "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
      "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar arc_instance_resource_group: The resource group that hosts the Arc agents, ie. Hybrid
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar arcInstanceResourceGroup: The resource group that hosts the Arc agents, ie. Hybrid
      Compute Machine resources.
-    :vartype arc_instance_resource_group: str
-    :ivar arc_application_client_id: App id of arc AAD identity.
-    :vartype arc_application_client_id: str
-    :ivar arc_application_tenant_id: Tenant id of arc AAD identity.
-    :vartype arc_application_tenant_id: str
-    :ivar arc_service_principal_object_id: Object id of arc AAD service principal.
-    :vartype arc_service_principal_object_id: str
-    :ivar arc_application_object_id: Object id of arc AAD identity.
-    :vartype arc_application_object_id: str
-    :ivar aggregate_state: Aggregate state of Arc agent across the nodes in this HCI cluster. Known
+    :vartype arcInstanceResourceGroup: str
+    :ivar arcApplicationClientId: App id of arc AAD identity.
+    :vartype arcApplicationClientId: str
+    :ivar arcApplicationTenantId: Tenant id of arc AAD identity.
+    :vartype arcApplicationTenantId: str
+    :ivar arcServicePrincipalObjectId: Object id of arc AAD service principal.
+    :vartype arcServicePrincipalObjectId: str
+    :ivar arcApplicationObjectId: Object id of arc AAD identity.
+    :vartype arcApplicationObjectId: str
+    :ivar aggregateState: Aggregate state of Arc agent across the nodes in this HCI cluster. Known
      values are: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed", "Connected",
      "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
      "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype aggregate_state: Union[str, "ArcSettingAggregateState"]
-    :ivar per_node_details: State of Arc agent in each of the nodes.
-    :vartype per_node_details: list["PerNodeState"]
-    :ivar connectivity_properties: contains connectivity related configuration for ARC resources.
-    :vartype connectivity_properties: "ArcConnectivityProperties"
-    :ivar default_extensions: Properties for each of the default extensions category.
-    :vartype default_extensions: list["DefaultExtensionDetails"]
+    :vartype aggregateState: Union[str, "ArcSettingAggregateState"]
+    :ivar perNodeDetails: State of Arc agent in each of the nodes.
+    :vartype perNodeDetails: list["PerNodeState"]
+    :ivar connectivityProperties: contains connectivity related configuration for ARC resources.
+    :vartype connectivityProperties: "ArcConnectivityProperties"
+    :ivar defaultExtensions: Properties for each of the default extensions category.
+    :vartype defaultExtensions: list["DefaultExtensionDetails"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -231,8 +352,8 @@ class ArcSettingsPatch(TypedDict, total=False):
 class ArcSettingsPatchProperties(TypedDict, total=False):
     """ArcSettings properties.
 
-    :ivar connectivity_properties: contains connectivity related configuration for ARC resources.
-    :vartype connectivity_properties: "ArcConnectivityProperties"
+    :ivar connectivityProperties: contains connectivity related configuration for ARC resources.
+    :vartype connectivityProperties: "ArcConnectivityProperties"
     """
 
     connectivityProperties: "ArcConnectivityProperties"
@@ -242,9 +363,9 @@ class ArcSettingsPatchProperties(TypedDict, total=False):
 class AssemblyInfo(TypedDict, total=False):
     """Assembly Package details for Validated Solution Recipe for AzureStackHCI Cluster.
 
-    :ivar package_version: Assembly Package version for Validated Solution Recipe for AzureStackHCI
+    :ivar packageVersion: Assembly Package version for Validated Solution Recipe for AzureStackHCI
      Cluster.
-    :vartype package_version: str
+    :vartype packageVersion: str
     :ivar payload: Payload properties for Validated Solution Recipe for AzureStackHCI Cluster.
     :vartype payload: list["AssemblyInfoPayload"]
     """
@@ -262,9 +383,9 @@ class AssemblyInfoPayload(TypedDict, total=False):
     :vartype identifier: str
     :ivar hash: Hash of assembly package for Validated Solution Recipe for AzureStackHCI Cluster.
     :vartype hash: str
-    :ivar file_name: File name of assembly package for Validated Solution Recipe for AzureStackHCI
+    :ivar fileName: File name of assembly package for Validated Solution Recipe for AzureStackHCI
      Cluster.
-    :vartype file_name: str
+    :vartype fileName: str
     :ivar url: Url of assembly package for Validated Solution Recipe for AzureStackHCI Cluster.
     :vartype url: str
     """
@@ -282,8 +403,8 @@ class AssemblyInfoPayload(TypedDict, total=False):
 class CheckUpdatesRequest(TypedDict, total=False):
     """Request body for the check updates action on update summaries.
 
-    :ivar update_name: Name of update.
-    :vartype update_name: str
+    :ivar updateName: Name of update.
+    :vartype updateName: str
     """
 
     updateName: str
@@ -301,9 +422,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -327,9 +448,9 @@ class Cluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -355,8 +476,8 @@ class Cluster(TrackedResource):
 class ClusterBillingProperties(TypedDict, total=False):
     """Billing properties of the cluster.
 
-    :ivar next_billing_model: The next billing model to be applied to the cluster.
-    :vartype next_billing_model: "NextBillingModel"
+    :ivar nextBillingModel: The next billing model to be applied to the cluster.
+    :vartype nextBillingModel: "NextBillingModel"
     """
 
     nextBillingModel: "NextBillingModel"
@@ -366,12 +487,12 @@ class ClusterBillingProperties(TypedDict, total=False):
 class ClusterDesiredProperties(TypedDict, total=False):
     """Desired properties of the cluster.
 
-    :ivar windows_server_subscription: Desired state of Windows Server Subscription. Known values
+    :ivar windowsServerSubscription: Desired state of Windows Server Subscription. Known values
      are: "Disabled" and "Enabled".
-    :vartype windows_server_subscription: Union[str, "WindowsServerSubscription"]
-    :ivar diagnostic_level: Desired level of diagnostic data emitted by the cluster. Known values
+    :vartype windowsServerSubscription: Union[str, "WindowsServerSubscription"]
+    :ivar diagnosticLevel: Desired level of diagnostic data emitted by the cluster. Known values
      are: "Off", "Basic", and "Enhanced".
-    :vartype diagnostic_level: Union[str, "DiagnosticLevel"]
+    :vartype diagnosticLevel: Union[str, "DiagnosticLevel"]
     """
 
     windowsServerSubscription: Union[str, "WindowsServerSubscription"]
@@ -381,6 +502,28 @@ class ClusterDesiredProperties(TypedDict, total=False):
      and \"Enhanced\"."""
 
 
+class ClusterJob(ProxyResource):
+    """Cluster Jobs resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ClusterJobProperties"
+    """
+
+    properties: "ClusterJobProperties"
+    """The resource-specific properties for this resource."""
+
+
 class ClusterNode(TypedDict, total=False):
     """Cluster node details.
 
@@ -388,35 +531,35 @@ class ClusterNode(TypedDict, total=False):
     :vartype name: str
     :ivar id: Id of the node in the cluster.
     :vartype id: float
-    :ivar windows_server_subscription: State of Windows Server Subscription. Known values are:
+    :ivar windowsServerSubscription: State of Windows Server Subscription. Known values are:
      "Disabled" and "Enabled".
-    :vartype windows_server_subscription: Union[str, "WindowsServerSubscription"]
-    :ivar node_type: Type of the cluster node hardware. Known values are: "FirstParty" and
+    :vartype windowsServerSubscription: Union[str, "WindowsServerSubscription"]
+    :ivar nodeType: Type of the cluster node hardware. Known values are: "FirstParty" and
      "ThirdParty".
-    :vartype node_type: Union[str, "ClusterNodeType"]
-    :ivar ehc_resource_id: Edge Hardware Center Resource Id.
-    :vartype ehc_resource_id: str
+    :vartype nodeType: Union[str, "ClusterNodeType"]
+    :ivar ehcResourceId: Edge Hardware Center Resource Id.
+    :vartype ehcResourceId: str
     :ivar manufacturer: Manufacturer of the cluster node hardware.
     :vartype manufacturer: str
     :ivar model: Model name of the cluster node hardware.
     :vartype model: str
-    :ivar os_name: Operating system running on the cluster node.
-    :vartype os_name: str
-    :ivar os_version: Version of the operating system running on the cluster node.
-    :vartype os_version: str
-    :ivar os_display_version: Display version of the operating system running on the cluster node.
-    :vartype os_display_version: str
-    :ivar serial_number: Immutable id of the cluster node.
-    :vartype serial_number: str
-    :ivar core_count: Number of physical cores on the cluster node.
-    :vartype core_count: float
-    :ivar memory_in_gi_b: Total available memory on the cluster node (in GiB).
-    :vartype memory_in_gi_b: float
-    :ivar last_licensing_timestamp: Most recent licensing timestamp.
-    :vartype last_licensing_timestamp: str
-    :ivar oem_activation: OEM activation status of the node. Known values are: "Disabled" and
+    :ivar osName: Operating system running on the cluster node.
+    :vartype osName: str
+    :ivar osVersion: Version of the operating system running on the cluster node.
+    :vartype osVersion: str
+    :ivar osDisplayVersion: Display version of the operating system running on the cluster node.
+    :vartype osDisplayVersion: str
+    :ivar serialNumber: Immutable id of the cluster node.
+    :vartype serialNumber: str
+    :ivar coreCount: Number of physical cores on the cluster node.
+    :vartype coreCount: float
+    :ivar memoryInGiB: Total available memory on the cluster node (in GiB).
+    :vartype memoryInGiB: float
+    :ivar lastLicensingTimestamp: Most recent licensing timestamp.
+    :vartype lastLicensingTimestamp: str
+    :ivar oemActivation: OEM activation status of the node. Known values are: "Disabled" and
      "Enabled".
-    :vartype oem_activation: Union[str, "OemActivation"]
+    :vartype oemActivation: Union[str, "OemActivation"]
     """
 
     name: str
@@ -473,14 +616,14 @@ class ClusterPatch(TypedDict, total=False):
 class ClusterPatchProperties(TypedDict, total=False):
     """Cluster properties.
 
-    :ivar cloud_management_endpoint: Endpoint configured for management from the Azure portal.
-    :vartype cloud_management_endpoint: str
-    :ivar aad_client_id: App id of cluster AAD identity.
-    :vartype aad_client_id: str
-    :ivar aad_tenant_id: Tenant id of cluster AAD identity.
-    :vartype aad_tenant_id: str
-    :ivar desired_properties: Desired properties of the cluster.
-    :vartype desired_properties: "ClusterDesiredProperties"
+    :ivar cloudManagementEndpoint: Endpoint configured for management from the Azure portal.
+    :vartype cloudManagementEndpoint: str
+    :ivar aadClientId: App id of cluster AAD identity.
+    :vartype aadClientId: str
+    :ivar aadTenantId: Tenant id of cluster AAD identity.
+    :vartype aadTenantId: str
+    :ivar desiredProperties: Desired properties of the cluster.
+    :vartype desiredProperties: "ClusterDesiredProperties"
     """
 
     cloudManagementEndpoint: str
@@ -496,81 +639,83 @@ class ClusterPatchProperties(TypedDict, total=False):
 class ClusterProperties(TypedDict, total=False):
     """Cluster properties.
 
-    :ivar provisioning_state: Provisioning state. Indicates the current lifecycle status of the
+    :ivar provisioningState: Provisioning state. Indicates the current lifecycle status of the
      resource, including creation, update, deletion, connectivity, and error states. Known values
      are: "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
      "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
      "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar status: Status of the cluster agent. Indicates the current connectivity, validation, and
      deployment state of the agent within the cluster. Known values are: "NotYetRegistered",
      "ConnectedRecently", "NotConnectedRecently", "Disconnected", "Error", "NotSpecified",
      "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
      "DeploymentFailed", and "DeploymentSuccess".
     :vartype status: Union[str, "Status"]
-    :ivar connectivity_status: Overall connectivity status for the cluster resource. Indicates
+    :ivar connectivityStatus: Overall connectivity status for the cluster resource. Indicates
      whether the cluster is connected to Azure, partially connected, or has not recently
      communicated. Known values are: "NotYetRegistered", "Connected", "NotConnectedRecently",
      "PartiallyConnected", "Disconnected", and "NotSpecified".
-    :vartype connectivity_status: Union[str, "ConnectivityStatus"]
-    :ivar cloud_id: Unique, immutable resource id.
-    :vartype cloud_id: str
-    :ivar cloud_management_endpoint: Endpoint configured for management from the Azure portal.
-    :vartype cloud_management_endpoint: str
-    :ivar aad_client_id: App id of cluster AAD identity.
-    :vartype aad_client_id: str
-    :ivar aad_tenant_id: Tenant id of cluster AAD identity.
-    :vartype aad_tenant_id: str
-    :ivar aad_application_object_id: Object id of cluster AAD identity.
-    :vartype aad_application_object_id: str
-    :ivar aad_service_principal_object_id: Id of cluster identity service principal.
-    :vartype aad_service_principal_object_id: str
-    :ivar software_assurance_properties: Software Assurance properties of the cluster.
-    :vartype software_assurance_properties: "SoftwareAssuranceProperties"
-    :ivar is_management_cluster: Is Management Cluster, when true indicates that the cluster is
-     used for managing other clusters.
-    :vartype is_management_cluster: bool
-    :ivar log_collection_properties: Log Collection properties of the cluster.
-    :vartype log_collection_properties: "LogCollectionProperties"
-    :ivar remote_support_properties: RemoteSupport properties of the cluster.
-    :vartype remote_support_properties: "RemoteSupportProperties"
-    :ivar desired_properties: Desired properties of the cluster.
-    :vartype desired_properties: "ClusterDesiredProperties"
-    :ivar reported_properties: Properties reported by cluster agent.
-    :vartype reported_properties: "ClusterReportedProperties"
-    :ivar isolated_vm_attestation_configuration: Attestation configurations for isolated VM (e.g.
-     TVM, CVM) of the cluster.
-    :vartype isolated_vm_attestation_configuration: "IsolatedVmAttestationConfiguration"
-    :ivar trial_days_remaining: Number of days remaining in the trial period.
-    :vartype trial_days_remaining: float
-    :ivar billing_model: Type of billing applied to the resource.
-    :vartype billing_model: str
-    :ivar billing_properties: Billing properties of the cluster, including upcoming billing model
+    :vartype connectivityStatus: Union[str, "ConnectivityStatus"]
+    :ivar cloudId: Unique, immutable resource id.
+    :vartype cloudId: str
+    :ivar cloudManagementEndpoint: Endpoint configured for management from the Azure portal.
+    :vartype cloudManagementEndpoint: str
+    :ivar aadClientId: App id of cluster AAD identity.
+    :vartype aadClientId: str
+    :ivar aadTenantId: Tenant id of cluster AAD identity.
+    :vartype aadTenantId: str
+    :ivar aadApplicationObjectId: Object id of cluster AAD identity.
+    :vartype aadApplicationObjectId: str
+    :ivar aadServicePrincipalObjectId: Id of cluster identity service principal.
+    :vartype aadServicePrincipalObjectId: str
+    :ivar softwareAssuranceProperties: Software Assurance properties of the cluster.
+    :vartype softwareAssuranceProperties: "SoftwareAssuranceProperties"
+    :ivar isManagementCluster: Is Management Cluster, when true indicates that the cluster is used
+     for managing other clusters.
+    :vartype isManagementCluster: bool
+    :ivar logCollectionProperties: Log Collection properties of the cluster.
+    :vartype logCollectionProperties: "LogCollectionProperties"
+    :ivar remoteSupportProperties: RemoteSupport properties of the cluster.
+    :vartype remoteSupportProperties: "RemoteSupportProperties"
+    :ivar desiredProperties: Desired properties of the cluster.
+    :vartype desiredProperties: "ClusterDesiredProperties"
+    :ivar reportedProperties: Properties reported by cluster agent.
+    :vartype reportedProperties: "ClusterReportedProperties"
+    :ivar isolatedVmAttestationConfiguration: Attestation configurations for isolated VM (e.g. TVM,
+     CVM) of the cluster.
+    :vartype isolatedVmAttestationConfiguration: "IsolatedVmAttestationConfiguration"
+    :ivar trialDaysRemaining: Number of days remaining in the trial period.
+    :vartype trialDaysRemaining: float
+    :ivar billingModel: Type of billing applied to the resource.
+    :vartype billingModel: str
+    :ivar billingProperties: Billing properties of the cluster, including upcoming billing model
      details.
-    :vartype billing_properties: "ClusterBillingProperties"
-    :ivar registration_timestamp: First cluster sync timestamp.
-    :vartype registration_timestamp: str
-    :ivar last_sync_timestamp: Most recent cluster sync timestamp.
-    :vartype last_sync_timestamp: str
-    :ivar last_billing_timestamp: Most recent billing meter timestamp.
-    :vartype last_billing_timestamp: str
-    :ivar service_endpoint: Region specific DataPath Endpoint of the cluster.
-    :vartype service_endpoint: str
-    :ivar resource_provider_object_id: Object id of RP Service Principal.
-    :vartype resource_provider_object_id: str
-    :ivar secrets_locations: List of secret locations.
-    :vartype secrets_locations: list["SecretsLocationDetails"]
-    :ivar cluster_pattern: Supported Storage Type for HCI Cluster. Known values are: "Standard" and
+    :vartype billingProperties: "ClusterBillingProperties"
+    :ivar registrationTimestamp: First cluster sync timestamp.
+    :vartype registrationTimestamp: str
+    :ivar lastSyncTimestamp: Most recent cluster sync timestamp.
+    :vartype lastSyncTimestamp: str
+    :ivar lastBillingTimestamp: Most recent billing meter timestamp.
+    :vartype lastBillingTimestamp: str
+    :ivar serviceEndpoint: Region specific DataPath Endpoint of the cluster.
+    :vartype serviceEndpoint: str
+    :ivar resourceProviderObjectId: Object id of RP Service Principal.
+    :vartype resourceProviderObjectId: str
+    :ivar secretsLocations: List of secret locations.
+    :vartype secretsLocations: list["SecretsLocationDetails"]
+    :ivar clusterPattern: Supported Storage Type for HCI Cluster. Known values are: "Standard" and
      "RackAware".
-    :vartype cluster_pattern: Union[str, "ClusterPattern"]
-    :ivar local_availability_zones: Local Availability Zone information for HCI cluster.
-    :vartype local_availability_zones: list["LocalAvailabilityZones"]
-    :ivar identity_provider: Identity Provider for the cluster. Known values are: "ActiveDirectory"
+    :vartype clusterPattern: Union[str, "ClusterPattern"]
+    :ivar sdnProperties: Software Defined Networking Properties of the cluster.
+    :vartype sdnProperties: "ClusterSdnProperties"
+    :ivar localAvailabilityZones: Local Availability Zone information for HCI cluster.
+    :vartype localAvailabilityZones: list["LocalAvailabilityZones"]
+    :ivar identityProvider: Identity Provider for the cluster. Known values are: "ActiveDirectory"
      and "LocalIdentity".
-    :vartype identity_provider: Union[str, "IdentityProvider"]
-    :ivar storage_type: Storage type of the cluster. Indicates whether the cluster uses S2D, SAN,
-     or a combination. Known values are: "S2D", "SAN", and "SANS2D".
-    :vartype storage_type: Union[str, "StorageType"]
+    :vartype identityProvider: Union[str, "IdentityProvider"]
+    :ivar storageType: Storage type of the cluster. Indicates whether the cluster uses S2D, SAN, or
+     a combination. Known values are: "S2D", "SAN", and "SANS2D".
+    :vartype storageType: Union[str, "StorageType"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -638,6 +783,8 @@ class ClusterProperties(TypedDict, total=False):
     """List of secret locations."""
     clusterPattern: Union[str, "ClusterPattern"]
     """Supported Storage Type for HCI Cluster. Known values are: \"Standard\" and \"RackAware\"."""
+    sdnProperties: "ClusterSdnProperties"
+    """Software Defined Networking Properties of the cluster."""
     localAvailabilityZones: list["LocalAvailabilityZones"]
     """Local Availability Zone information for HCI cluster."""
     identityProvider: Union[str, "IdentityProvider"]
@@ -650,39 +797,39 @@ class ClusterProperties(TypedDict, total=False):
 class ClusterReportedProperties(TypedDict, total=False):
     """Properties reported by cluster agent.
 
-    :ivar cluster_name: Name of the on-prem cluster connected to this resource.
-    :vartype cluster_name: str
-    :ivar cluster_id: Unique id generated by the on-prem cluster.
-    :vartype cluster_id: str
-    :ivar cluster_version: Version of the cluster software.
-    :vartype cluster_version: str
+    :ivar clusterName: Name of the on-prem cluster connected to this resource.
+    :vartype clusterName: str
+    :ivar clusterId: Unique id generated by the on-prem cluster.
+    :vartype clusterId: str
+    :ivar clusterVersion: Version of the cluster software.
+    :vartype clusterVersion: str
     :ivar nodes: List of nodes reported by the cluster.
     :vartype nodes: list["ClusterNode"]
-    :ivar last_updated: Last time the cluster reported the data.
-    :vartype last_updated: str
-    :ivar msi_expiration_time_stamp: Specifies the expiration timestamp of the cluster's Managed
+    :ivar lastUpdated: Last time the cluster reported the data.
+    :vartype lastUpdated: str
+    :ivar msiExpirationTimeStamp: Specifies the expiration timestamp of the cluster's Managed
      Service Identity (MSI). The value is expressed in Coordinated Universal Time (UTC).
-    :vartype msi_expiration_time_stamp: str
-    :ivar imds_attestation: IMDS attestation status of the cluster. Known values are: "Disabled"
-     and "Enabled".
-    :vartype imds_attestation: Union[str, "ImdsAttestation"]
-    :ivar diagnostic_level: Level of diagnostic data emitted by the cluster. Known values are:
+    :vartype msiExpirationTimeStamp: str
+    :ivar imdsAttestation: IMDS attestation status of the cluster. Known values are: "Disabled" and
+     "Enabled".
+    :vartype imdsAttestation: Union[str, "ImdsAttestation"]
+    :ivar diagnosticLevel: Level of diagnostic data emitted by the cluster. Known values are:
      "Off", "Basic", and "Enhanced".
-    :vartype diagnostic_level: Union[str, "DiagnosticLevel"]
-    :ivar supported_capabilities: Capabilities supported by the cluster.
-    :vartype supported_capabilities: list[str]
-    :ivar cluster_type: Specifies the type of hardware vendor for all nodes in the cluster.
+    :vartype diagnosticLevel: Union[str, "DiagnosticLevel"]
+    :ivar supportedCapabilities: Capabilities supported by the cluster.
+    :vartype supportedCapabilities: list[str]
+    :ivar clusterType: Specifies the type of hardware vendor for all nodes in the cluster.
      Indicates whether the nodes are provided by Microsoft or a third-party vendor. Known values
      are: "FirstParty" and "ThirdParty".
-    :vartype cluster_type: Union[str, "ClusterNodeType"]
+    :vartype clusterType: Union[str, "ClusterNodeType"]
     :ivar manufacturer: The manufacturer of all the nodes of the cluster.
     :vartype manufacturer: str
-    :ivar oem_activation: OEM activation status of the cluster. Known values are: "Disabled" and
+    :ivar oemActivation: OEM activation status of the cluster. Known values are: "Disabled" and
      "Enabled".
-    :vartype oem_activation: Union[str, "OemActivation"]
-    :ivar hardware_class: Hardware class of the cluster. Known values are: "Small", "Medium", and
+    :vartype oemActivation: Union[str, "OemActivation"]
+    :ivar hardwareClass: Hardware class of the cluster. Known values are: "Small", "Medium", and
      "Large".
-    :vartype hardware_class: Union[str, "HardwareClass"]
+    :vartype hardwareClass: Union[str, "HardwareClass"]
     """
 
     clusterName: str
@@ -717,13 +864,120 @@ class ClusterReportedProperties(TypedDict, total=False):
     """Hardware class of the cluster. Known values are: \"Small\", \"Medium\", and \"Large\"."""
 
 
+class ClusterSdnProperties(TypedDict, total=False):
+    """Represents the Software Defined Networking (SDN) configuration state of the Azure Stack HCI
+    cluster.
+
+    :ivar sdnStatus: Indicates the current Software Defined Networking (SDN) status of the
+     resource, which may be an individual device or a cluster. Known values are: "Unknown",
+     "Disabled", and "Enabled".
+    :vartype sdnStatus: Union[str, "SdnStatus"]
+    :ivar sdnDomainName: The fully qualified domain name (FQDN) associated with the SDN deployment.
+     This value is propagated from the Device Management Extension to the cluster resource. It is
+     typically in the format ``<sdnPrefix>-nc.<domain>`` when SDN is enabled. May be null or absent
+     in unsupported or disabled states.
+    :vartype sdnDomainName: str
+    :ivar sdnApiAddress: Represents the API address for the SDN deployment.
+    :vartype sdnApiAddress: str
+    :ivar sdnIntegrationIntent: Indicates whether Software Defined Networking (SDN) integration
+     should be enabled or disabled for this deployment. Known values are: "Enable" and "Disable".
+    :vartype sdnIntegrationIntent: Union[str, "SdnIntegrationIntent"]
+    """
+
+    sdnStatus: Union[str, "SdnStatus"]
+    """Indicates the current Software Defined Networking (SDN) status of the resource, which may be an
+     individual device or a cluster. Known values are: \"Unknown\", \"Disabled\", and \"Enabled\"."""
+    sdnDomainName: str
+    """The fully qualified domain name (FQDN) associated with the SDN deployment. This value is
+     propagated from the Device Management Extension to the cluster resource. It is typically in the
+     format ``<sdnPrefix>-nc.<domain>`` when SDN is enabled. May be null or absent in unsupported or
+     disabled states."""
+    sdnApiAddress: str
+    """Represents the API address for the SDN deployment."""
+    sdnIntegrationIntent: Union[str, "SdnIntegrationIntent"]
+    """Indicates whether Software Defined Networking (SDN) integration should be enabled or disabled
+     for this deployment. Known values are: \"Enable\" and \"Disable\"."""
+
+
+class CreateVolumeJobProperties(TypedDict, total=False):
+    """Properties for creating a volume on a disk.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of disk job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: Error details if job failed.
+    :vartype error: "ErrorDetail"
+    :ivar reportedProperties: Properties reported by the job execution.
+    :vartype reportedProperties: "DiskJobReportedProperties"
+    :ivar jobType: Job type. Required. Job to create a volume on the disk.
+    :vartype jobType: Literal[DiskJobType.CREATE_VOLUME]
+    :ivar sizeInBytes: Size of the volume to create in bytes. Required.
+    :vartype sizeInBytes: str
+    :ivar path: Absolute path where the volume should be mounted. Required.
+    :vartype path: str
+    :ivar fileSystem: File system type to format the volume with. Known values are: "ext4", "xfs",
+     "NTFS", "ReFS", "vfat", "fat32", and "fat".
+    :vartype fileSystem: Union[str, "DiskFileSystemType"]
+    :ivar createdVolumeId: ARM resource ID of the created volume.
+    :vartype createdVolumeId: str
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of disk job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """Error details if job failed."""
+    reportedProperties: "DiskJobReportedProperties"
+    """Properties reported by the job execution."""
+    jobType: Required[Literal[DiskJobType.CREATE_VOLUME]]
+    """Job type. Required. Job to create a volume on the disk."""
+    sizeInBytes: Required[str]
+    """Size of the volume to create in bytes. Required."""
+    path: Required[str]
+    """Absolute path where the volume should be mounted. Required."""
+    fileSystem: Union[str, "DiskFileSystemType"]
+    """File system type to format the volume with. Known values are: \"ext4\", \"xfs\", \"NTFS\",
+     \"ReFS\", \"vfat\", \"fat32\", and \"fat\"."""
+    createdVolumeId: str
+    """ARM resource ID of the created volume."""
+
+
 class DefaultExtensionDetails(TypedDict, total=False):
     """Properties for a particular default extension category.
 
     :ivar category: Default extension category.
     :vartype category: str
-    :ivar consent_time: Consent time for extension category.
-    :vartype consent_time: str
+    :ivar consentTime: Consent time for extension category.
+    :vartype consentTime: str
     """
 
     category: str
@@ -732,31 +986,93 @@ class DefaultExtensionDetails(TypedDict, total=False):
     """Consent time for extension category."""
 
 
+class DeleteVolumeJobProperties(TypedDict, total=False):
+    """Properties for deleting a volume from a disk.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of disk job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: Error details if job failed.
+    :vartype error: "ErrorDetail"
+    :ivar reportedProperties: Properties reported by the job execution.
+    :vartype reportedProperties: "DiskJobReportedProperties"
+    :ivar jobType: Job type. Required. Job to delete a volume from the disk.
+    :vartype jobType: Literal[PrivilegedJobType.DELETE_VOLUME]
+    :ivar volumePath: The mount path of the volume to delete. Required.
+    :vartype volumePath: str
+    :ivar confirmDeletion: Confirmation flag that must be set to true to proceed with deletion.
+    :vartype confirmDeletion: bool
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of disk job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """Error details if job failed."""
+    reportedProperties: "DiskJobReportedProperties"
+    """Properties reported by the job execution."""
+    jobType: Required[Literal[PrivilegedJobType.DELETE_VOLUME]]
+    """Job type. Required. Job to delete a volume from the disk."""
+    volumePath: Required[str]
+    """The mount path of the volume to delete. Required."""
+    confirmDeletion: bool
+    """Confirmation flag that must be set to true to proceed with deletion."""
+
+
 class DeploymentCluster(TypedDict, total=False):
     """AzureStackHCI Cluster deployment properties.
 
     :ivar name: The cluster name provided when preparing Active Directory.
     :vartype name: str
-    :ivar witness_type: Use a cloud witness if you have internet access and if you use an Azure
+    :ivar witnessType: Use a cloud witness if you have internet access and if you use an Azure
      Storage account to provide a vote on cluster quorum. A cloud witness uses Azure Blob Storage to
      read or write a blob file and then uses it to arbitrate in split-brain resolution. Only allowed
      values are 'Cloud', 'FileShare'.
-    :vartype witness_type: str
-    :ivar witness_path: Specify the fileshare path for the local witness for your Azure Stack HCI
+    :vartype witnessType: str
+    :ivar witnessPath: Specify the fileshare path for the local witness for your Azure Stack HCI
      cluster.
-    :vartype witness_path: str
-    :ivar cloud_account_name: Specify the Azure Storage account name for cloud witness for your
-     Azure Stack HCI cluster.
-    :vartype cloud_account_name: str
-    :ivar azure_service_endpoint: For Azure blob service endpoint type, select either Default or
+    :vartype witnessPath: str
+    :ivar cloudAccountName: Specify the Azure Storage account name for cloud witness for your Azure
+     Stack HCI cluster.
+    :vartype cloudAccountName: str
+    :ivar azureServiceEndpoint: For Azure blob service endpoint type, select either Default or
      Custom domain. If you selected **Custom domain, enter the domain for the blob service in this
      format core.windows.net.
-    :vartype azure_service_endpoint: str
-    :ivar hardware_class: Hardware class of the cluster. Known values are: "Small", "Medium", and
+    :vartype azureServiceEndpoint: str
+    :ivar hardwareClass: Hardware class of the cluster. Known values are: "Small", "Medium", and
      "Large".
-    :vartype hardware_class: Union[str, "HardwareClass"]
-    :ivar cluster_pattern: Cluster Pattern supported. Known values are: "Standard" and "RackAware".
-    :vartype cluster_pattern: Union[str, "ClusterPattern"]
+    :vartype hardwareClass: Union[str, "HardwareClass"]
+    :ivar clusterPattern: Cluster Pattern supported. Known values are: "Standard" and "RackAware".
+    :vartype clusterPattern: Union[str, "ClusterPattern"]
     """
 
     name: str
@@ -784,8 +1100,8 @@ class DeploymentConfiguration(TypedDict, total=False):
 
     :ivar version: deployment template version.
     :vartype version: str
-    :ivar scale_units: Scale units will contains list of deployment data. Required.
-    :vartype scale_units: list["ScaleUnits"]
+    :ivar scaleUnits: Scale units will contains list of deployment data. Required.
+    :vartype scaleUnits: list["ScaleUnits"]
     """
 
     version: str
@@ -797,47 +1113,47 @@ class DeploymentConfiguration(TypedDict, total=False):
 class DeploymentData(TypedDict, total=False):
     """The Deployment data of AzureStackHCI Cluster.
 
-    :ivar security_settings: SecuritySettings to deploy AzureStackHCI Cluster.
-    :vartype security_settings: "DeploymentSecuritySettings"
+    :ivar securitySettings: SecuritySettings to deploy AzureStackHCI Cluster.
+    :vartype securitySettings: "DeploymentSecuritySettings"
     :ivar observability: Observability config to deploy AzureStackHCI Cluster.
     :vartype observability: "Observability"
     :ivar cluster: Observability config to deploy AzureStackHCI Cluster.
     :vartype cluster: "DeploymentCluster"
-    :ivar identity_provider: Identity Provider for the cluster. Known values are: "ActiveDirectory"
+    :ivar identityProvider: Identity Provider for the cluster. Known values are: "ActiveDirectory"
      and "LocalIdentity".
-    :vartype identity_provider: Union[str, "IdentityProvider"]
+    :vartype identityProvider: Union[str, "IdentityProvider"]
     :ivar storage: Storage config to deploy AzureStackHCI Cluster.
     :vartype storage: "Storage"
-    :ivar naming_prefix: naming prefix to deploy cluster.
-    :vartype naming_prefix: str
-    :ivar domain_fqdn: FQDN to deploy cluster.
-    :vartype domain_fqdn: str
-    :ivar infrastructure_network: InfrastructureNetwork config to deploy AzureStackHCI Cluster.
-    :vartype infrastructure_network: list["InfrastructureNetwork"]
-    :ivar physical_nodes: list of physical nodes config to deploy AzureStackHCI Cluster.
-    :vartype physical_nodes: list["PhysicalNodes"]
-    :ivar host_network: HostNetwork config to deploy AzureStackHCI Cluster.
-    :vartype host_network: "DeploymentSettingHostNetwork"
-    :ivar sdn_integration: SDN Integration config to deploy AzureStackHCI Cluster.
-    :vartype sdn_integration: "SdnIntegration"
-    :ivar is_management_cluster: Is Management Cluster, when true indicates that the cluster is
-     used for managing other clusters.
-    :vartype is_management_cluster: bool
-    :ivar adou_path: The path to the Active Directory Organizational Unit container object prepared
+    :ivar namingPrefix: naming prefix to deploy cluster.
+    :vartype namingPrefix: str
+    :ivar domainFqdn: FQDN to deploy cluster.
+    :vartype domainFqdn: str
+    :ivar infrastructureNetwork: InfrastructureNetwork config to deploy AzureStackHCI Cluster.
+    :vartype infrastructureNetwork: list["InfrastructureNetwork"]
+    :ivar physicalNodes: list of physical nodes config to deploy AzureStackHCI Cluster.
+    :vartype physicalNodes: list["PhysicalNodes"]
+    :ivar hostNetwork: HostNetwork config to deploy AzureStackHCI Cluster.
+    :vartype hostNetwork: "DeploymentSettingHostNetwork"
+    :ivar sdnIntegration: SDN Integration config to deploy AzureStackHCI Cluster.
+    :vartype sdnIntegration: "SdnIntegration"
+    :ivar isManagementCluster: Is Management Cluster, when true indicates that the cluster is used
+     for managing other clusters.
+    :vartype isManagementCluster: bool
+    :ivar adouPath: The path to the Active Directory Organizational Unit container object prepared
      for the deployment.
-    :vartype adou_path: str
-    :ivar secrets_location: Azure key vault endpoint. This property is deprecated from
+    :vartype adouPath: str
+    :ivar secretsLocation: Azure key vault endpoint. This property is deprecated from
      2023-12-01-preview. Please use secrets property instead.
-    :vartype secrets_location: str
+    :vartype secretsLocation: str
     :ivar secrets: secrets used for cloud deployment.
     :vartype secrets: list["EceDeploymentSecrets"]
-    :ivar optional_services: OptionalServices config to deploy AzureStackHCI Cluster.
-    :vartype optional_services: "OptionalServices"
-    :ivar local_availability_zones: Local Availability Zone information for HCI cluster.
-    :vartype local_availability_zones: list["LocalAvailabilityZones"]
-    :ivar assembly_info: Assembly Package details for Validated Solution Recipe for AzureStackHCI
+    :ivar optionalServices: OptionalServices config to deploy AzureStackHCI Cluster.
+    :vartype optionalServices: "OptionalServices"
+    :ivar localAvailabilityZones: Local Availability Zone information for HCI cluster.
+    :vartype localAvailabilityZones: list["LocalAvailabilityZones"]
+    :ivar assemblyInfo: Assembly Package details for Validated Solution Recipe for AzureStackHCI
      Cluster.
-    :vartype assembly_info: "AssemblyInfo"
+    :vartype assemblyInfo: "AssemblyInfo"
     """
 
     securitySettings: "DeploymentSecuritySettings"
@@ -884,34 +1200,34 @@ class DeploymentData(TypedDict, total=False):
 class DeploymentSecuritySettings(TypedDict, total=False):
     """The SecuritySettings of AzureStackHCI Cluster.
 
-    :ivar hvci_protection: By default, Hypervisor-protected Code Integrity is enabled on your Azure
+    :ivar hvciProtection: By default, Hypervisor-protected Code Integrity is enabled on your Azure
      HCI cluster.
-    :vartype hvci_protection: bool
-    :ivar drtm_protection: By default, Secure Boot is enabled on your Azure HCI cluster. This
+    :vartype hvciProtection: bool
+    :ivar drtmProtection: By default, Secure Boot is enabled on your Azure HCI cluster. This
      setting is hardware dependent.
-    :vartype drtm_protection: bool
-    :ivar drift_control_enforced: When set to true, the security baseline is re-applied regularly.
-    :vartype drift_control_enforced: bool
-    :ivar credential_guard_enforced: When set to true, Credential Guard is enabled.
-    :vartype credential_guard_enforced: bool
-    :ivar smb_signing_enforced: When set to true, the SMB default instance requires sign in for the
+    :vartype drtmProtection: bool
+    :ivar driftControlEnforced: When set to true, the security baseline is re-applied regularly.
+    :vartype driftControlEnforced: bool
+    :ivar credentialGuardEnforced: When set to true, Credential Guard is enabled.
+    :vartype credentialGuardEnforced: bool
+    :ivar smbSigningEnforced: When set to true, the SMB default instance requires sign in for the
      client and server services.
-    :vartype smb_signing_enforced: bool
-    :ivar smb_cluster_encryption: When set to true, cluster east-west traffic is encrypted.
-    :vartype smb_cluster_encryption: bool
-    :ivar side_channel_mitigation_enforced: When set to true, all the side channel mitigations are
+    :vartype smbSigningEnforced: bool
+    :ivar smbClusterEncryption: When set to true, cluster east-west traffic is encrypted.
+    :vartype smbClusterEncryption: bool
+    :ivar sideChannelMitigationEnforced: When set to true, all the side channel mitigations are
      enabled.
-    :vartype side_channel_mitigation_enforced: bool
-    :ivar bitlocker_boot_volume: When set to true, BitLocker XTS_AES 256-bit encryption is enabled
+    :vartype sideChannelMitigationEnforced: bool
+    :ivar bitlockerBootVolume: When set to true, BitLocker XTS_AES 256-bit encryption is enabled
      for all data-at-rest on the OS volume of your Azure Stack HCI cluster. This setting is
      TPM-hardware dependent.
-    :vartype bitlocker_boot_volume: bool
-    :ivar bitlocker_data_volumes: When set to true, BitLocker XTS-AES 256-bit encryption is enabled
+    :vartype bitlockerBootVolume: bool
+    :ivar bitlockerDataVolumes: When set to true, BitLocker XTS-AES 256-bit encryption is enabled
      for all data-at-rest on your Azure Stack HCI cluster shared volumes.
-    :vartype bitlocker_data_volumes: bool
-    :ivar wdac_enforced: WDAC is enabled by default and limits the applications and the code that
+    :vartype bitlockerDataVolumes: bool
+    :ivar wdacEnforced: WDAC is enabled by default and limits the applications and the code that
      you can run on your Azure Stack HCI cluster.
-    :vartype wdac_enforced: bool
+    :vartype wdacEnforced: bool
     """
 
     hvciProtection: bool
@@ -951,9 +1267,9 @@ class DeploymentSetting(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "DeploymentSettingsProperties"
     """
@@ -965,16 +1281,16 @@ class DeploymentSetting(ProxyResource):
 class DeploymentSettingAdapterPropertyOverrides(TypedDict, total=False):  # pylint: disable=name-too-long
     """The AdapterPropertyOverrides of a cluster.
 
-    :ivar jumbo_packet: This parameter should only be modified based on your OEM guidance. Do not
+    :ivar jumboPacket: This parameter should only be modified based on your OEM guidance. Do not
      modify this parameter without OEM validation.
-    :vartype jumbo_packet: str
-    :ivar network_direct: This parameter should only be modified based on your OEM guidance. Do not
+    :vartype jumboPacket: str
+    :ivar networkDirect: This parameter should only be modified based on your OEM guidance. Do not
      modify this parameter without OEM validation.
-    :vartype network_direct: str
-    :ivar network_direct_technology: This parameter should only be modified based on your OEM
+    :vartype networkDirect: str
+    :ivar networkDirectTechnology: This parameter should only be modified based on your OEM
      guidance. Do not modify this parameter without OEM validation. Expected values are 'iWARP',
      'RoCEv2', 'RoCE'.
-    :vartype network_direct_technology: str
+    :vartype networkDirectTechnology: str
     """
 
     jumboPacket: str
@@ -995,18 +1311,18 @@ class DeploymentSettingHostNetwork(TypedDict, total=False):
      deployment. Each intent will define its own name, traffic type, adapter names, and overrides as
      recommended by your OEM.
     :vartype intents: list["DeploymentSettingIntents"]
-    :ivar storage_networks: List of StorageNetworks config to deploy AzureStackHCI Cluster.
-    :vartype storage_networks: list["DeploymentSettingStorageNetworks"]
-    :ivar san_networks: SAN network configuration for the host network. Applicable when StorageType
+    :ivar storageNetworks: List of StorageNetworks config to deploy AzureStackHCI Cluster.
+    :vartype storageNetworks: list["DeploymentSettingStorageNetworks"]
+    :ivar sanNetworks: SAN network configuration for the host network. Applicable when StorageType
      is 'SAN' or 'SANS2D'.
-    :vartype san_networks: "SanNetworks"
-    :ivar storage_connectivity_switchless: Defines how the storage adapters between nodes are
+    :vartype sanNetworks: "SanNetworks"
+    :ivar storageConnectivitySwitchless: Defines how the storage adapters between nodes are
      connected either switch or switch less..
-    :vartype storage_connectivity_switchless: bool
-    :ivar enable_storage_auto_ip: Optional parameter required only for 3 Nodes Switchless
-     deployments. This allows users to specify IPs and Mask for Storage NICs when Network ATC is not
-     assigning the IPs for storage automatically.
-    :vartype enable_storage_auto_ip: bool
+    :vartype storageConnectivitySwitchless: bool
+    :ivar enableStorageAutoIp: Optional parameter required only for 3 Nodes Switchless deployments.
+     This allows users to specify IPs and Mask for Storage NICs when Network ATC is not assigning
+     the IPs for storage automatically.
+    :vartype enableStorageAutoIp: bool
     """
 
     intents: list["DeploymentSettingIntents"]
@@ -1031,28 +1347,28 @@ class DeploymentSettingIntents(TypedDict, total=False):
 
     :ivar name: Name of the network intent you wish to create.
     :vartype name: str
-    :ivar traffic_type: List of network traffic types. Only allowed values are 'Compute',
-     'Storage', 'Management'.
-    :vartype traffic_type: list[str]
+    :ivar trafficType: List of network traffic types. Only allowed values are 'Compute', 'Storage',
+     'Management'.
+    :vartype trafficType: list[str]
     :ivar adapter: Array of network interfaces used for the network intent.
     :vartype adapter: list[str]
-    :ivar override_virtual_switch_configuration: This parameter should only be modified based on
-     your OEM guidance. Do not modify this parameter without OEM validation.
-    :vartype override_virtual_switch_configuration: bool
-    :ivar virtual_switch_configuration_overrides: Set virtualSwitch ConfigurationOverrides for
+    :ivar overrideVirtualSwitchConfiguration: This parameter should only be modified based on your
+     OEM guidance. Do not modify this parameter without OEM validation.
+    :vartype overrideVirtualSwitchConfiguration: bool
+    :ivar virtualSwitchConfigurationOverrides: Set virtualSwitch ConfigurationOverrides for
      cluster.
-    :vartype virtual_switch_configuration_overrides:
+    :vartype virtualSwitchConfigurationOverrides:
      "DeploymentSettingVirtualSwitchConfigurationOverrides"
-    :ivar override_qos_policy: This parameter should only be modified based on your OEM guidance.
-     Do not modify this parameter without OEM validation.
-    :vartype override_qos_policy: bool
-    :ivar qos_policy_overrides: Set QoS PolicyOverrides for cluster.
-    :vartype qos_policy_overrides: "QosPolicyOverrides"
-    :ivar override_adapter_property: This parameter should only be modified based on your OEM
+    :ivar overrideQosPolicy: This parameter should only be modified based on your OEM guidance. Do
+     not modify this parameter without OEM validation.
+    :vartype overrideQosPolicy: bool
+    :ivar qosPolicyOverrides: Set QoS PolicyOverrides for cluster.
+    :vartype qosPolicyOverrides: "QosPolicyOverrides"
+    :ivar overrideAdapterProperty: This parameter should only be modified based on your OEM
      guidance. Do not modify this parameter without OEM validation.
-    :vartype override_adapter_property: bool
-    :ivar adapter_property_overrides: Set Adapter PropertyOverrides for cluster.
-    :vartype adapter_property_overrides: "DeploymentSettingAdapterPropertyOverrides"
+    :vartype overrideAdapterProperty: bool
+    :ivar adapterPropertyOverrides: Set Adapter PropertyOverrides for cluster.
+    :vartype adapterPropertyOverrides: "DeploymentSettingAdapterPropertyOverrides"
     """
 
     name: str
@@ -1081,24 +1397,23 @@ class DeploymentSettingIntents(TypedDict, total=False):
 class DeploymentSettingsProperties(TypedDict, total=False):
     """DeploymentSetting properties.
 
-    :ivar provisioning_state: DeploymentSetting provisioning state. Known values are:
+    :ivar provisioningState: DeploymentSetting provisioning state. Known values are:
      "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
      "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
      "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar arc_node_resource_ids: Azure resource ids of Arc machines to be part of cluster.
-     Required.
-    :vartype arc_node_resource_ids: list[str]
-    :ivar deployment_mode: The deployment mode for cluster deployment. Required. Known values are:
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar arcNodeResourceIds: Azure resource ids of Arc machines to be part of cluster. Required.
+    :vartype arcNodeResourceIds: list[str]
+    :ivar deploymentMode: The deployment mode for cluster deployment. Required. Known values are:
      "Validate" and "Deploy".
-    :vartype deployment_mode: Union[str, "DeploymentMode"]
-    :ivar operation_type: The intended operation for a cluster. Known values are:
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar operationType: The intended operation for a cluster. Known values are:
      "ClusterProvisioning" and "ClusterUpgrade".
-    :vartype operation_type: Union[str, "OperationType"]
-    :ivar deployment_configuration: Scale units will contains list of deployment data. Required.
-    :vartype deployment_configuration: "DeploymentConfiguration"
-    :ivar reported_properties: Deployment Status reported from cluster.
-    :vartype reported_properties: "EceReportedProperties"
+    :vartype operationType: Union[str, "OperationType"]
+    :ivar deploymentConfiguration: Scale units will contains list of deployment data. Required.
+    :vartype deploymentConfiguration: "DeploymentConfiguration"
+    :ivar reportedProperties: Deployment Status reported from cluster.
+    :vartype reportedProperties: "EceReportedProperties"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -1124,14 +1439,14 @@ class DeploymentSettingsProperties(TypedDict, total=False):
 class DeploymentSettingStorageAdapterIPInfo(TypedDict, total=False):
     """The StorageAdapter physical nodes of a cluster.
 
-    :ivar physical_node: storage adapter physical node name.
-    :vartype physical_node: str
-    :ivar ipv4_address: The IPv4 address assigned to each storage adapter physical node on your
+    :ivar physicalNode: storage adapter physical node name.
+    :vartype physicalNode: str
+    :ivar ipv4Address: The IPv4 address assigned to each storage adapter physical node on your
      Azure Stack HCI cluster.
-    :vartype ipv4_address: str
-    :ivar subnet_mask: The SubnetMask address assigned to each storage adapter physical node on
-     your Azure Stack HCI cluster.
-    :vartype subnet_mask: str
+    :vartype ipv4Address: str
+    :ivar subnetMask: The SubnetMask address assigned to each storage adapter physical node on your
+     Azure Stack HCI cluster.
+    :vartype subnetMask: str
     """
 
     physicalNode: str
@@ -1149,14 +1464,14 @@ class DeploymentSettingStorageNetworks(TypedDict, total=False):
 
     :ivar name: Name of the storage network.
     :vartype name: str
-    :ivar network_adapter_name: Name of the storage network adapter.
-    :vartype network_adapter_name: str
-    :ivar vlan_id: ID specified for the VLAN storage network. This setting is applied to the
-     network interfaces that route the storage and VM migration traffic.
-    :vartype vlan_id: str
-    :ivar storage_adapter_ip_info: List of Storage adapter physical nodes config to deploy
+    :ivar networkAdapterName: Name of the storage network adapter.
+    :vartype networkAdapterName: str
+    :ivar vlanId: ID specified for the VLAN storage network. This setting is applied to the network
+     interfaces that route the storage and VM migration traffic.
+    :vartype vlanId: str
+    :ivar storageAdapterIPInfo: List of Storage adapter physical nodes config to deploy
      AzureStackHCI Cluster.
-    :vartype storage_adapter_ip_info: list["DeploymentSettingStorageAdapterIPInfo"]
+    :vartype storageAdapterIPInfo: list["DeploymentSettingStorageAdapterIPInfo"]
     """
 
     name: str
@@ -1173,10 +1488,10 @@ class DeploymentSettingStorageNetworks(TypedDict, total=False):
 class DeploymentSettingVirtualSwitchConfigurationOverrides(TypedDict, total=False):  # pylint: disable=name-too-long
     """The VirtualSwitchConfigurationOverrides of a cluster.
 
-    :ivar enable_iov: Enable IoV for Virtual Switch.
-    :vartype enable_iov: str
-    :ivar load_balancing_algorithm: Load Balancing Algorithm for Virtual Switch.
-    :vartype load_balancing_algorithm: str
+    :ivar enableIov: Enable IoV for Virtual Switch.
+    :vartype enableIov: str
+    :ivar loadBalancingAlgorithm: Load Balancing Algorithm for Virtual Switch.
+    :vartype loadBalancingAlgorithm: str
     """
 
     enableIov: str
@@ -1192,18 +1507,26 @@ class DeploymentStep(TypedDict, total=False):
     :vartype name: str
     :ivar description: Description of step.
     :vartype description: str
-    :ivar full_step_index: FullStepIndex of step.
-    :vartype full_step_index: str
-    :ivar start_time_utc: Start time of step.
-    :vartype start_time_utc: str
-    :ivar end_time_utc: End time of step.
-    :vartype end_time_utc: str
+    :ivar fullStepIndex: FullStepIndex of step.
+    :vartype fullStepIndex: str
+    :ivar startTimeUtc: Start time of step.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: End time of step.
+    :vartype endTimeUtc: str
     :ivar status: Status of step. Allowed values are 'Error', 'Success', 'InProgress'.
     :vartype status: str
     :ivar steps: List of nested steps of AzureStackHCI Cluster Deployment.
     :vartype steps: list["DeploymentStep"]
     :ivar exception: List of exceptions in AzureStackHCI Cluster Deployment.
     :vartype exception: list[str]
+    :ivar error: error details.
+    :vartype error: "ErrorDetail"
+    :ivar percentComplete: The progress percentage of the step.
+    :vartype percentComplete: int
+    :ivar additionalData: Additional metadata associated with the step.
+    :vartype additionalData: list["Metadata"]
+    :ivar recommendedSteps: Recommended steps to resolve failures in this step.
+    :vartype recommendedSteps: list[str]
     """
 
     name: str
@@ -1222,15 +1545,23 @@ class DeploymentStep(TypedDict, total=False):
     """List of nested steps of AzureStackHCI Cluster Deployment."""
     exception: list[str]
     """List of exceptions in AzureStackHCI Cluster Deployment."""
+    error: "ErrorDetail"
+    """error details."""
+    percentComplete: int
+    """The progress percentage of the step."""
+    additionalData: list["Metadata"]
+    """Additional metadata associated with the step."""
+    recommendedSteps: list[str]
+    """Recommended steps to resolve failures in this step."""
 
 
 class DeviceConfiguration(TypedDict, total=False):
     """The device Configuration for edge device.
 
-    :ivar nic_details: NIC Details of device.
-    :vartype nic_details: list["NicDetail"]
-    :ivar device_metadata: Device metadata details.
-    :vartype device_metadata: str
+    :ivar nicDetails: NIC Details of device.
+    :vartype nicDetails: list["NicDetail"]
+    :ivar deviceMetadata: Device metadata details.
+    :vartype deviceMetadata: str
     """
 
     nicDetails: list["NicDetail"]
@@ -1239,19 +1570,351 @@ class DeviceConfiguration(TypedDict, total=False):
     """Device metadata details."""
 
 
+class DiskActionStatus(TypedDict, total=False):
+    """The action plan deployment status for Disk Job.
+
+    :ivar status: Status of ECE action Disk Job.
+    :vartype status: str
+    :ivar steps: List of steps of Disk Job.
+    :vartype steps: list["DiskDeploymentStep"]
+    """
+
+    status: str
+    """Status of ECE action Disk Job."""
+    steps: list["DiskDeploymentStep"]
+    """List of steps of Disk Job."""
+
+
+class DiskConfiguration(TypedDict, total=False):
+    """Desired configuration for a disk.
+
+    :ivar volumes: List of desired volumes on this disk.
+    :vartype volumes: list["DiskVolumeConfiguration"]
+    """
+
+    volumes: list["DiskVolumeConfiguration"]
+    """List of desired volumes on this disk."""
+
+
+class DiskDeploymentStep(TypedDict, total=False):
+    """The Step of Disk Job.
+
+    :ivar name: Name of step.
+    :vartype name: str
+    :ivar description: Description of step.
+    :vartype description: str
+    :ivar fullStepIndex: FullStepIndex of step.
+    :vartype fullStepIndex: str
+    :ivar startTimeUtc: Start time of step.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: End time of step.
+    :vartype endTimeUtc: str
+    :ivar status: Status of step (Error, Success, InProgress).
+    :vartype status: str
+    :ivar steps: List of nested steps.
+    :vartype steps: list["DiskDeploymentStep"]
+    :ivar exception: List of exceptions.
+    :vartype exception: list[str]
+    """
+
+    name: str
+    """Name of step."""
+    description: str
+    """Description of step."""
+    fullStepIndex: str
+    """FullStepIndex of step."""
+    startTimeUtc: str
+    """Start time of step."""
+    endTimeUtc: str
+    """End time of step."""
+    status: str
+    """Status of step (Error, Success, InProgress)."""
+    steps: list["DiskDeploymentStep"]
+    """List of nested steps."""
+    exception: list[str]
+    """List of exceptions."""
+
+
+class DiskJobReportedProperties(TypedDict, total=False):
+    """Reported properties of a disk job.
+
+    :ivar percentComplete: Percentage of job completion.
+    :vartype percentComplete: int
+    :ivar validationStatus: Validation status of Disk Job.
+    :vartype validationStatus: "DiskActionStatus"
+    :ivar deploymentStatus: Deployment status of Disk Job.
+    :vartype deploymentStatus: "DiskActionStatus"
+    """
+
+    percentComplete: int
+    """Percentage of job completion."""
+    validationStatus: "DiskActionStatus"
+    """Validation status of Disk Job."""
+    deploymentStatus: "DiskActionStatus"
+    """Deployment status of Disk Job."""
+
+
+class DiskReportedProperties(TypedDict, total=False):
+    """The actual state of the disk as reported by the device.
+
+    :ivar diskName: The actual disk name as reported by the OS.
+    :vartype diskName: str
+    :ivar model: Model number of the hardware.
+    :vartype model: str
+    :ivar manufacturer: The manufacturer of the disk.
+    :vartype manufacturer: str
+    :ivar isSupported: Indicates whether the disk manufacturer is supported for the validated
+     solution recipe ring. Defaults to true. Set to false when the SAN vendor is not in the allowed
+     vendor list for the current ring.
+    :vartype isSupported: bool
+    :ivar serialNumber: Serial number.
+    :vartype serialNumber: str
+    :ivar firmwareVersion: Firmware version.
+    :vartype firmwareVersion: str
+    :ivar sizeInBytes: Size in bytes.
+    :vartype sizeInBytes: str
+    :ivar storageType: Storage type of the disk. Known values are: "SAN" and "S2D".
+    :vartype storageType: Union[str, "DiskStorageType"]
+    :ivar diskType: Type of the disk. Known values are: "Unknown", "SCM", "NVMe", "SATA", "SSD",
+     "HDD", "Virtual", and "Other".
+    :vartype diskType: Union[str, "DiskType"]
+    :ivar busLocation: Bus location of the disk.
+    :vartype busLocation: str
+    :ivar unallocatedSizeInBytes: Unallocated space on the disk in bytes.
+    :vartype unallocatedSizeInBytes: str
+    :ivar state: Current state of the disk. Known values are: "Online", "Offline", "Failed",
+     "Missing", and "Unknown".
+    :vartype state: Union[str, "DiskState"]
+    :ivar volumes: List of volumes on this disk.
+    :vartype volumes: list["DiskVolumeReportedProperties"]
+    """
+
+    diskName: str
+    """The actual disk name as reported by the OS."""
+    model: str
+    """Model number of the hardware."""
+    manufacturer: str
+    """The manufacturer of the disk."""
+    isSupported: bool
+    """Indicates whether the disk manufacturer is supported for the validated solution recipe ring.
+     Defaults to true. Set to false when the SAN vendor is not in the allowed vendor list for the
+     current ring."""
+    serialNumber: str
+    """Serial number."""
+    firmwareVersion: str
+    """Firmware version."""
+    sizeInBytes: str
+    """Size in bytes."""
+    storageType: Union[str, "DiskStorageType"]
+    """Storage type of the disk. Known values are: \"SAN\" and \"S2D\"."""
+    diskType: Union[str, "DiskType"]
+    """Type of the disk. Known values are: \"Unknown\", \"SCM\", \"NVMe\", \"SATA\", \"SSD\", \"HDD\",
+     \"Virtual\", and \"Other\"."""
+    busLocation: str
+    """Bus location of the disk."""
+    unallocatedSizeInBytes: str
+    """Unallocated space on the disk in bytes."""
+    state: Union[str, "DiskState"]
+    """Current state of the disk. Known values are: \"Online\", \"Offline\", \"Failed\", \"Missing\",
+     and \"Unknown\"."""
+    volumes: list["DiskVolumeReportedProperties"]
+    """List of volumes on this disk."""
+
+
+class DiskVolumeConfiguration(TypedDict, total=False):
+    """Configuration for a volume on a disk.
+
+    :ivar sizeInBytes: Size of the volume in bytes. Required.
+    :vartype sizeInBytes: str
+    :ivar path: Mount path for the volume (e.g., /data or D:\\data). Required.
+    :vartype path: str
+    :ivar fileSystem: File system type to format the volume with. Known values are: "ext4", "xfs",
+     "NTFS", "ReFS", "vfat", "fat32", and "fat".
+    :vartype fileSystem: Union[str, "DiskFileSystemType"]
+    """
+
+    sizeInBytes: Required[str]
+    """Size of the volume in bytes. Required."""
+    path: Required[str]
+    """Mount path for the volume (e.g., /data or D:\\data). Required."""
+    fileSystem: Union[str, "DiskFileSystemType"]
+    """File system type to format the volume with. Known values are: \"ext4\", \"xfs\", \"NTFS\",
+     \"ReFS\", \"vfat\", \"fat32\", and \"fat\"."""
+
+
+class DiskVolumeReportedProperties(TypedDict, total=False):
+    """Reported properties of a volume on the disk.
+
+    :ivar sizeInBytes: Size of the volume in bytes.
+    :vartype sizeInBytes: str
+    :ivar path: Mount path for the volume.
+    :vartype path: str
+    :ivar fileSystem: File system type.
+    :vartype fileSystem: str
+    :ivar partitionId: Unique identifier for the partition.
+    :vartype partitionId: str
+    :ivar partitionNumber: Partition number.
+    :vartype partitionNumber: int
+    :ivar offsetInBytes: Byte offset of the partition start.
+    :vartype offsetInBytes: int
+    :ivar name: Name of the volume.
+    :vartype name: str
+    :ivar isBoot: Indicates if this volume is a boot volume.
+    :vartype isBoot: bool
+    :ivar sizeRemainingInBytes: Available space on the volume in bytes.
+    :vartype sizeRemainingInBytes: str
+    :ivar resourceName: Resource name of the volume.
+    :vartype resourceName: str
+    """
+
+    sizeInBytes: str
+    """Size of the volume in bytes."""
+    path: str
+    """Mount path for the volume."""
+    fileSystem: str
+    """File system type."""
+    partitionId: str
+    """Unique identifier for the partition."""
+    partitionNumber: int
+    """Partition number."""
+    offsetInBytes: int
+    """Byte offset of the partition start."""
+    name: str
+    """Name of the volume."""
+    isBoot: bool
+    """Indicates if this volume is a boot volume."""
+    sizeRemainingInBytes: str
+    """Available space on the volume in bytes."""
+    resourceName: str
+    """Resource name of the volume."""
+
+
 class DnsZones(TypedDict, total=False):
     """Details of the DNS Zones to be configured.
 
-    :ivar dns_zone_name: Name of the DNS Zone to be configured.
-    :vartype dns_zone_name: str
-    :ivar dns_forwarder: Forwarder details of the DNS Zone to be configured.
-    :vartype dns_forwarder: list[str]
+    :ivar dnsZoneName: Name of the DNS Zone to be configured.
+    :vartype dnsZoneName: str
+    :ivar dnsForwarder: Forwarder details of the DNS Zone to be configured.
+    :vartype dnsForwarder: list[str]
     """
 
     dnsZoneName: str
     """Name of the DNS Zone to be configured."""
     dnsForwarder: list[str]
     """Forwarder details of the DNS Zone to be configured."""
+
+
+class DownloadOsJobProperties(TypedDict, total=False):
+    """Represents the properties of Download Os job.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: error details.
+    :vartype error: "ErrorDetail"
+    :ivar jobType: Job Type to support polymorphic resource. Required. Job to download OS packages
+     on to the device.
+    :vartype jobType: Literal[EdgeMachineJobType.DOWNLOAD_OS]
+    :ivar downloadRequest: Download OS request. Required.
+    :vartype downloadRequest: "DownloadRequest"
+    :ivar reportedProperties: Reported Properties for Download Os job.
+    :vartype reportedProperties: "ProvisionOsReportedProperties"
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Edge device job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """error details."""
+    jobType: Required[Literal[EdgeMachineJobType.DOWNLOAD_OS]]
+    """Job Type to support polymorphic resource. Required. Job to download OS packages on to the
+     device."""
+    downloadRequest: Required["DownloadRequest"]
+    """Download OS request. Required."""
+    reportedProperties: "ProvisionOsReportedProperties"
+    """Reported Properties for Download Os job."""
+
+
+class DownloadOsProfile(TypedDict, total=False):
+    """Operating system profile.
+
+    :ivar osName: Name of the operating system.
+    :vartype osName: str
+    :ivar osType: Type of the operating system.
+    :vartype osType: str
+    :ivar osVersion: Version of the operating system.
+    :vartype osVersion: str
+    :ivar osImageLocation: Location of the operating system image.
+    :vartype osImageLocation: str
+    :ivar vsrVersion: Validated Solution Recipe version to be used for the job.
+    :vartype vsrVersion: str
+    :ivar imageHash: Hash of the OS package downloaded.
+    :vartype imageHash: str
+    :ivar gpgPubKey: GPG Public Key used for package verification.
+    :vartype gpgPubKey: str
+    """
+
+    osName: str
+    """Name of the operating system."""
+    osType: str
+    """Type of the operating system."""
+    osVersion: str
+    """Version of the operating system."""
+    osImageLocation: str
+    """Location of the operating system image."""
+    vsrVersion: str
+    """Validated Solution Recipe version to be used for the job."""
+    imageHash: str
+    """Hash of the OS package downloaded."""
+    gpgPubKey: str
+    """GPG Public Key used for package verification."""
+
+
+class DownloadRequest(TypedDict, total=False):
+    """Download Request properties.
+
+    :ivar target: Target operating system to support polymorphic resource. Required. Known values
+     are: "AzureLinux" and "HCI".
+    :vartype target: Union[str, "ProvisioningOsType"]
+    :ivar osProfile: Operating system profile. Required.
+    :vartype osProfile: "DownloadOsProfile"
+    """
+
+    target: Required[Union[str, "ProvisioningOsType"]]
+    """Target operating system to support polymorphic resource. Required. Known values are:
+     \"AzureLinux\" and \"HCI\"."""
+    osProfile: Required["DownloadOsProfile"]
+    """Operating system profile. Required."""
 
 
 class EceActionStatus(TypedDict, total=False):
@@ -1272,22 +1935,22 @@ class EceActionStatus(TypedDict, total=False):
 class EceDeploymentSecrets(TypedDict, total=False):
     """Protected parameters list stored in keyvault.
 
-    :ivar secret_name: Secret name stored in keyvault.
-    :vartype secret_name: str
-    :ivar ece_secret_name: Secret name expected for Enterprise Cloud Engine (ECE) deployment. Known
-     values are: "AzureStackLCMUserCredential", "DefaultARBApplication", "LocalAdminCredential", and
-     "WitnessStorageKey".
-    :vartype ece_secret_name: Union[str, "EceSecrets"]
-    :ivar secret_location: Secret URI stored in keyvault.
-    :vartype secret_location: str
+    :ivar secretName: Secret name stored in keyvault.
+    :vartype secretName: str
+    :ivar eceSecretName: Secret name expected for Enterprise Cloud Engine (ECE) deployment. Known
+     values are: "AzureStackLCMUserCredential", "DefaultARBApplication", "LocalAdminCredential",
+     "WitnessStorageKey", "chapCredential", and "mutualChapCredential".
+    :vartype eceSecretName: Union[str, "EceSecrets"]
+    :ivar secretLocation: Secret URI stored in keyvault.
+    :vartype secretLocation: str
     """
 
     secretName: str
     """Secret name stored in keyvault."""
     eceSecretName: Union[str, "EceSecrets"]
     """Secret name expected for Enterprise Cloud Engine (ECE) deployment. Known values are:
-     \"AzureStackLCMUserCredential\", \"DefaultARBApplication\", \"LocalAdminCredential\", and
-     \"WitnessStorageKey\"."""
+     \"AzureStackLCMUserCredential\", \"DefaultARBApplication\", \"LocalAdminCredential\",
+     \"WitnessStorageKey\", \"chapCredential\", and \"mutualChapCredential\"."""
     secretLocation: str
     """Secret URI stored in keyvault."""
 
@@ -1295,10 +1958,10 @@ class EceDeploymentSecrets(TypedDict, total=False):
 class EceReportedProperties(TypedDict, total=False):
     """The DeploymentStatus of AzureStackHCI Cluster.
 
-    :ivar validation_status: validation status of AzureStackHCI Cluster Deployment.
-    :vartype validation_status: "EceActionStatus"
-    :ivar deployment_status: Deployment status of AzureStackHCI Cluster Deployment.
-    :vartype deployment_status: "EceActionStatus"
+    :ivar validationStatus: validation status of AzureStackHCI Cluster Deployment.
+    :vartype validationStatus: "EceActionStatus"
+    :ivar deploymentStatus: Deployment status of AzureStackHCI Cluster Deployment.
+    :vartype deploymentStatus: "EceActionStatus"
     """
 
     validationStatus: "EceActionStatus"
@@ -1318,9 +1981,9 @@ class ExtensionResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -1329,16 +1992,16 @@ class EdgeDeviceDisks(TypedDict, total=False):
 
     :ivar id: The unique identifier of the disk. Required.
     :vartype id: str
-    :ivar size_in_bytes: The size of the disk in bytes.
-    :vartype size_in_bytes: str
+    :ivar sizeInBytes: The size of the disk in bytes.
+    :vartype sizeInBytes: str
     :ivar type: The type of the disk. For example, S2D or SAN.
     :vartype type: str
     :ivar model: Model number of the hardware.
     :vartype model: str
     :ivar manufacturer: The manufacturer of the disk.
     :vartype manufacturer: str
-    :ivar is_supported: Indicates whether the manufacturer is supported.
-    :vartype is_supported: bool
+    :ivar isSupported: Indicates whether the manufacturer is supported.
+    :vartype isSupported: bool
     """
 
     id: Required[str]
@@ -1358,13 +2021,13 @@ class EdgeDeviceDisks(TypedDict, total=False):
 class EdgeDeviceProperties(TypedDict, total=False):
     """Edge Device properties.
 
-    :ivar device_configuration: Device Configuration.
-    :vartype device_configuration: "DeviceConfiguration"
-    :ivar provisioning_state: Provisioning state of edgeDevice resource. Known values are:
+    :ivar deviceConfiguration: Device Configuration.
+    :vartype deviceConfiguration: "DeviceConfiguration"
+    :ivar provisioningState: Provisioning state of edgeDevice resource. Known values are:
      "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
      "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
      "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     deviceConfiguration: "DeviceConfiguration"
@@ -1375,6 +2038,1172 @@ class EdgeDeviceProperties(TypedDict, total=False):
      \"Creating\", \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\",
      \"PartiallyConnected\", \"InProgress\", \"Accepted\", \"Provisioning\", and
      \"DisableInProgress\"."""
+
+
+class EdgeMachine(TrackedResource):
+    """EdgeMachine details.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineProperties"
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    """
+
+    properties: "EdgeMachineProperties"
+    """The resource-specific properties for this resource."""
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+
+
+class EdgeMachineAdapterPropertyOverrides(TypedDict, total=False):
+    """The AdapterPropertyOverrides reported for the edge machine.
+
+    :ivar jumboPacket: This parameter should only be modified based on your OEM guidance. Do not
+     modify this parameter without OEM validation.
+    :vartype jumboPacket: str
+    :ivar networkDirect: This parameter should only be modified based on your OEM guidance. Do not
+     modify this parameter without OEM validation.
+    :vartype networkDirect: str
+    :ivar networkDirectTechnology: This parameter should only be modified based on your OEM
+     guidance. Do not modify this parameter without OEM validation. Expected values are 'iWARP',
+     'RoCEv2', 'RoCE'.
+    :vartype networkDirectTechnology: str
+    """
+
+    jumboPacket: str
+    """This parameter should only be modified based on your OEM guidance. Do not modify this parameter
+     without OEM validation."""
+    networkDirect: str
+    """This parameter should only be modified based on your OEM guidance. Do not modify this parameter
+     without OEM validation."""
+    networkDirectTechnology: str
+    """This parameter should only be modified based on your OEM guidance. Do not modify this parameter
+     without OEM validation. Expected values are 'iWARP', 'RoCEv2', 'RoCE'."""
+
+
+class EdgeMachineCollectLogJobProperties(TypedDict, total=False):
+    """Properties for pausing a server in the cluster.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: error details.
+    :vartype error: "ErrorDetail"
+    :ivar jobType: ClusterJob Type to support polymorphic resource. Required. Job to collect logs
+     from the device.
+    :vartype jobType: Literal[EdgeMachineJobType.COLLECT_LOG]
+    :ivar fromDate: From date for log collection. Required.
+    :vartype fromDate: str
+    :ivar toDate: To date for log collection. Required.
+    :vartype toDate: str
+    :ivar lastLogGenerated: To date for log collection.
+    :vartype lastLogGenerated: str
+    :ivar reportedProperties: log collection job reported properties.
+    :vartype reportedProperties: "EdgeMachineCollectLogJobReportedProperties"
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Edge device job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """error details."""
+    jobType: Required[Literal[EdgeMachineJobType.COLLECT_LOG]]
+    """ClusterJob Type to support polymorphic resource. Required. Job to collect logs from the device."""
+    fromDate: Required[str]
+    """From date for log collection. Required."""
+    toDate: Required[str]
+    """To date for log collection. Required."""
+    lastLogGenerated: str
+    """To date for log collection."""
+    reportedProperties: "EdgeMachineCollectLogJobReportedProperties"
+    """log collection job reported properties."""
+
+
+class EdgeMachineCollectLogJobReportedProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Represents the reported properties of a log collection job.
+
+    :ivar percentComplete: The percentage of the job that is complete.
+    :vartype percentComplete: int
+    :ivar validationStatus: Validation status of job.
+    :vartype validationStatus: "EceActionStatus"
+    :ivar deploymentStatus: Deployment status of job.
+    :vartype deploymentStatus: "EceActionStatus"
+    :ivar logCollectionSessionDetails: Details of the log collection session.
+    :vartype logCollectionSessionDetails: list["LogCollectionJobSession"]
+    """
+
+    percentComplete: int
+    """The percentage of the job that is complete."""
+    validationStatus: "EceActionStatus"
+    """Validation status of job."""
+    deploymentStatus: "EceActionStatus"
+    """Deployment status of job."""
+    logCollectionSessionDetails: list["LogCollectionJobSession"]
+    """Details of the log collection session."""
+
+
+class EdgeMachineDeploymentConfiguration(TypedDict, total=False):
+    """Edge Machine Deployment Configuration.
+
+    :ivar version: Deployment template version.
+    :vartype version: str
+    :ivar scaleUnits: The list of deployment data. Required.
+    :vartype scaleUnits: list["EdgeMachineScaleUnits"]
+    """
+
+    version: str
+    """Deployment template version."""
+    scaleUnits: Required[list["EdgeMachineScaleUnits"]]
+    """The list of deployment data. Required."""
+
+
+class EdgeMachineDeploymentData(TypedDict, total=False):
+    """The deployment data of an edge machine.
+
+    :ivar storageType: Storage type for the edge machine node. Required. Known values are: "S2D",
+     "SANISCSI", and "SANFC".
+    :vartype storageType: Union[str, "NodeStorageType"]
+    :ivar iScsiConfig: iSCSI configuration for the edge machine.
+    :vartype iScsiConfig: "IscsiConfig"
+    :ivar secrets: Protected parameters stored in Key Vault and applied during edge machine node
+     preparation.
+    :vartype secrets: list["EceDeploymentSecrets"]
+    """
+
+    storageType: Required[Union[str, "NodeStorageType"]]
+    """Storage type for the edge machine node. Required. Known values are: \"S2D\", \"SANISCSI\", and
+     \"SANFC\"."""
+    iScsiConfig: "IscsiConfig"
+    """iSCSI configuration for the edge machine."""
+    secrets: list["EceDeploymentSecrets"]
+    """Protected parameters stored in Key Vault and applied during edge machine node preparation."""
+
+
+class EdgeMachineDeploymentSetting(ProxyResource):
+    """Deployment setting resource for an Edge Machine.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineDeploymentSettingProperties"
+    """
+
+    properties: "EdgeMachineDeploymentSettingProperties"
+    """The resource-specific properties for this resource."""
+
+
+class EdgeMachineDeploymentSettingProperties(TypedDict, total=False):
+    """The properties of an Edge Machine Deployment Setting.
+
+    :ivar provisioningState: The provisioning state of the deployment setting resource. Known
+     values are: "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected",
+     "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar deploymentConfiguration: The deployment configuration for the edge machine. Required.
+    :vartype deploymentConfiguration: "EdgeMachineDeploymentConfiguration"
+    :ivar reportedProperties: Deployment status reported from the edge machine.
+    :vartype reportedProperties: "EceReportedProperties"
+    """
+
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the deployment setting resource. Known values are: \"NotSpecified\",
+     \"Error\", \"Succeeded\", \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\",
+     \"Deleted\", \"Creating\", \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\",
+     \"PartiallyConnected\", \"InProgress\", \"Accepted\", \"Provisioning\", and
+     \"DisableInProgress\"."""
+    deploymentConfiguration: Required["EdgeMachineDeploymentConfiguration"]
+    """The deployment configuration for the edge machine. Required."""
+    reportedProperties: "EceReportedProperties"
+    """Deployment status reported from the edge machine."""
+
+
+class EdgeMachineDisk(ProxyResource):
+    """Disk resource representing a physical disk on an Edge Machine.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineDiskProperties"
+    """
+
+    properties: "EdgeMachineDiskProperties"
+    """The resource-specific properties for this resource."""
+
+
+class EdgeMachineDiskJob(ProxyResource):
+    """Disk Job resource for managing operations on disks.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineDiskJobProperties"
+    """
+
+    properties: "EdgeMachineDiskJobProperties"
+    """The resource-specific properties for this resource."""
+
+
+class EdgeMachineDiskPrivilegedJob(ProxyResource):
+    """Disk Privileged Job resource for managing privileged operations on disk volumes.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineDiskPrivilegedJobProperties"
+    """
+
+    properties: "EdgeMachineDiskPrivilegedJobProperties"
+    """The resource-specific properties for this resource."""
+
+
+class EdgeMachineDiskProperties(TypedDict, total=False):
+    """Properties of a disk.
+
+    :ivar diskConfiguration: The authoritative desired configuration for this disk.
+    :vartype diskConfiguration: "DiskConfiguration"
+    :ivar reportedProperties: The actual state of the disk as reported by the device.
+    :vartype reportedProperties: "DiskReportedProperties"
+    :ivar provisioningState: Provisioning state of the disk resource. Known values are:
+     "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
+     "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    """
+
+    diskConfiguration: "DiskConfiguration"
+    """The authoritative desired configuration for this disk."""
+    reportedProperties: "DiskReportedProperties"
+    """The actual state of the disk as reported by the device."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Provisioning state of the disk resource. Known values are: \"NotSpecified\", \"Error\",
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\",
+     \"Creating\", \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\",
+     \"PartiallyConnected\", \"InProgress\", \"Accepted\", \"Provisioning\", and
+     \"DisableInProgress\"."""
+
+
+class EdgeMachineHostNetwork(TypedDict, total=False):
+    """HostNetwork configuration reported for the edge machine.
+
+    :ivar intents: The network intents assigned to the network reference pattern used for the
+     deployment. Each intent will define its own name, traffic type, adapter names, and overrides as
+     recommended by your OEM.
+    :vartype intents: list["EdgeMachineHostNetworkIntent"]
+    :ivar storageNetworks: List of StorageNetworks config to deploy AzureStackHCI Cluster.
+    :vartype storageNetworks: list["EdgeMachineStorageNetwork"]
+    :ivar storageConnectivitySwitchless: Defines how the storage adapters between nodes are
+     connected either switch or switch less.
+    :vartype storageConnectivitySwitchless: bool
+    :ivar enableStorageAutoIp: Optional parameter required only for 3 Nodes Switchless deployments.
+     This allows users to specify IPs and Mask for Storage NICs when Network ATC is not assigning
+     the IPs for storage automatically.
+    :vartype enableStorageAutoIp: bool
+    """
+
+    intents: list["EdgeMachineHostNetworkIntent"]
+    """The network intents assigned to the network reference pattern used for the deployment. Each
+     intent will define its own name, traffic type, adapter names, and overrides as recommended by
+     your OEM."""
+    storageNetworks: list["EdgeMachineStorageNetwork"]
+    """List of StorageNetworks config to deploy AzureStackHCI Cluster."""
+    storageConnectivitySwitchless: bool
+    """Defines how the storage adapters between nodes are connected either switch or switch less."""
+    enableStorageAutoIp: bool
+    """Optional parameter required only for 3 Nodes Switchless deployments. This allows users to
+     specify IPs and Mask for Storage NICs when Network ATC is not assigning the IPs for storage
+     automatically."""
+
+
+class EdgeMachineHostNetworkIntent(TypedDict, total=False):
+    """The network intent reported for the edge machine.
+
+    :ivar scope: Scope for host network intent.
+    :vartype scope: int
+    :ivar intentType: IntentType for host network intent.
+    :vartype intentType: int
+    :ivar isComputeIntentSet: IsComputeIntentSet for host network intent.
+    :vartype isComputeIntentSet: bool
+    :ivar isStorageIntentSet: IsStorageIntentSet for host network intent.
+    :vartype isStorageIntentSet: bool
+    :ivar isOnlyStorage: IntentType for host network intent.
+    :vartype isOnlyStorage: bool
+    :ivar isManagementIntentSet: IsManagementIntentSet for host network intent.
+    :vartype isManagementIntentSet: bool
+    :ivar isStretchIntentSet: IsStretchIntentSet for host network intent.
+    :vartype isStretchIntentSet: bool
+    :ivar isOnlyStretch: IsOnlyStretch for host network intent.
+    :vartype isOnlyStretch: bool
+    :ivar isNetworkIntentType: IsNetworkIntentType for host network intent.
+    :vartype isNetworkIntentType: bool
+    :ivar intentName: Name of the network intent you wish to create.
+    :vartype intentName: str
+    :ivar intentAdapters: Array of adapters used for the network intent.
+    :vartype intentAdapters: list[str]
+    :ivar overrideVirtualSwitchConfiguration: This parameter should only be modified based on your
+     OEM guidance. Do not modify this parameter without OEM validation.
+    :vartype overrideVirtualSwitchConfiguration: bool
+    :ivar virtualSwitchConfigurationOverrides: Set virtualSwitch ConfigurationOverrides for
+     cluster.
+    :vartype virtualSwitchConfigurationOverrides: "EdgeMachineVirtualSwitchConfigurationOverrides"
+    :ivar overrideQosPolicy: This parameter should only be modified based on your OEM guidance. Do
+     not modify this parameter without OEM validation.
+    :vartype overrideQosPolicy: bool
+    :ivar qosPolicyOverrides: Set QoS PolicyOverrides for cluster.
+    :vartype qosPolicyOverrides: "QosPolicyOverrides"
+    :ivar overrideAdapterProperty: This parameter should only be modified based on your OEM
+     guidance. Do not modify this parameter without OEM validation.
+    :vartype overrideAdapterProperty: bool
+    :ivar adapterPropertyOverrides: Set Adapter PropertyOverrides for cluster.
+    :vartype adapterPropertyOverrides: "EdgeMachineAdapterPropertyOverrides"
+    """
+
+    scope: int
+    """Scope for host network intent."""
+    intentType: int
+    """IntentType for host network intent."""
+    isComputeIntentSet: bool
+    """IsComputeIntentSet for host network intent."""
+    isStorageIntentSet: bool
+    """IsStorageIntentSet for host network intent."""
+    isOnlyStorage: bool
+    """IntentType for host network intent."""
+    isManagementIntentSet: bool
+    """IsManagementIntentSet for host network intent."""
+    isStretchIntentSet: bool
+    """IsStretchIntentSet for host network intent."""
+    isOnlyStretch: bool
+    """IsOnlyStretch for host network intent."""
+    isNetworkIntentType: bool
+    """IsNetworkIntentType for host network intent."""
+    intentName: str
+    """Name of the network intent you wish to create."""
+    intentAdapters: list[str]
+    """Array of adapters used for the network intent."""
+    overrideVirtualSwitchConfiguration: bool
+    """This parameter should only be modified based on your OEM guidance. Do not modify this parameter
+     without OEM validation."""
+    virtualSwitchConfigurationOverrides: "EdgeMachineVirtualSwitchConfigurationOverrides"
+    """Set virtualSwitch ConfigurationOverrides for cluster."""
+    overrideQosPolicy: bool
+    """This parameter should only be modified based on your OEM guidance. Do not modify this parameter
+     without OEM validation."""
+    qosPolicyOverrides: "QosPolicyOverrides"
+    """Set QoS PolicyOverrides for cluster."""
+    overrideAdapterProperty: bool
+    """This parameter should only be modified based on your OEM guidance. Do not modify this parameter
+     without OEM validation."""
+    adapterPropertyOverrides: "EdgeMachineAdapterPropertyOverrides"
+    """Set Adapter PropertyOverrides for cluster."""
+
+
+class EdgeMachineJob(ProxyResource):
+    """Cluster Jobs resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineJobProperties"
+    """
+
+    properties: "EdgeMachineJobProperties"
+    """The resource-specific properties for this resource."""
+
+
+class EdgeMachineNetworkAdapterJob(ProxyResource):
+    """Job for an Edge Machine Network Adapter.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineNetworkAdapterJobProperties"
+    """
+
+    properties: "EdgeMachineNetworkAdapterJobProperties"
+    """The resource-specific properties for this resource."""
+
+
+class EdgeMachineNetworkProfile(TypedDict, total=False):
+    """NetworkProfile of edge machine.
+
+    :ivar nicDetails: List of Network Interface Card (NIC) Details of edge machine.
+    :vartype nicDetails: list["EdgeMachineNicDetail"]
+    :ivar switchDetails: List of switch Details of edge machine.
+    :vartype switchDetails: list["SwitchDetail"]
+    :ivar hostNetwork: HostNetwork configuration reported for the edge machine.
+    :vartype hostNetwork: "EdgeMachineHostNetwork"
+    :ivar sdnProperties: Software Defined Networking (SDN) properties reported for the edge
+     machine.
+    :vartype sdnProperties: "SdnProperties"
+    """
+
+    nicDetails: list["EdgeMachineNicDetail"]
+    """List of Network Interface Card (NIC) Details of edge machine."""
+    switchDetails: list["SwitchDetail"]
+    """List of switch Details of edge machine."""
+    hostNetwork: "EdgeMachineHostNetwork"
+    """HostNetwork configuration reported for the edge machine."""
+    sdnProperties: "SdnProperties"
+    """Software Defined Networking (SDN) properties reported for the edge machine."""
+
+
+class EdgeMachineNicDetail(TypedDict, total=False):
+    """Network Interface Card (NIC) Details of edge machine.
+
+    :ivar adapterName: Adapter Name of NIC.
+    :vartype adapterName: str
+    :ivar interfaceDescription: Interface Description of NIC.
+    :vartype interfaceDescription: str
+    :ivar componentId: Component Id of NIC.
+    :vartype componentId: str
+    :ivar driverVersion: Driver Version of NIC.
+    :vartype driverVersion: str
+    :ivar ip4Address: Subnet Mask of NIC.
+    :vartype ip4Address: str
+    :ivar subnetMask: Subnet Mask of NIC.
+    :vartype subnetMask: str
+    :ivar defaultGateway: Default Gateway of NIC.
+    :vartype defaultGateway: str
+    :ivar dnsServers: DNS Servers for NIC.
+    :vartype dnsServers: list[str]
+    :ivar defaultIsolationId: Default Isolation of Management NIC.
+    :vartype defaultIsolationId: str
+    :ivar macAddress: MAC address information of NIC.
+    :vartype macAddress: str
+    :ivar slot: The slot attached to the NIC.
+    :vartype slot: str
+    :ivar switchName: The switch attached to the NIC, if any.
+    :vartype switchName: str
+    :ivar nicType: The type of NIC, physical, virtual, management.
+    :vartype nicType: str
+    :ivar vlanId: The VLAN ID of the physical NIC.
+    :vartype vlanId: str
+    :ivar nicStatus: The status of NIC, up, disconnected.
+    :vartype nicStatus: str
+    :ivar rdmaCapability: Describes the RDMA capability of the network adapter. Known values are:
+     "Enabled" and "Disabled".
+    :vartype rdmaCapability: Union[str, "RdmaCapability"]
+    """
+
+    adapterName: str
+    """Adapter Name of NIC."""
+    interfaceDescription: str
+    """Interface Description of NIC."""
+    componentId: str
+    """Component Id of NIC."""
+    driverVersion: str
+    """Driver Version of NIC."""
+    ip4Address: str
+    """Subnet Mask of NIC."""
+    subnetMask: str
+    """Subnet Mask of NIC."""
+    defaultGateway: str
+    """Default Gateway of NIC."""
+    dnsServers: list[str]
+    """DNS Servers for NIC."""
+    defaultIsolationId: str
+    """Default Isolation of Management NIC."""
+    macAddress: str
+    """MAC address information of NIC."""
+    slot: str
+    """The slot attached to the NIC."""
+    switchName: str
+    """The switch attached to the NIC, if any."""
+    nicType: str
+    """The type of NIC, physical, virtual, management."""
+    vlanId: str
+    """The VLAN ID of the physical NIC."""
+    nicStatus: str
+    """The status of NIC, up, disconnected."""
+    rdmaCapability: Union[str, "RdmaCapability"]
+    """Describes the RDMA capability of the network adapter. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+
+
+class EdgeMachinePatch(TypedDict, total=False):
+    """Model for patching edge machine.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+
+
+class EdgeMachineProperties(TypedDict, total=False):
+    """Properties for edge machine.
+
+    :ivar edgeMachineKind: Edge Machine type. Known values are: "Standard" and "Dedicated".
+    :vartype edgeMachineKind: Union[str, "EdgeMachineKind"]
+    :ivar provisioningState: The provisioning state of a resource. Known values are:
+     "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
+     "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar cloudId: Unique, immutable resource id.
+    :vartype cloudId: str
+    :ivar arcMachineResourceGroupId: Optional property to create arc machine in custom resource
+     group.
+    :vartype arcMachineResourceGroupId: str
+    :ivar arcMachineResourceId: Arc machine instance resource id.
+    :vartype arcMachineResourceId: str
+    :ivar lifecycleDetails: Lifecycle details of the resource.
+    :vartype lifecycleDetails: "LifecycleDetails"
+    :ivar arcGatewayResourceId: Link to Arc Gateway ARM resource Id.
+    :vartype arcGatewayResourceId: str
+    :ivar siteDetails: Service fetches common configuration from site.
+    :vartype siteDetails: "SiteDetails"
+    :ivar ownershipVoucherDetails: Ownership voucher details for provisioned machine.
+    :vartype ownershipVoucherDetails: "OwnershipVoucherDetails"
+    :ivar provisioningDetails: Details for device provisioning.
+    :vartype provisioningDetails: "ProvisioningDetails"
+    :ivar devicePoolResourceId: A machine can only be assigned to single device pool.
+    :vartype devicePoolResourceId: str
+    :ivar machineState: OS configuration status details. Known values are: "Created",
+     "Registering", "Unpurposed", "Transitioning", "Purposed", "Updating", "Resetting", "Failed",
+     and "Preparing".
+    :vartype machineState: Union[str, "EdgeMachineState"]
+    :ivar connectivityStatus: machine connectivity status. Known values are: "NotSpecified",
+     "Disconnected", and "Connected".
+    :vartype connectivityStatus: Union[str, "EdgeMachineConnectivityStatus"]
+    :ivar claimedBy: Tracks the ID of the consuming resource, setting the machine as in-use.
+    :vartype claimedBy: str
+    :ivar reportedProperties: Reported properties for edge machine.
+    :vartype reportedProperties: "EdgeMachineReportedProperties"
+    :ivar operationDetails: operation status details for edge machine.
+    :vartype operationDetails: list["OperationDetail"]
+    :ivar lastSyncTimestamp: Last time data updated to service.
+    :vartype lastSyncTimestamp: str
+    """
+
+    edgeMachineKind: Union[str, "EdgeMachineKind"]
+    """Edge Machine type. Known values are: \"Standard\" and \"Dedicated\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of a resource. Known values are: \"NotSpecified\", \"Error\",
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\",
+     \"Creating\", \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\",
+     \"PartiallyConnected\", \"InProgress\", \"Accepted\", \"Provisioning\", and
+     \"DisableInProgress\"."""
+    cloudId: str
+    """Unique, immutable resource id."""
+    arcMachineResourceGroupId: str
+    """Optional property to create arc machine in custom resource group."""
+    arcMachineResourceId: str
+    """Arc machine instance resource id."""
+    lifecycleDetails: "LifecycleDetails"
+    """Lifecycle details of the resource."""
+    arcGatewayResourceId: str
+    """Link to Arc Gateway ARM resource Id."""
+    siteDetails: "SiteDetails"
+    """Service fetches common configuration from site."""
+    ownershipVoucherDetails: "OwnershipVoucherDetails"
+    """Ownership voucher details for provisioned machine."""
+    provisioningDetails: "ProvisioningDetails"
+    """Details for device provisioning."""
+    devicePoolResourceId: str
+    """A machine can only be assigned to single device pool."""
+    machineState: Union[str, "EdgeMachineState"]
+    """OS configuration status details. Known values are: \"Created\", \"Registering\",
+     \"Unpurposed\", \"Transitioning\", \"Purposed\", \"Updating\", \"Resetting\", \"Failed\", and
+     \"Preparing\"."""
+    connectivityStatus: Union[str, "EdgeMachineConnectivityStatus"]
+    """machine connectivity status. Known values are: \"NotSpecified\", \"Disconnected\", and
+     \"Connected\"."""
+    claimedBy: str
+    """Tracks the ID of the consuming resource, setting the machine as in-use."""
+    reportedProperties: "EdgeMachineReportedProperties"
+    """Reported properties for edge machine."""
+    operationDetails: list["OperationDetail"]
+    """operation status details for edge machine."""
+    lastSyncTimestamp: str
+    """Last time data updated to service."""
+
+
+class EdgeMachineRemoteSupportJobProperties(TypedDict, total=False):
+    """Properties for adding a server in the cluster.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: error details.
+    :vartype error: "ErrorDetail"
+    :ivar jobType: Job Type to support polymorphic resource. Required. Job to provide remote
+     support to the device.
+    :vartype jobType: Literal[EdgeMachineJobType.REMOTE_SUPPORT]
+    :ivar accessLevel: Remote support access level. Required. Known values are: "None",
+     "Diagnostics", and "DiagnosticsAndRepair".
+    :vartype accessLevel: Union[str, "RemoteSupportAccessLevel"]
+    :ivar expirationTimestamp: Remote support expiration timestamp. Required.
+    :vartype expirationTimestamp: str
+    :ivar type: Remote support type. Required. Known values are: "Enable" and "Revoke".
+    :vartype type: Union[str, "RemoteSupportType"]
+    :ivar reportedProperties: log collection job reported properties.
+    :vartype reportedProperties: "EdgeMachineRemoteSupportJobReportedProperties"
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Edge device job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """error details."""
+    jobType: Required[Literal[EdgeMachineJobType.REMOTE_SUPPORT]]
+    """Job Type to support polymorphic resource. Required. Job to provide remote support to the
+     device."""
+    accessLevel: Required[Union[str, "RemoteSupportAccessLevel"]]
+    """Remote support access level. Required. Known values are: \"None\", \"Diagnostics\", and
+     \"DiagnosticsAndRepair\"."""
+    expirationTimestamp: Required[str]
+    """Remote support expiration timestamp. Required."""
+    type: Required[Union[str, "RemoteSupportType"]]
+    """Remote support type. Required. Known values are: \"Enable\" and \"Revoke\"."""
+    reportedProperties: "EdgeMachineRemoteSupportJobReportedProperties"
+    """log collection job reported properties."""
+
+
+class EdgeMachineRemoteSupportJobReportedProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Represents the reported properties of a remote support job.
+
+    :ivar percentComplete: The percentage of the job that is complete.
+    :vartype percentComplete: int
+    :ivar validationStatus: Validation status of job.
+    :vartype validationStatus: "EceActionStatus"
+    :ivar deploymentStatus: Deployment status of job.
+    :vartype deploymentStatus: "EceActionStatus"
+    :ivar nodeSettings: Optional settings for configuring the node for remote support.
+    :vartype nodeSettings: "EdgeMachineRemoteSupportNodeSettings"
+    :ivar sessionDetails: Details of the remote support session.
+    :vartype sessionDetails: list["RemoteSupportSession"]
+    """
+
+    percentComplete: int
+    """The percentage of the job that is complete."""
+    validationStatus: "EceActionStatus"
+    """Validation status of job."""
+    deploymentStatus: "EceActionStatus"
+    """Deployment status of job."""
+    nodeSettings: "EdgeMachineRemoteSupportNodeSettings"
+    """Optional settings for configuring the node for remote support."""
+    sessionDetails: list["RemoteSupportSession"]
+    """Details of the remote support session."""
+
+
+class EdgeMachineRemoteSupportNodeSettings(TypedDict, total=False):
+    """Represents the settings of a remote support node.
+
+    :ivar state: The state of the remote support node.
+    :vartype state: str
+    :ivar createdAt: The timestamp when the node settings were created, in UTC.
+    :vartype createdAt: str
+    :ivar updatedAt: The timestamp when the node settings were last updated, in UTC.
+    :vartype updatedAt: str
+    :ivar connectionStatus: The current connection status of the remote support session.
+    :vartype connectionStatus: str
+    :ivar connectionErrorMessage: The error message, if any, from the last connection attempt.
+    :vartype connectionErrorMessage: str
+    """
+
+    state: str
+    """The state of the remote support node."""
+    createdAt: str
+    """The timestamp when the node settings were created, in UTC."""
+    updatedAt: str
+    """The timestamp when the node settings were last updated, in UTC."""
+    connectionStatus: str
+    """The current connection status of the remote support session."""
+    connectionErrorMessage: str
+    """The error message, if any, from the last connection attempt."""
+
+
+class EdgeMachineReportedProperties(TypedDict, total=False):
+    """Reported properties for edge machine.
+
+    :ivar lastUpdated: Last time data reported.
+    :vartype lastUpdated: str
+    :ivar networkProfile: Network details for edge machine.
+    :vartype networkProfile: "EdgeMachineNetworkProfile"
+    :ivar osProfile: OS Properties for edge machine.
+    :vartype osProfile: "OsProfile"
+    :ivar hardwareProfile: Hardware related information for edge machine.
+    :vartype hardwareProfile: "HardwareProfile"
+    :ivar storageProfile: Storage related information for edge machine.
+    :vartype storageProfile: "StorageProfile"
+    :ivar sbeDeploymentPackageInfo: Solution builder extension (SBE) deployment package
+     information.
+    :vartype sbeDeploymentPackageInfo: "SbeDeploymentPackageInfo"
+    :ivar extensionProfile: Extension details for edge machine.
+    :vartype extensionProfile: "ExtensionProfile"
+    :ivar workloadInventory: Read-only Hyper-V VM inventory reported by the device management
+     extension for VMs visible on this node.
+    :vartype workloadInventory: list["EdgeMachineWorkloadInventoryItem"]
+    :ivar workloadInventoryLastUpdated: Last time the device management extension refreshed the
+     local Hyper-V workload inventory.
+    :vartype workloadInventoryLastUpdated: str
+    :ivar storageInitiators: Storage fabric initiator ports (iSCSI or Fibre Channel) discovered on
+     the edge machine.
+    :vartype storageInitiators: list["StorageInitiator"]
+    """
+
+    lastUpdated: str
+    """Last time data reported."""
+    networkProfile: "EdgeMachineNetworkProfile"
+    """Network details for edge machine."""
+    osProfile: "OsProfile"
+    """OS Properties for edge machine."""
+    hardwareProfile: "HardwareProfile"
+    """Hardware related information for edge machine."""
+    storageProfile: "StorageProfile"
+    """Storage related information for edge machine."""
+    sbeDeploymentPackageInfo: "SbeDeploymentPackageInfo"
+    """Solution builder extension (SBE) deployment package information."""
+    extensionProfile: "ExtensionProfile"
+    """Extension details for edge machine."""
+    workloadInventory: list["EdgeMachineWorkloadInventoryItem"]
+    """Read-only Hyper-V VM inventory reported by the device management extension for VMs visible on
+     this node."""
+    workloadInventoryLastUpdated: str
+    """Last time the device management extension refreshed the local Hyper-V workload inventory."""
+    storageInitiators: list["StorageInitiator"]
+    """Storage fabric initiator ports (iSCSI or Fibre Channel) discovered on the edge machine."""
+
+
+class EdgeMachineScaleUnits(TypedDict, total=False):
+    """A scale unit containing deployment data.
+
+    :ivar deploymentData: Deployment data to configure the edge machine. Required.
+    :vartype deploymentData: "EdgeMachineDeploymentData"
+    """
+
+    deploymentData: Required["EdgeMachineDeploymentData"]
+    """Deployment data to configure the edge machine. Required."""
+
+
+class EdgeMachineSecurityComplianceStatus(TypedDict, total=False):
+    """Compliance status payload for edge machine security settings.
+
+    :ivar fipsStatus: FIPS compliance status. Known values are: "Compliant", "NonCompliant", and
+     "Pending".
+    :vartype fipsStatus: Union[str, "ComplianceStatus"]
+    :ivar secureBootStatus: Secure Boot compliance status. Known values are: "Compliant",
+     "NonCompliant", and "Pending".
+    :vartype secureBootStatus: Union[str, "ComplianceStatus"]
+    :ivar encryptionAtRestStatus: Encryption at rest compliance status. Known values are:
+     "Compliant", "NonCompliant", and "Pending".
+    :vartype encryptionAtRestStatus: Union[str, "ComplianceStatus"]
+    :ivar seLinuxPolicyStatus: SELinux policy compliance status. Known values are: "Compliant",
+     "NonCompliant", and "Pending".
+    :vartype seLinuxPolicyStatus: Union[str, "ComplianceStatus"]
+    :ivar securityBaselineStatus: Security baseline compliance status. Known values are:
+     "Compliant", "NonCompliant", and "Pending".
+    :vartype securityBaselineStatus: Union[str, "ComplianceStatus"]
+    """
+
+    fipsStatus: Union[str, "ComplianceStatus"]
+    """FIPS compliance status. Known values are: \"Compliant\", \"NonCompliant\", and \"Pending\"."""
+    secureBootStatus: Union[str, "ComplianceStatus"]
+    """Secure Boot compliance status. Known values are: \"Compliant\", \"NonCompliant\", and
+     \"Pending\"."""
+    encryptionAtRestStatus: Union[str, "ComplianceStatus"]
+    """Encryption at rest compliance status. Known values are: \"Compliant\", \"NonCompliant\", and
+     \"Pending\"."""
+    seLinuxPolicyStatus: Union[str, "ComplianceStatus"]
+    """SELinux policy compliance status. Known values are: \"Compliant\", \"NonCompliant\", and
+     \"Pending\"."""
+    securityBaselineStatus: Union[str, "ComplianceStatus"]
+    """Security baseline compliance status. Known values are: \"Compliant\", \"NonCompliant\", and
+     \"Pending\"."""
+
+
+class EdgeMachineSecurityProperties(TypedDict, total=False):
+    """Properties of an Edge Machine Security Settings resource.
+
+    :ivar provisioningState: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
+     "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar securityComplianceStatus: Compliance status values synchronized from Guest Configuration.
+    :vartype securityComplianceStatus: "EdgeMachineSecurityComplianceStatus"
+    :ivar registrationTimestamp: First synchronization timestamp in UTC.
+    :vartype registrationTimestamp: str
+    :ivar lastSyncTimestamp: Most recent synchronization timestamp in UTC.
+    :vartype lastSyncTimestamp: str
+    """
+
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the resource. Known values are: \"NotSpecified\", \"Error\",
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\",
+     \"Creating\", \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\",
+     \"PartiallyConnected\", \"InProgress\", \"Accepted\", \"Provisioning\", and
+     \"DisableInProgress\"."""
+    securityComplianceStatus: "EdgeMachineSecurityComplianceStatus"
+    """Compliance status values synchronized from Guest Configuration."""
+    registrationTimestamp: str
+    """First synchronization timestamp in UTC."""
+    lastSyncTimestamp: str
+    """Most recent synchronization timestamp in UTC."""
+
+
+class EdgeMachineSecuritySettings(ProxyResource):
+    """Edge Machine Security Settings proxy resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineSecurityProperties"
+    """
+
+    properties: "EdgeMachineSecurityProperties"
+    """The resource-specific properties for this resource."""
+
+
+class EdgeMachineStorageAdapterIpInfo(TypedDict, total=False):
+    """The StorageAdapter physical nodes reported for the edge machine.
+
+    :ivar physicalNode: storage adapter physical node name.
+    :vartype physicalNode: str
+    :ivar ipv4Address: The IPv4 address assigned to each storage adapter physical node on your
+     Azure Stack HCI cluster.
+    :vartype ipv4Address: str
+    :ivar subnetMask: The SubnetMask address assigned to each storage adapter physical node on your
+     Azure Stack HCI cluster.
+    :vartype subnetMask: str
+    """
+
+    physicalNode: str
+    """storage adapter physical node name."""
+    ipv4Address: str
+    """The IPv4 address assigned to each storage adapter physical node on your Azure Stack HCI
+     cluster."""
+    subnetMask: str
+    """The SubnetMask address assigned to each storage adapter physical node on your Azure Stack HCI
+     cluster."""
+
+
+class EdgeMachineStorageNetwork(TypedDict, total=False):
+    """The StorageNetworks reported for the edge machine.
+
+    :ivar name: Name of the storage network.
+    :vartype name: str
+    :ivar networkAdapterName: Name of the storage network adapter.
+    :vartype networkAdapterName: str
+    :ivar storageVlanId: ID specified for the VLAN storage network. This setting is applied to the
+     network interfaces that route the storage and VM migration traffic.
+    :vartype storageVlanId: str
+    :ivar storageAdapterIPInfo: List of Storage adapter physical nodes config to deploy
+     AzureStackHCI Cluster.
+    :vartype storageAdapterIPInfo: list["EdgeMachineStorageAdapterIpInfo"]
+    """
+
+    name: str
+    """Name of the storage network."""
+    networkAdapterName: str
+    """Name of the storage network adapter."""
+    storageVlanId: str
+    """ID specified for the VLAN storage network. This setting is applied to the network interfaces
+     that route the storage and VM migration traffic."""
+    storageAdapterIPInfo: list["EdgeMachineStorageAdapterIpInfo"]
+    """List of Storage adapter physical nodes config to deploy AzureStackHCI Cluster."""
+
+
+class EdgeMachineValidateRequest(TypedDict, total=False):
+    """The validate request for Edge Machine.
+
+    :ivar edgeMachineIds: Machine Ids against which, current machine has to be validated. Required.
+    :vartype edgeMachineIds: list[str]
+    :ivar additionalInfo: Additional info required for validation.
+    :vartype additionalInfo: str
+    """
+
+    edgeMachineIds: Required[list[str]]
+    """Machine Ids against which, current machine has to be validated. Required."""
+    additionalInfo: str
+    """Additional info required for validation."""
+
+
+class EdgeMachineVirtualSwitchConfigurationOverrides(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The VirtualSwitchConfigurationOverrides reported for the edge machine.
+
+    :ivar enableIov: Enable IoV for Virtual Switch.
+    :vartype enableIov: str
+    :ivar loadBalancingAlgorithm: Load Balancing Algorithm for Virtual Switch.
+    :vartype loadBalancingAlgorithm: str
+    """
+
+    enableIov: str
+    """Enable IoV for Virtual Switch."""
+    loadBalancingAlgorithm: str
+    """Load Balancing Algorithm for Virtual Switch."""
+
+
+class EdgeMachineVolume(ProxyResource):
+    """Volume resource representing a storage volume on an Edge Machine.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "EdgeMachineVolumeProperties"
+    """
+
+    properties: "EdgeMachineVolumeProperties"
+    """The resource-specific properties for this resource."""
+
+
+class EdgeMachineVolumeProperties(TypedDict, total=False):
+    """Properties of a volume.
+
+    :ivar volumeConfiguration: Desired configuration for this volume.
+    :vartype volumeConfiguration: "VolumeConfiguration"
+    :ivar reportedProperties: The actual state of the volume as reported by the device.
+    :vartype reportedProperties: "VolumeReportedProperties"
+    :ivar provisioningState: Provisioning state of the volume resource. Known values are:
+     "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
+     "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    """
+
+    volumeConfiguration: "VolumeConfiguration"
+    """Desired configuration for this volume."""
+    reportedProperties: "VolumeReportedProperties"
+    """The actual state of the volume as reported by the device."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Provisioning state of the volume resource. Known values are: \"NotSpecified\", \"Error\",
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\",
+     \"Creating\", \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\",
+     \"PartiallyConnected\", \"InProgress\", \"Accepted\", \"Provisioning\", and
+     \"DisableInProgress\"."""
+
+
+class EdgeMachineWorkloadInventoryItem(TypedDict, total=False):
+    """Represents a single workload (Hyper-V VM) inventory entry reported by the device management
+    extension running on the edge machine.
+
+    :ivar workloadId: Stable device-reported workload identifier, such as the Hyper-V VM ID when
+     available.
+    :vartype workloadId: str
+    :ivar name: Hyper-V VM name.
+    :vartype name: str
+    :ivar resourceId: Optional ARM resource ID when the service can map the local VM to an ARM
+     resource.
+    :vartype resourceId: str
+    :ivar workloadType: Workload type. For v1 this should be VirtualMachine.
+    :vartype workloadType: str
+    :ivar state: Hyper-V VM state reported by the node.
+    :vartype state: str
+    :ivar virtualProcessorCount: Configured virtual processor count from Hyper-V.
+    :vartype virtualProcessorCount: str
+    :ivar memoryInBytes: Maximum memory the VM can consume, in bytes.
+    :vartype memoryInBytes: str
+    """
+
+    workloadId: str
+    """Stable device-reported workload identifier, such as the Hyper-V VM ID when available."""
+    name: str
+    """Hyper-V VM name."""
+    resourceId: str
+    """Optional ARM resource ID when the service can map the local VM to an ARM resource."""
+    workloadType: str
+    """Workload type. For v1 this should be VirtualMachine."""
+    state: str
+    """Hyper-V VM state reported by the node."""
+    virtualProcessorCount: str
+    """Configured virtual processor count from Hyper-V."""
+    memoryInBytes: str
+    """Maximum memory the VM can consume, in bytes."""
+
+
+class ErrorAdditionalInfo(TypedDict, total=False):
+    """The resource management error additional info.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: Any
+    """
+
+    type: str
+    """The additional info type."""
+    info: Any
+    """The additional info."""
+
+
+class ErrorDetail(TypedDict, total=False):
+    """The error detail.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list["ErrorDetail"]
+    :ivar additionalInfo: The error additional info.
+    :vartype additionalInfo: list["ErrorAdditionalInfo"]
+    """
+
+    code: str
+    """The error code."""
+    message: str
+    """The error message."""
+    target: str
+    """The error target."""
+    details: list["ErrorDetail"]
+    """The error details."""
+    additionalInfo: list["ErrorAdditionalInfo"]
+    """The error additional info."""
 
 
 class Extension(ProxyResource):
@@ -1388,9 +3217,9 @@ class Extension(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Describes Machine Extension Properties.
     :vartype properties: "ExtensionProperties"
     """
@@ -1406,8 +3235,8 @@ class ExtensionInstanceView(TypedDict, total=False):
     :vartype name: str
     :ivar type: Specifies the type of the extension; an example is "MicrosoftMonitoringAgent".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
-    :vartype type_handler_version: str
+    :ivar typeHandlerVersion: Specifies the version of the script handler.
+    :vartype typeHandlerVersion: str
     :ivar status: Instance view status.
     :vartype status: "ExtensionInstanceViewStatus"
     """
@@ -1430,8 +3259,8 @@ class ExtensionInstanceViewStatus(TypedDict, total=False):
     :ivar level: The level code. Indicates the severity or importance of the status message. Known
      values are: "Info", "Warning", and "Error".
     :vartype level: Union[str, "StatusLevelTypes"]
-    :ivar display_status: The short localizable label for the status.
-    :vartype display_status: str
+    :ivar displayStatus: The short localizable label for the status.
+    :vartype displayStatus: str
     :ivar message: The detailed status message, including for alerts and error messages.
     :vartype message: str
     :ivar time: The time of the status.
@@ -1455,27 +3284,27 @@ class ExtensionParameters(TypedDict, total=False):
     """Describes the properties of a Machine Extension. This object mirrors the definition in
     HybridCompute.
 
-    :ivar force_update_tag: How the extension handler should be forced to update even if the
+    :ivar forceUpdateTag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
-    :vartype force_update_tag: str
+    :vartype forceUpdateTag: str
     :ivar publisher: The name of the extension handler publisher.
     :vartype publisher: str
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler. Latest version would
-     be used if not specified.
-    :vartype type_handler_version: str
-    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
-     version if one is available at deployment time. Once deployed, however, the extension will not
-     upgrade minor versions unless redeployed, even with this property set to true.
-    :vartype auto_upgrade_minor_version: bool
+    :ivar typeHandlerVersion: Specifies the version of the script handler. Latest version would be
+     used if not specified.
+    :vartype typeHandlerVersion: str
+    :ivar autoUpgradeMinorVersion: Indicates whether the extension should use a newer minor version
+     if one is available at deployment time. Once deployed, however, the extension will not upgrade
+     minor versions unless redeployed, even with this property set to true.
+    :vartype autoUpgradeMinorVersion: bool
     :ivar settings: Json formatted public settings for the extension.
     :vartype settings: Any
-    :ivar protected_settings: Protected settings (may contain secrets).
-    :vartype protected_settings: Any
-    :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
-     upgraded by the platform if there is a newer version available.
-    :vartype enable_automatic_upgrade: bool
+    :ivar protectedSettings: Protected settings (may contain secrets).
+    :vartype protectedSettings: Any
+    :ivar enableAutomaticUpgrade: Indicates whether the extension should be automatically upgraded
+     by the platform if there is a newer version available.
+    :vartype enableAutomaticUpgrade: bool
     """
 
     forceUpdateTag: str
@@ -1514,16 +3343,16 @@ class ExtensionPatch(TypedDict, total=False):
 class ExtensionPatchParameters(TypedDict, total=False):
     """Describes the properties of a Machine Extension that can be updated.
 
-    :ivar type_handler_version: Specifies the version of the script handler. Latest version would
-     be used if not specified.
-    :vartype type_handler_version: str
-    :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
-     upgraded by the platform if there is a newer version available.
-    :vartype enable_automatic_upgrade: bool
+    :ivar typeHandlerVersion: Specifies the version of the script handler. Latest version would be
+     used if not specified.
+    :vartype typeHandlerVersion: str
+    :ivar enableAutomaticUpgrade: Indicates whether the extension should be automatically upgraded
+     by the platform if there is a newer version available.
+    :vartype enableAutomaticUpgrade: bool
     :ivar settings: Json formatted public settings for the extension.
     :vartype settings: Any
-    :ivar protected_settings: Protected settings (may contain secrets).
-    :vartype protected_settings: Any
+    :ivar protectedSettings: Protected settings (may contain secrets).
+    :vartype protectedSettings: Any
     """
 
     typeHandlerVersion: str
@@ -1540,9 +3369,8 @@ class ExtensionPatchParameters(TypedDict, total=False):
 class ExtensionPatchProperties(TypedDict, total=False):
     """Describes Machine Extension Properties that can be updated.
 
-    :ivar extension_parameters: Describes the properties of a Machine Extension that can be
-     updated.
-    :vartype extension_parameters: "ExtensionPatchParameters"
+    :ivar extensionParameters: Describes the properties of a Machine Extension that can be updated.
+    :vartype extensionParameters: "ExtensionPatchParameters"
     """
 
     extensionParameters: "ExtensionPatchParameters"
@@ -1563,28 +3391,28 @@ class ExtensionProfile(TypedDict, total=False):
 class ExtensionProperties(TypedDict, total=False):
     """Status of Arc Extension for a particular node in HCI Cluster.
 
-    :ivar provisioning_state: Provisioning state of the Extension proxy resource. Indicates the
+    :ivar provisioningState: Provisioning state of the Extension proxy resource. Indicates the
      current lifecycle status of the resource, such as whether it's being created, updated, deleted,
      or has encountered an error. Known values are: "NotSpecified", "Error", "Succeeded", "Failed",
      "Canceled", "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting",
      "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress", "Accepted", "Provisioning",
      and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar extension_parameters: Parameters specific to this extension type.
-    :vartype extension_parameters: "ExtensionParameters"
-    :ivar aggregate_state: Aggregate state of Arc Extensions across the nodes in this HCI cluster.
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar extensionParameters: Parameters specific to this extension type.
+    :vartype extensionParameters: "ExtensionParameters"
+    :ivar aggregateState: Aggregate state of Arc Extensions across the nodes in this HCI cluster.
      This reflects the overall status of the extension deployment and operation across all nodes.
      Known values are: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed", "Connected",
      "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
      "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and
      "UpgradeFailedRollbackSucceeded".
-    :vartype aggregate_state: Union[str, "ExtensionAggregateState"]
-    :ivar per_node_extension_details: State of Arc Extension in each of the nodes.
-    :vartype per_node_extension_details: list["PerNodeExtensionState"]
-    :ivar managed_by: Indicates if the extension is managed by Azure or the user. This determines
+    :vartype aggregateState: Union[str, "ExtensionAggregateState"]
+    :ivar perNodeExtensionDetails: State of Arc Extension in each of the nodes.
+    :vartype perNodeExtensionDetails: list["PerNodeExtensionState"]
+    :ivar managedBy: Indicates if the extension is managed by Azure or the user. This determines
      who controls the deployment and lifecycle of the extension. Known values are: "User" and
      "Azure".
-    :vartype managed_by: Union[str, "ExtensionManagedBy"]
+    :vartype managedBy: Union[str, "ExtensionManagedBy"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -1613,47 +3441,202 @@ class ExtensionProperties(TypedDict, total=False):
 class ExtensionUpgradeParameters(TypedDict, total=False):
     """Describes the parameters for Extension upgrade.
 
-    :ivar target_version: Extension Upgrade Target Version.
-    :vartype target_version: str
+    :ivar targetVersion: Extension Upgrade Target Version.
+    :vartype targetVersion: str
     """
 
     targetVersion: str
     """Extension Upgrade Target Version."""
 
 
-class HciCollectLogJobProperties(TypedDict, total=False):
-    """Represents the properties of an HCI Collect Log job.
+class ForcePushNetworkAdapterJobProperties(TypedDict, total=False):
+    """Properties for force push of network adapter configuration.
 
-    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
      "Deploy".
-    :vartype deployment_mode: Union[str, "DeploymentMode"]
-    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
-     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Provisioning state of the job. Known values are: "NotSpecified",
+     "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
      "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
      "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar job_id: Unique, immutable job id.
-    :vartype job_id: str
-    :ivar start_time_utc: The UTC date and time at which the job started.
-    :vartype start_time_utc: str
-    :ivar end_time_utc: The UTC date and time at which the job completed.
-    :vartype end_time_utc: str
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
     :ivar status: Status of Edge device job. Known values are: "NotSpecified",
      "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
      "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
      "Scheduled".
     :vartype status: Union[str, "JobStatus"]
-    :ivar from_date: From date for log collection. Required.
-    :vartype from_date: str
-    :ivar to_date: To date for log collection. Required.
-    :vartype to_date: str
-    :ivar last_log_generated: To date for log collection.
-    :vartype last_log_generated: str
-    :ivar reported_properties: log collection job reported properties.
-    :vartype reported_properties: "LogCollectionReportedProperties"
-    :ivar job_type: Job Type to support polymorphic resource. Required. Job to collect logs from
-     the device.
-    :vartype job_type: Literal[HciEdgeDeviceJobType.COLLECT_LOG]
+    :ivar error: Error details if job failed.
+    :vartype error: "ErrorDetail"
+    :ivar reportedProperties: Reported properties for Network Adapter Job.
+    :vartype reportedProperties: "NetworkAdapterJobReportedProperties"
+    :ivar jobType: Job type. Required. Force push configuration to the network adapter.
+    :vartype jobType: Literal[NetworkAdapterJobType.FORCE_PUSH]
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Provisioning state of the job. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Edge device job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """Error details if job failed."""
+    reportedProperties: "NetworkAdapterJobReportedProperties"
+    """Reported properties for Network Adapter Job."""
+    jobType: Required[Literal[NetworkAdapterJobType.FORCE_PUSH]]
+    """Job type. Required. Force push configuration to the network adapter."""
+
+
+class HardwareProfile(TypedDict, total=False):
+    """Hardware profile for the machine.
+
+    :ivar cpuCores: Number of cpu cores in the machine.
+    :vartype cpuCores: int
+    :ivar cpuSockets: Number of cpu sockets in the machine.
+    :vartype cpuSockets: int
+    :ivar memoryCapacityInGb: Memory capacity of the machine.
+    :vartype memoryCapacityInGb: int
+    :ivar model: Model info of the machine.
+    :vartype model: str
+    :ivar manufacturer: manufacturer info of the machine.
+    :vartype manufacturer: str
+    :ivar serialNumber: Serial number of the machine.
+    :vartype serialNumber: str
+    :ivar processorType: Process type of the machine.
+    :vartype processorType: str
+    :ivar architecture: CPU architecture of the machine, for example amd64 or arm64. Known values
+     are: "amd64" and "arm64".
+    :vartype architecture: Union[str, "Architecture"]
+    """
+
+    cpuCores: int
+    """Number of cpu cores in the machine."""
+    cpuSockets: int
+    """Number of cpu sockets in the machine."""
+    memoryCapacityInGb: int
+    """Memory capacity of the machine."""
+    model: str
+    """Model info of the machine."""
+    manufacturer: str
+    """manufacturer info of the machine."""
+    serialNumber: str
+    """Serial number of the machine."""
+    processorType: str
+    """Process type of the machine."""
+    architecture: Union[str, "Architecture"]
+    """CPU architecture of the machine, for example amd64 or arm64. Known values are: \"amd64\" and
+     \"arm64\"."""
+
+
+class HciAddServerJobProperties(TypedDict, total=False):
+    """Properties for adding a server in the cluster.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Cluster job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar reportedProperties: Reported properties for job.
+    :vartype reportedProperties: "JobReportedProperties"
+    :ivar jobType: ClusterJob Type to support polymorphic resource. Required. Job to add a server
+     to the cluster.
+    :vartype jobType: Literal[HciJobType.ADD_SERVER]
+    :ivar addServerJobServerDetails: Details of servers to be added to the cluster. Required.
+    :vartype addServerJobServerDetails: list["AddServerJobServerDetails"]
+    :ivar secrets: List of protected parameters to pass to trigger the job for the cluster.
+    :vartype secrets: list["EceDeploymentSecrets"]
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Cluster job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    reportedProperties: "JobReportedProperties"
+    """Reported properties for job."""
+    jobType: Required[Literal[HciJobType.ADD_SERVER]]
+    """ClusterJob Type to support polymorphic resource. Required. Job to add a server to the cluster."""
+    addServerJobServerDetails: Required[list["AddServerJobServerDetails"]]
+    """Details of servers to be added to the cluster. Required."""
+    secrets: list["EceDeploymentSecrets"]
+    """List of protected parameters to pass to trigger the job for the cluster."""
+
+
+class HciCollectLogJobProperties(TypedDict, total=False):
+    """Represents the properties of an HCI Collect Log job.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar fromDate: From date for log collection. Required.
+    :vartype fromDate: str
+    :ivar toDate: To date for log collection. Required.
+    :vartype toDate: str
+    :ivar lastLogGenerated: To date for log collection.
+    :vartype lastLogGenerated: str
+    :ivar reportedProperties: log collection job reported properties.
+    :vartype reportedProperties: "LogCollectionReportedProperties"
+    :ivar jobType: Job Type to support polymorphic resource. Required. Job to collect logs from the
+     device.
+    :vartype jobType: Literal[HciEdgeDeviceJobType.COLLECT_LOG]
     """
 
     deploymentMode: Union[str, "DeploymentMode"]
@@ -1685,6 +3668,72 @@ class HciCollectLogJobProperties(TypedDict, total=False):
     """Job Type to support polymorphic resource. Required. Job to collect logs from the device."""
 
 
+class HciConfigureSdnIntegrationJobProperties(TypedDict, total=False):
+    """Properties for configuring SDN integration intent for the cluster.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Cluster job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar reportedProperties: Reported properties for job.
+    :vartype reportedProperties: "JobReportedProperties"
+    :ivar jobType: ClusterJob Type to support polymorphic resource. Required. Job to configure SDN
+     (Software Defined Networking) integration for the cluster.
+    :vartype jobType: Literal[HciJobType.CONFIGURE_SDN_INTEGRATION]
+    :ivar sdnIntegrationIntent: Defines the customer's intent for configuring SDN integration.
+     Required. Known values are: "Enable" and "Disable".
+    :vartype sdnIntegrationIntent: Union[str, "SdnIntegrationIntent"]
+    :ivar sdnPrefix: A string identifier used to construct the Network Controller (NC) REST
+     resource name. This prefix helps group and distinguish SDN-managed network components and must
+     follow specific formatting rules.
+    :vartype sdnPrefix: str
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Cluster job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    reportedProperties: "JobReportedProperties"
+    """Reported properties for job."""
+    jobType: Required[Literal[HciJobType.CONFIGURE_SDN_INTEGRATION]]
+    """ClusterJob Type to support polymorphic resource. Required. Job to configure SDN (Software
+     Defined Networking) integration for the cluster."""
+    sdnIntegrationIntent: Required[Union[str, "SdnIntegrationIntent"]]
+    """Defines the customer's intent for configuring SDN integration. Required. Known values are:
+     \"Enable\" and \"Disable\"."""
+    sdnPrefix: str
+    """A string identifier used to construct the Network Controller (NC) REST resource name. This
+     prefix helps group and distinguish SDN-managed network components and must follow specific
+     formatting rules."""
+
+
 class HciEdgeDevice(TypedDict, total=False):
     """Arc-enabled edge device with HCI OS.
 
@@ -1696,9 +3745,9 @@ class HciEdgeDevice(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: properties for Arc-enabled edge device with HCI OS.
     :vartype properties: "HciEdgeDeviceProperties"
     :ivar kind: Device kind to support polymorphic resource. Required. Arc-enabled edge device with
@@ -1725,16 +3774,16 @@ class HciEdgeDevice(TypedDict, total=False):
 class HciEdgeDeviceAdapterPropertyOverrides(TypedDict, total=False):
     """The AdapterPropertyOverrides of a cluster.
 
-    :ivar jumbo_packet: This parameter should only be modified based on your OEM guidance. Do not
+    :ivar jumboPacket: This parameter should only be modified based on your OEM guidance. Do not
      modify this parameter without OEM validation.
-    :vartype jumbo_packet: str
-    :ivar network_direct: This parameter should only be modified based on your OEM guidance. Do not
+    :vartype jumboPacket: str
+    :ivar networkDirect: This parameter should only be modified based on your OEM guidance. Do not
      modify this parameter without OEM validation.
-    :vartype network_direct: str
-    :ivar network_direct_technology: This parameter should only be modified based on your OEM
+    :vartype networkDirect: str
+    :ivar networkDirectTechnology: This parameter should only be modified based on your OEM
      guidance. Do not modify this parameter without OEM validation. Expected values are 'iWARP',
      'RoCEv2', 'RoCE'.
-    :vartype network_direct_technology: str
+    :vartype networkDirectTechnology: str
     """
 
     jumboPacket: str
@@ -1751,21 +3800,21 @@ class HciEdgeDeviceAdapterPropertyOverrides(TypedDict, total=False):
 class HciEdgeDeviceArcExtension(TypedDict, total=False):
     """Arc extension installed on edge device.
 
-    :ivar extension_name: Arc extension name installed on edge device.
-    :vartype extension_name: str
+    :ivar extensionName: Arc extension name installed on edge device.
+    :vartype extensionName: str
     :ivar state: Arc extension state from arc machine extension. Known values are: "NotSpecified",
      "Succeeded", "Failed", "Canceled", "Accepted", "Creating", "Updating", "Moving", "Deleting",
      and "Deleted".
     :vartype state: Union[str, "ArcExtensionState"]
-    :ivar error_details: Error details while installing Arc extension.
-    :vartype error_details: list["HciValidationFailureDetail"]
-    :ivar extension_resource_id: Arc Extension Azure resource id.
-    :vartype extension_resource_id: str
-    :ivar type_handler_version: Extension version installed.
-    :vartype type_handler_version: str
-    :ivar managed_by: Indicates whether the extension is managed by the user or by Azure. Known
+    :ivar errorDetails: Error details while installing Arc extension.
+    :vartype errorDetails: list["HciValidationFailureDetail"]
+    :ivar extensionResourceId: Arc Extension Azure resource id.
+    :vartype extensionResourceId: str
+    :ivar typeHandlerVersion: Extension version installed.
+    :vartype typeHandlerVersion: str
+    :ivar managedBy: Indicates whether the extension is managed by the user or by Azure. Known
      values are: "User" and "Azure".
-    :vartype managed_by: Union[str, "ExtensionManagedBy"]
+    :vartype managedBy: Union[str, "ExtensionManagedBy"]
     """
 
     extensionName: str
@@ -1792,15 +3841,15 @@ class HciEdgeDeviceHostNetwork(TypedDict, total=False):
      deployment. Each intent will define its own name, traffic type, adapter names, and overrides as
      recommended by your OEM.
     :vartype intents: list["HciEdgeDeviceIntents"]
-    :ivar storage_networks: List of StorageNetworks config to deploy AzureStackHCI Cluster.
-    :vartype storage_networks: list["HciEdgeDeviceStorageNetworks"]
-    :ivar storage_connectivity_switchless: Defines how the storage adapters between nodes are
+    :ivar storageNetworks: List of StorageNetworks config to deploy AzureStackHCI Cluster.
+    :vartype storageNetworks: list["HciEdgeDeviceStorageNetworks"]
+    :ivar storageConnectivitySwitchless: Defines how the storage adapters between nodes are
      connected either switch or switch less.
-    :vartype storage_connectivity_switchless: bool
-    :ivar enable_storage_auto_ip: Optional parameter required only for 3 Nodes Switchless
-     deployments. This allows users to specify IPs and Mask for Storage NICs when Network ATC is not
-     assigning the IPs for storage automatically.
-    :vartype enable_storage_auto_ip: bool
+    :vartype storageConnectivitySwitchless: bool
+    :ivar enableStorageAutoIp: Optional parameter required only for 3 Nodes Switchless deployments.
+     This allows users to specify IPs and Mask for Storage NICs when Network ATC is not assigning
+     the IPs for storage automatically.
+    :vartype enableStorageAutoIp: bool
     """
 
     intents: list["HciEdgeDeviceIntents"]
@@ -1822,43 +3871,43 @@ class HciEdgeDeviceIntents(TypedDict, total=False):
 
     :ivar scope: Scope for host network intent.
     :vartype scope: int
-    :ivar intent_type: IntentType for host network intent.
-    :vartype intent_type: int
-    :ivar is_compute_intent_set: IsComputeIntentSet for host network intent.
-    :vartype is_compute_intent_set: bool
-    :ivar is_storage_intent_set: IsStorageIntentSet for host network intent.
-    :vartype is_storage_intent_set: bool
-    :ivar is_only_storage: IntentType for host network intent.
-    :vartype is_only_storage: bool
-    :ivar is_management_intent_set: IsManagementIntentSet for host network intent.
-    :vartype is_management_intent_set: bool
-    :ivar is_stretch_intent_set: IsStretchIntentSet for host network intent.
-    :vartype is_stretch_intent_set: bool
-    :ivar is_only_stretch: IsOnlyStretch for host network intent.
-    :vartype is_only_stretch: bool
-    :ivar is_network_intent_type: IsNetworkIntentType for host network intent.
-    :vartype is_network_intent_type: bool
-    :ivar intent_name: Name of the network intent you wish to create.
-    :vartype intent_name: str
-    :ivar intent_adapters: Array of adapters used for the network intent.
-    :vartype intent_adapters: list[str]
-    :ivar override_virtual_switch_configuration: This parameter should only be modified based on
-     your OEM guidance. Do not modify this parameter without OEM validation.
-    :vartype override_virtual_switch_configuration: bool
-    :ivar virtual_switch_configuration_overrides: Set virtualSwitch ConfigurationOverrides for
+    :ivar intentType: IntentType for host network intent.
+    :vartype intentType: int
+    :ivar isComputeIntentSet: IsComputeIntentSet for host network intent.
+    :vartype isComputeIntentSet: bool
+    :ivar isStorageIntentSet: IsStorageIntentSet for host network intent.
+    :vartype isStorageIntentSet: bool
+    :ivar isOnlyStorage: IntentType for host network intent.
+    :vartype isOnlyStorage: bool
+    :ivar isManagementIntentSet: IsManagementIntentSet for host network intent.
+    :vartype isManagementIntentSet: bool
+    :ivar isStretchIntentSet: IsStretchIntentSet for host network intent.
+    :vartype isStretchIntentSet: bool
+    :ivar isOnlyStretch: IsOnlyStretch for host network intent.
+    :vartype isOnlyStretch: bool
+    :ivar isNetworkIntentType: IsNetworkIntentType for host network intent.
+    :vartype isNetworkIntentType: bool
+    :ivar intentName: Name of the network intent you wish to create.
+    :vartype intentName: str
+    :ivar intentAdapters: Array of adapters used for the network intent.
+    :vartype intentAdapters: list[str]
+    :ivar overrideVirtualSwitchConfiguration: This parameter should only be modified based on your
+     OEM guidance. Do not modify this parameter without OEM validation.
+    :vartype overrideVirtualSwitchConfiguration: bool
+    :ivar virtualSwitchConfigurationOverrides: Set virtualSwitch ConfigurationOverrides for
      cluster.
-    :vartype virtual_switch_configuration_overrides:
+    :vartype virtualSwitchConfigurationOverrides:
      "HciEdgeDeviceVirtualSwitchConfigurationOverrides"
-    :ivar override_qos_policy: This parameter should only be modified based on your OEM guidance.
-     Do not modify this parameter without OEM validation.
-    :vartype override_qos_policy: bool
-    :ivar qos_policy_overrides: Set QoS PolicyOverrides for cluster.
-    :vartype qos_policy_overrides: "QosPolicyOverrides"
-    :ivar override_adapter_property: This parameter should only be modified based on your OEM
+    :ivar overrideQosPolicy: This parameter should only be modified based on your OEM guidance. Do
+     not modify this parameter without OEM validation.
+    :vartype overrideQosPolicy: bool
+    :ivar qosPolicyOverrides: Set QoS PolicyOverrides for cluster.
+    :vartype qosPolicyOverrides: "QosPolicyOverrides"
+    :ivar overrideAdapterProperty: This parameter should only be modified based on your OEM
      guidance. Do not modify this parameter without OEM validation.
-    :vartype override_adapter_property: bool
-    :ivar adapter_property_overrides: Set Adapter PropertyOverrides for cluster.
-    :vartype adapter_property_overrides: "HciEdgeDeviceAdapterPropertyOverrides"
+    :vartype overrideAdapterProperty: bool
+    :ivar adapterPropertyOverrides: Set Adapter PropertyOverrides for cluster.
+    :vartype adapterPropertyOverrides: "HciEdgeDeviceAdapterPropertyOverrides"
     """
 
     scope: int
@@ -1911,9 +3960,9 @@ class HciEdgeDeviceJob(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: HCI Edge device job properties. Required.
     :vartype properties: "HciEdgeDeviceJobProperties"
     :ivar kind: Edge Solution type to support polymorphic resource. Required. Arc-enabled edge
@@ -1941,15 +3990,15 @@ class HciEdgeDeviceJob(TypedDict, total=False):
 class HciEdgeDeviceProperties(EdgeDeviceProperties):
     """properties for Arc-enabled edge device with HCI OS.
 
-    :ivar device_configuration: Device Configuration.
-    :vartype device_configuration: "DeviceConfiguration"
-    :ivar provisioning_state: Provisioning state of edgeDevice resource. Known values are:
+    :ivar deviceConfiguration: Device Configuration.
+    :vartype deviceConfiguration: "DeviceConfiguration"
+    :ivar provisioningState: Provisioning state of edgeDevice resource. Known values are:
      "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
      "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
      "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar reported_properties: The instance view of all current configurations on HCI device.
-    :vartype reported_properties: "HciReportedProperties"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar reportedProperties: The instance view of all current configurations on HCI device.
+    :vartype reportedProperties: "HciReportedProperties"
     """
 
     reportedProperties: "HciReportedProperties"
@@ -1959,14 +4008,14 @@ class HciEdgeDeviceProperties(EdgeDeviceProperties):
 class HciEdgeDeviceStorageAdapterIPInfo(TypedDict, total=False):
     """The StorageAdapter physical nodes of a cluster.
 
-    :ivar physical_node: storage adapter physical node name.
-    :vartype physical_node: str
-    :ivar ipv4_address: The IPv4 address assigned to each storage adapter physical node on your
+    :ivar physicalNode: storage adapter physical node name.
+    :vartype physicalNode: str
+    :ivar ipv4Address: The IPv4 address assigned to each storage adapter physical node on your
      Azure Stack HCI cluster.
-    :vartype ipv4_address: str
-    :ivar subnet_mask: The SubnetMask address assigned to each storage adapter physical node on
-     your Azure Stack HCI cluster.
-    :vartype subnet_mask: str
+    :vartype ipv4Address: str
+    :ivar subnetMask: The SubnetMask address assigned to each storage adapter physical node on your
+     Azure Stack HCI cluster.
+    :vartype subnetMask: str
     """
 
     physicalNode: str
@@ -1984,14 +4033,14 @@ class HciEdgeDeviceStorageNetworks(TypedDict, total=False):
 
     :ivar name: Name of the storage network.
     :vartype name: str
-    :ivar network_adapter_name: Name of the storage network adapter.
-    :vartype network_adapter_name: str
-    :ivar storage_vlan_id: ID specified for the VLAN storage network. This setting is applied to
-     the network interfaces that route the storage and VM migration traffic.
-    :vartype storage_vlan_id: str
-    :ivar storage_adapter_ip_info: List of Storage adapter physical nodes config to deploy
+    :ivar networkAdapterName: Name of the storage network adapter.
+    :vartype networkAdapterName: str
+    :ivar storageVlanId: ID specified for the VLAN storage network. This setting is applied to the
+     network interfaces that route the storage and VM migration traffic.
+    :vartype storageVlanId: str
+    :ivar storageAdapterIPInfo: List of Storage adapter physical nodes config to deploy
      AzureStackHCI Cluster.
-    :vartype storage_adapter_ip_info: list["HciEdgeDeviceStorageAdapterIPInfo"]
+    :vartype storageAdapterIPInfo: list["HciEdgeDeviceStorageAdapterIPInfo"]
     """
 
     name: str
@@ -2008,10 +4057,10 @@ class HciEdgeDeviceStorageNetworks(TypedDict, total=False):
 class HciEdgeDeviceVirtualSwitchConfigurationOverrides(TypedDict, total=False):  # pylint: disable=name-too-long
     """The VirtualSwitchConfigurationOverrides of a cluster.
 
-    :ivar enable_iov: Enable IoV for Virtual Switch.
-    :vartype enable_iov: str
-    :ivar load_balancing_algorithm: Load Balancing Algorithm for Virtual Switch.
-    :vartype load_balancing_algorithm: str
+    :ivar enableIov: Enable IoV for Virtual Switch.
+    :vartype enableIov: str
+    :ivar loadBalancingAlgorithm: Load Balancing Algorithm for Virtual Switch.
+    :vartype loadBalancingAlgorithm: str
     """
 
     enableIov: str
@@ -2023,8 +4072,8 @@ class HciEdgeDeviceVirtualSwitchConfigurationOverrides(TypedDict, total=False): 
 class HciHardwareProfile(TypedDict, total=False):
     """Hardware configurations for HCI device.
 
-    :ivar processor_type: Process type of the device.
-    :vartype processor_type: str
+    :ivar processorType: Process type of the device.
+    :vartype processorType: str
     """
 
     processorType: str
@@ -2034,12 +4083,14 @@ class HciHardwareProfile(TypedDict, total=False):
 class HciNetworkProfile(TypedDict, total=False):
     """The network profile of a device.
 
-    :ivar nic_details: List of NIC Details of device.
-    :vartype nic_details: list["HciNicDetail"]
-    :ivar switch_details: List of switch details for edge device.
-    :vartype switch_details: list["SwitchDetail"]
-    :ivar host_network: HostNetwork config to deploy AzureStackHCI Cluster.
-    :vartype host_network: "HciEdgeDeviceHostNetwork"
+    :ivar nicDetails: List of NIC Details of device.
+    :vartype nicDetails: list["HciNicDetail"]
+    :ivar switchDetails: List of switch details for edge device.
+    :vartype switchDetails: list["SwitchDetail"]
+    :ivar hostNetwork: HostNetwork config to deploy AzureStackHCI Cluster.
+    :vartype hostNetwork: "HciEdgeDeviceHostNetwork"
+    :ivar sdnProperties: Software Defined Networking Properties of the device.
+    :vartype sdnProperties: "SdnProperties"
     """
 
     nicDetails: list["HciNicDetail"]
@@ -2048,44 +4099,46 @@ class HciNetworkProfile(TypedDict, total=False):
     """List of switch details for edge device."""
     hostNetwork: "HciEdgeDeviceHostNetwork"
     """HostNetwork config to deploy AzureStackHCI Cluster."""
+    sdnProperties: "SdnProperties"
+    """Software Defined Networking Properties of the device."""
 
 
 class HciNicDetail(TypedDict, total=False):
     """The NIC Detail of a device.
 
-    :ivar adapter_name: Adapter Name of NIC.
-    :vartype adapter_name: str
-    :ivar interface_description: Interface Description of NIC.
-    :vartype interface_description: str
-    :ivar component_id: Component Id of NIC.
-    :vartype component_id: str
-    :ivar driver_version: Driver Version of NIC.
-    :vartype driver_version: str
-    :ivar ip4_address: Subnet Mask of NIC.
-    :vartype ip4_address: str
-    :ivar subnet_mask: Subnet Mask of NIC.
-    :vartype subnet_mask: str
-    :ivar default_gateway: Default Gateway of NIC.
-    :vartype default_gateway: str
-    :ivar dns_servers: DNS Servers for NIC.
-    :vartype dns_servers: list[str]
-    :ivar default_isolation_id: Default Isolation of Management NIC.
-    :vartype default_isolation_id: str
-    :ivar mac_address: MAC address information of NIC.
-    :vartype mac_address: str
+    :ivar adapterName: Adapter Name of NIC.
+    :vartype adapterName: str
+    :ivar interfaceDescription: Interface Description of NIC.
+    :vartype interfaceDescription: str
+    :ivar componentId: Component Id of NIC.
+    :vartype componentId: str
+    :ivar driverVersion: Driver Version of NIC.
+    :vartype driverVersion: str
+    :ivar ip4Address: Subnet Mask of NIC.
+    :vartype ip4Address: str
+    :ivar subnetMask: Subnet Mask of NIC.
+    :vartype subnetMask: str
+    :ivar defaultGateway: Default Gateway of NIC.
+    :vartype defaultGateway: str
+    :ivar dnsServers: DNS Servers for NIC.
+    :vartype dnsServers: list[str]
+    :ivar defaultIsolationId: Default Isolation of Management NIC.
+    :vartype defaultIsolationId: str
+    :ivar macAddress: MAC address information of NIC.
+    :vartype macAddress: str
     :ivar slot: The slot attached to the NIC.
     :vartype slot: str
-    :ivar switch_name: The switch attached to the NIC, if any.
-    :vartype switch_name: str
-    :ivar nic_type: The type of NIC, physical, virtual, management.
-    :vartype nic_type: str
-    :ivar vlan_id: The VLAN ID of the physical NIC.
-    :vartype vlan_id: str
-    :ivar nic_status: The status of NIC, up, disconnected.
-    :vartype nic_status: str
-    :ivar rdma_capability: Describes the RDMA capability of the network adapter. Known values are:
+    :ivar switchName: The switch attached to the NIC, if any.
+    :vartype switchName: str
+    :ivar nicType: The type of NIC, physical, virtual, management.
+    :vartype nicType: str
+    :ivar vlanId: The VLAN ID of the physical NIC.
+    :vartype vlanId: str
+    :ivar nicStatus: The status of NIC, up, disconnected.
+    :vartype nicStatus: str
+    :ivar rdmaCapability: Describes the RDMA capability of the network adapter. Known values are:
      "Enabled" and "Disabled".
-    :vartype rdma_capability: Union[str, "RdmaCapability"]
+    :vartype rdmaCapability: Union[str, "RdmaCapability"]
     """
 
     adapterName: str
@@ -2126,10 +4179,10 @@ class HciNicDetail(TypedDict, total=False):
 class HciOsProfile(TypedDict, total=False):
     """OS configurations for HCI device.
 
-    :ivar boot_type: The boot type of the device. e.g. UEFI, Legacy etc.
-    :vartype boot_type: str
-    :ivar assembly_version: Version of assembly present on device.
-    :vartype assembly_version: str
+    :ivar bootType: The boot type of the device. e.g. UEFI, Legacy etc.
+    :vartype bootType: str
+    :ivar assemblyVersion: Version of assembly present on device.
+    :vartype assemblyVersion: str
     """
 
     bootType: str
@@ -2141,37 +4194,37 @@ class HciOsProfile(TypedDict, total=False):
 class HciRemoteSupportJobProperties(TypedDict, total=False):
     """Represents the properties of a remote support job for HCI.
 
-    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
      "Deploy".
-    :vartype deployment_mode: Union[str, "DeploymentMode"]
-    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
      "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
      "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
      "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar job_id: Unique, immutable job id.
-    :vartype job_id: str
-    :ivar start_time_utc: The UTC date and time at which the job started.
-    :vartype start_time_utc: str
-    :ivar end_time_utc: The UTC date and time at which the job completed.
-    :vartype end_time_utc: str
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
     :ivar status: Status of Edge device job. Known values are: "NotSpecified",
      "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
      "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
      "Scheduled".
     :vartype status: Union[str, "JobStatus"]
-    :ivar access_level: Remote support access level. Required. Known values are: "None",
+    :ivar accessLevel: Remote support access level. Required. Known values are: "None",
      "Diagnostics", and "DiagnosticsAndRepair".
-    :vartype access_level: Union[str, "RemoteSupportAccessLevel"]
-    :ivar expiration_timestamp: Remote support expiration timestamp. Required.
-    :vartype expiration_timestamp: str
+    :vartype accessLevel: Union[str, "RemoteSupportAccessLevel"]
+    :ivar expirationTimestamp: Remote support expiration timestamp. Required.
+    :vartype expirationTimestamp: str
     :ivar type: Remote support type. Required. Known values are: "Enable" and "Revoke".
     :vartype type: Union[str, "RemoteSupportType"]
-    :ivar reported_properties: log collection job reported properties.
-    :vartype reported_properties: "RemoteSupportJobReportedProperties"
-    :ivar job_type: Job Type to support polymorphic resource. Required. Job to provide remote
+    :ivar reportedProperties: log collection job reported properties.
+    :vartype reportedProperties: "RemoteSupportJobReportedProperties"
+    :ivar jobType: Job Type to support polymorphic resource. Required. Job to provide remote
      support to the device.
-    :vartype job_type: Literal[HciEdgeDeviceJobType.REMOTE_SUPPORT]
+    :vartype jobType: Literal[HciEdgeDeviceJobType.REMOTE_SUPPORT]
     """
 
     deploymentMode: Union[str, "DeploymentMode"]
@@ -2205,16 +4258,76 @@ class HciRemoteSupportJobProperties(TypedDict, total=False):
      device."""
 
 
+class HciRepairServerJobProperties(TypedDict, total=False):
+    """Properties for repairing a server in the cluster.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Cluster job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar reportedProperties: Reported properties for job.
+    :vartype reportedProperties: "JobReportedProperties"
+    :ivar jobType: ClusterJob Type to support polymorphic resource. Required. Job to repair a
+     server in the cluster.
+    :vartype jobType: Literal[HciJobType.REPAIR_SERVER]
+    :ivar repairServerJobServerDetails: Details of servers to be repaired in the cluster. Required.
+    :vartype repairServerJobServerDetails: list["RepairServerJobServerDetails"]
+    :ivar secrets: List of protected parameters to pass to trigger job for cluster.
+    :vartype secrets: list["EceDeploymentSecrets"]
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Cluster job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    reportedProperties: "JobReportedProperties"
+    """Reported properties for job."""
+    jobType: Required[Literal[HciJobType.REPAIR_SERVER]]
+    """ClusterJob Type to support polymorphic resource. Required. Job to repair a server in the
+     cluster."""
+    repairServerJobServerDetails: Required[list["RepairServerJobServerDetails"]]
+    """Details of servers to be repaired in the cluster. Required."""
+    secrets: list["EceDeploymentSecrets"]
+    """List of protected parameters to pass to trigger job for cluster."""
+
+
 class ReportedProperties(TypedDict, total=False):
     """Reported properties pushed from edge device.
 
-    :ivar device_state: edge device state. Known values are: "NotSpecified", "Connected",
+    :ivar deviceState: edge device state. Known values are: "NotSpecified", "Connected",
      "Disconnected", "Repairing", "Draining", "InMaintenance", "Resuming", and "Processing".
-    :vartype device_state: Union[str, "DeviceState"]
-    :ivar extension_profile: Extensions details for edge device.
-    :vartype extension_profile: "ExtensionProfile"
-    :ivar last_sync_timestamp: Most recent edge device sync timestamp in UTC.
-    :vartype last_sync_timestamp: str
+    :vartype deviceState: Union[str, "DeviceState"]
+    :ivar extensionProfile: Extensions details for edge device.
+    :vartype extensionProfile: "ExtensionProfile"
+    :ivar lastSyncTimestamp: Most recent edge device sync timestamp in UTC.
+    :vartype lastSyncTimestamp: str
     """
 
     deviceState: Union[str, "DeviceState"]
@@ -2229,24 +4342,24 @@ class ReportedProperties(TypedDict, total=False):
 class HciReportedProperties(ReportedProperties):
     """The device Configuration for HCI device.
 
-    :ivar device_state: edge device state. Known values are: "NotSpecified", "Connected",
+    :ivar deviceState: edge device state. Known values are: "NotSpecified", "Connected",
      "Disconnected", "Repairing", "Draining", "InMaintenance", "Resuming", and "Processing".
-    :vartype device_state: Union[str, "DeviceState"]
-    :ivar extension_profile: Extensions details for edge device.
-    :vartype extension_profile: "ExtensionProfile"
-    :ivar last_sync_timestamp: Most recent edge device sync timestamp in UTC.
-    :vartype last_sync_timestamp: str
-    :ivar network_profile: HCI device network information.
-    :vartype network_profile: "HciNetworkProfile"
-    :ivar os_profile: HCI device OS specific information.
-    :vartype os_profile: "HciOsProfile"
-    :ivar sbe_deployment_package_info: Solution builder extension (SBE) deployment package
+    :vartype deviceState: Union[str, "DeviceState"]
+    :ivar extensionProfile: Extensions details for edge device.
+    :vartype extensionProfile: "ExtensionProfile"
+    :ivar lastSyncTimestamp: Most recent edge device sync timestamp in UTC.
+    :vartype lastSyncTimestamp: str
+    :ivar networkProfile: HCI device network information.
+    :vartype networkProfile: "HciNetworkProfile"
+    :ivar osProfile: HCI device OS specific information.
+    :vartype osProfile: "HciOsProfile"
+    :ivar sbeDeploymentPackageInfo: Solution builder extension (SBE) deployment package
      information.
-    :vartype sbe_deployment_package_info: "SbeDeploymentPackageInfo"
-    :ivar storage_profile: Hci device storage specific information.
-    :vartype storage_profile: "HciStorageProfile"
-    :ivar hardware_profile: Hci device hardware specific information.
-    :vartype hardware_profile: "HciHardwareProfile"
+    :vartype sbeDeploymentPackageInfo: "SbeDeploymentPackageInfo"
+    :ivar storageProfile: Hci device storage specific information.
+    :vartype storageProfile: "HciStorageProfile"
+    :ivar hardwareProfile: Hci device hardware specific information.
+    :vartype hardwareProfile: "HciHardwareProfile"
     """
 
     networkProfile: "HciNetworkProfile"
@@ -2264,8 +4377,8 @@ class HciReportedProperties(ReportedProperties):
 class HciStorageProfile(TypedDict, total=False):
     """Storage configurations for HCI device.
 
-    :ivar poolable_disks_count: Number of storage disks in the device with $CanPool as true.
-    :vartype poolable_disks_count: int
+    :ivar poolableDisksCount: Number of storage disks in the device with $CanPool as true.
+    :vartype poolableDisksCount: int
     :ivar disks: List of storage disks on the device.
     :vartype disks: list["EdgeDeviceDisks"]
     """
@@ -2290,24 +4403,24 @@ class HciValidationFailureDetail(TypedDict, total=False):
 class InfrastructureNetwork(TypedDict, total=False):
     """The InfrastructureNetwork of a AzureStackHCI Cluster.
 
-    :ivar subnet_mask: Subnet mask that matches the provided IP address space.
-    :vartype subnet_mask: str
+    :ivar subnetMask: Subnet mask that matches the provided IP address space.
+    :vartype subnetMask: str
     :ivar gateway: Default gateway that should be used for the provided IP address space.
     :vartype gateway: str
-    :ivar ip_pools: Range of IP addresses from which addresses are allocated for nodes within a
+    :ivar ipPools: Range of IP addresses from which addresses are allocated for nodes within a
      subnet.
-    :vartype ip_pools: list["IpPools"]
-    :ivar dns_server_config: Specifies how DNS servers are configured for the infrastructure
-     network. Allowed values are 'UseDnsServer' to use the provided DNS servers, and 'UseForwarder'
-     to use DNS forwarders. Known values are: "UseDnsServer" and "UseForwarder".
-    :vartype dns_server_config: Union[str, "DnsServerConfig"]
-    :ivar dns_zones: Details of the DNS Zones to be configured.
-    :vartype dns_zones: list["DnsZones"]
-    :ivar dns_servers: IPv4 address of the DNS servers in your environment.
-    :vartype dns_servers: list[str]
-    :ivar use_dhcp: Allows customers to use DHCP for Hosts and Cluster IPs. If not declared, the
+    :vartype ipPools: list["IpPools"]
+    :ivar dnsServerConfig: Specifies how DNS servers are configured for the infrastructure network.
+     Allowed values are 'UseDnsServer' to use the provided DNS servers, and 'UseForwarder' to use
+     DNS forwarders. Known values are: "UseDnsServer" and "UseForwarder".
+    :vartype dnsServerConfig: Union[str, "DnsServerConfig"]
+    :ivar dnsZones: Details of the DNS Zones to be configured.
+    :vartype dnsZones: list["DnsZones"]
+    :ivar dnsServers: IPv4 address of the DNS servers in your environment.
+    :vartype dnsServers: list[str]
+    :ivar useDhcp: Allows customers to use DHCP for Hosts and Cluster IPs. If not declared, the
      deployment will default to static IPs. When true, GW and DNS servers are not required.
-    :vartype use_dhcp: bool
+    :vartype useDhcp: bool
     """
 
     subnetMask: str
@@ -2329,17 +4442,32 @@ class InfrastructureNetwork(TypedDict, total=False):
      default to static IPs. When true, GW and DNS servers are not required."""
 
 
+class IpAddressRange(TypedDict, total=False):
+    """IP address range configuration.
+
+    :ivar startIp: Start IP address. Required.
+    :vartype startIp: str
+    :ivar endIp: End IP address. Required.
+    :vartype endIp: str
+    """
+
+    startIp: Required[str]
+    """Start IP address. Required."""
+    endIp: Required[str]
+    """End IP address. Required."""
+
+
 class IpPools(TypedDict, total=False):
     """The dnsServers of a device.
 
-    :ivar starting_address: Starting IP address for the management network. A minimum of six free,
+    :ivar startingAddress: Starting IP address for the management network. A minimum of six free,
      contiguous IPv4 addresses (excluding your host IPs) are needed for infrastructure services such
      as clustering.
-    :vartype starting_address: str
-    :ivar ending_address: Ending IP address for the management network. A minimum of six free,
+    :vartype startingAddress: str
+    :ivar endingAddress: Ending IP address for the management network. A minimum of six free,
      contiguous IPv4 addresses (excluding your host IPs) are needed for infrastructure services such
      as clustering.
-    :vartype ending_address: str
+    :vartype endingAddress: str
     """
 
     startingAddress: str
@@ -2350,17 +4478,121 @@ class IpPools(TypedDict, total=False):
      (excluding your host IPs) are needed for infrastructure services such as clustering."""
 
 
+class IscsiAdapterIPConfig(TypedDict, total=False):
+    """IP configuration for a single iSCSI network adapter.
+
+    :ivar networkAdapterName: Name of the iSCSI network adapter.
+    :vartype networkAdapterName: str
+    :ivar vlanId: VLAN ID associated with the iSCSI network adapter.
+    :vartype vlanId: int
+    :ivar addressPrefix: Address prefix in CIDR notation.
+    :vartype addressPrefix: str
+    :ivar targetPortalAddresses: Target portal addresses reachable through this adapter.
+    :vartype targetPortalAddresses: list["IscsiTargetPortalAddress"]
+    """
+
+    networkAdapterName: str
+    """Name of the iSCSI network adapter."""
+    vlanId: int
+    """VLAN ID associated with the iSCSI network adapter."""
+    addressPrefix: str
+    """Address prefix in CIDR notation."""
+    targetPortalAddresses: list["IscsiTargetPortalAddress"]
+    """Target portal addresses reachable through this adapter."""
+
+
+class IscsiAdapterProperties(TypedDict, total=False):
+    """Common properties applied to iSCSI network adapters.
+
+    :ivar priorityValue8021ActionIscsi: 802.1p priority value for iSCSI traffic.
+    :vartype priorityValue8021ActionIscsi: int
+    :ivar bandwidthPercentageIscsi: iSCSI bandwidth percentage.
+    :vartype bandwidthPercentageIscsi: int
+    :ivar jumboPacket: Jumbo frame size in bytes.
+    :vartype jumboPacket: int
+    """
+
+    priorityValue8021ActionIscsi: int
+    """802.1p priority value for iSCSI traffic."""
+    bandwidthPercentageIscsi: int
+    """iSCSI bandwidth percentage."""
+    jumboPacket: int
+    """Jumbo frame size in bytes."""
+
+
+class IscsiChapSettings(TypedDict, total=False):
+    """CHAP authentication settings for an iSCSI connection.
+
+    :ivar chapType: The CHAP authentication mode to use. Known values are: "NoChap", "OneWay", and
+     "Bidirectional".
+    :vartype chapType: Union[str, "IscsiChapType"]
+    """
+
+    chapType: Union[str, "IscsiChapType"]
+    """The CHAP authentication mode to use. Known values are: \"NoChap\", \"OneWay\", and
+     \"Bidirectional\"."""
+
+
+class IscsiConfig(TypedDict, total=False):
+    """iSCSI configuration.
+
+    :ivar iScsiNetworkConfig: iSCSI network configuration.
+    :vartype iScsiNetworkConfig: "IscsiNetworkConfig"
+    :ivar chapSettings: CHAP authentication settings.
+    :vartype chapSettings: "IscsiChapSettings"
+    :ivar initiatorIqn: iSCSI Qualified Name of the initiator.
+    :vartype initiatorIqn: str
+    """
+
+    iScsiNetworkConfig: "IscsiNetworkConfig"
+    """iSCSI network configuration."""
+    chapSettings: "IscsiChapSettings"
+    """CHAP authentication settings."""
+    initiatorIqn: str
+    """iSCSI Qualified Name of the initiator."""
+
+
+class IscsiNetworkConfig(TypedDict, total=False):
+    """iSCSI network configuration.
+
+    :ivar adapterProperties: Common adapter properties applied to all iSCSI network adapters.
+    :vartype adapterProperties: "IscsiAdapterProperties"
+    :ivar adapterIPConfig: Per-adapter IP configuration for the iSCSI network adapters.
+    :vartype adapterIPConfig: list["IscsiAdapterIPConfig"]
+    """
+
+    adapterProperties: "IscsiAdapterProperties"
+    """Common adapter properties applied to all iSCSI network adapters."""
+    adapterIPConfig: list["IscsiAdapterIPConfig"]
+    """Per-adapter IP configuration for the iSCSI network adapters."""
+
+
+class IscsiTargetPortalAddress(TypedDict, total=False):
+    """iSCSI target portal address.
+
+    :ivar ipAddress: IP address of the iSCSI target portal.
+    :vartype ipAddress: str
+    :ivar nextHop: Next hop IP address used to reach the target portal.
+    :vartype nextHop: str
+    """
+
+    ipAddress: str
+    """IP address of the iSCSI target portal."""
+    nextHop: str
+    """Next hop IP address used to reach the target portal."""
+
+
 class IsolatedVmAttestationConfiguration(TypedDict, total=False):
     """Attestation configurations for isolated VM (e.g. TVM, CVM) of the cluster.
 
-    :ivar attestation_resource_id: Fully qualified Azure resource id of the Microsoft Azure
+    :ivar attestationResourceId: Fully qualified Azure resource id of the Microsoft Azure
      attestation resource associated with this cluster.
-    :vartype attestation_resource_id: str
-    :ivar relying_party_service_endpoint: Region specific endpoint for relying party service.
-    :vartype relying_party_service_endpoint: str
-    :ivar attestation_service_endpoint: Region specific endpoint for Microsoft Azure Attestation
+    :vartype attestationResourceId: str
+    :ivar relyingPartyServiceEndpoint: Region specific endpoint for relying party service.
+    :vartype relyingPartyServiceEndpoint: str
+    :ivar attestationServiceEndpoint: Region specific endpoint for Microsoft Azure Attestation
      service for the cluster.
-    :vartype attestation_service_endpoint: str
+    :vartype attestationServiceEndpoint: str
     """
 
     attestationResourceId: str
@@ -2372,11 +4604,118 @@ class IsolatedVmAttestationConfiguration(TypedDict, total=False):
     """Region specific endpoint for Microsoft Azure Attestation service for the cluster."""
 
 
+class JobReportedProperties(TypedDict, total=False):
+    """Reported Properties for job triggered from cloud.
+
+    :ivar percentComplete: The percentage of the job that is complete.
+    :vartype percentComplete: int
+    :ivar validationStatus: Validation status of job.
+    :vartype validationStatus: "EceActionStatus"
+    :ivar deploymentStatus: Deployment status of job.
+    :vartype deploymentStatus: "EceActionStatus"
+    """
+
+    percentComplete: int
+    """The percentage of the job that is complete."""
+    validationStatus: "EceActionStatus"
+    """Validation status of job."""
+    deploymentStatus: "EceActionStatus"
+    """Deployment status of job."""
+
+
+class LifecycleDetails(TypedDict, total=False):
+    """Overall Lifecycle details for a resource.
+
+    :ivar lifecycleStatus: Overall lifecycle status of the edge machine.
+    :vartype lifecycleStatus: "LifecycleStatus"
+    :ivar lifecycleStages: List of lifecycle stages for the edge machine. Required.
+    :vartype lifecycleStages: list["LifecycleStage"]
+    """
+
+    lifecycleStatus: "LifecycleStatus"
+    """Overall lifecycle status of the edge machine."""
+    lifecycleStages: Required[list["LifecycleStage"]]
+    """List of lifecycle stages for the edge machine. Required."""
+
+
+class LifecycleStage(TypedDict, total=False):
+    """Lifecycle stage details for a resource.
+
+    :ivar name: Name of the stage. Required.
+    :vartype name: str
+    :ivar description: Description of the stage. Required.
+    :vartype description: str
+    :ivar status: Status of the stage. Required. Known values are: "NotStarted", "InProgress",
+     "Completed", and "Failed".
+    :vartype status: Union[str, "LifecycleOperationStatus"]
+    :ivar startTimeUtc: Start time of the stage.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: End time of the stage.
+    :vartype endTimeUtc: str
+    :ivar lastUpdatedUtc: Last time the stage was updated.
+    :vartype lastUpdatedUtc: str
+    :ivar error: Error details.
+    :vartype error: "ErrorDetail"
+    :ivar subStages: Sub-stages for this stage.
+    :vartype subStages: list["LifecycleStage"]
+    """
+
+    name: Required[str]
+    """Name of the stage. Required."""
+    description: Required[str]
+    """Description of the stage. Required."""
+    status: Required[Union[str, "LifecycleOperationStatus"]]
+    """Status of the stage. Required. Known values are: \"NotStarted\", \"InProgress\", \"Completed\",
+     and \"Failed\"."""
+    startTimeUtc: str
+    """Start time of the stage."""
+    endTimeUtc: str
+    """End time of the stage."""
+    lastUpdatedUtc: str
+    """Last time the stage was updated."""
+    error: "ErrorDetail"
+    """Error details."""
+    subStages: list["LifecycleStage"]
+    """Sub-stages for this stage."""
+
+
+class LifecycleStatus(TypedDict, total=False):
+    """Summary lifecycle status for a resource.
+
+    :ivar status: Overall lifecycle status of the edge machine. Required. Known values are:
+     "Creating", "AwaitingConnection", "Provisioning", "ReadyForOs", "InstallingOs", "Provisioned",
+     "UpdatingOs", "ResettingOs", "Deleting", and "Failed".
+    :vartype status: Union[str, "EdgeMachineLifecycleStatus"]
+    :ivar stage: Depicts what is the current ongoing stage.
+    :vartype stage: str
+    :ivar lastUpdatedUtc: Last time the lifecycle status was updated. Required.
+    :vartype lastUpdatedUtc: str
+    :ivar message: Message to provide more details on lifecycle status, especially in case of
+     failures.
+    :vartype message: str
+    :ivar recommendedSteps: Recommended steps to resolve failures.
+    :vartype recommendedSteps: list[str]
+    """
+
+    status: Required[Union[str, "EdgeMachineLifecycleStatus"]]
+    """Overall lifecycle status of the edge machine. Required. Known values are: \"Creating\",
+     \"AwaitingConnection\", \"Provisioning\", \"ReadyForOs\", \"InstallingOs\", \"Provisioned\",
+     \"UpdatingOs\", \"ResettingOs\", \"Deleting\", and \"Failed\"."""
+    stage: str
+    """Depicts what is the current ongoing stage."""
+    lastUpdatedUtc: Required[str]
+    """Last time the lifecycle status was updated. Required."""
+    message: str
+    """Message to provide more details on lifecycle status, especially in case of failures."""
+    recommendedSteps: list[str]
+    """Recommended steps to resolve failures."""
+
+
 class LocalAvailabilityZones(TypedDict, total=False):
     """Local Availability Zone information for HCI cluster.
 
-    :ivar local_availability_zone_name: Local Availability Zone name for HCI cluster.
-    :vartype local_availability_zone_name: str
+    :ivar localAvailabilityZoneName: Local Availability Zone name for HCI cluster.
+    :vartype localAvailabilityZoneName: str
     :ivar nodes: Nodes belonging to a particular zone.
     :vartype nodes: list[str]
     """
@@ -2390,10 +4729,10 @@ class LocalAvailabilityZones(TypedDict, total=False):
 class LogCollectionError(TypedDict, total=False):
     """Log Collection Error details of the cluster.
 
-    :ivar error_code: Error Code of the log collection.
-    :vartype error_code: str
-    :ivar error_message: Error Message of the log collection.
-    :vartype error_message: str
+    :ivar errorCode: Error Code of the log collection.
+    :vartype errorCode: str
+    :ivar errorMessage: Error Message of the log collection.
+    :vartype errorMessage: str
     """
 
     errorCode: str
@@ -2405,20 +4744,20 @@ class LogCollectionError(TypedDict, total=False):
 class LogCollectionJobSession(TypedDict, total=False):
     """Represents a session for collecting logs from an edge device.
 
-    :ivar start_time: The timestamp when log collection started, in ISO 8601 format.
-    :vartype start_time: str
-    :ivar end_time: The timestamp when log collection ended, in ISO 8601 format.
-    :vartype end_time: str
-    :ivar time_collected: The total time logs were collected for, in ISO 8601 duration format.
-    :vartype time_collected: str
-    :ivar log_size: The size of the collected logs in bytes.
-    :vartype log_size: int
+    :ivar startTime: The timestamp when log collection started, in ISO 8601 format.
+    :vartype startTime: str
+    :ivar endTime: The timestamp when log collection ended, in ISO 8601 format.
+    :vartype endTime: str
+    :ivar timeCollected: The total time logs were collected for, in ISO 8601 duration format.
+    :vartype timeCollected: str
+    :ivar logSize: The size of the collected logs in bytes.
+    :vartype logSize: int
     :ivar status: The status of the log collection session. Known values are: "NotStarted",
      "Running", "Failed", "Succeeded", and "Canceled".
     :vartype status: Union[str, "DeviceLogCollectionStatus"]
-    :ivar correlation_id: A unique identifier for correlating this log collection session with
-     other operations or sessions.
-    :vartype correlation_id: str
+    :ivar correlationId: A unique identifier for correlating this log collection session with other
+     operations or sessions.
+    :vartype correlationId: str
     """
 
     startTime: str
@@ -2440,14 +4779,14 @@ class LogCollectionJobSession(TypedDict, total=False):
 class LogCollectionProperties(TypedDict, total=False):
     """Log Collection properties of the cluster.
 
-    :ivar from_date: From DateTimeStamp from when logs need to be connected.
-    :vartype from_date: str
-    :ivar to_date: To DateTimeStamp till when logs need to be connected.
-    :vartype to_date: str
-    :ivar last_log_generated: Recent DateTimeStamp where logs are successfully generated.
-    :vartype last_log_generated: str
-    :ivar log_collection_session_details:
-    :vartype log_collection_session_details: list["LogCollectionSession"]
+    :ivar fromDate: From DateTimeStamp from when logs need to be connected.
+    :vartype fromDate: str
+    :ivar toDate: To DateTimeStamp till when logs need to be connected.
+    :vartype toDate: str
+    :ivar lastLogGenerated: Recent DateTimeStamp where logs are successfully generated.
+    :vartype lastLogGenerated: str
+    :ivar logCollectionSessionDetails:
+    :vartype logCollectionSessionDetails: list["LogCollectionSession"]
     """
 
     fromDate: str
@@ -2462,14 +4801,14 @@ class LogCollectionProperties(TypedDict, total=False):
 class LogCollectionReportedProperties(TypedDict, total=False):
     """Represents the reported properties of a log collection job.
 
-    :ivar percent_complete: The percentage of the job that is complete.
-    :vartype percent_complete: int
-    :ivar validation_status: Validation status of job.
-    :vartype validation_status: "EceActionStatus"
-    :ivar deployment_status: Deployment status of job.
-    :vartype deployment_status: "EceActionStatus"
-    :ivar log_collection_session_details: Details of the log collection session.
-    :vartype log_collection_session_details: list["LogCollectionJobSession"]
+    :ivar percentComplete: The percentage of the job that is complete.
+    :vartype percentComplete: int
+    :ivar validationStatus: Validation status of job.
+    :vartype validationStatus: "EceActionStatus"
+    :ivar deploymentStatus: Deployment status of job.
+    :vartype deploymentStatus: "EceActionStatus"
+    :ivar logCollectionSessionDetails: Details of the log collection session.
+    :vartype logCollectionSessionDetails: list["LogCollectionJobSession"]
     """
 
     percentComplete: int
@@ -2496,10 +4835,10 @@ class LogCollectionRequest(TypedDict, total=False):
 class LogCollectionRequestProperties(TypedDict, total=False):
     """Properties for Log Collection Request.
 
-    :ivar from_date: From DateTimeStamp from when logs need to be connected. Required.
-    :vartype from_date: str
-    :ivar to_date: To DateTimeStamp till when logs need to be connected. Required.
-    :vartype to_date: str
+    :ivar fromDate: From DateTimeStamp from when logs need to be connected. Required.
+    :vartype fromDate: str
+    :ivar toDate: To DateTimeStamp till when logs need to be connected. Required.
+    :vartype toDate: str
     """
 
     fromDate: Required[str]
@@ -2511,27 +4850,27 @@ class LogCollectionRequestProperties(TypedDict, total=False):
 class LogCollectionSession(TypedDict, total=False):
     """Log Collection Session details of the cluster.
 
-    :ivar log_start_time: Start Time of the logs when it was collected.
-    :vartype log_start_time: str
-    :ivar log_end_time: End Time of the logs when it was collected.
-    :vartype log_end_time: str
-    :ivar time_collected: Duration of logs collected.
-    :vartype time_collected: str
-    :ivar log_size: Size of the logs collected.
-    :vartype log_size: int
-    :ivar log_collection_status: LogCollection status. Known values are: "None", "InProgress",
+    :ivar logStartTime: Start Time of the logs when it was collected.
+    :vartype logStartTime: str
+    :ivar logEndTime: End Time of the logs when it was collected.
+    :vartype logEndTime: str
+    :ivar timeCollected: Duration of logs collected.
+    :vartype timeCollected: str
+    :ivar logSize: Size of the logs collected.
+    :vartype logSize: int
+    :ivar logCollectionStatus: LogCollection status. Known values are: "None", "InProgress",
      "Failed", and "Succeeded".
-    :vartype log_collection_status: Union[str, "LogCollectionStatus"]
-    :ivar correlation_id: CorrelationId of the log collection.
-    :vartype correlation_id: str
-    :ivar log_collection_job_type: Specifies the type of log collection job. Determines whether the
+    :vartype logCollectionStatus: Union[str, "LogCollectionStatus"]
+    :ivar correlationId: CorrelationId of the log collection.
+    :vartype correlationId: str
+    :ivar logCollectionJobType: Specifies the type of log collection job. Determines whether the
      logs are collected immediately on demand or as part of a scheduled operation. Known values are:
      "OnDemand" and "Scheduled".
-    :vartype log_collection_job_type: Union[str, "LogCollectionJobType"]
-    :ivar end_time_collected: End Time of the logs when it was collected.
-    :vartype end_time_collected: str
-    :ivar log_collection_error: Log Collection Error details of the cluster.
-    :vartype log_collection_error: "LogCollectionError"
+    :vartype logCollectionJobType: Union[str, "LogCollectionJobType"]
+    :ivar endTimeCollected: End Time of the logs when it was collected.
+    :vartype endTimeCollected: str
+    :ivar logCollectionError: Log Collection Error details of the cluster.
+    :vartype logCollectionError: "LogCollectionError"
     """
 
     logStartTime: str
@@ -2560,17 +4899,17 @@ class LogCollectionSession(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -2586,17 +4925,204 @@ class ManagedServiceIdentity(TypedDict, total=False):
     """The identities assigned to this resource by the user."""
 
 
+class Metadata(TypedDict, total=False):
+    """Metadata associated with a deployment step.
+
+    :ivar key: The key of the metadata entry. Required.
+    :vartype key: str
+    :ivar value: The value of the metadata entry. Required.
+    :vartype value: str
+    """
+
+    key: Required[str]
+    """The key of the metadata entry. Required."""
+    value: Required[str]
+    """The value of the metadata entry. Required."""
+
+
+class NetworkAdapter(TypedDict, total=False):
+    """Network adapter configuration.
+
+    :ivar ipAssignmentType: Type of IP assignment. Required. Known values are: "Automatic" and
+     "Manual".
+    :vartype ipAssignmentType: Union[str, "IpAssignmentType"]
+    :ivar ipAddress: IP address.
+    :vartype ipAddress: str
+    :ivar adapterName: Adapter Name.
+    :vartype adapterName: str
+    :ivar macAddress: MAC address.
+    :vartype macAddress: str
+    :ivar ipAddressRange: IP address range.
+    :vartype ipAddressRange: "IpAddressRange"
+    :ivar gateway: Gateway id.
+    :vartype gateway: str
+    :ivar subnetMask: Subnet mask.
+    :vartype subnetMask: str
+    :ivar dnsAddressArray: Array of DNS addresses.
+    :vartype dnsAddressArray: list[str]
+    :ivar vlanId: VLAN ID for the network setup.
+    :vartype vlanId: str
+    """
+
+    ipAssignmentType: Required[Union[str, "IpAssignmentType"]]
+    """Type of IP assignment. Required. Known values are: \"Automatic\" and \"Manual\"."""
+    ipAddress: str
+    """IP address."""
+    adapterName: str
+    """Adapter Name."""
+    macAddress: str
+    """MAC address."""
+    ipAddressRange: "IpAddressRange"
+    """IP address range."""
+    gateway: str
+    """Gateway id."""
+    subnetMask: str
+    """Subnet mask."""
+    dnsAddressArray: list[str]
+    """Array of DNS addresses."""
+    vlanId: str
+    """VLAN ID for the network setup."""
+
+
+class NetworkAdapterActionStatus(TypedDict, total=False):
+    """The action plan deployment status for Network Adapter Job.
+
+    :ivar status: Status of ECE action Network Adapter Job.
+    :vartype status: str
+    :ivar steps: List of steps of Network Adapter Job.
+    :vartype steps: list["NetworkAdapterDeploymentStep"]
+    """
+
+    status: str
+    """Status of ECE action Network Adapter Job."""
+    steps: list["NetworkAdapterDeploymentStep"]
+    """List of steps of Network Adapter Job."""
+
+
+class NetworkAdapterConfiguration(TypedDict, total=False):
+    """Network adapter configuration.
+
+    :ivar adapterName: Adapter name.
+    :vartype adapterName: str
+    :ivar ip4Address: IP address.
+    :vartype ip4Address: str
+    :ivar subnetMask: Subnet mask.
+    :vartype subnetMask: str
+    :ivar defaultGateway: Default gateway.
+    :vartype defaultGateway: str
+    :ivar dnsServers: List of DNS servers.
+    :vartype dnsServers: list[str]
+    :ivar ipInterfaceType: IP configuration type (Dhcp or Static). Known values are: "Dhcp" and
+     "Static".
+    :vartype ipInterfaceType: Union[str, "IpInterfaceType"]
+    :ivar vlanId: VLAN identifier for network segmentation.
+    :vartype vlanId: int
+    :ivar interfaceState: Administrative state of the interface (up or down). Known values are:
+     "up" and "down".
+    :vartype interfaceState: Union[str, "InterfaceState"]
+    :ivar wifiConfiguration: WiFi configuration desired properties.
+    :vartype wifiConfiguration: "WifiConfigurationDesiredProperties"
+    """
+
+    adapterName: str
+    """Adapter name."""
+    ip4Address: str
+    """IP address."""
+    subnetMask: str
+    """Subnet mask."""
+    defaultGateway: str
+    """Default gateway."""
+    dnsServers: list[str]
+    """List of DNS servers."""
+    ipInterfaceType: Union[str, "IpInterfaceType"]
+    """IP configuration type (Dhcp or Static). Known values are: \"Dhcp\" and \"Static\"."""
+    vlanId: int
+    """VLAN identifier for network segmentation."""
+    interfaceState: Union[str, "InterfaceState"]
+    """Administrative state of the interface (up or down). Known values are: \"up\" and \"down\"."""
+    wifiConfiguration: "WifiConfigurationDesiredProperties"
+    """WiFi configuration desired properties."""
+
+
+class NetworkAdapterDeploymentStep(TypedDict, total=False):
+    """The Step of Network Adapter Job.
+
+    :ivar name: Name of step.
+    :vartype name: str
+    :ivar description: Description of step.
+    :vartype description: str
+    :ivar fullStepIndex: FullStepIndex of step.
+    :vartype fullStepIndex: str
+    :ivar startTimeUtc: Start time of step.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: End time of step.
+    :vartype endTimeUtc: str
+    :ivar status: Status of step (Error, Success, InProgress).
+    :vartype status: str
+    :ivar steps: List of nested steps.
+    :vartype steps: list["NetworkAdapterDeploymentStep"]
+    :ivar exception: List of exceptions.
+    :vartype exception: list[str]
+    """
+
+    name: str
+    """Name of step."""
+    description: str
+    """Description of step."""
+    fullStepIndex: str
+    """FullStepIndex of step."""
+    startTimeUtc: str
+    """Start time of step."""
+    endTimeUtc: str
+    """End time of step."""
+    status: str
+    """Status of step (Error, Success, InProgress)."""
+    steps: list["NetworkAdapterDeploymentStep"]
+    """List of nested steps."""
+    exception: list[str]
+    """List of exceptions."""
+
+
+class NetworkAdapterJobReportedProperties(TypedDict, total=False):
+    """Reported properties for Network Adapter Job.
+
+    :ivar percentComplete: The percentage of the job that is complete.
+    :vartype percentComplete: int
+    :ivar validationStatus: Validation status of Network Adapter Job.
+    :vartype validationStatus: "NetworkAdapterActionStatus"
+    :ivar deploymentStatus: Deployment status of Network Adapter Job.
+    :vartype deploymentStatus: "NetworkAdapterActionStatus"
+    """
+
+    percentComplete: int
+    """The percentage of the job that is complete."""
+    validationStatus: "NetworkAdapterActionStatus"
+    """Validation status of Network Adapter Job."""
+    deploymentStatus: "NetworkAdapterActionStatus"
+    """Deployment status of Network Adapter Job."""
+
+
+class NetworkConfiguration(TypedDict, total=False):
+    """Network configuration.
+
+    :ivar networkAdapters: List of network adapters.
+    :vartype networkAdapters: list["NetworkAdapter"]
+    """
+
+    networkAdapters: list["NetworkAdapter"]
+    """List of network adapters."""
+
+
 class NetworkController(TypedDict, total=False):
     """network controller config for SDN Integration to deploy AzureStackHCI Cluster.
 
-    :ivar mac_address_pool_start: macAddressPoolStart of network controller used for SDN
-     Integration.
-    :vartype mac_address_pool_start: str
-    :ivar mac_address_pool_stop: macAddressPoolStop of network controller used for SDN Integration.
-    :vartype mac_address_pool_stop: str
-    :ivar network_virtualization_enabled: NetworkVirtualizationEnabled of network controller used
-     for SDN Integration.
-    :vartype network_virtualization_enabled: bool
+    :ivar macAddressPoolStart: macAddressPoolStart of network controller used for SDN Integration.
+    :vartype macAddressPoolStart: str
+    :ivar macAddressPoolStop: macAddressPoolStop of network controller used for SDN Integration.
+    :vartype macAddressPoolStop: str
+    :ivar networkVirtualizationEnabled: NetworkVirtualizationEnabled of network controller used for
+     SDN Integration.
+    :vartype networkVirtualizationEnabled: bool
     """
 
     macAddressPoolStart: str
@@ -2610,12 +5136,12 @@ class NetworkController(TypedDict, total=False):
 class NextBillingModel(TypedDict, total=False):
     """Details of the next billing model for the cluster.
 
-    :ivar billing_model: Type of billing model.
-    :vartype billing_model: str
-    :ivar capabilities_enabled: Capabilities enabled under this billing model.
-    :vartype capabilities_enabled: list[str]
-    :ivar trial_days_remaining: Number of days remaining in the trial period.
-    :vartype trial_days_remaining: float
+    :ivar billingModel: Type of billing model.
+    :vartype billingModel: str
+    :ivar capabilitiesEnabled: Capabilities enabled under this billing model.
+    :vartype capabilitiesEnabled: list[str]
+    :ivar trialDaysRemaining: Number of days remaining in the trial period.
+    :vartype trialDaysRemaining: float
     """
 
     billingModel: str
@@ -2629,24 +5155,24 @@ class NextBillingModel(TypedDict, total=False):
 class NicDetail(TypedDict, total=False):
     """The NIC Detail of a device.
 
-    :ivar adapter_name: Adapter Name of NIC.
-    :vartype adapter_name: str
-    :ivar interface_description: Interface Description of NIC.
-    :vartype interface_description: str
-    :ivar component_id: Component Id of NIC.
-    :vartype component_id: str
-    :ivar driver_version: Driver Version of NIC.
-    :vartype driver_version: str
-    :ivar ip4_address: Subnet Mask of NIC.
-    :vartype ip4_address: str
-    :ivar subnet_mask: Subnet Mask of NIC.
-    :vartype subnet_mask: str
-    :ivar default_gateway: Default Gateway of NIC.
-    :vartype default_gateway: str
-    :ivar dns_servers: DNS Servers for NIC.
-    :vartype dns_servers: list[str]
-    :ivar default_isolation_id: Default Isolation of Management NIC.
-    :vartype default_isolation_id: str
+    :ivar adapterName: Adapter Name of NIC.
+    :vartype adapterName: str
+    :ivar interfaceDescription: Interface Description of NIC.
+    :vartype interfaceDescription: str
+    :ivar componentId: Component Id of NIC.
+    :vartype componentId: str
+    :ivar driverVersion: Driver Version of NIC.
+    :vartype driverVersion: str
+    :ivar ip4Address: Subnet Mask of NIC.
+    :vartype ip4Address: str
+    :ivar subnetMask: Subnet Mask of NIC.
+    :vartype subnetMask: str
+    :ivar defaultGateway: Default Gateway of NIC.
+    :vartype defaultGateway: str
+    :ivar dnsServers: DNS Servers for NIC.
+    :vartype dnsServers: list[str]
+    :ivar defaultIsolationId: Default Isolation of Management NIC.
+    :vartype defaultIsolationId: str
     """
 
     adapterName: str
@@ -2672,15 +5198,15 @@ class NicDetail(TypedDict, total=False):
 class Observability(TypedDict, total=False):
     """The Observability of AzureStackHCI Cluster.
 
-    :ivar streaming_data_client: Enables telemetry data to be sent to Microsoft.
-    :vartype streaming_data_client: bool
-    :ivar eu_location: Location of your cluster. The log and diagnostic data is sent to the
+    :ivar streamingDataClient: Enables telemetry data to be sent to Microsoft.
+    :vartype streamingDataClient: bool
+    :ivar euLocation: Location of your cluster. The log and diagnostic data is sent to the
      appropriate diagnostics servers depending upon where your cluster resides. Setting this to
      false results in all data sent to Microsoft to be stored outside of the EU.
-    :vartype eu_location: bool
-    :ivar episodic_data_upload: When set to true, collects log data to facilitate quicker issue
+    :vartype euLocation: bool
+    :ivar episodicDataUpload: When set to true, collects log data to facilitate quicker issue
      resolution.
-    :vartype episodic_data_upload: bool
+    :vartype episodicDataUpload: bool
     """
 
     streamingDataClient: bool
@@ -2693,26 +5219,235 @@ class Observability(TypedDict, total=False):
     """When set to true, collects log data to facilitate quicker issue resolution."""
 
 
+class OnboardingConfiguration(TypedDict, total=False):
+    """Onboarding configuration.
+
+    :ivar type: Type of the onboarding resource to support polymorphic resource.
+     "HybridComputeMachine"
+    :vartype type: Union[str, "OnboardingResourceType"]
+    :ivar resourceId: Resource ID.
+    :vartype resourceId: str
+    :ivar location: Location of the resource.
+    :vartype location: str
+    :ivar tenantId: Tenant ID of the resource.
+    :vartype tenantId: str
+    :ivar arcVirtualMachineId: Azure Arc virtual machine ID.
+    :vartype arcVirtualMachineId: str
+    """
+
+    type: Union[str, "OnboardingResourceType"]
+    """Type of the onboarding resource to support polymorphic resource. \"HybridComputeMachine\""""
+    resourceId: str
+    """Resource ID."""
+    location: str
+    """Location of the resource."""
+    tenantId: str
+    """Tenant ID of the resource."""
+    arcVirtualMachineId: str
+    """Azure Arc virtual machine ID."""
+
+
+class OperationDetail(TypedDict, total=False):
+    """operation detail.
+
+    :ivar name: operation name.
+    :vartype name: str
+    :ivar id: operation id.
+    :vartype id: str
+    :ivar type: operation type.
+    :vartype type: str
+    :ivar resourceId: operation resource id.
+    :vartype resourceId: str
+    :ivar description: operation description.
+    :vartype description: str
+    :ivar status: operation status.
+    :vartype status: str
+    :ivar error: error details.
+    :vartype error: "ErrorDetail"
+    """
+
+    name: str
+    """operation name."""
+    id: str
+    """operation id."""
+    type: str
+    """operation type."""
+    resourceId: str
+    """operation resource id."""
+    description: str
+    """operation description."""
+    status: str
+    """operation status."""
+    error: "ErrorDetail"
+    """error details."""
+
+
 class OptionalServices(TypedDict, total=False):
     """The OptionalServices of AzureStackHCI Cluster.
 
-    :ivar custom_location: The name of custom location.
-    :vartype custom_location: str
+    :ivar customLocation: The name of custom location.
+    :vartype customLocation: str
     """
 
     customLocation: str
     """The name of custom location."""
 
 
+class OsProfile(TypedDict, total=False):
+    """OS configurations for HCI device.
+
+    :ivar bootType: The boot type of the device. e.g. UEFI, Legacy etc.
+    :vartype bootType: str
+    :ivar assemblyVersion: Version of assembly present on device.
+    :vartype assemblyVersion: str
+    :ivar osType: OS type (“windows", “linux”).
+    :vartype osType: str
+    :ivar osSku: OS SKU (e.g., “ Microsoft Azure Linux ROE“, “Azure Stack HCI", "Microsoft Azure
+     Linux 3.0").
+    :vartype osSku: str
+    :ivar osVersion: OS Version.
+    :vartype osVersion: str
+    :ivar buildNumber: OS Build Number.
+    :vartype buildNumber: str
+    :ivar baseImageVersion: OS Base Image Version.
+    :vartype baseImageVersion: str
+    :ivar imageVersion: OS Image Version.
+    :vartype imageVersion: str
+    """
+
+    bootType: str
+    """The boot type of the device. e.g. UEFI, Legacy etc."""
+    assemblyVersion: str
+    """Version of assembly present on device."""
+    osType: str
+    """OS type (“windows\", “linux”)."""
+    osSku: str
+    """OS SKU (e.g., “ Microsoft Azure Linux ROE“, “Azure Stack HCI\", \"Microsoft Azure Linux 3.0\")."""
+    osVersion: str
+    """OS Version."""
+    buildNumber: str
+    """OS Build Number."""
+    baseImageVersion: str
+    """OS Base Image Version."""
+    imageVersion: str
+    """OS Image Version."""
+
+
+class OsProvisionProfile(TypedDict, total=False):
+    """Operating system profile.
+
+    :ivar osName: Name of the operating system.
+    :vartype osName: str
+    :ivar osType: Type of the operating system.
+    :vartype osType: str
+    :ivar osVersion: Version of the operating system.
+    :vartype osVersion: str
+    :ivar osImageLocation: Location of the operating system image.
+    :vartype osImageLocation: str
+    :ivar vsrVersion: Validated Solution Recipe version to be used for the job.
+    :vartype vsrVersion: str
+    :ivar imageHash: Hash of the OS package downloaded.
+    :vartype imageHash: str
+    :ivar gpgPubKey: GPG Public Key used for package verification.
+    :vartype gpgPubKey: str
+    :ivar operationType: Operation sub type of OS Provisioning. Known values are: "Provision",
+     "Update", "ReImage", and "Reset".
+    :vartype operationType: Union[str, "OSOperationType"]
+    """
+
+    osName: str
+    """Name of the operating system."""
+    osType: str
+    """Type of the operating system."""
+    osVersion: str
+    """Version of the operating system."""
+    osImageLocation: str
+    """Location of the operating system image."""
+    vsrVersion: str
+    """Validated Solution Recipe version to be used for the job."""
+    imageHash: str
+    """Hash of the OS package downloaded."""
+    gpgPubKey: str
+    """GPG Public Key used for package verification."""
+    operationType: Union[str, "OSOperationType"]
+    """Operation sub type of OS Provisioning. Known values are: \"Provision\", \"Update\",
+     \"ReImage\", and \"Reset\"."""
+
+
+class OwnershipVoucherDetails(TypedDict, total=False):
+    """Details for ownership voucher.
+
+    :ivar ownershipVoucher: Ownership voucher in base64 encoded format. Required.
+    :vartype ownershipVoucher: str
+    :ivar ownerKeyType: Owner key type. Required. "MicrosoftManaged"
+    :vartype ownerKeyType: Union[str, "OwnerKeyType"]
+    :ivar validationDetails: Ownership Voucher Validation Details.
+    :vartype validationDetails: "OwnershipVoucherValidationDetails"
+    """
+
+    ownershipVoucher: Required[str]
+    """Ownership voucher in base64 encoded format. Required."""
+    ownerKeyType: Required[Union[str, "OwnerKeyType"]]
+    """Owner key type. Required. \"MicrosoftManaged\""""
+    validationDetails: "OwnershipVoucherValidationDetails"
+    """Ownership Voucher Validation Details."""
+
+
+class OwnershipVoucherValidationDetails(TypedDict, total=False):
+    """Ownership Voucher Validation Details.
+
+    :ivar validationStatus: The ownership voucher validation status. Known values are: "Valid" and
+     "Invalid".
+    :vartype validationStatus: Union[str, "OwnershipVoucherValidationStatus"]
+    :ivar serialNumber: Serial number of the device.
+    :vartype serialNumber: str
+    :ivar id: FDO guid of the Ownership Voucher.
+    :vartype id: str
+    :ivar manufacturer: Name of the manufacturer.
+    :vartype manufacturer: str
+    :ivar modelName: Name of the model.
+    :vartype modelName: str
+    :ivar version: Version of the Ownership Voucher format.
+    :vartype version: str
+    :ivar azureMachineId: Azure Machine Id of the Ownership voucher.
+    :vartype azureMachineId: str
+    :ivar architecture: CPU architecture of the device, for example amd64 or arm64. Known values
+     are: "amd64" and "arm64".
+    :vartype architecture: Union[str, "Architecture"]
+    :ivar error: Error details if the validation failed.
+    :vartype error: "ErrorDetail"
+    """
+
+    validationStatus: Union[str, "OwnershipVoucherValidationStatus"]
+    """The ownership voucher validation status. Known values are: \"Valid\" and \"Invalid\"."""
+    serialNumber: str
+    """Serial number of the device."""
+    id: str
+    """FDO guid of the Ownership Voucher."""
+    manufacturer: str
+    """Name of the manufacturer."""
+    modelName: str
+    """Name of the model."""
+    version: str
+    """Version of the Ownership Voucher format."""
+    azureMachineId: str
+    """Azure Machine Id of the Ownership voucher."""
+    architecture: Union[str, "Architecture"]
+    """CPU architecture of the device, for example amd64 or arm64. Known values are: \"amd64\" and
+     \"arm64\"."""
+    error: "ErrorDetail"
+    """Error details if the validation failed."""
+
+
 class PackageVersionInfo(TypedDict, total=False):
     """Current version of each updatable component.
 
-    :ivar package_type: Package type.
-    :vartype package_type: str
+    :ivar packageType: Package type.
+    :vartype packageType: str
     :ivar version: Package version.
     :vartype version: str
-    :ivar last_updated: Last time this component was updated.
-    :vartype last_updated: str
+    :ivar lastUpdated: Last time this component was updated.
+    :vartype lastUpdated: str
     """
 
     packageType: str
@@ -2730,16 +5465,16 @@ class PerNodeExtensionState(TypedDict, total=False):
     :vartype name: str
     :ivar extension: Fully qualified resource ID for the particular Arc Extension on this node.
     :vartype extension: str
-    :ivar type_handler_version: Specifies the version of the script handler.
-    :vartype type_handler_version: str
+    :ivar typeHandlerVersion: Specifies the version of the script handler.
+    :vartype typeHandlerVersion: str
     :ivar state: State of Arc Extension in this node. Reflects the current lifecycle status of the
      extension on the individual node, such as whether it's being created, updated, deleted, or has
      encountered an error. Known values are: "NotSpecified", "Error", "Succeeded", "Canceled",
      "Failed", "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving",
      "PartiallySucceeded", "PartiallyConnected", "InProgress", "Accepted", and "Provisioning".
     :vartype state: Union[str, "NodeExtensionState"]
-    :ivar instance_view: The extension instance view.
-    :vartype instance_view: "ExtensionInstanceView"
+    :ivar instanceView: The extension instance view.
+    :vartype instanceView: "ExtensionInstanceView"
     """
 
     name: str
@@ -2762,19 +5497,19 @@ class PerNodeExtensionState(TypedDict, total=False):
 class PerNodeRemoteSupportSession(TypedDict, total=False):
     """Remote Support Node Session Details on the Node.
 
-    :ivar session_start_time: Remote Support Session StartTime on the Node.
-    :vartype session_start_time: str
-    :ivar session_end_time: Remote Support Session EndTime on the Node.
-    :vartype session_end_time: str
-    :ivar node_name: Name of the node.
-    :vartype node_name: str
+    :ivar sessionStartTime: Remote Support Session StartTime on the Node.
+    :vartype sessionStartTime: str
+    :ivar sessionEndTime: Remote Support Session EndTime on the Node.
+    :vartype sessionEndTime: str
+    :ivar nodeName: Name of the node.
+    :vartype nodeName: str
     :ivar duration: Duration of Remote Support Enablement.
     :vartype duration: int
-    :ivar access_level: Remote Support Access Level. Known values are: "Diagnostics" and
+    :ivar accessLevel: Remote Support Access Level. Known values are: "Diagnostics" and
      "DiagnosticsAndRepair".
-    :vartype access_level: Union[str, "AccessLevel"]
-    :ivar transcript_location: The location where the session transcript is stored.
-    :vartype transcript_location: str
+    :vartype accessLevel: Union[str, "AccessLevel"]
+    :ivar transcriptLocation: The location where the session transcript is stored.
+    :vartype transcriptLocation: str
     """
 
     sessionStartTime: str
@@ -2796,11 +5531,10 @@ class PerNodeState(TypedDict, total=False):
 
     :ivar name: Name of the Node in HCI Cluster.
     :vartype name: str
-    :ivar arc_instance: Fully qualified resource ID for the Arc agent of this node.
-    :vartype arc_instance: str
-    :ivar arc_node_service_principal_object_id: The service principal id of the arc for server
-     node.
-    :vartype arc_node_service_principal_object_id: str
+    :ivar arcInstance: Fully qualified resource ID for the Arc agent of this node.
+    :vartype arcInstance: str
+    :ivar arcNodeServicePrincipalObjectId: The service principal id of the arc for server node.
+    :vartype arcNodeServicePrincipalObjectId: str
     :ivar state: State of the Arc agent in this node. Indicates the current lifecycle status of the
      agent, such as whether it's being provisioned, connected, updated, or has encountered an error.
      Known values are: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed", "Connected",
@@ -2829,9 +5563,9 @@ class PhysicalNodes(TypedDict, total=False):
 
     :ivar name: NETBIOS name of each physical server on your Azure Stack HCI cluster.
     :vartype name: str
-    :ivar ipv4_address: The IPv4 address assigned to each physical server on your Azure Stack HCI
+    :ivar ipv4Address: The IPv4 address assigned to each physical server on your Azure Stack HCI
      cluster.
-    :vartype ipv4_address: str
+    :vartype ipv4Address: str
     """
 
     name: str
@@ -2846,12 +5580,12 @@ class PrecheckResult(TypedDict, total=False):
     :ivar name: Name of the individual test/rule/alert that was executed. Unique, not exposed to
      the customer.
     :vartype name: str
-    :ivar display_name: The health check DisplayName localized of the individual test executed.
-    :vartype display_name: str
+    :ivar displayName: The health check DisplayName localized of the individual test executed.
+    :vartype displayName: str
     :ivar tags: Key-value pairs that allow grouping/filtering individual tests.
     :vartype tags: "PrecheckResultTags"
-    :ivar health_check_tags: Key-value pairs that allow grouping/filtering individual tests.
-    :vartype health_check_tags: Any
+    :ivar healthCheckTags: Key-value pairs that allow grouping/filtering individual tests.
+    :vartype healthCheckTags: Any
     :ivar title: User-facing name; one or more sentences indicating the direct issue.
     :vartype title: str
     :ivar status: Represents the current status of the check being performed. Indicates whether the
@@ -2868,21 +5602,21 @@ class PrecheckResult(TypedDict, total=False):
     :vartype description: str
     :ivar remediation: Set of steps that can be taken to resolve the issue found.
     :vartype remediation: str
-    :ivar target_resource_id: The unique identifier for the affected resource (such as a node or
+    :ivar targetResourceID: The unique identifier for the affected resource (such as a node or
      drive).
-    :vartype target_resource_id: str
-    :ivar target_resource_name: The name of the affected resource.
-    :vartype target_resource_name: str
-    :ivar target_resource_type: The type of resource being referred to (well-known set of nouns in
+    :vartype targetResourceID: str
+    :ivar targetResourceName: The name of the affected resource.
+    :vartype targetResourceName: str
+    :ivar targetResourceType: The type of resource being referred to (well-known set of nouns in
      infrastructure, aligning with Monitoring).
-    :vartype target_resource_type: str
+    :vartype targetResourceType: str
     :ivar timestamp: The time in which the HealthCheck was called.
     :vartype timestamp: str
-    :ivar additional_data: Property bag of key value pairs for additional information.
-    :vartype additional_data: str
-    :ivar health_check_source: The name of the services called for the HealthCheck (I.E.
+    :ivar additionalData: Property bag of key value pairs for additional information.
+    :vartype additionalData: str
+    :ivar healthCheckSource: The name of the services called for the HealthCheck (I.E.
      Test-AzureStack, Test-Cluster).
-    :vartype health_check_source: str
+    :vartype healthCheckSource: str
     """
 
     name: str
@@ -2940,18 +5674,146 @@ class PrecheckResultTags(TypedDict, total=False):
     """Value of the key that allow grouping/filtering individual tests."""
 
 
+class ProvisioningDetails(TypedDict, total=False):
+    """Details for device provisioning.
+
+    :ivar osProfile: Operating system profile. Required.
+    :vartype osProfile: "OsProvisionProfile"
+    :ivar userDetails: User configuration.
+    :vartype userDetails: list["UserDetails"]
+    """
+
+    osProfile: Required["OsProvisionProfile"]
+    """Operating system profile. Required."""
+    userDetails: list["UserDetails"]
+    """User configuration."""
+
+
+class ProvisioningRequest(TypedDict, total=False):
+    """Represents a provisioning request.
+
+    :ivar target: Target operating system to support polymorphic resource. Required. Known values
+     are: "AzureLinux" and "HCI".
+    :vartype target: Union[str, "ProvisioningOsType"]
+    :ivar osProfile: Operating system profile. Required.
+    :vartype osProfile: "OsProvisionProfile"
+    :ivar userDetails: User configuration.
+    :vartype userDetails: list["UserDetails"]
+    :ivar onboardingConfiguration: Onboarding configuration.
+    :vartype onboardingConfiguration: "OnboardingConfiguration"
+    :ivar deviceConfiguration: Device configuration.
+    :vartype deviceConfiguration: "TargetDeviceConfiguration"
+    :ivar customConfiguration: Base64 encoded custom configuration for CAPI to use.
+    :vartype customConfiguration: str
+    """
+
+    target: Required[Union[str, "ProvisioningOsType"]]
+    """Target operating system to support polymorphic resource. Required. Known values are:
+     \"AzureLinux\" and \"HCI\"."""
+    osProfile: Required["OsProvisionProfile"]
+    """Operating system profile. Required."""
+    userDetails: list["UserDetails"]
+    """User configuration."""
+    onboardingConfiguration: "OnboardingConfiguration"
+    """Onboarding configuration."""
+    deviceConfiguration: "TargetDeviceConfiguration"
+    """Device configuration."""
+    customConfiguration: str
+    """Base64 encoded custom configuration for CAPI to use."""
+
+
+class ProvisionOsJobProperties(TypedDict, total=False):
+    """Represents the properties of an Azure Linux restricted operating environment Provision Os job.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: error details.
+    :vartype error: "ErrorDetail"
+    :ivar jobType: Job Type to support polymorphic resource. Required. Job to provision operating
+     system in the device.
+    :vartype jobType: Literal[EdgeMachineJobType.PROVISION_OS]
+    :ivar provisioningRequest: Os Provisioning request. Required.
+    :vartype provisioningRequest: "ProvisioningRequest"
+    :ivar reportedProperties: Reported Properties for Provision Os job.
+    :vartype reportedProperties: "ProvisionOsReportedProperties"
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Edge device job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """error details."""
+    jobType: Required[Literal[EdgeMachineJobType.PROVISION_OS]]
+    """Job Type to support polymorphic resource. Required. Job to provision operating system in the
+     device."""
+    provisioningRequest: Required["ProvisioningRequest"]
+    """Os Provisioning request. Required."""
+    reportedProperties: "ProvisionOsReportedProperties"
+    """Reported Properties for Provision Os job."""
+
+
+class ProvisionOsReportedProperties(TypedDict, total=False):
+    """Reported Properties for Provision Os job.
+
+    :ivar percentComplete: The percentage of the job that is complete.
+    :vartype percentComplete: int
+    :ivar validationStatus: Validation status of job.
+    :vartype validationStatus: "EceActionStatus"
+    :ivar deploymentStatus: Deployment status of job.
+    :vartype deploymentStatus: "EceActionStatus"
+    """
+
+    percentComplete: int
+    """The percentage of the job that is complete."""
+    validationStatus: "EceActionStatus"
+    """Validation status of job."""
+    deploymentStatus: "EceActionStatus"
+    """Deployment status of job."""
+
+
 class QosPolicyOverrides(TypedDict, total=False):
     """The QoSPolicyOverrides of a cluster.
 
-    :ivar priority_value8021_action_cluster: This parameter should only be modified based on your
-     OEM guidance. Do not modify this parameter without OEM validation.
-    :vartype priority_value8021_action_cluster: str
-    :ivar priority_value8021_action_smb: This parameter should only be modified based on your OEM
+    :ivar priorityValue8021Action_Cluster: This parameter should only be modified based on your OEM
      guidance. Do not modify this parameter without OEM validation.
-    :vartype priority_value8021_action_smb: str
-    :ivar bandwidth_percentage_smb: This parameter should only be modified based on your OEM
+    :vartype priorityValue8021Action_Cluster: str
+    :ivar priorityValue8021Action_SMB: This parameter should only be modified based on your OEM
      guidance. Do not modify this parameter without OEM validation.
-    :vartype bandwidth_percentage_smb: str
+    :vartype priorityValue8021Action_SMB: str
+    :ivar bandwidthPercentage_SMB: This parameter should only be modified based on your OEM
+     guidance. Do not modify this parameter without OEM validation.
+    :vartype bandwidthPercentage_SMB: str
     """
 
     priorityValue8021Action_Cluster: str
@@ -2989,8 +5851,8 @@ class ReconcileArcSettingsRequest(TypedDict, total=False):
 class ReconcileArcSettingsRequestProperties(TypedDict, total=False):
     """List of Arc Nodes in the cluster.
 
-    :ivar cluster_nodes:
-    :vartype cluster_nodes: list[str]
+    :ivar clusterNodes:
+    :vartype clusterNodes: list[str]
     """
 
     clusterNodes: list[str]
@@ -3001,14 +5863,14 @@ class RemoteSupportJobNodeSettings(TypedDict, total=False):
 
     :ivar state: The state of the remote support node.
     :vartype state: str
-    :ivar created_at: The timestamp when the node settings were created, in UTC.
-    :vartype created_at: str
-    :ivar updated_at: The timestamp when the node settings were last updated, in UTC.
-    :vartype updated_at: str
-    :ivar connection_status: The current connection status of the remote support session.
-    :vartype connection_status: str
-    :ivar connection_error_message: The error message, if any, from the last connection attempt.
-    :vartype connection_error_message: str
+    :ivar createdAt: The timestamp when the node settings were created, in UTC.
+    :vartype createdAt: str
+    :ivar updatedAt: The timestamp when the node settings were last updated, in UTC.
+    :vartype updatedAt: str
+    :ivar connectionStatus: The current connection status of the remote support session.
+    :vartype connectionStatus: str
+    :ivar connectionErrorMessage: The error message, if any, from the last connection attempt.
+    :vartype connectionErrorMessage: str
     """
 
     state: str
@@ -3026,16 +5888,16 @@ class RemoteSupportJobNodeSettings(TypedDict, total=False):
 class RemoteSupportJobReportedProperties(TypedDict, total=False):
     """Represents the reported properties of a remote support job.
 
-    :ivar percent_complete: The percentage of the job that is complete.
-    :vartype percent_complete: int
-    :ivar validation_status: Validation status of job.
-    :vartype validation_status: "EceActionStatus"
-    :ivar deployment_status: Deployment status of job.
-    :vartype deployment_status: "EceActionStatus"
-    :ivar node_settings: Optional settings for configuring the node for remote support.
-    :vartype node_settings: "RemoteSupportJobNodeSettings"
-    :ivar session_details: Details of the remote support session.
-    :vartype session_details: list["RemoteSupportSession"]
+    :ivar percentComplete: The percentage of the job that is complete.
+    :vartype percentComplete: int
+    :ivar validationStatus: Validation status of job.
+    :vartype validationStatus: "EceActionStatus"
+    :ivar deploymentStatus: Deployment status of job.
+    :vartype deploymentStatus: "EceActionStatus"
+    :ivar nodeSettings: Optional settings for configuring the node for remote support.
+    :vartype nodeSettings: "RemoteSupportJobNodeSettings"
+    :ivar sessionDetails: Details of the remote support session.
+    :vartype sessionDetails: list["RemoteSupportSession"]
     """
 
     percentComplete: int
@@ -3053,20 +5915,20 @@ class RemoteSupportJobReportedProperties(TypedDict, total=False):
 class RemoteSupportNodeSettings(TypedDict, total=False):
     """Remote Support Node Settings of the cluster.
 
-    :ivar arc_resource_id: Arc ResourceId of the Node.
-    :vartype arc_resource_id: str
+    :ivar arcResourceId: Arc ResourceId of the Node.
+    :vartype arcResourceId: str
     :ivar state: Remote Support Access Connection State on the Node.
     :vartype state: str
-    :ivar created_at: Remote Support Enablement Request Created TimeStamp on the Node.
-    :vartype created_at: str
-    :ivar updated_at: Remote Support Enablement Request Updated TimeStamp on the Node.
-    :vartype updated_at: str
-    :ivar connection_status: Remote Support Access Connection Status on the Node.
-    :vartype connection_status: str
-    :ivar connection_error_message: Remote Support Access Connection Error Message on the Node.
-    :vartype connection_error_message: str
-    :ivar transcript_location: Remote Support Transcript location on the node.
-    :vartype transcript_location: str
+    :ivar createdAt: Remote Support Enablement Request Created TimeStamp on the Node.
+    :vartype createdAt: str
+    :ivar updatedAt: Remote Support Enablement Request Updated TimeStamp on the Node.
+    :vartype updatedAt: str
+    :ivar connectionStatus: Remote Support Access Connection Status on the Node.
+    :vartype connectionStatus: str
+    :ivar connectionErrorMessage: Remote Support Access Connection Error Message on the Node.
+    :vartype connectionErrorMessage: str
+    :ivar transcriptLocation: Remote Support Transcript location on the node.
+    :vartype transcriptLocation: str
     """
 
     arcResourceId: str
@@ -3088,22 +5950,21 @@ class RemoteSupportNodeSettings(TypedDict, total=False):
 class RemoteSupportProperties(TypedDict, total=False):
     """Remote Support properties of the cluster.
 
-    :ivar access_level: Remote Support Access Level. Known values are: "Diagnostics" and
+    :ivar accessLevel: Remote Support Access Level. Known values are: "Diagnostics" and
      "DiagnosticsAndRepair".
-    :vartype access_level: Union[str, "AccessLevel"]
-    :ivar expiration_time_stamp: Expiration DateTimeStamp when Remote Support Access will be
-     expired.
-    :vartype expiration_time_stamp: str
-    :ivar remote_support_type: Remote Support Type for cluster. Known values are: "Enable" and
+    :vartype accessLevel: Union[str, "AccessLevel"]
+    :ivar expirationTimeStamp: Expiration DateTimeStamp when Remote Support Access will be expired.
+    :vartype expirationTimeStamp: str
+    :ivar remoteSupportType: Remote Support Type for cluster. Known values are: "Enable" and
      "Revoke".
-    :vartype remote_support_type: Union[str, "RemoteSupportType"]
-    :ivar remote_support_node_settings:
-    :vartype remote_support_node_settings: list["RemoteSupportNodeSettings"]
-    :ivar remote_support_session_details:
-    :vartype remote_support_session_details: list["PerNodeRemoteSupportSession"]
-    :ivar remote_support_provisioning_state: Remote Support Provisioning State. Known values are:
+    :vartype remoteSupportType: Union[str, "RemoteSupportType"]
+    :ivar remoteSupportNodeSettings:
+    :vartype remoteSupportNodeSettings: list["RemoteSupportNodeSettings"]
+    :ivar remoteSupportSessionDetails:
+    :vartype remoteSupportSessionDetails: list["PerNodeRemoteSupportSession"]
+    :ivar remoteSupportProvisioningState: Remote Support Provisioning State. Known values are:
      "None", "GrantInProgress", "RevokeInProgress", "Succeeded", and "Failed".
-    :vartype remote_support_provisioning_state: Union[str, "RemoteSupportProvisioningState"]
+    :vartype remoteSupportProvisioningState: Union[str, "RemoteSupportProvisioningState"]
     """
 
     accessLevel: Union[str, "AccessLevel"]
@@ -3133,15 +5994,14 @@ class RemoteSupportRequest(TypedDict, total=False):
 class RemoteSupportRequestProperties(TypedDict, total=False):
     """Properties for Remote Support Request.
 
-    :ivar access_level: Remote Support Access Level. Known values are: "Diagnostics" and
+    :ivar accessLevel: Remote Support Access Level. Known values are: "Diagnostics" and
      "DiagnosticsAndRepair".
-    :vartype access_level: Union[str, "AccessLevel"]
-    :ivar expiration_time_stamp: Expiration DateTimeStamp when Remote Support Access will be
-     expired.
-    :vartype expiration_time_stamp: str
-    :ivar remote_support_type: Remote Support Type for cluster. Known values are: "Enable" and
+    :vartype accessLevel: Union[str, "AccessLevel"]
+    :ivar expirationTimeStamp: Expiration DateTimeStamp when Remote Support Access will be expired.
+    :vartype expirationTimeStamp: str
+    :ivar remoteSupportType: Remote Support Type for cluster. Known values are: "Enable" and
      "Revoke".
-    :vartype remote_support_type: Union[str, "RemoteSupportType"]
+    :vartype remoteSupportType: Union[str, "RemoteSupportType"]
     """
 
     accessLevel: Union[str, "AccessLevel"]
@@ -3155,17 +6015,17 @@ class RemoteSupportRequestProperties(TypedDict, total=False):
 class RemoteSupportSession(TypedDict, total=False):
     """Represents a remote support session.
 
-    :ivar session_id: Unique session Id.
-    :vartype session_id: str
-    :ivar session_start_time: The start time of the remote support session, in UTC.
-    :vartype session_start_time: str
-    :ivar session_end_time: The end time of the remote support session, in UTC.
-    :vartype session_end_time: str
-    :ivar access_level: The level of access granted during the remote support session. Known values
+    :ivar sessionId: Unique session Id.
+    :vartype sessionId: str
+    :ivar sessionStartTime: The start time of the remote support session, in UTC.
+    :vartype sessionStartTime: str
+    :ivar sessionEndTime: The end time of the remote support session, in UTC.
+    :vartype sessionEndTime: str
+    :ivar accessLevel: The level of access granted during the remote support session. Known values
      are: "None", "Diagnostics", and "DiagnosticsAndRepair".
-    :vartype access_level: Union[str, "RemoteSupportAccessLevel"]
-    :ivar transcript_location: The location where the session transcript is stored.
-    :vartype transcript_location: str
+    :vartype accessLevel: Union[str, "RemoteSupportAccessLevel"]
+    :ivar transcriptLocation: The location where the session transcript is stored.
+    :vartype transcriptLocation: str
     """
 
     sessionId: str
@@ -3181,17 +6041,33 @@ class RemoteSupportSession(TypedDict, total=False):
     """The location where the session transcript is stored."""
 
 
+class RepairServerJobServerDetails(TypedDict, total=False):
+    """Details of servers to be repaired in the cluster.
+
+    :ivar serverName: Name of server to be repaired in cluster. Required.
+    :vartype serverName: str
+    :ivar serverResourceId: Azure resource id of Arc machine part of cluster for which job will be
+     triggered. Required.
+    :vartype serverResourceId: str
+    """
+
+    serverName: Required[str]
+    """Name of server to be repaired in cluster. Required."""
+    serverResourceId: Required[str]
+    """Azure resource id of Arc machine part of cluster for which job will be triggered. Required."""
+
+
 class SanAdapterIPConfig(TypedDict, total=False):
     """Per-adapter IP configuration for SAN cluster network.
 
     :ivar name: Logical name of the adapter IP configuration (e.g., clusterNetwork-A).
     :vartype name: str
-    :ivar network_adapter_name: Physical NIC name (e.g., ethernet 3).
-    :vartype network_adapter_name: str
-    :ivar vlan_id: VLAN ID (0-4095). Value of 0 or omitted means untagged.
-    :vartype vlan_id: int
-    :ivar address_prefix: Subnet address prefix in CIDR notation (e.g., 10.10.30.0/24).
-    :vartype address_prefix: str
+    :ivar networkAdapterName: Physical NIC name (e.g., ethernet 3).
+    :vartype networkAdapterName: str
+    :ivar vlanId: VLAN ID (0-4095). Value of 0 or omitted means untagged.
+    :vartype vlanId: int
+    :ivar addressPrefix: Subnet address prefix in CIDR notation (e.g., 10.10.30.0/24).
+    :vartype addressPrefix: str
     """
 
     name: str
@@ -3207,14 +6083,14 @@ class SanAdapterIPConfig(TypedDict, total=False):
 class SanAdapterProperties(TypedDict, total=False):
     """QoS and adapter property overrides for SAN cluster network traffic.
 
-    :ivar priority_value8021_action_cluster: 802.1p priority value for cluster traffic.
-    :vartype priority_value8021_action_cluster: int
-    :ivar priority_value8021_action_smb: 802.1p priority value for SMB traffic.
-    :vartype priority_value8021_action_smb: int
-    :ivar bandwidth_percentage_smb: SMB bandwidth percentage (1-97).
-    :vartype bandwidth_percentage_smb: int
-    :ivar jumbo_packet: Jumbo frame size in bytes.
-    :vartype jumbo_packet: int
+    :ivar priorityValue8021ActionCluster: 802.1p priority value for cluster traffic.
+    :vartype priorityValue8021ActionCluster: int
+    :ivar priorityValue8021ActionSmb: 802.1p priority value for SMB traffic.
+    :vartype priorityValue8021ActionSmb: int
+    :ivar bandwidthPercentageSmb: SMB bandwidth percentage (1-97).
+    :vartype bandwidthPercentageSmb: int
+    :ivar jumboPacket: Jumbo frame size in bytes.
+    :vartype jumboPacket: int
     """
 
     priorityValue8021ActionCluster: int
@@ -3230,10 +6106,10 @@ class SanAdapterProperties(TypedDict, total=False):
 class SanClusterNetworkConfig(TypedDict, total=False):
     """Cluster network configuration for SAN deployments (CSV/LiveMig traffic).
 
-    :ivar adapter_properties: QoS and adapter overrides for the cluster network.
-    :vartype adapter_properties: "SanAdapterProperties"
-    :ivar adapter_ip_config: Per-adapter IP configuration for the cluster network.
-    :vartype adapter_ip_config: list["SanAdapterIPConfig"]
+    :ivar adapterProperties: QoS and adapter overrides for the cluster network.
+    :vartype adapterProperties: "SanAdapterProperties"
+    :ivar adapterIPConfig: Per-adapter IP configuration for the cluster network.
+    :vartype adapterIPConfig: list["SanAdapterIPConfig"]
     """
 
     adapterProperties: "SanAdapterProperties"
@@ -3245,8 +6121,8 @@ class SanClusterNetworkConfig(TypedDict, total=False):
 class SanNetworks(TypedDict, total=False):
     """SAN network configuration for host network of AzureStackHCI Cluster.
 
-    :ivar cluster_network_config: Cluster (CSV/LiveMig) network configuration for SAN deployments.
-    :vartype cluster_network_config: "SanClusterNetworkConfig"
+    :ivar clusterNetworkConfig: Cluster (CSV/LiveMig) network configuration for SAN deployments.
+    :vartype clusterNetworkConfig: "SanClusterNetworkConfig"
     """
 
     clusterNetworkConfig: "SanClusterNetworkConfig"
@@ -3256,12 +6132,12 @@ class SanNetworks(TypedDict, total=False):
 class SbeCredentials(TypedDict, total=False):
     """secrets used for solution builder extension (SBE) partner extensibility.
 
-    :ivar secret_name: secret name stored in keyvault.
-    :vartype secret_name: str
-    :ivar ece_secret_name: secret name expected for Enterprise Cloud Engine (ECE).
-    :vartype ece_secret_name: str
-    :ivar secret_location: secret URI stored in keyvault.
-    :vartype secret_location: str
+    :ivar secretName: secret name stored in keyvault.
+    :vartype secretName: str
+    :ivar eceSecretName: secret name expected for Enterprise Cloud Engine (ECE).
+    :vartype eceSecretName: str
+    :ivar secretLocation: secret URI stored in keyvault.
+    :vartype secretLocation: str
     """
 
     secretName: str
@@ -3282,10 +6158,10 @@ class SbeDeploymentInfo(TypedDict, total=False):
     :vartype family: str
     :ivar publisher: SBE manifest publisher.
     :vartype publisher: str
-    :ivar sbe_manifest_source: SBE Manifest Source.
-    :vartype sbe_manifest_source: str
-    :ivar sbe_manifest_creation_date: SBE Manifest Creation Date.
-    :vartype sbe_manifest_creation_date: str
+    :ivar sbeManifestSource: SBE Manifest Source.
+    :vartype sbeManifestSource: str
+    :ivar sbeManifestCreationDate: SBE Manifest Creation Date.
+    :vartype sbeManifestCreationDate: str
     """
 
     version: str
@@ -3307,9 +6183,9 @@ class SbeDeploymentPackageInfo(TypedDict, total=False):
     :vartype code: str
     :ivar message: A detailed message that explains the SBE package validation result.
     :vartype message: str
-    :ivar sbe_manifest: This represents discovered update results for matching updates and store it
+    :ivar sbeManifest: This represents discovered update results for matching updates and store it
      as SBE manifest.
-    :vartype sbe_manifest: str
+    :vartype sbeManifest: str
     """
 
     code: str
@@ -3323,13 +6199,13 @@ class SbeDeploymentPackageInfo(TypedDict, total=False):
 class SbePartnerInfo(TypedDict, total=False):
     """The solution builder extension (SBE) partner deployment info for cluster.
 
-    :ivar sbe_deployment_info: SBE package and manifest information for the solution Builder
+    :ivar sbeDeploymentInfo: SBE package and manifest information for the solution Builder
      Extension staged for AzureStackHCI cluster deployment.
-    :vartype sbe_deployment_info: "SbeDeploymentInfo"
-    :ivar partner_properties: List of SBE partner properties for AzureStackHCI cluster deployment.
-    :vartype partner_properties: list["SbePartnerProperties"]
-    :ivar credential_list: SBE credentials list for AzureStackHCI cluster deployment.
-    :vartype credential_list: list["SbeCredentials"]
+    :vartype sbeDeploymentInfo: "SbeDeploymentInfo"
+    :ivar partnerProperties: List of SBE partner properties for AzureStackHCI cluster deployment.
+    :vartype partnerProperties: list["SbePartnerProperties"]
+    :ivar credentialList: SBE credentials list for AzureStackHCI cluster deployment.
+    :vartype credentialList: list["SbeCredentials"]
     """
 
     sbeDeploymentInfo: "SbeDeploymentInfo"
@@ -3359,10 +6235,10 @@ class SbePartnerProperties(TypedDict, total=False):
 class ScaleUnits(TypedDict, total=False):
     """Scale units will contains list of deployment data.
 
-    :ivar deployment_data: Deployment Data to deploy AzureStackHCI Cluster. Required.
-    :vartype deployment_data: "DeploymentData"
-    :ivar sbe_partner_info: Solution builder extension (SBE) partner properties.
-    :vartype sbe_partner_info: "SbePartnerInfo"
+    :ivar deploymentData: Deployment Data to deploy AzureStackHCI Cluster. Required.
+    :vartype deploymentData: "DeploymentData"
+    :ivar sbePartnerInfo: Solution builder extension (SBE) partner properties.
+    :vartype sbePartnerInfo: "SbePartnerInfo"
     """
 
     deploymentData: Required["DeploymentData"]
@@ -3374,22 +6250,50 @@ class ScaleUnits(TypedDict, total=False):
 class SdnIntegration(TypedDict, total=False):
     """SDN Integration config to deploy AzureStackHCI Cluster.
 
-    :ivar network_controller: network controller config for SDN Integration to deploy AzureStackHCI
+    :ivar networkController: network controller config for SDN Integration to deploy AzureStackHCI
      Cluster.
-    :vartype network_controller: "NetworkController"
+    :vartype networkController: "NetworkController"
     """
 
     networkController: "NetworkController"
     """network controller config for SDN Integration to deploy AzureStackHCI Cluster."""
 
 
+class SdnProperties(TypedDict, total=False):
+    """Represents the Software Defined Networking (SDN) configuration state.
+
+    :ivar sdnStatus: Indicates the current Software Defined Networking (SDN) status of the
+     resource, which may be an individual device or a cluster. Known values are: "Unknown",
+     "Disabled", and "Enabled".
+    :vartype sdnStatus: Union[str, "SdnStatus"]
+    :ivar sdnDomainName: The fully qualified domain name (FQDN) associated with the SDN deployment.
+     This value is propagated from the Device Management Extension to the cluster resource. It is
+     typically in the format ``<sdnPrefix>-nc.<domain>`` when SDN is enabled. May be null or absent
+     in unsupported or disabled states.
+    :vartype sdnDomainName: str
+    :ivar sdnApiAddress: Represents the API address for the SDN deployment.
+    :vartype sdnApiAddress: str
+    """
+
+    sdnStatus: Union[str, "SdnStatus"]
+    """Indicates the current Software Defined Networking (SDN) status of the resource, which may be an
+     individual device or a cluster. Known values are: \"Unknown\", \"Disabled\", and \"Enabled\"."""
+    sdnDomainName: str
+    """The fully qualified domain name (FQDN) associated with the SDN deployment. This value is
+     propagated from the Device Management Extension to the cluster resource. It is typically in the
+     format ``<sdnPrefix>-nc.<domain>`` when SDN is enabled. May be null or absent in unsupported or
+     disabled states."""
+    sdnApiAddress: str
+    """Represents the API address for the SDN deployment."""
+
+
 class SecretsLocationDetails(TypedDict, total=False):
     """Secrets location details.
 
-    :ivar secrets_type: Type of secrets to store. Required. "BackupSecrets"
-    :vartype secrets_type: Union[str, "SecretsType"]
-    :ivar secrets_location: secrets location. Required.
-    :vartype secrets_location: str
+    :ivar secretsType: Type of secrets to store. Required. "BackupSecrets"
+    :vartype secretsType: Union[str, "SecretsType"]
+    :ivar secretsLocation: secrets location. Required.
+    :vartype secretsLocation: str
     """
 
     secretsType: Required[Union[str, "SecretsType"]]
@@ -3412,20 +6316,20 @@ class SecretsLocationsChangeRequest(TypedDict, total=False):
 class SecurityComplianceStatus(TypedDict, total=False):
     """Security compliance properties of the resource.
 
-    :ivar secured_core_compliance: Indicates whether HCI hosts meets secured-core server
+    :ivar securedCoreCompliance: Indicates whether HCI hosts meets secured-core server
      requirements. Known values are: "Compliant", "NonCompliant", and "Pending".
-    :vartype secured_core_compliance: Union[str, "ComplianceStatus"]
-    :ivar wdac_compliance: Indicates whether HCI hosts have enforced consistent Windows Defender
+    :vartype securedCoreCompliance: Union[str, "ComplianceStatus"]
+    :ivar wdacCompliance: Indicates whether HCI hosts have enforced consistent Windows Defender
      Application Control. Known values are: "Compliant", "NonCompliant", and "Pending".
-    :vartype wdac_compliance: Union[str, "ComplianceStatus"]
-    :ivar data_at_rest_encrypted: Indicates whether data at-rest encryption is enabled on Azure
-     Stack HCI clustered volumes. Known values are: "Compliant", "NonCompliant", and "Pending".
-    :vartype data_at_rest_encrypted: Union[str, "ComplianceStatus"]
-    :ivar data_in_transit_protected: Indicates whether HCI cluster has data in-transit protection.
+    :vartype wdacCompliance: Union[str, "ComplianceStatus"]
+    :ivar dataAtRestEncrypted: Indicates whether data at-rest encryption is enabled on Azure Stack
+     HCI clustered volumes. Known values are: "Compliant", "NonCompliant", and "Pending".
+    :vartype dataAtRestEncrypted: Union[str, "ComplianceStatus"]
+    :ivar dataInTransitProtected: Indicates whether HCI cluster has data in-transit protection.
      Known values are: "Compliant", "NonCompliant", and "Pending".
-    :vartype data_in_transit_protected: Union[str, "ComplianceStatus"]
-    :ivar last_updated: Time in UTC when compliance status was last updated.
-    :vartype last_updated: str
+    :vartype dataInTransitProtected: Union[str, "ComplianceStatus"]
+    :ivar lastUpdated: Time in UTC when compliance status was last updated.
+    :vartype lastUpdated: str
     """
 
     securedCoreCompliance: Union[str, "ComplianceStatus"]
@@ -3447,24 +6351,23 @@ class SecurityComplianceStatus(TypedDict, total=False):
 class SecurityProperties(TypedDict, total=False):
     """Security properties of the resource.
 
-    :ivar secured_core_compliance_assignment: Secured Core Compliance Assignment. Known values are:
+    :ivar securedCoreComplianceAssignment: Secured Core Compliance Assignment. Known values are:
      "Audit" and "ApplyAndAutoCorrect".
-    :vartype secured_core_compliance_assignment: Union[str, "ComplianceAssignmentType"]
-    :ivar wdac_compliance_assignment: WDAC Compliance Assignment. Known values are: "Audit" and
+    :vartype securedCoreComplianceAssignment: Union[str, "ComplianceAssignmentType"]
+    :ivar wdacComplianceAssignment: WDAC Compliance Assignment. Known values are: "Audit" and
      "ApplyAndAutoCorrect".
-    :vartype wdac_compliance_assignment: Union[str, "ComplianceAssignmentType"]
-    :ivar smb_encryption_for_intra_cluster_traffic_compliance_assignment: SMB encryption for
-     intra-cluster traffic Compliance Assignment. Known values are: "Audit" and
-     "ApplyAndAutoCorrect".
-    :vartype smb_encryption_for_intra_cluster_traffic_compliance_assignment: Union[str,
+    :vartype wdacComplianceAssignment: Union[str, "ComplianceAssignmentType"]
+    :ivar smbEncryptionForIntraClusterTrafficComplianceAssignment: SMB encryption for intra-cluster
+     traffic Compliance Assignment. Known values are: "Audit" and "ApplyAndAutoCorrect".
+    :vartype smbEncryptionForIntraClusterTrafficComplianceAssignment: Union[str,
      "ComplianceAssignmentType"]
-    :ivar security_compliance_status: Security Compliance Status.
-    :vartype security_compliance_status: "SecurityComplianceStatus"
-    :ivar provisioning_state: The status of the last operation. Known values are: "NotSpecified",
+    :ivar securityComplianceStatus: Security Compliance Status.
+    :vartype securityComplianceStatus: "SecurityComplianceStatus"
+    :ivar provisioningState: The status of the last operation. Known values are: "NotSpecified",
      "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
      "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
      "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     securedCoreComplianceAssignment: Union[str, "ComplianceAssignmentType"]
@@ -3494,9 +6397,9 @@ class SecuritySetting(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "SecurityProperties"
     """
@@ -3508,9 +6411,9 @@ class SecuritySetting(ProxyResource):
 class ServiceConfiguration(TypedDict, total=False):
     """Service configuration details.
 
-    :ivar service_name: Specifies the name of the service associated with the update or operation.
+    :ivar serviceName: Specifies the name of the service associated with the update or operation.
      This helps identify which system component or tool is involved. Required. "WAC"
-    :vartype service_name: Union[str, "ServiceName"]
+    :vartype serviceName: Union[str, "ServiceName"]
     :ivar port: The port on which service is enabled. Required.
     :vartype port: int
     """
@@ -3520,6 +6423,22 @@ class ServiceConfiguration(TypedDict, total=False):
      which system component or tool is involved. Required. \"WAC\""""
     port: Required[int]
     """The port on which service is enabled. Required."""
+
+
+class SiteDetails(TypedDict, total=False):
+    """Site Details consists of common configurations.
+
+    :ivar siteResourceId: Site resource Id to be set during Edge Machine resource creation.
+     Required.
+    :vartype siteResourceId: str
+    :ivar deviceConfiguration: Edge Device configuration received from site common configuration.
+    :vartype deviceConfiguration: "TargetDeviceConfiguration"
+    """
+
+    siteResourceId: Required[str]
+    """Site resource Id to be set during Edge Machine resource creation. Required."""
+    deviceConfiguration: "TargetDeviceConfiguration"
+    """Edge Device configuration received from site common configuration."""
 
 
 class SoftwareAssuranceChangeRequest(TypedDict, total=False):
@@ -3535,10 +6454,10 @@ class SoftwareAssuranceChangeRequest(TypedDict, total=False):
 class SoftwareAssuranceChangeRequestProperties(TypedDict, total=False):
     """SoftwareAssuranceChangeRequestProperties.
 
-    :ivar software_assurance_intent: Customer Intent for Software Assurance Benefit. This indicates
+    :ivar softwareAssuranceIntent: Customer Intent for Software Assurance Benefit. This indicates
      whether the customer wishes to opt in or out of the Software Assurance program, which provides
      licensing and support benefits. Known values are: "Enable" and "Disable".
-    :vartype software_assurance_intent: Union[str, "SoftwareAssuranceIntent"]
+    :vartype softwareAssuranceIntent: Union[str, "SoftwareAssuranceIntent"]
     """
 
     softwareAssuranceIntent: Union[str, "SoftwareAssuranceIntent"]
@@ -3550,14 +6469,14 @@ class SoftwareAssuranceChangeRequestProperties(TypedDict, total=False):
 class SoftwareAssuranceProperties(TypedDict, total=False):
     """Software Assurance properties of the cluster.
 
-    :ivar software_assurance_status: Status of the Software Assurance for the cluster. Known values
+    :ivar softwareAssuranceStatus: Status of the Software Assurance for the cluster. Known values
      are: "Enabled" and "Disabled".
-    :vartype software_assurance_status: Union[str, "SoftwareAssuranceStatus"]
-    :ivar software_assurance_intent: Customer Intent for Software Assurance Benefit. Known values
+    :vartype softwareAssuranceStatus: Union[str, "SoftwareAssuranceStatus"]
+    :ivar softwareAssuranceIntent: Customer Intent for Software Assurance Benefit. Known values
      are: "Enable" and "Disable".
-    :vartype software_assurance_intent: Union[str, "SoftwareAssuranceIntent"]
-    :ivar last_updated: TimeStamp denoting the latest SA benefit applicability is validated.
-    :vartype last_updated: str
+    :vartype softwareAssuranceIntent: Union[str, "SoftwareAssuranceIntent"]
+    :ivar lastUpdated: TimeStamp denoting the latest SA benefit applicability is validated.
+    :vartype lastUpdated: str
     """
 
     softwareAssuranceStatus: Union[str, "SoftwareAssuranceStatus"]
@@ -3576,20 +6495,20 @@ class Step(TypedDict, total=False):
     :vartype name: str
     :ivar description: More detailed description of the step.
     :vartype description: str
-    :ivar error_message: Error message, specified if the step is in a failed state.
-    :vartype error_message: str
+    :ivar errorMessage: Error message, specified if the step is in a failed state.
+    :vartype errorMessage: str
     :ivar status: Status of the step, bubbled up from the ECE action plan for installation
      attempts. Values are: 'Success', 'Error', 'InProgress', and 'Unknown status'.
     :vartype status: str
-    :ivar start_time_utc: When the step started, or empty if it has not started executing.
-    :vartype start_time_utc: str
-    :ivar end_time_utc: When the step reached a terminal state.
-    :vartype end_time_utc: str
-    :ivar last_updated_time_utc: Completion time of this step or the last completed sub-step.
-    :vartype last_updated_time_utc: str
-    :ivar expected_execution_time: Expected execution time of a given step. This is optionally
+    :ivar startTimeUtc: When the step started, or empty if it has not started executing.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: When the step reached a terminal state.
+    :vartype endTimeUtc: str
+    :ivar lastUpdatedTimeUtc: Completion time of this step or the last completed sub-step.
+    :vartype lastUpdatedTimeUtc: str
+    :ivar expectedExecutionTime: Expected execution time of a given step. This is optionally
      authored in the update action plan and can be empty.
-    :vartype expected_execution_time: str
+    :vartype expectedExecutionTime: str
     :ivar steps: Recursive model for child steps of this step.
     :vartype steps: list["Step"]
     """
@@ -3619,16 +6538,16 @@ class Step(TypedDict, total=False):
 class Storage(TypedDict, total=False):
     """The Storage config of AzureStackHCI Cluster.
 
-    :ivar configuration_mode: By default, this mode is set to Express and your storage is
-     configured as per best practices based on the number of nodes in the cluster. Allowed values
-     are 'Express','InfraOnly', 'KeepStorage'.
-    :vartype configuration_mode: str
-    :ivar storage_type: Storage type for the HCI Cluster. Allowed values are 'S2D', 'SAN',
-     'SANS2D'. Known values are: "S2D", "SAN", and "SANS2D".
-    :vartype storage_type: Union[str, "StorageType"]
-    :ivar s2_d: S2D (Storage Spaces Direct) configuration. Applicable when StorageType is 'S2D' or
+    :ivar configurationMode: By default, this mode is set to Express and your storage is configured
+     as per best practices based on the number of nodes in the cluster. Allowed values are
+     'Express','InfraOnly', 'KeepStorage'.
+    :vartype configurationMode: str
+    :ivar storageType: Storage type for the HCI Cluster. Allowed values are 'S2D', 'SAN', 'SANS2D'.
+     Known values are: "S2D", "SAN", and "SANS2D".
+    :vartype storageType: Union[str, "StorageType"]
+    :ivar s2d: S2D (Storage Spaces Direct) configuration. Applicable when StorageType is 'S2D' or
      'SANS2D'.
-    :vartype s2_d: "StorageS2dConfig"
+    :vartype s2d: "StorageS2dConfig"
     :ivar san: SAN (Storage Area Network) configuration. Applicable when StorageType is 'SAN' or
      'SANS2D'.
     :vartype san: "StorageSanConfig"
@@ -3647,15 +6566,80 @@ class Storage(TypedDict, total=False):
     """SAN (Storage Area Network) configuration. Applicable when StorageType is 'SAN' or 'SANS2D'."""
 
 
+class StorageConfiguration(TypedDict, total=False):
+    """Storage configuration.
+
+    :ivar partitionSize: Partition size.
+    :vartype partitionSize: str
+    """
+
+    partitionSize: str
+    """Partition size."""
+
+
+class StorageInitiator(TypedDict, total=False):
+    """A storage fabric initiator port (iSCSI or Fibre Channel) discovered on the edge machine.
+
+    :ivar initiatorType: Transport type of the initiator port. Required. Known values are: "iSCSI",
+     "FibreChannel", and "Unknown".
+    :vartype initiatorType: Union[str, "StorageInitiatorType"]
+    :ivar initiatorIdentifier: Node identifier of the initiator. IQN for iSCSI or node WWN (WWNN)
+     for Fibre Channel. Corresponds to the NodeAddress reported by Get-InitiatorPort. Required.
+    :vartype initiatorIdentifier: str
+    :ivar portWorldWideName: Fibre Channel port World Wide Name (WWPN). Populated for FibreChannel
+     initiators only; corresponds to the PortAddress reported by Get-InitiatorPort.
+    :vartype portWorldWideName: str
+    :ivar ethernetAdapterName: Name of the Ethernet adapter the iSCSI initiator is bound to.
+     Populated for iSCSI initiators only; matches EdgeMachineNicDetail.adapterName.
+    :vartype ethernetAdapterName: str
+    :ivar ethernetAdapterMacAddress: MAC address of the Ethernet adapter the iSCSI initiator is
+     bound to. Populated for iSCSI initiators only; matches EdgeMachineNicDetail.macAddress.
+    :vartype ethernetAdapterMacAddress: str
+    :ivar operationalStatus: Operational status of the initiator port as reported by the host.
+     Corresponds to OperationalStatus from Get-InitiatorPort.
+    :vartype operationalStatus: str
+    """
+
+    initiatorType: Required[Union[str, "StorageInitiatorType"]]
+    """Transport type of the initiator port. Required. Known values are: \"iSCSI\", \"FibreChannel\",
+     and \"Unknown\"."""
+    initiatorIdentifier: Required[str]
+    """Node identifier of the initiator. IQN for iSCSI or node WWN (WWNN) for Fibre Channel.
+     Corresponds to the NodeAddress reported by Get-InitiatorPort. Required."""
+    portWorldWideName: str
+    """Fibre Channel port World Wide Name (WWPN). Populated for FibreChannel initiators only;
+     corresponds to the PortAddress reported by Get-InitiatorPort."""
+    ethernetAdapterName: str
+    """Name of the Ethernet adapter the iSCSI initiator is bound to. Populated for iSCSI initiators
+     only; matches EdgeMachineNicDetail.adapterName."""
+    ethernetAdapterMacAddress: str
+    """MAC address of the Ethernet adapter the iSCSI initiator is bound to. Populated for iSCSI
+     initiators only; matches EdgeMachineNicDetail.macAddress."""
+    operationalStatus: str
+    """Operational status of the initiator port as reported by the host. Corresponds to
+     OperationalStatus from Get-InitiatorPort."""
+
+
+class StorageProfile(TypedDict, total=False):
+    """StorageProfile of edge machine.
+
+    :ivar poolableDisksCount: Number of storage disks in the device with $CanPool as true.
+    :vartype poolableDisksCount: int
+    """
+
+    poolableDisksCount: int
+    """Number of storage disks in the device with $CanPool as true."""
+
+
 class StorageS2dConfig(TypedDict, total=False):
     """The S2D (Storage Spaces Direct) configuration for AzureStackHCI Cluster storage.
 
-    :ivar volume_type: Volume provisioning type. Allowed values are 'Fixed', 'ThinProvisioned'.
+    :ivar volumeType: Volume provisioning type. Allowed values are 'Fixed', 'ThinProvisioned'.
      Known values are: "Fixed" and "ThinProvisioned".
-    :vartype volume_type: Union[str, "VolumeType"]
-    :ivar overprovisioning_ratio: Overprovisioning ratio for S2D storage. Allowed values are '0',
+    :vartype volumeType: Union[str, "VolumeType"]
+    :ivar overprovisioningRatio: Overprovisioning ratio for S2D storage. Allowed values are '0',
      '1', '2'. Known values are: "0", "1", and "2".
-    :vartype overprovisioning_ratio: Union[str, "OverprovisioningRatio"]
+    :vartype overprovisioningRatio: Union[str, "OverprovisioningRatio"]
     """
 
     volumeType: Union[str, "VolumeType"]
@@ -3669,10 +6653,10 @@ class StorageS2dConfig(TypedDict, total=False):
 class StorageSanConfig(TypedDict, total=False):
     """The SAN (Storage Area Network) configuration for AzureStackHCI Cluster storage.
 
-    :ivar infra_vol_lun_id: Infrastructure volume LUN ID (e.g. PURE1234567890ABCDEF).
-    :vartype infra_vol_lun_id: str
-    :ivar infra_perf_lun_id: Infrastructure performance LUN ID.
-    :vartype infra_perf_lun_id: str
+    :ivar infraVolLunId: Infrastructure volume LUN ID (e.g. PURE1234567890ABCDEF).
+    :vartype infraVolLunId: str
+    :ivar infraPerfLunId: Infrastructure performance LUN ID.
+    :vartype infraPerfLunId: str
     """
 
     infraVolLunId: str
@@ -3684,10 +6668,10 @@ class StorageSanConfig(TypedDict, total=False):
 class SwitchDetail(TypedDict, total=False):
     """List of switch details for edge device.
 
-    :ivar switch_name: The name of the switch.
-    :vartype switch_name: str
-    :ivar switch_type: The type of the switch. e.g. external, internal.
-    :vartype switch_type: str
+    :ivar switchName: The name of the switch.
+    :vartype switchName: str
+    :ivar switchType: The type of the switch. e.g. external, internal.
+    :vartype switchType: str
     :ivar extensions: This represents extensions installed on virtualSwitch.
     :vartype extensions: list["SwitchExtension"]
     """
@@ -3703,12 +6687,12 @@ class SwitchDetail(TypedDict, total=False):
 class SwitchExtension(TypedDict, total=False):
     """This represents extensions installed on virtualSwitch.
 
-    :ivar switch_id: Unique identifier for virtualSwitch.
-    :vartype switch_id: str
-    :ivar extension_name: This will show extension name for virtualSwitch.
-    :vartype extension_name: str
-    :ivar extension_enabled: This represents whether extension is enabled on virtualSwitch.
-    :vartype extension_enabled: bool
+    :ivar switchId: Unique identifier for virtualSwitch.
+    :vartype switchId: str
+    :ivar extensionName: This will show extension name for virtualSwitch.
+    :vartype extensionName: str
+    :ivar extensionEnabled: This represents whether extension is enabled on virtualSwitch.
+    :vartype extensionEnabled: bool
     """
 
     switchId: str
@@ -3719,23 +6703,146 @@ class SwitchExtension(TypedDict, total=False):
     """This represents whether extension is enabled on virtualSwitch."""
 
 
+class SyncConfigurationJobProperties(TypedDict, total=False):
+    """Properties for resolving configuration drift.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of disk job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: Error details if job failed.
+    :vartype error: "ErrorDetail"
+    :ivar reportedProperties: Properties reported by the job execution.
+    :vartype reportedProperties: "DiskJobReportedProperties"
+    :ivar jobType: Job type. Required. Job to resolve configuration drift between desired and
+     reported state.
+    :vartype jobType: Literal[DiskJobType.SYNC_CONFIGURATION]
+    :ivar resolutionStrategy: The strategy to use for resolving the configuration drift. Required.
+     Known values are: "ApplyDesired" and "AcceptReported".
+    :vartype resolutionStrategy: Union[str, "ResolutionStrategy"]
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of disk job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """Error details if job failed."""
+    reportedProperties: "DiskJobReportedProperties"
+    """Properties reported by the job execution."""
+    jobType: Required[Literal[DiskJobType.SYNC_CONFIGURATION]]
+    """Job type. Required. Job to resolve configuration drift between desired and reported state."""
+    resolutionStrategy: Required[Union[str, "ResolutionStrategy"]]
+    """The strategy to use for resolving the configuration drift. Required. Known values are:
+     \"ApplyDesired\" and \"AcceptReported\"."""
+
+
+class SyncConfigurationNetworkAdapterJobProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for resolving network adapter configuration drift.
+
+    :ivar deploymentMode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deploymentMode: Union[str, "DeploymentMode"]
+    :ivar provisioningState: Provisioning state of the job. Known values are: "NotSpecified",
+     "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar jobId: Unique, immutable job id.
+    :vartype jobId: str
+    :ivar startTimeUtc: The UTC date and time at which the job started.
+    :vartype startTimeUtc: str
+    :ivar endTimeUtc: The UTC date and time at which the job completed.
+    :vartype endTimeUtc: str
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: Union[str, "JobStatus"]
+    :ivar error: Error details if job failed.
+    :vartype error: "ErrorDetail"
+    :ivar reportedProperties: Reported properties for Network Adapter Job.
+    :vartype reportedProperties: "NetworkAdapterJobReportedProperties"
+    :ivar jobType: Job type. Required. Job to resolve configuration drift between desired and
+     reported state.
+    :vartype jobType: Literal[NetworkAdapterJobType.SYNC_CONFIGURATION]
+    :ivar resolutionStrategy: The strategy to use for resolving the configuration drift. Required.
+     Known values are: "ApplyDesired" and "AcceptReported".
+    :vartype resolutionStrategy: Union[str, "ResolutionStrategy"]
+    """
+
+    deploymentMode: Union[str, "DeploymentMode"]
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Provisioning state of the job. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    jobId: str
+    """Unique, immutable job id."""
+    startTimeUtc: str
+    """The UTC date and time at which the job started."""
+    endTimeUtc: str
+    """The UTC date and time at which the job completed."""
+    status: Union[str, "JobStatus"]
+    """Status of Edge device job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: "ErrorDetail"
+    """Error details if job failed."""
+    reportedProperties: "NetworkAdapterJobReportedProperties"
+    """Reported properties for Network Adapter Job."""
+    jobType: Required[Literal[NetworkAdapterJobType.SYNC_CONFIGURATION]]
+    """Job type. Required. Job to resolve configuration drift between desired and reported state."""
+    resolutionStrategy: Required[Union[str, "ResolutionStrategy"]]
+    """The strategy to use for resolving the configuration drift. Required. Known values are:
+     \"ApplyDesired\" and \"AcceptReported\"."""
+
+
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -3754,6 +6861,52 @@ class SystemData(TypedDict, total=False):
     """The timestamp of resource last modification (UTC)."""
 
 
+class TargetDeviceConfiguration(TypedDict, total=False):
+    """Device configuration.
+
+    :ivar network: Network configuration.
+    :vartype network: "NetworkConfiguration"
+    :ivar hostName: Hostname of the device.
+    :vartype hostName: str
+    :ivar webProxy: Web proxy configuration.
+    :vartype webProxy: "WebProxyConfiguration"
+    :ivar time: Time configuration.
+    :vartype time: "TimeConfiguration"
+    :ivar storage: Storage configuration.
+    :vartype storage: "StorageConfiguration"
+    """
+
+    network: "NetworkConfiguration"
+    """Network configuration."""
+    hostName: str
+    """Hostname of the device."""
+    webProxy: "WebProxyConfiguration"
+    """Web proxy configuration."""
+    time: "TimeConfiguration"
+    """Time configuration."""
+    storage: "StorageConfiguration"
+    """Storage configuration."""
+
+
+class TimeConfiguration(TypedDict, total=False):
+    """Time configuration.
+
+    :ivar primaryTimeServer: Primary NTP server.
+    :vartype primaryTimeServer: str
+    :ivar secondaryTimeServer: Secondary NTP server.
+    :vartype secondaryTimeServer: str
+    :ivar timeZone: Time zone.
+    :vartype timeZone: str
+    """
+
+    primaryTimeServer: str
+    """Primary NTP server."""
+    secondaryTimeServer: str
+    """Secondary NTP server."""
+    timeZone: str
+    """Time zone."""
+
+
 class Update(ProxyResource):
     """Update details.
 
@@ -3765,9 +6918,9 @@ class Update(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Update properties.
     :vartype properties: "UpdateProperties"
     :ivar location: The geo-location where the resource lives.
@@ -3784,12 +6937,12 @@ class UpdatePrerequisite(TypedDict, total=False):
     """If update State is HasPrerequisite, this property contains an array of objects describing
     prerequisite updates before installing this update. Otherwise, it is empty.
 
-    :ivar update_type: Updatable component type.
-    :vartype update_type: str
+    :ivar updateType: Updatable component type.
+    :vartype updateType: str
     :ivar version: Version of the prerequisite.
     :vartype version: str
-    :ivar package_name: Friendly name of the prerequisite.
-    :vartype package_name: str
+    :ivar packageName: Friendly name of the prerequisite.
+    :vartype packageName: str
     """
 
     updateType: str
@@ -3803,19 +6956,19 @@ class UpdatePrerequisite(TypedDict, total=False):
 class UpdateProperties(TypedDict, total=False):
     """Details of a singular Update in HCI Cluster.
 
-    :ivar provisioning_state: Provisioning state of the Updates proxy resource. Indicates the
+    :ivar provisioningState: Provisioning state of the Updates proxy resource. Indicates the
      current lifecycle status of the update operation, such as whether it has been accepted, is in
      progress, or has completed. Known values are: "NotSpecified", "Error", "Succeeded", "Failed",
      "Canceled", "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting",
      "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress", "Accepted", "Provisioning",
      and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar installed_date: Date that the update was installed.
-    :vartype installed_date: str
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar installedDate: Date that the update was installed.
+    :vartype installedDate: str
     :ivar description: Description of the update.
     :vartype description: str
-    :ivar min_sbe_version_required: Minimum Sbe Version of the update.
-    :vartype min_sbe_version_required: str
+    :ivar minSbeVersionRequired: Minimum Sbe Version of the update.
+    :vartype minSbeVersionRequired: str
     :ivar state: Represents the current state of the update as it relates to this stamp. This
      includes phases such as preparation, installation, scanning, and error handling, providing
      insight into the update's progress and any issues encountered. Known values are:
@@ -3828,47 +6981,47 @@ class UpdateProperties(TypedDict, total=False):
     :ivar prerequisites: If update State is HasPrerequisite, this property contains an array of
      objects describing prerequisite updates before installing this update. Otherwise, it is empty.
     :vartype prerequisites: list["UpdatePrerequisite"]
-    :ivar component_versions: An array of component versions for a Solution Bundle update, and an
+    :ivar componentVersions: An array of component versions for a Solution Bundle update, and an
      empty array otherwise.
-    :vartype component_versions: list["PackageVersionInfo"]
-    :ivar reboot_required: Indicates whether a reboot is required after the update or operation.
+    :vartype componentVersions: list["PackageVersionInfo"]
+    :ivar rebootRequired: Indicates whether a reboot is required after the update or operation.
      Helps determine if a system restart is necessary to complete the process. Known values are:
      "Unknown", "True", and "False".
-    :vartype reboot_required: Union[str, "RebootRequirement"]
-    :ivar health_state: Overall health state for update-specific health checks. Known values are:
+    :vartype rebootRequired: Union[str, "RebootRequirement"]
+    :ivar healthState: Overall health state for update-specific health checks. Known values are:
      "Unknown", "Success", "Failure", "Warning", "Error", and "InProgress".
-    :vartype health_state: Union[str, "HealthState"]
-    :ivar health_check_result: An array of PrecheckResult objects.
-    :vartype health_check_result: list["PrecheckResult"]
-    :ivar health_check_date: Last time the package-specific checks were run.
-    :vartype health_check_date: str
-    :ivar package_path: Path where the update package is available.
-    :vartype package_path: str
-    :ivar package_size_in_mb: Size of the package. This value is a combination of the size from
-     update metadata and size of the payload that results from the live scan operation for OS update
+    :vartype healthState: Union[str, "HealthState"]
+    :ivar healthCheckResult: An array of PrecheckResult objects.
+    :vartype healthCheckResult: list["PrecheckResult"]
+    :ivar healthCheckDate: Last time the package-specific checks were run.
+    :vartype healthCheckDate: str
+    :ivar packagePath: Path where the update package is available.
+    :vartype packagePath: str
+    :ivar packageSizeInMb: Size of the package. This value is a combination of the size from update
+     metadata and size of the payload that results from the live scan operation for OS update
      content.
-    :vartype package_size_in_mb: float
-    :ivar display_name: Display name of the Update.
-    :vartype display_name: str
+    :vartype packageSizeInMb: float
+    :ivar displayName: Display name of the Update.
+    :vartype displayName: str
     :ivar version: Version of the update.
     :vartype version: str
     :ivar publisher: Publisher of the update package.
     :vartype publisher: str
-    :ivar release_link: Link to release notes for the update.
-    :vartype release_link: str
-    :ivar availability_type: Indicates how the update content is made available for download. This
+    :ivar releaseLink: Link to release notes for the update.
+    :vartype releaseLink: str
+    :ivar availabilityType: Indicates how the update content is made available for download. This
      determines whether the update is sourced locally, from an online repository, or requires user
      notification. Known values are: "Local", "Online", and "Notify".
-    :vartype availability_type: Union[str, "AvailabilityType"]
-    :ivar package_type: Customer-visible type of the update.
-    :vartype package_type: str
-    :ivar additional_properties: Extensible KV pairs serialized as a string. This is currently used
+    :vartype availabilityType: Union[str, "AvailabilityType"]
+    :ivar packageType: Customer-visible type of the update.
+    :vartype packageType: str
+    :ivar additionalProperties: Extensible KV pairs serialized as a string. This is currently used
      to report the stamp OEM family and hardware model information when an update is flagged as
      Invalid for the stamp based on OEM type.
-    :vartype additional_properties: str
-    :ivar update_state_properties: Additional information regarding the state of the update. See
+    :vartype additionalProperties: str
+    :ivar updateStateProperties: Additional information regarding the state of the update. See
      definition of UpdateStateProperties type below for more details on this property.
-    :vartype update_state_properties: "UpdateStateProperties"
+    :vartype updateStateProperties: "UpdateStateProperties"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -3948,9 +7101,9 @@ class UpdateRun(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Describes Update Run Properties.
     :vartype properties: "UpdateRunProperties"
     :ivar location: The geo-location where the resource lives.
@@ -3966,17 +7119,17 @@ class UpdateRun(ProxyResource):
 class UpdateRunProperties(TypedDict, total=False):
     """Details of an Update run.
 
-    :ivar provisioning_state: Provisioning state of the UpdateRuns proxy resource. Indicates the
+    :ivar provisioningState: Provisioning state of the UpdateRuns proxy resource. Indicates the
      current lifecycle status of the update operation, such as whether it has been accepted, is in
      progress, or has completed. Known values are: "NotSpecified", "Error", "Succeeded", "Failed",
      "Canceled", "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting",
      "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress", "Accepted", "Provisioning",
      and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar time_started: Timestamp of the update run was started.
-    :vartype time_started: str
-    :ivar last_updated_time: Timestamp of the most recently completed step in the update run.
-    :vartype last_updated_time: str
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar timeStarted: Timestamp of the update run was started.
+    :vartype timeStarted: str
+    :ivar lastUpdatedTime: Timestamp of the most recently completed step in the update run.
+    :vartype lastUpdatedTime: str
     :ivar duration: Duration of the update run.
     :vartype duration: str
     :ivar state: Represents the current state of the update run. Indicates whether the update is in
@@ -4012,12 +7165,12 @@ class UpdateStateProperties(TypedDict, total=False):
     """Additional information regarding the state of the update. See definition of
     UpdateStateProperties type below for more details on this property.
 
-    :ivar progress_percentage: Progress percentage of ongoing operation. Currently this property is
+    :ivar progressPercentage: Progress percentage of ongoing operation. Currently this property is
      only valid when the update is in the Downloading state, where it maps to how much of the update
      content has been downloaded.
-    :vartype progress_percentage: float
-    :ivar notify_message: Brief message with instructions for updates of AvailabilityType Notify.
-    :vartype notify_message: str
+    :vartype progressPercentage: float
+    :ivar notifyMessage: Brief message with instructions for updates of AvailabilityType Notify.
+    :vartype notifyMessage: str
     """
 
     progressPercentage: float
@@ -4039,9 +7192,9 @@ class UpdateSummaries(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Update summaries properties.
     :vartype properties: "UpdateSummariesProperties"
     :ivar location: The geo-location where the resource lives.
@@ -4057,36 +7210,36 @@ class UpdateSummaries(ProxyResource):
 class UpdateSummariesProperties(TypedDict, total=False):
     """Properties of Update summaries.
 
-    :ivar provisioning_state: Provisioning state of the UpdateSummaries proxy resource. Indicates
+    :ivar provisioningState: Provisioning state of the UpdateSummaries proxy resource. Indicates
      the current lifecycle status of the update summary operation, such as whether it has been
      accepted, is in progress, or has completed. Known values are: "NotSpecified", "Error",
      "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
      "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
      "Accepted", "Provisioning", and "DisableInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar oem_family: OEM family name.
-    :vartype oem_family: str
-    :ivar current_oem_version: Current OEM Version.
-    :vartype current_oem_version: str
-    :ivar hardware_model: Name of the hardware model.
-    :vartype hardware_model: str
-    :ivar package_versions: Current version of each updatable component.
-    :vartype package_versions: list["PackageVersionInfo"]
-    :ivar current_version: Current Solution Bundle version of the stamp.
-    :vartype current_version: str
-    :ivar current_sbe_version: Current Sbe version of the stamp.
-    :vartype current_sbe_version: str
-    :ivar last_updated: Last time an update installation completed successfully.
-    :vartype last_updated: str
-    :ivar last_checked: Last time the update service successfully checked for updates.
-    :vartype last_checked: str
-    :ivar health_state: Overall health state for update-specific health checks. Known values are:
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar oemFamily: OEM family name.
+    :vartype oemFamily: str
+    :ivar currentOemVersion: Current OEM Version.
+    :vartype currentOemVersion: str
+    :ivar hardwareModel: Name of the hardware model.
+    :vartype hardwareModel: str
+    :ivar packageVersions: Current version of each updatable component.
+    :vartype packageVersions: list["PackageVersionInfo"]
+    :ivar currentVersion: Current Solution Bundle version of the stamp.
+    :vartype currentVersion: str
+    :ivar currentSbeVersion: Current Sbe version of the stamp.
+    :vartype currentSbeVersion: str
+    :ivar lastUpdated: Last time an update installation completed successfully.
+    :vartype lastUpdated: str
+    :ivar lastChecked: Last time the update service successfully checked for updates.
+    :vartype lastChecked: str
+    :ivar healthState: Overall health state for update-specific health checks. Known values are:
      "Unknown", "Success", "Failure", "Warning", "Error", and "InProgress".
-    :vartype health_state: Union[str, "HealthState"]
-    :ivar health_check_result: An array of pre-check result objects.
-    :vartype health_check_result: list["PrecheckResult"]
-    :ivar health_check_date: Last time the package-specific checks were run.
-    :vartype health_check_date: str
+    :vartype healthState: Union[str, "HealthState"]
+    :ivar healthCheckResult: An array of pre-check result objects.
+    :vartype healthCheckResult: list["PrecheckResult"]
+    :ivar healthCheckDate: Last time the package-specific checks were run.
+    :vartype healthCheckDate: str
     :ivar state: Overall update state of the stamp. Indicates the current status of update
      deployment across the stamp, including preparation, application, and any issues encountered.
      Known values are: "Unknown", "AppliedSuccessfully", "UpdateAvailable", "UpdateInProgress",
@@ -4144,10 +7297,10 @@ class UploadCertificateRequest(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -4156,13 +7309,49 @@ class UserAssignedIdentity(TypedDict, total=False):
     """The client ID of the assigned identity."""
 
 
+class UserDetails(TypedDict, total=False):
+    """User configuration.
+
+    :ivar userName: Name of the user. Required.
+    :vartype userName: str
+    :ivar secretType: Type of the secret used for authentication. Required. Known values are:
+     "KeyVault" and "SshPubKey".
+    :vartype secretType: Union[str, "SecretType"]
+    :ivar secretLocation: Location of the secret used for authentication.
+    :vartype secretLocation: str
+    :ivar sshPubKey: SSH Public Key for the user.
+    :vartype sshPubKey: list[str]
+    """
+
+    userName: Required[str]
+    """Name of the user. Required."""
+    secretType: Required[Union[str, "SecretType"]]
+    """Type of the secret used for authentication. Required. Known values are: \"KeyVault\" and
+     \"SshPubKey\"."""
+    secretLocation: str
+    """Location of the secret used for authentication."""
+    sshPubKey: list[str]
+    """SSH Public Key for the user."""
+
+
+class ValidateOwnershipVouchersRequest(TypedDict, total=False):
+    """Validate Ownership Voucher Request.
+
+    :ivar ownershipVoucherDetails: Ownership Voucher Details. Required.
+    :vartype ownershipVoucherDetails: list["OwnershipVoucherDetails"]
+    """
+
+    ownershipVoucherDetails: Required[list["OwnershipVoucherDetails"]]
+    """Ownership Voucher Details. Required."""
+
+
 class ValidateRequest(TypedDict, total=False):
     """The validate request for Edge Device.
 
-    :ivar edge_device_ids: Node Ids against which, current node has to be validated. Required.
-    :vartype edge_device_ids: list[str]
-    :ivar additional_info: Additional info required for validation.
-    :vartype additional_info: str
+    :ivar edgeDeviceIds: Node Ids against which, current node has to be validated. Required.
+    :vartype edgeDeviceIds: list[str]
+    :ivar additionalInfo: Additional info required for validation.
+    :vartype additionalInfo: str
     """
 
     edgeDeviceIds: Required[list[str]]
@@ -4171,6 +7360,147 @@ class ValidateRequest(TypedDict, total=False):
     """Additional info required for validation."""
 
 
+class VolumeConfiguration(TypedDict, total=False):
+    """Desired configuration for a volume. Reserved for future use.
+
+    :ivar reserved: Reserved for future volume configuration options.
+    :vartype reserved: str
+    """
+
+    reserved: str
+    """Reserved for future volume configuration options."""
+
+
+class VolumeReportedProperties(TypedDict, total=False):
+    """The actual state of the volume as reported by the device.
+
+    :ivar partitionId: Unique identifier for the partition.
+    :vartype partitionId: str
+    :ivar offsetInBytes: Byte offset of the partition start.
+    :vartype offsetInBytes: int
+    :ivar name: Label of the volume.
+    :vartype name: str
+    :ivar path: Access path for the volume.
+    :vartype path: str
+    :ivar parentDiskId: ARM resource ID of the parent disk.
+    :vartype parentDiskId: str
+    :ivar isBoot: Indicates if this volume is a boot volume.
+    :vartype isBoot: bool
+    :ivar sizeInBytes: Total size of the volume in bytes.
+    :vartype sizeInBytes: str
+    :ivar sizeRemainingInBytes: Available space on the volume in bytes.
+    :vartype sizeRemainingInBytes: str
+    :ivar fileSystem: File system on the volume.
+    :vartype fileSystem: str
+    """
+
+    partitionId: str
+    """Unique identifier for the partition."""
+    offsetInBytes: int
+    """Byte offset of the partition start."""
+    name: str
+    """Label of the volume."""
+    path: str
+    """Access path for the volume."""
+    parentDiskId: str
+    """ARM resource ID of the parent disk."""
+    isBoot: bool
+    """Indicates if this volume is a boot volume."""
+    sizeInBytes: str
+    """Total size of the volume in bytes."""
+    sizeRemainingInBytes: str
+    """Available space on the volume in bytes."""
+    fileSystem: str
+    """File system on the volume."""
+
+
+class WebProxyConfiguration(TypedDict, total=False):
+    """Web proxy configuration.
+
+    :ivar connectionUri: Connection URI of the web proxy.
+    :vartype connectionUri: str
+    :ivar port: Port of the web proxy.
+    :vartype port: str
+    :ivar bypassList: Bypass list for the web proxy.
+    :vartype bypassList: list[str]
+    """
+
+    connectionUri: str
+    """Connection URI of the web proxy."""
+    port: str
+    """Port of the web proxy."""
+    bypassList: list[str]
+    """Bypass list for the web proxy."""
+
+
+class WifiConfigurationDesiredProperties(TypedDict, total=False):
+    """WiFi configuration desired properties.
+
+    :ivar ssid: WiFi SSID.
+    :vartype ssid: str
+    :ivar authenticationType: WiFi authentication type. Known values are: "WPA2-Personal",
+     "WPA2-Enterprise", "WPA3-Personal", "WPA3-Enterprise", and "Open".
+    :vartype authenticationType: Union[str, "AuthenticationType"]
+    :ivar eapMethod: EAP method used for authentication. Known values are: "PEAP", "EAP-TLS",
+     "EAP-TTLS", and "EAP-FAST".
+    :vartype eapMethod: Union[str, "EAPMethod"]
+    :ivar username: Username for enterprise WiFi authentication.
+    :vartype username: str
+    :ivar wifiSecret: WiFi secret reference.
+    :vartype wifiSecret: "WifiSecret"
+    """
+
+    ssid: str
+    """WiFi SSID."""
+    authenticationType: Union[str, "AuthenticationType"]
+    """WiFi authentication type. Known values are: \"WPA2-Personal\", \"WPA2-Enterprise\",
+     \"WPA3-Personal\", \"WPA3-Enterprise\", and \"Open\"."""
+    eapMethod: Union[str, "EAPMethod"]
+    """EAP method used for authentication. Known values are: \"PEAP\", \"EAP-TLS\", \"EAP-TTLS\", and
+     \"EAP-FAST\"."""
+    username: str
+    """Username for enterprise WiFi authentication."""
+    wifiSecret: "WifiSecret"
+    """WiFi secret reference."""
+
+
+class WifiSecret(TypedDict, total=False):
+    """WiFi secret reference for storing credentials.
+
+    :ivar secretName: Name of the secret.
+    :vartype secretName: str
+    :ivar secretLocation: Location of the secret.
+    :vartype secretLocation: str
+    :ivar secretType: Type of the WiFi secret. Known values are: "WiFiPassword", "WiFiCertificate",
+     and "WiFiCACertificate".
+    :vartype secretType: Union[str, "WifiSecretType"]
+    """
+
+    secretName: str
+    """Name of the secret."""
+    secretLocation: str
+    """Location of the secret."""
+    secretType: Union[str, "WifiSecretType"]
+    """Type of the WiFi secret. Known values are: \"WiFiPassword\", \"WiFiCertificate\", and
+     \"WiFiCACertificate\"."""
+
+
+EdgeMachineNetworkAdapterJobProperties = Union[
+    ApplyConfigurationNetworkAdapterJobProperties,
+    ForcePushNetworkAdapterJobProperties,
+    SyncConfigurationNetworkAdapterJobProperties,
+]
+ClusterJobProperties = Union[
+    HciAddServerJobProperties, HciConfigureSdnIntegrationJobProperties, HciRepairServerJobProperties
+]
+EdgeMachineDiskJobProperties = Union[CreateVolumeJobProperties, SyncConfigurationJobProperties]
+EdgeMachineDiskPrivilegedJobProperties = Union[DeleteVolumeJobProperties]
+EdgeMachineJobProperties = Union[
+    EdgeMachineCollectLogJobProperties,
+    DownloadOsJobProperties,
+    ProvisionOsJobProperties,
+    EdgeMachineRemoteSupportJobProperties,
+]
 EdgeDevice = Union[HciEdgeDevice]
 EdgeDeviceJob = Union[HciEdgeDeviceJob]
 HciEdgeDeviceJobProperties = Union[HciCollectLogJobProperties, HciRemoteSupportJobProperties]

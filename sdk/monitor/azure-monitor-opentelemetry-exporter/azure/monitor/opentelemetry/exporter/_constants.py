@@ -3,7 +3,7 @@
 # cSpell:disable
 
 from enum import Enum
-from typing import Union
+from typing import Dict, FrozenSet, Union
 from opentelemetry.semconv.metrics import MetricInstruments
 from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
@@ -11,16 +11,24 @@ from opentelemetry.semconv.metrics.http_metrics import (
 )
 from azure.core import CaseInsensitiveEnumMeta
 
-
 _EXPORTER_DOMAIN_SCHEMA_VERSION = 2
 
 # Environment variables
 
+_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES"
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
 _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = (
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
 )
 _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+
+# Add feature names only when their implementations are available.
+_SUPPORTED_EXPERIMENTAL_FEATURES: FrozenSet[str] = frozenset(
+    {
+        "gen_ai_input_output_limit_increase",
+        "multi_endpoint_routing",
+    }
+)
 
 # SDK version
 _AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
@@ -28,6 +36,7 @@ _MICROSOFT_OPENTELEMETRY_VERSION = "MICROSOFT_OPENTELEMETRY_VERSION"
 
 _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED = "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED"
 _APPLICATIONINSIGHTS_AUTHENTICATION_STRING = "APPLICATIONINSIGHTS_AUTHENTICATION_STRING"
+_APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE = "APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE"
 
 # RPs
 
@@ -49,15 +58,18 @@ _REDIRECT_STATUS_CODES = (
     308,  # Permanent redirect
 )
 
-_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = (
-    ".livediagnostics.monitor.azure.com",
-    ".monitor.azure.com",
-    ".services.visualstudio.com",
-    ".applicationinsights.azure.com",
-    ".monitor.azure.us",
-    ".applicationinsights.azure.us",
-    ".monitor.azure.cn",
-    ".applicationinsights.azure.cn",
+_ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS = (
+    (
+        ".livediagnostics.monitor.azure.com",
+        ".monitor.azure.com",
+        ".services.visualstudio.com",
+        ".applicationinsights.azure.com",
+    ),
+    (".monitor.azure.us", ".applicationinsights.azure.us"),
+    (".monitor.azure.cn", ".applicationinsights.azure.cn"),
+)
+_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = tuple(
+    suffix for group in _ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS for suffix in group
 )
 
 _RETRYABLE_STATUS_CODES = (
@@ -95,6 +107,16 @@ _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKE
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
+_MICROSOFT_INSTRUMENTATION_KEY = "microsoft.instrumentation_key"
+_MICROSOFT_INGESTION_ENDPOINT = "microsoft.ingestion_endpoint"
+_MICROSOFT_MULTI_ENDPOINT_CLOUD_ROLE = "microsoft.multi_endpoint_cloud_role"
+_MICROSOFT_INGESTION_AUTH = "microsoft.ingestion_auth"
+_MULTI_ENDPOINT_ROUTING_ATTRIBUTES = (
+    _MICROSOFT_INSTRUMENTATION_KEY,
+    _MICROSOFT_INGESTION_ENDPOINT,
+    _MICROSOFT_MULTI_ENDPOINT_CLOUD_ROLE,
+    _MICROSOFT_INGESTION_AUTH,
+)
 
 # Track Availability telemetry constants
 _MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
@@ -163,6 +185,7 @@ _EU_ENDPOINTS = [
     "northeurope",
     "francecentral",
     "francesouth",
+    "germanynorth",
     "germanywestcentral",
     "norwayeast",
     "norwaywest",
@@ -369,6 +392,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 # sampleRate
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
+_LOG_SAMPLE_RATE_ATTR = "_azure_monitor_sample_rate"
 _SAMPLING_HASH = 5381
 _INT32_MAX: int = 2**31 - 1  # 2147483647
 _INT32_MIN: int = -(2**31)  # -2147483648
@@ -383,16 +407,37 @@ _DEFAULT_LOG_MESSAGE = "n/a"
 # Resource attribute applicationId
 _APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
 
-# Gen AI attributes whose value should be exempt from truncation
-_GEN_AI_ATTRIBUTES = (
+# Custom properties (customDimensions) value length limits, in characters
+_CUSTOM_PROPERTY_MAX_LENGTH = 8 * 1024
+_GEN_AI_ATTRIBUTE_MAX_LENGTH = 256 * 1024
+# gen_ai.input.messages / gen_ai.output.messages may contain multimodal
+# blob parts (e.g. base64 images/audio), so they get a larger limit when the
+# "gen_ai_input_output_limit_increase" experimental feature is enabled.
+_GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH = 4 * 1024 * 1024
+
+_GEN_AI_MESSAGES_ATTRIBUTES = (
     "gen_ai.input.messages",
     "gen_ai.output.messages",
+)
+
+# Gen AI attributes whose value has a larger truncation limit than regular custom properties
+_GEN_AI_ATTRIBUTES = _GEN_AI_MESSAGES_ATTRIBUTES + (
     "gen_ai.system_instructions",
     "gen_ai.tool.definitions",
     "gen_ai.tool.call.arguments",
     "gen_ai.tool.call.result",
     "gen_ai.evaluation.explanation",
 )
+
+# Per-attribute max length overrides; keys not present use _CUSTOM_PROPERTY_MAX_LENGTH
+_GEN_AI_ATTRIBUTE_MAX_LENGTHS: Dict[str, int] = {key: _GEN_AI_ATTRIBUTE_MAX_LENGTH for key in _GEN_AI_ATTRIBUTES}
+
+# Per-attribute max length overrides used when the "gen_ai_input_output_limit_increase"
+# experimental feature is enabled
+_GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS: Dict[str, int] = {
+    **_GEN_AI_ATTRIBUTE_MAX_LENGTHS,
+    **{key: _GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH for key in _GEN_AI_MESSAGES_ATTRIBUTES},
+}
 
 # Gen AI main-agent attribution constants
 # Attribute mapping for main-agent propagation in OnStart

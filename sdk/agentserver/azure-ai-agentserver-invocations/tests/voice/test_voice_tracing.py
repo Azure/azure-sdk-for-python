@@ -10,6 +10,7 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import unquote
 
 import pytest
 from opentelemetry import baggage, metrics, trace
@@ -22,6 +23,7 @@ from opentelemetry.trace import SpanContext, TraceFlags, TraceState
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
+from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 from azure.ai.agentserver.invocations.voice import (
     Session,
@@ -140,6 +142,91 @@ def _session_start_frame() -> dict[str, object]:
             "max_duration_ms": 3,
         },
     }
+
+
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+def test_voice_original_subject_is_invocation_local(path):
+    app = VoiceAgentServerHost(configure_observability=None)
+    observed = []
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        observed.append(get_request_context().model_attribution_headers())
+        await session.send(SessionReady())
+
+    subject = {"x-ms-original-subject": 'oid="voice-user", tid="tenant", idtype="user"'}
+    client = TestClient(app)
+    for headers in (subject, {}):
+        with client.websocket_connect(path, headers=dict(headers)) as websocket:
+            websocket.send_json(_session_start_frame())
+            assert websocket.receive_json()["type"] == "session.ready"
+    assert len(observed) == 2
+    assert not any(name.lower().startswith("x-ms-original-subject") for name in observed[0])
+    assert unquote(observed[0]["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
+    assert len(observed[0]) == 1
+    assert observed[1] == {}
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+def test_overlapping_voice_sessions_keep_subject_baggage_isolated(path):
+    app = VoiceAgentServerHost(configure_observability=None)
+    ready = asyncio.Event()
+    observed = []
+    arrivals = 0
+
+    @app.on_session_start
+    async def on_session_start(session, _event):
+        nonlocal arrivals
+        context = get_request_context()
+        arrivals += 1
+        if arrivals == 2:
+            ready.set()
+        await asyncio.wait_for(ready.wait(), timeout=5)
+        assert get_request_context() is context
+        observed.append(context.model_attribution_headers())
+        await session.send(SessionReady())
+
+    alice = 'oid="alice", tid="tenant-alice", idtype="user"'
+    bob = 'oid="bob", tid="tenant-bob", idtype="app"'
+    with TestClient(app) as client:
+        with client.websocket_connect(path, headers={"x-ms-original-subject": alice}) as first:
+            with client.websocket_connect(path, headers={"x-ms-original-subject": bob}) as second:
+                first.send_json(_session_start_frame())
+                second.send_json(_session_start_frame())
+                assert first.receive_json()["type"] == "session.ready"
+                assert second.receive_json()["type"] == "session.ready"
+        with client.websocket_connect(path) as without_subject:
+            without_subject.send_json(_session_start_frame())
+            assert without_subject.receive_json()["type"] == "session.ready"
+    assert len(observed) == 3
+    assert {unquote(headers["x-ms-foundry-baggage"].split("=", 1)[1]) for headers in observed[:2]} == {alice, bob}
+    for headers in observed[:2]:
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in headers)
+    assert observed[2] == {}
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+def test_voice_malformed_original_subject_closes_without_callback(path, caplog):
+    app = VoiceAgentServerHost(configure_observability=None)
+    observed = []
+
+    @app.on_session_start
+    async def on_session_start(_session, _event):
+        observed.append(True)
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with TestClient(app).websocket_connect(path, headers={"x-ms-original-subject": "malformed"}) as websocket:
+            with pytest.raises(WebSocketDisconnect) as error:
+                websocket.receive_json()
+    assert error.value.code == 1011
+    assert not observed
+    assert any(
+        getattr(record, InvocationsWSConstants.ATTR_SPAN_ERROR_CODE, None) == "invalid_original_subject"
+        for record in caplog.records
+    )
+    assert get_request_context().original_subject is None
 
 
 def _span_by_name(exporter: InMemorySpanExporter, name: str):

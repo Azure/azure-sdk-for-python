@@ -24,9 +24,16 @@ class MonitorExporterPerfTest(PerfStressTest):
 
         trace.set_tracer_provider(TracerProvider())
         tracer = trace.get_tracer(__name__)
+        attributes = {}
+        if self.args.gen_ai_message_size:
+            gen_ai_message = "m" * self.args.gen_ai_message_size
+            attributes = {
+                "gen_ai.input.messages": gen_ai_message,
+                "gen_ai.output.messages": gen_ai_message,
+            }
         self.spans_list = []
         for _ in range(self.args.num_spans):
-            with tracer.start_as_current_span(name="name") as span:
+            with tracer.start_as_current_span(name="name", attributes=attributes) as span:
                 self.spans_list.append(span)
 
     def run_sync(self):
@@ -43,4 +50,11 @@ class MonitorExporterPerfTest(PerfStressTest):
         super(MonitorExporterPerfTest, MonitorExporterPerfTest).add_arguments(parser)
         parser.add_argument(
             "-n", "--num-spans", nargs="?", type=int, help="Number of spans to be exported. Defaults to 10", default=10
+        )
+        parser.add_argument(
+            "--gen-ai-message-size",
+            nargs="?",
+            type=int,
+            help="Length of gen_ai.input.messages and gen_ai.output.messages attributes on each span. Defaults to 0",
+            default=0,
         )

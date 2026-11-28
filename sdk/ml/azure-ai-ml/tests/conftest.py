@@ -20,6 +20,7 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
+    add_header_regex_sanitizer,
     add_remove_header_sanitizer,
     is_live,
     remove_batch_sanitizers,
@@ -92,6 +93,9 @@ def _query_param_regex(name, *, only_value=True) -> str:
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
+    # The size of the first blob download request depends on the installed azure-storage-blob version.
+    # Normalize only that initial range so later ranges must still match exactly.
+    add_header_regex_sanitizer(key="x-ms-range", regex=r"^bytes=0-\d+$", value="bytes=0-initial")
     set_custom_default_matcher(
         compare_bodies=True,
         excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",

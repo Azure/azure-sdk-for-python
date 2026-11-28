@@ -361,9 +361,11 @@
     "nbytes",
     "nbsp",
     "noarch",
+    "nocae",
     "NOPERM",
     "norecursedirs",
     "northcentralus",
+    "npmjs",
     "nspkg",
     "OAEP",
     "oauthlib",
@@ -399,6 +401,7 @@
     "prevsnapshot",
     "prompty",
     "pschema",
+    "pscustomobject",
     "PSECRET",
     "pstn",
     "pydantic",
@@ -419,6 +422,7 @@
     "RAGRS",
     "rdbms",
     "rgeraghty",
+    "ROPC",
     "Rohit",
     "rohitganguly",
     "reauthenticated",
@@ -549,6 +553,14 @@
   ],
   "overrides": [
     {
+      "filename": "sdk/template/azure-template-two/**",
+      "words": [
+        "istrue",
+        "istruemodule",
+        "SSIZE"
+      ]
+    },
+    {
       "filename": "sdk/ai/**",
       "words": [
         "azureml",
@@ -579,6 +591,28 @@
         "mltable",
         "wsid",
         "runid"
+      ]
+    },
+    {
+      "filename": [
+        "sdk/ai/azure-ai-projects/tests.yml",
+        "sdk/ai/azure-ai-projects/tests/samples/ci/**",
+        "sdk/ai/azure-ai-projects/tests/samples/sample_log.py"
+      ],
+      "words": [
+        "axpy",
+        "bicepparam",
+        "caphostproj",
+        "cnotin",
+        "DEFINITIONID",
+        "foundy",
+        "idtyp",
+        "Nlcjpw",
+        "opusr",
+        "pscore",
+        "pytrace",
+        "retagged",
+        "unconfigured"
       ]
     },
     {
@@ -1674,6 +1708,16 @@
       ]
     },
     {
+      "filename": "sdk/dataai/azure-data-ai/**",
+      "words": [
+        "aisearch",
+        "dataai",
+        "rerank",
+        "reranker",
+        "reranks"
+      ]
+    },
+    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",
@@ -2159,6 +2203,22 @@
       "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     },
     {
+      "filename": "sdk/ai/azure-ai-finetuningsessions/**",
+      "words": [
+        "finetuningsessions", "AICLIENT", "CISPO", "SAPO", "TCGC", "pygen", "undici",
+        "skyrl", "falsey", "ungated", "rhno", "sess", "coro", "dedups",
+        "unconfigured", "chunker", "aabbccdd", "xffjpeg", "xffoffline", "xfftest",
+        "gethostbyaddr", "WRONLY", "RDWR", "CREAT", "xffvalid", "nopolling", "undoc"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-finetuningsessions/{emitter-package-lock,cspell}.json",
+      "words": [
+        "chownr", "cliui", "esbuild", "fastq", "fsevents", "globby", "iojs", "isaacs",
+        "loong", "reusify", "sindresorhus", "sunos", "universalify", "upgrader", "yallist", "yargs"
+      ]
+    },
+    {
       "filename": ".github/**/ml/**",
       "words": ["envml", "paginators"]
     },
@@ -2168,7 +2228,7 @@
     },
     {
       "filename": ".github/**",
-      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
+      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily", "pygen"]
     },
     {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",

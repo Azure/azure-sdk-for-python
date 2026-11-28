@@ -13,9 +13,19 @@ import difflib
 import json
 import os
 import re
+import sys
+import tomllib
 import urllib.error
 import urllib.parse
 import urllib.request
+
+from mgmt_sdk_review_evidence import (
+    MAX_SNAPSHOT_BYTES,
+    allowed_sdk_file,
+    deterministic_checks,
+    normalize_api_versions,
+    source_record,
+)
 
 
 API_ROOT = os.environ.get("GH_API_ROOT", "https://api.github.com")
@@ -25,6 +35,7 @@ MAX_PAGES = 30
 MAX_API_REQUESTS = 500
 API_TIMEOUT_SECONDS = 30
 PACKAGE_PATTERN = re.compile(r"^(sdk/[^/]+/azure-mgmt-[^/]+)(?:/|$)")
+MANAGEMENT_RULES_PATH = ".github/instructions/reviewer/management.instructions.md"
 REPOSITORY_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 RELEASE_HEADING = re.compile(r"^##\s+(.+?)\s*$")
@@ -58,6 +69,7 @@ class GitHubClient:
         self.token = token
         self.api_root = api_root.rstrip("/")
         self.request_count = 0
+        self.files = {}
 
     def get(self, path):
         if not path.startswith("/"):
@@ -108,6 +120,12 @@ class GitHubClient:
         return items, True
 
     def read_file(self, path, revision):
+        key = (path, revision)
+        if key not in self.files:
+            self.files[key] = self._read_file(path, revision)
+        return self.files[key]
+
+    def _read_file(self, path, revision):
         encoded_path = urllib.parse.quote(path, safe="/")
         encoded_ref = urllib.parse.quote(revision, safe="")
         api_path = f"/repos/{self.repository}/contents/{encoded_path}?ref={encoded_ref}"
@@ -116,6 +134,7 @@ class GitHubClient:
         except GitHubApiError as error:
             return {
                 "status": "missing" if error.status == 404 else "unverified",
+                "httpStatus": error.status,
                 "path": path,
                 "revision": revision,
                 "error": str(error),
@@ -379,11 +398,10 @@ def summarize_provenance(files):
     return summary
 
 
-def metadata_api_version(provenance):
+def metadata_api_versions(provenance):
     metadata = provenance.get("metadata") or {}
-    item = metadata.get("apiVersion") or {}
-    value = item.get("value")
-    return value if isinstance(value, str) and value else None
+    item = metadata.get("apiVersions") or {}
+    return normalize_api_versions(item.get("value"))
 
 
 def collect_provenance(client, package_path, revision):
@@ -392,31 +410,31 @@ def collect_provenance(client, package_path, revision):
 
 
 def api_version_drift(package_path, first_revision, latest_revision, first_provenance, latest_provenance):
-    first_api_version = metadata_api_version(first_provenance)
-    latest_api_version = metadata_api_version(latest_provenance)
     drift_errors = first_provenance["issues"] + latest_provenance["issues"]
-    for label, revision, version in (
-        ("first", first_revision, first_api_version),
-        ("latest", latest_revision, latest_api_version),
+    versions = {}
+    for label, revision, provenance in (
+        ("first", first_revision, first_provenance),
+        ("latest", latest_revision, latest_provenance),
     ):
-        if not version:
-            drift_errors.append(
-                f"{package_path}/_metadata.json at {label} revision {revision} "
-                "does not contain a non-empty string apiVersion"
-            )
+        try:
+            versions[label] = metadata_api_versions(provenance)
+        except ValueError as error:
+            versions[label] = None
+            drift_errors.append(f"{package_path}/_metadata.json at {label} revision {revision}: {error}")
+    first_api_versions, latest_api_versions = versions["first"], versions["latest"]
     return {
         "packagePath": package_path,
         "metadataPath": f"{package_path}/_metadata.json",
         "status": (
             "unverified"
-            if not first_api_version or not latest_api_version
-            else "unchanged" if first_api_version == latest_api_version else "changed"
+            if first_api_versions is None or latest_api_versions is None
+            else "unchanged" if first_api_versions == latest_api_versions else "changed"
         ),
         "firstRevision": first_revision,
-        "firstApiVersion": first_api_version,
+        "firstApiVersions": first_api_versions,
         "latestRevision": latest_revision,
-        "latestApiVersion": latest_api_version,
-        "error": "; ".join(drift_errors) if (not first_api_version or not latest_api_version) else None,
+        "latestApiVersions": latest_api_versions,
+        "error": "; ".join(drift_errors) if (first_api_versions is None or latest_api_versions is None) else None,
     }
 
 
@@ -488,27 +506,98 @@ def validated_source_reference(provenance):
     return {"status": "available", "repository": repository, "revision": commit}
 
 
+def authorize_manual_run(repository, event_name, actor, triggering_actor, ref):
+    if event_name == "workflow_dispatch":
+        if repository.casefold() != "azure/azure-sdk-for-python":
+            raise GitHubApiError("manual_repository_forbidden: Run manual reviews in Azure/azure-sdk-for-python.")
+        if actor.casefold() != "msyyc" or triggering_actor.casefold() != "msyyc":
+            raise GitHubApiError("manual_actor_forbidden: Only msyyc may dispatch or rerun a manual review.")
+        if not ref.startswith("refs/heads/") or not ref.removeprefix("refs/heads/"):
+            raise GitHubApiError("manual_ref_forbidden: Select a maintainer-controlled branch, not a tag.")
+
+
+def authorize_current_run():
+    authorize_manual_run(
+        os.environ.get("GH_REPOSITORY", ""),
+        os.environ.get("GITHUB_EVENT_NAME", ""),
+        os.environ.get("GITHUB_ACTOR", ""),
+        os.environ.get("GITHUB_TRIGGERING_ACTOR", ""),
+        os.environ.get("GITHUB_REF", ""),
+    )
+
+
+def resolve_review_target(client, event, event_name, actor, triggering_actor, ref):
+    """Resolve a fixed review target before exposing any evidence to the agent."""
+    repository = client.repository
+    authorize_manual_run(repository, event_name, actor, triggering_actor, ref)
+    manual = event_name == "workflow_dispatch"
+    if manual:
+        number = event.get("inputs", {}).get("pr_number")
+        if not isinstance(number, str) or not re.fullmatch(r"[1-9][0-9]{0,9}", number):
+            raise GitHubApiError("invalid_pr_number: pr_number must be a positive decimal PR number.")
+        pr_number = int(number)
+    elif event_name == "pull_request_target" and event.get("action") == "labeled":
+        if event.get("label", {}).get("name") != "mgmt-review-needed":
+            raise GitHubApiError("invalid_trigger: Expected the mgmt-review-needed label.")
+        pr_number = event.get("pull_request", {}).get("number")
+        if type(pr_number) is not int or pr_number <= 0:
+            raise GitHubApiError("invalid_pr_number: The label event must identify a pull request.")
+    else:
+        raise GitHubApiError("invalid_trigger: Expected workflow_dispatch or a pull_request_target labeled event.")
+
+    pull = client.get(f"/repos/{repository}/pulls/{pr_number}")
+    if (
+        pull.get("number") != pr_number
+        or (pull.get("base", {}).get("repo") or {}).get("full_name", "").casefold() != repository.casefold()
+    ):
+        raise GitHubApiError("wrong_review_target: GitHub returned a different PR or base repository.")
+    head = pull.get("head") or {}
+    head_sha = head.get("sha")
+    if not isinstance(head_sha, str) or not SHA_PATTERN.fullmatch(head_sha):
+        raise GitHubApiError("invalid_head_revision: The PR must have an immutable head SHA.")
+    if manual:
+        head_repository = head.get("repo") or {}
+        owner = head_repository.get("owner") or {}
+        if (
+            owner.get("login", "").casefold() != "azure"
+            or owner.get("type") != "Organization"
+            or not head_repository.get("full_name", "").casefold().startswith("azure/")
+        ):
+            raise GitHubApiError("manual_source_forbidden: The SDK PR source repository must belong to Azure.")
+    elif head_sha != event.get("pull_request", {}).get("head", {}).get("sha"):
+        raise GitHubApiError("stale_event_head: The PR changed since the label event; trigger a fresh review.")
+    return {"pr_number": str(pr_number), "head_sha": head_sha}
+
+
+def resolve_target():
+    with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as source:
+        event = json.load(source)
+    target = resolve_review_target(
+        GitHubClient(os.environ["GH_REPOSITORY"], os.environ["GH_TOKEN"]),
+        event,
+        os.environ["GITHUB_EVENT_NAME"],
+        os.environ["GITHUB_ACTOR"],
+        os.environ["GITHUB_TRIGGERING_ACTOR"],
+        os.environ["GITHUB_REF"],
+    )
+    with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+        for name, value in target.items():
+            output.write(f"{name}={value}\n")
+    print(json.dumps({"reviewTarget": target, "event": os.environ["GITHUB_EVENT_NAME"]}))
+
+
 def collect():
     repository = os.environ["GH_REPOSITORY"]
     pr_number = int(os.environ["PR_NUMBER"])
     client = GitHubClient(repository, os.environ["GH_TOKEN"])
 
-    repository_data = client.get(f"/repos/{repository}")
-    default_branch = repository_data.get("default_branch")
-    branch_data = client.get(f"/repos/{repository}/branches/{urllib.parse.quote(default_branch, safe='')}")
-    rules_revision = branch_data.get("commit", {}).get("sha")
+    rules_revision = os.environ.get("REVIEW_TOOLING_SHA")
     if not isinstance(rules_revision, str) or not SHA_PATTERN.fullmatch(rules_revision):
-        raise GitHubApiError("Default branch metadata did not contain an immutable commit SHA")
-    rules_file = client.read_file(".github/copilot-instructions.md", rules_revision)
+        raise GitHubApiError("REVIEW_TOOLING_SHA must pin review rules to the trusted workflow commit.")
+    rules_file = client.read_file(MANAGEMENT_RULES_PATH, rules_revision)
     if rules_file.get("status") != "available":
         raise GitHubApiError(rules_file.get("error", "Could not load review rules"))
-    lines = rules_file["content"].splitlines()
-    heading = "## MGMT SDK Code Review Rules"
-    try:
-        start = lines.index(heading)
-    except ValueError as error:
-        raise GitHubApiError(f"{heading} was not found in .github/copilot-instructions.md") from error
-    end = next((index for index in range(start + 1, len(lines)) if lines[index].startswith("## ")), len(lines))
+    management_review_rules = rules_file["content"].strip()
 
     pull_request = client.get(f"/repos/{repository}/pulls/{pr_number}")
     expected_changed_files = pull_request.get("changed_files")
@@ -583,9 +672,9 @@ def collect():
                     "metadataPath": f"{package_path}/_metadata.json",
                     "status": "unverified",
                     "firstRevision": first_revision,
-                    "firstApiVersion": None,
+                    "firstApiVersions": None,
                     "latestRevision": latest_revision,
-                    "latestApiVersion": None,
+                    "latestApiVersions": None,
                     "error": reason,
                 }
             )
@@ -761,11 +850,13 @@ def collect():
         )
 
     context = {
+        "schemaVersion": "2",
+        "reviewDate": datetime.datetime.now(datetime.timezone.utc).date().isoformat(),
         "repository": repository,
         "pullRequestNumber": pr_number,
         "toolingRevision": os.environ.get("REVIEW_TOOLING_SHA"),
-        "rulesSource": f".github/copilot-instructions.md@{rules_revision}",
-        "mgmtSdkCodeReviewRules": "\n".join(lines[start:end]).strip(),
+        "rulesSource": f"{MANAGEMENT_RULES_PATH}@{rules_revision}",
+        "mgmtSdkCodeReviewRules": management_review_rules,
         "packageDiscovery": {
             "status": "complete" if package_discovery_complete else "unverified",
             "expectedChangedFiles": expected_changed_files,
@@ -810,6 +901,7 @@ def collect():
             "githubApiRequests": client.request_count,
         },
     }
+    collect_review_sources(client, context)
     if expected_head:
         current = client.get(f"/repos/{repository}/pulls/{pr_number}")
         if (
@@ -825,5 +917,90 @@ def collect():
         output.write("\n")
 
 
+def collect_review_sources(client, context):
+    """Collect bounded package data without importing or executing any PR code."""
+    context["sources"] = []
+    context["sourceCollectionIssues"] = []
+    byte_count = 0
+
+    def read(path):
+        key = (path, context["latestRevision"])
+        if key not in client.files and client.request_count >= MAX_API_REQUESTS - 1:
+            client.files[key] = {
+                "path": path,
+                "revision": context["latestRevision"],
+                "status": "unverified",
+                "error": "Evidence request budget exhausted; completed evidence is preserved.",
+            }
+        else:
+            client.read_file(*key)
+        return client.files[key]
+
+    for package in context["affectedPackages"]:
+        paths = {
+            f"{package}/{name}" for name in ("README.md", "api.md", "_metadata.json", "pyproject.toml", "CHANGELOG.md")
+        }
+        project_path = f"{package}/pyproject.toml"
+        project = read(project_path)
+        if project.get("status") == "available":
+            try:
+                attr = (
+                    tomllib.loads(project["content"])
+                    .get("tool", {})
+                    .get("setuptools", {})
+                    .get("dynamic", {})
+                    .get("version", {})
+                    .get("attr", "")
+                )
+                if re.fullmatch(r"azure\.mgmt\.(?:[A-Za-z_][A-Za-z0-9_]*\.)+_version\.VERSION", attr):
+                    version_path = attr.rsplit(".", 1)[0].replace(".", "/") + ".py"
+                    paths.update(
+                        {
+                            f"{package}/{version_path}",
+                            f"{package}/{version_path.rsplit('/', 1)[0]}/_client.py",
+                            f"{package}/{version_path.rsplit('/', 1)[0]}/aio/_client.py",
+                        }
+                    )
+            except (ValueError, TypeError, AttributeError) as error:
+                context["sourceCollectionIssues"].append(
+                    f"{package}/pyproject.toml cannot identify version data: {error}"
+                )
+        for changed in context["changedFiles"]:
+            path = changed["filename"]
+            if path.startswith(package + "/") and path.endswith(("/_client.py", "/_version.py")):
+                paths.add(path)
+        if not any(path.endswith("/_version.py") for path in paths):
+            context["sourceCollectionIssues"].append(
+                f"{package}: version/client paths were not discoverable from literal packaging metadata or changed files."
+            )
+        if len(paths) > 16:
+            context["sourceCollectionIssues"].append(f"{package}: source discovery exceeded the 16-file package limit.")
+        for path in sorted(paths, key=lambda path: (path != project_path, path))[:16]:
+            read(path)
+        for (path, revision), evidence in client.files.items():
+            if not path.startswith(package + "/"):
+                continue
+            if not allowed_sdk_file(path[len(package) + 1 :], "Version consistency"):
+                continue
+            evidence = dict(evidence)
+            size = len(evidence.get("content", "").encode())
+            if byte_count + size > MAX_SNAPSHOT_BYTES:
+                evidence.update(status="truncated", error="Total snapshot text budget exhausted.")
+                evidence.pop("content", None)
+            else:
+                byte_count += size
+            context["sources"].append(source_record(context["repository"], evidence, package))
+    context["deterministicChecks"] = {
+        package: dict(zip(("checks", "findings"), deterministic_checks(context, package)))
+        for package in context["affectedPackages"]
+    }
+    context["collectionLimits"]["githubApiRequests"] = client.request_count
+
+
 if __name__ == "__main__":
-    collect()
+    if sys.argv[1:] == ["target"]:
+        resolve_target()
+    elif not sys.argv[1:]:
+        collect()
+    else:
+        raise SystemExit("Usage: mgmt_sdk_review_context.py [target]")

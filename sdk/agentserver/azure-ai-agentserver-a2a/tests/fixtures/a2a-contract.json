@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "protocol_version_cases": [
+    {"name": "missing", "headers": [], "query": [], "error_code": -32009},
+    {"name": "empty-header", "headers": [["A2A-Version", ""]], "query": [], "error_code": -32009},
+    {"name": "header", "headers": [["A2A-Version", "1.0"]], "query": [], "effective_version": "1.0"},
+    {"name": "header-case", "headers": [["a2a-version", "1.0"]], "query": [], "effective_version": "1.0"},
+    {"name": "query", "headers": [], "query": [["a2a-version", "1.0"]], "effective_version": "1.0"},
+    {"name": "query-case", "headers": [], "query": [["A2A-Version", "1.0"]], "effective_version": "1.0"},
+    {"name": "matching", "headers": [["A2A-Version", "1.0"]], "query": [["a2a-version", "1.0"]], "effective_version": "1.0"},
+    {"name": "conflict", "headers": [["A2A-Version", "1.0"]], "query": [["a2a-version", "2.0"]], "error_code": -32602},
+    {"name": "query-conflict", "headers": [], "query": [["a2a-version", "1.0"], ["A2A-Version", "2.0"]], "error_code": -32602},
+    {"name": "header-conflict", "headers": [["A2A-Version", "1.0"], ["A2A-Version", "2.0"]], "query": [], "error_code": -32602},
+    {"name": "unsupported-major", "headers": [["A2A-Version", "2.0"]], "query": [], "error_code": -32009},
+    {"name": "unsupported-minor", "headers": [["A2A-Version", "1.1"]], "query": [], "error_code": -32009},
+    {"name": "unsupported-query", "headers": [], "query": [["a2a-version", "2.0"]], "error_code": -32009},
+    {"name": "patch-not-major-minor", "headers": [["A2A-Version", "1.0.9"]], "query": [], "error_code": -32009},
+    {"name": "malformed", "headers": [["A2A-Version", "invalid"]], "query": [], "error_code": -32009}
+  ],
+  "storage_tag_cases": [
+    {"name": "key-at-128", "task_id_length": 47, "context_id_length": 1, "summary_tag": true, "key_chars": 128},
+    {"name": "key-over-128", "task_id_length": 48, "context_id_length": 1, "summary_tag": true, "key_chars": 64},
+    {"name": "below-bound", "task_id_length": 171, "context_id_length": 1, "summary_tag": true},
+    {"name": "at-256", "task_id_length": 176, "context_id_length": 1, "summary_tag": true, "summary_chars": 256},
+    {"name": "above-256", "task_id_length": 177, "context_id_length": 1, "summary_tag": false},
+    {"name": "long-identifiers", "task_id_length": 128, "context_id_length": 128, "summary_tag": false}
+  ],
+  "list_cases": [
+    {
+      "name": "inclusive-boundary-and-ties",
+      "tasks": [
+        {"id": "a", "timestamp_ns": 10000000001},
+        {"id": "c", "timestamp_ns": 10000000001},
+        {"id": "b", "timestamp_ns": 10000000001},
+        {"id": "before", "timestamp_ns": 10000000000}
+      ],
+      "cutoff_ns": 10000000001,
+      "page_size": 2,
+      "expected_pages": [["c", "b"], ["a"]],
+      "expected_total_sizes": [3, 3]
+    },
+    {
+      "name": "delete-returned-records",
+      "tasks": [
+        {"id": "task-0", "timestamp_ns": 1},
+        {"id": "task-1", "timestamp_ns": 2},
+        {"id": "task-2", "timestamp_ns": 3},
+        {"id": "task-3", "timestamp_ns": 4},
+        {"id": "task-4", "timestamp_ns": 5}
+      ],
+      "page_size": 2,
+      "delete_after_first": ["task-4", "task-3"],
+      "expected_pages": [["task-4", "task-3"], ["task-2", "task-1"], ["task-0"]],
+      "expected_total_sizes": [5, 3, 3]
+    }
+  ]
+}

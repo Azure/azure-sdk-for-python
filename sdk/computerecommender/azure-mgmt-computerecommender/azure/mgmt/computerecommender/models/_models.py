@@ -62,8 +62,8 @@ class ProxyResource(Resource):
     """
 
 
-class ComputeDiagnosticBase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Contains metadata of a diagnostic type.
+class ComputePlacementScoresBase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains metadata of the compute placement scoring resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -76,20 +76,20 @@ class ComputeDiagnosticBase(ProxyResource):  # pylint: disable=docstring-keyword
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.computerecommender.models.SystemData
-    :ivar properties: Contains additional properties of a diagnostic.
-    :vartype properties: ~azure.mgmt.computerecommender.models.DiagnosticProperties
+    :ivar properties: Contains additional properties of a placement scores resource.
+    :vartype properties: ~azure.mgmt.computerecommender.models.PlacementScoresProperties
     """
 
-    properties: Optional["_models.DiagnosticProperties"] = rest_field(
+    properties: Optional["_models.PlacementScoresProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Contains additional properties of a diagnostic."""
+    """Contains additional properties of a placement scores resource."""
 
     @overload
     def __init__(
         self,
         *,
-        properties: Optional["_models.DiagnosticProperties"] = None,
+        properties: Optional["_models.PlacementScoresProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -103,24 +103,107 @@ class ComputeDiagnosticBase(ProxyResource):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Contains additional properties of a diagnostic.
+class ComputePlacementScoresInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ComputePlacementScores API Input.
 
-    :ivar supported_resource_types: Describes what are the supported resource types for a
-     diagnostic.
-    :vartype supported_resource_types: list[str]
+    :ivar desired_locations: The desired regions. If not set, the location from the request URI is
+     used as the desired location. Each location in this list must be a valid Azure region.
+    :vartype desired_locations: list[str]
+    :ivar desired_sizes: The desired virtual machine SKU sizes. Required.
+    :vartype desired_sizes: list[~azure.mgmt.computerecommender.models.ResourceSize]
+    :ivar desired_count: Desired instance count per region/zone based on the scope. If not set,
+     defaults to 1.
+    :vartype desired_count: int
+    :ivar availability_zones: Defines if the scope is zonal or regional.
+    :vartype availability_zones: bool
     """
 
-    supported_resource_types: Optional[list[str]] = rest_field(
-        name="supportedResourceTypes", visibility=["read", "create", "update", "delete", "query"]
+    desired_locations: Optional[list[str]] = rest_field(
+        name="desiredLocations", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes what are the supported resource types for a diagnostic."""
+    """The desired regions. If not set, the location from the request URI is used as the desired
+     location. Each location in this list must be a valid Azure region."""
+    desired_sizes: list["_models.ResourceSize"] = rest_field(
+        name="desiredSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired virtual machine SKU sizes. Required."""
+    desired_count: Optional[int] = rest_field(
+        name="desiredCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Desired instance count per region/zone based on the scope. If not set, defaults to 1."""
+    availability_zones: Optional[bool] = rest_field(
+        name="availabilityZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines if the scope is zonal or regional."""
 
     @overload
     def __init__(
         self,
         *,
-        supported_resource_types: Optional[list[str]] = None,
+        desired_sizes: list["_models.ResourceSize"],
+        desired_locations: Optional[list[str]] = None,
+        desired_count: Optional[int] = None,
+        availability_zones: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ComputePlacementScoresResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ComputePlacementScores API response.
+
+    :ivar desired_locations: The desired regions.
+    :vartype desired_locations: list[str]
+    :ivar desired_sizes: The desired virtual machine SKU sizes.
+    :vartype desired_sizes: list[~azure.mgmt.computerecommender.models.ResourceSize]
+    :ivar desired_count: Desired instance count per region/zone based on the scope.
+    :vartype desired_count: int
+    :ivar availability_zones: Defines if the scope is zonal or regional.
+    :vartype availability_zones: bool
+    :ivar placement_scores: A placement score indicating the likelihood of successfully allocating
+     the specified Spot VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation.
+    :vartype placement_scores: list[~azure.mgmt.computerecommender.models.PlacementScore]
+    """
+
+    desired_locations: Optional[list[str]] = rest_field(
+        name="desiredLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired regions."""
+    desired_sizes: Optional[list["_models.ResourceSize"]] = rest_field(
+        name="desiredSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired virtual machine SKU sizes."""
+    desired_count: Optional[int] = rest_field(
+        name="desiredCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Desired instance count per region/zone based on the scope."""
+    availability_zones: Optional[bool] = rest_field(
+        name="availabilityZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines if the scope is zonal or regional."""
+    placement_scores: Optional[list["_models.PlacementScore"]] = rest_field(
+        name="placementScores", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A placement score indicating the likelihood of successfully allocating the specified Spot
+     VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_locations: Optional[list[str]] = None,
+        desired_sizes: Optional[list["_models.ResourceSize"]] = None,
+        desired_count: Optional[int] = None,
+        availability_zones: Optional[bool] = None,
+        placement_scores: Optional[list["_models.PlacementScore"]] = None,
     ) -> None: ...
 
     @overload
@@ -305,9 +388,11 @@ class PlacementScore(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype availability_zone: str
     :ivar score: A placement score indicating the likelihood of successfully allocating the
      specified Spot VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation.
-    :vartype score: str
-    :ivar is_quota_available: Whether the desired quota is available.
-    :vartype is_quota_available: bool
+     Known values are: "High", "Medium", "Low", "RestrictedSkuNotAvailable", "InsufficientQuota",
+     and "DataNotFoundOrStale".
+    :vartype score: str or ~azure.mgmt.computerecommender.models.PlacementScoreValue
+    :ivar placement_preference: Placement preference from 0 to 10 (inclusive). Higher is better.
+    :vartype placement_preference: int
     """
 
     sku: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -318,13 +403,17 @@ class PlacementScore(_Model):  # pylint: disable=docstring-keyword-should-match-
         name="availabilityZone", visibility=["read", "create", "update", "delete", "query"]
     )
     """The availability zone."""
-    score: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A placement score indicating the likelihood of successfully allocating the specified Spot
-     VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation."""
-    is_quota_available: Optional[bool] = rest_field(
-        name="isQuotaAvailable", visibility=["read", "create", "update", "delete", "query"]
+    score: Optional[Union[str, "_models.PlacementScoreValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether the desired quota is available."""
+    """A placement score indicating the likelihood of successfully allocating the specified Spot
+     VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation. Known values are:
+     \"High\", \"Medium\", \"Low\", \"RestrictedSkuNotAvailable\", \"InsufficientQuota\", and
+     \"DataNotFoundOrStale\"."""
+    placement_preference: Optional[int] = rest_field(
+        name="placementPreference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Placement preference from 0 to 10 (inclusive). Higher is better."""
 
     @overload
     def __init__(
@@ -333,8 +422,38 @@ class PlacementScore(_Model):  # pylint: disable=docstring-keyword-should-match-
         sku: Optional[str] = None,
         region: Optional[str] = None,
         availability_zone: Optional[str] = None,
-        score: Optional[str] = None,
-        is_quota_available: Optional[bool] = None,
+        score: Optional[Union[str, "_models.PlacementScoreValue"]] = None,
+        placement_preference: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlacementScoresProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains additional properties of a placement scores resource.
+
+    :ivar supported_resource_types: Describes the supported resource types for placement scoring.
+    :vartype supported_resource_types: list[str]
+    """
+
+    supported_resource_types: Optional[list[str]] = rest_field(
+        name="supportedResourceTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes the supported resource types for placement scoring."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        supported_resource_types: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -974,14 +1093,57 @@ class SkuMixPlacementZonePreference(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
+class SpotPlacementScoresBase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains metadata of the Spot Placement Scores resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computerecommender.models.SystemData
+    :ivar properties: Contains additional properties of a placement scores resource.
+    :vartype properties: ~azure.mgmt.computerecommender.models.PlacementScoresProperties
+    """
+
+    properties: Optional["_models.PlacementScoresProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains additional properties of a placement scores resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PlacementScoresProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SpotPlacementScoresInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SpotPlacementScores API Input.
 
-    :ivar desired_locations: The desired regions.
+    :ivar desired_locations: The desired regions. If not set, the location from the request URI is
+     used as the desired location. Each location in this list must be a valid Azure region.
     :vartype desired_locations: list[str]
-    :ivar desired_sizes: The desired virtual machine SKU sizes.
+    :ivar desired_sizes: The desired virtual machine SKU sizes. Required.
     :vartype desired_sizes: list[~azure.mgmt.computerecommender.models.ResourceSize]
-    :ivar desired_count: Desired instance count per region/zone based on the scope.
+    :ivar desired_count: Desired instance count per region/zone based on the scope. If not set,
+     defaults to 1.
     :vartype desired_count: int
     :ivar availability_zones: Defines if the scope is zonal or regional.
     :vartype availability_zones: bool
@@ -990,15 +1152,16 @@ class SpotPlacementScoresInput(_Model):  # pylint: disable=docstring-keyword-sho
     desired_locations: Optional[list[str]] = rest_field(
         name="desiredLocations", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The desired regions."""
-    desired_sizes: Optional[list["_models.ResourceSize"]] = rest_field(
+    """The desired regions. If not set, the location from the request URI is used as the desired
+     location. Each location in this list must be a valid Azure region."""
+    desired_sizes: list["_models.ResourceSize"] = rest_field(
         name="desiredSizes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The desired virtual machine SKU sizes."""
+    """The desired virtual machine SKU sizes. Required."""
     desired_count: Optional[int] = rest_field(
         name="desiredCount", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Desired instance count per region/zone based on the scope."""
+    """Desired instance count per region/zone based on the scope. If not set, defaults to 1."""
     availability_zones: Optional[bool] = rest_field(
         name="availabilityZones", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1008,8 +1171,8 @@ class SpotPlacementScoresInput(_Model):  # pylint: disable=docstring-keyword-sho
     def __init__(
         self,
         *,
+        desired_sizes: list["_models.ResourceSize"],
         desired_locations: Optional[list[str]] = None,
-        desired_sizes: Optional[list["_models.ResourceSize"]] = None,
         desired_count: Optional[int] = None,
         availability_zones: Optional[bool] = None,
     ) -> None: ...

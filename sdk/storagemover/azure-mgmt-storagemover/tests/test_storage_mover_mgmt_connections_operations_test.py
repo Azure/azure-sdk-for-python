@@ -11,22 +11,29 @@ Connection op group is new in API 2025-08-01+ and isn't in the .NET Scenario sui
 yet — this is the canonical Python port.
 
 Exercises Storage Mover Connection CRUD (create / get / list / update / delete)
-against the **real** shared PrivateLinkService `test-pls-wcs` in the
-XDataMove-Synthetics subscription / RG ``E2E-Management-RGsyn``. The PLS lives in
-``westcentralus``, so the storage mover must too.
+against an approved shared PrivateLinkService in the XDataMove-Synthetics
+subscription / RG ``E2E-Management-RGsyn``. Set
+``STORAGEMOVER_PRIVATE_LINK_SERVICE_NAME`` for live runs; recordings use
+``test-pls-wcs``. The PLS must live in ``westcentralus``, like the storage mover.
 
 Intentionally does NOT assert on ``properties.connection_status``: it'll be
 ``Pending`` immediately after create because the PLS-side PE provisioning is
 async. Approval is covered by matrix row #31
 (``JobDefinitionJobRunTests.StartC2CJobWithPrivateSourceTest``).
 """
+
 import os
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.mgmt.storagemover import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import (
+    AzureMgmtRecordedTestCase,
+    EnvironmentVariableLoader,
+    RandomNameResourceGroupPreparer,
+    recorded_by_proxy,
+)
 
 # PrivateLinkService lives in westcentralus, so storage mover must too.
 AZURE_LOCATION = "westcentralus"
@@ -37,13 +44,12 @@ AZURE_LOCATION = "westcentralus"
 # The subscription id is read from the environment for live runs and defaults to
 # the sanitized zero-GUID so the real subscription is never committed.
 SYNTHETICS_SUBSCRIPTION_ID = (
-    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
-    or "00000000-0000-0000-0000-000000000000"
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID") or "00000000-0000-0000-0000-000000000000"
 )
-REAL_PRIVATE_LINK_SERVICE_ID = (
+PRIVATE_LINK_SERVICE_ID_PREFIX = (
     f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
     "/resourceGroups/E2E-Management-RGsyn"
-    "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
+    "/providers/Microsoft.Network/privateLinkServices/"
 )
 
 
@@ -51,37 +57,46 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)
 
+    @EnvironmentVariableLoader("storagemover", storagemover_private_link_service_name="test-pls-wcs")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_get_list_update_delete(self, resource_group):
+    def test_create_get_list_update_delete(self, resource_group, storagemover_private_link_service_name):
         rg = resource_group.name
         sm_name = "testsm-conn"
         connection_name = "testconn1"
+        private_link_service_id = PRIVATE_LINK_SERVICE_ID_PREFIX + storagemover_private_link_service_name
 
         self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
 
         # Create
         created = self.client.connections.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
-            connection={"properties": {
-                "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
-                "description": "ConnectionDesc",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
+            connection={
+                "properties": {
+                    "privateLinkServiceId": private_link_service_id,
+                    "description": "ConnectionDesc",
+                }
+            },
         )
         # Playback note: the test runner's subscription ID is sanitized to all-zeros
         # in recordings, so we assert by PLS name suffix (resource-path-stable across
         # sanitization) rather than full ARM-ID equality.
-        pls_id_suffix = "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
+        pls_id_suffix = "/providers/Microsoft.Network/privateLinkServices/" + storagemover_private_link_service_name
         assert created.name == connection_name
         assert created.properties.private_link_service_id.endswith(pls_id_suffix)
         assert created.properties.description == "ConnectionDesc"
 
         # Get
         fetched = self.client.connections.get(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
         )
         assert fetched.name == connection_name
         assert fetched.id == created.id
@@ -89,9 +104,12 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
         # NOTE: do not assert on `connection_status` — see module docstring.
 
         # List
-        items = list(self.client.connections.list(
-            resource_group_name=rg, storage_mover_name=sm_name,
-        ))
+        items = list(
+            self.client.connections.list(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+            )
+        )
         assert len(items) >= 1
         assert connection_name in [c.name for c in items]
 
@@ -102,18 +120,26 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
         # (test_storage_mover_connection_scenarios) also calls update without
         # post-update verification for the same reason.
         self.client.connections.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
-            connection={"properties": {
-                "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
-                "description": "ConnectionDescUpdate",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
+            connection={
+                "properties": {
+                    "privateLinkServiceId": private_link_service_id,
+                    "description": "ConnectionDescUpdate",
+                }
+            },
         )
 
         # Delete + 404 verification
         self.client.connections.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
         ).result()
         with pytest.raises(ResourceNotFoundError):
             self.client.connections.get(
-                resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                connection_name=connection_name,
             )

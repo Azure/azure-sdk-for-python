@@ -34,14 +34,20 @@ def main():
         resource_group_name="myResourceGroup",
         registry_name="myRegistry",
         registry_update_parameters={
-            "properties": {"adminUserEnabled": True, "roleAssignmentMode": "AbacRepositoryPermissions"},
-            "sku": {"name": "Standard"},
+            "properties": {
+                "adminUserEnabled": True,
+                "dataEndpointEnabled": True,
+                "endpointProtocol": "IPv4AndIPv6",
+                "regionalEndpoints": "Enabled",
+                "roleAssignmentMode": "AbacRepositoryPermissions",
+            },
+            "sku": {"name": "Premium"},
             "tags": {"key": "value"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/RegistryUpdate.json
+# x-ms-original-file: 2026-11-01/RegistryUpdate.json
 if __name__ == "__main__":
     main()

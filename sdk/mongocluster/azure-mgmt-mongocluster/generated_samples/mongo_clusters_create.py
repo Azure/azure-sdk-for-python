@@ -44,11 +44,12 @@ def main():
                 "sharding": {"shardCount": 1},
                 "storage": {"sizeGb": 128},
             },
+            "tags": {"costCenter": "1234", "environment": "production"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-06-15-preview/MongoClusters_Create.json
+# x-ms-original-file: 2026-09-01/MongoClusters_Create.json
 if __name__ == "__main__":
     main()

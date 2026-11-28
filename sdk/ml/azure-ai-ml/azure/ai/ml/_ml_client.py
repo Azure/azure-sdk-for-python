@@ -659,6 +659,7 @@ class MLClient:
             self._operation_config,
             (self._service_client_registry_arm if registry_name else self._service_client_04_2023_preview),
             self._datastores,
+            cloud=self._cloud,
             requests_pipeline=self._requests_pipeline,
             all_operations=self._operation_container,
             registry_service_client=getattr(self, "_service_client_registry_arm", None),

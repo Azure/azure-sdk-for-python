@@ -105,6 +105,36 @@ def is_default_agent_reference(value: Any) -> bool:
     )
 
 
+def is_complete_agent_reference(value: Any) -> bool:
+    """Return whether *value* contains a complete response agent identity.
+
+    :param value: A candidate agent reference wire payload.
+    :type value: Any
+    :returns: ``True`` when type, name, and version are valid.
+    :rtype: bool
+    """
+    if not isinstance(value, MutableMapping) or value.get("type") != "agent_reference":
+        return False
+    name = value.get("name")
+    version = value.get("version")
+    return isinstance(name, str) and bool(name.strip()) and isinstance(version, str) and bool(version.strip())
+
+
+def should_replace_agent_reference(existing: Any, canonical: Any) -> bool:
+    """Return whether a response snapshot should use the canonical reference.
+
+    :param existing: The handler-provided response reference.
+    :type existing: Any
+    :param canonical: The request-level canonical reference.
+    :type canonical: Any
+    :returns: ``True`` when the existing value is absent or incomplete.
+    :rtype: bool
+    """
+    if not isinstance(existing, MutableMapping) or not existing:
+        return True
+    return bool(canonical) and (is_default_agent_reference(existing) or not is_complete_agent_reference(existing))
+
+
 def materialize_wire_payload(value: Any) -> Any:
     """Recursively resolve generators/tuples to plain lists/dicts.
 
@@ -180,11 +210,7 @@ def apply_common_defaults(
         snapshot_dict.setdefault("response_id", response_id)
         snapshot_dict.setdefault("object", "response")
         existing_agent_reference = snapshot_dict.get("agent_reference")
-        if (
-            not isinstance(existing_agent_reference, MutableMapping)
-            or not existing_agent_reference
-            or (is_default_agent_reference(existing_agent_reference) and bool(agent_reference))
-        ):
+        if should_replace_agent_reference(existing_agent_reference, agent_reference):
             snapshot_dict["agent_reference"] = response_agent_reference(agent_reference)
         if model is not None:
             snapshot_dict.setdefault("model", model)

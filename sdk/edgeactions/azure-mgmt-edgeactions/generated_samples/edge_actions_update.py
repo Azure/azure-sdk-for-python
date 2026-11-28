@@ -33,11 +33,11 @@ def main():
     response = client.edge_actions.begin_update(
         resource_group_name="testrg",
         edge_action_name="edgeAction1",
-        properties={"sku": {"name": "Standard", "tier": "Standard"}},
+        properties={"tags": {"environment": "production"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-12-01-preview/EdgeActions_Update.json
+# x-ms-original-file: 2026-10-01/EdgeActions_Update.json
 if __name__ == "__main__":
     main()

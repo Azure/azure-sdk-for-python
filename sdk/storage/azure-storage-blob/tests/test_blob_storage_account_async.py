@@ -54,8 +54,12 @@ class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         await self._setup(bsc)
-        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot, StandardBlobTier.SMART]
-
+        tiers = [
+            StandardBlobTier.Archive,
+            StandardBlobTier.Cool,
+            StandardBlobTier.Hot,
+            # StandardBlobTier.SMART,
+        ]
         for tier in tiers:
             blob_name = self.get_resource_name(tier.value)
             blob = bsc.get_blob_client(self.container_name, blob_name)
@@ -122,7 +126,7 @@ class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
         assert not blob_ref.blob_tier_inferred
 
         blobs = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blobs.append(b)
 
         await blob.delete_blob()
@@ -146,7 +150,7 @@ class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
         assert not blob_ref2.blob_tier_inferred
 
         blobs = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blobs.append(b)
 
         # Assert

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -57,7 +58,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attributes
+class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """The Azure Database for PostgreSQL management API provides create, read, update, and delete
     functionality for Azure PostgreSQL resources including servers, databases, firewall rules,
     network configuration, security alert policies, log files and configurations with new business
@@ -143,10 +144,9 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-04-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-10-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

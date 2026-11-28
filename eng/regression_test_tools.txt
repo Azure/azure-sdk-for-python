@@ -1,4 +1,4 @@
-pip==20.2
+pip==26.2.2
 
 # requirements leveraged by ci for testing
 pytest==7.3.1

@@ -40,6 +40,7 @@ from _keys_test_case import KeysTestCase
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_default = get_decorator(only_hsm=True, api_versions=[DEFAULT_VERSION])
+only_hsm_2026_04_01 = get_decorator(only_hsm=True, api_versions=[ApiVersion.V2026_04_01])
 default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 only_hsm_7_4_plus = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_vault_7_4_plus = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
@@ -808,7 +809,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         response = client.send_request(request)
         assert response.json()["key"]["kid"] == key.id
 
-    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
+    @pytest.mark.playback_test_only("Requires an EKM-connected HSM; plays back existing 2026-04-01 recordings.")
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_2026_04_01)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_create_external_key(self, client, **kwargs):

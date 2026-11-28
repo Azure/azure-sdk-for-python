@@ -264,7 +264,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 alert_setting_name: str, 
-                request: JSON, 
+                request: ConfigureAlertRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -407,7 +407,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 fabric_name: str, 
-                input: JSON, 
+                input: FabricCreationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -470,7 +470,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 fabric_name: str, 
-                failover_process_server_request: JSON, 
+                failover_process_server_request: FailoverProcessServerRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -515,7 +515,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 fabric_name: str, 
-                renew_certificate: JSON, 
+                renew_certificate: RenewCertificateInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -586,7 +586,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
-                job_query_parameter: JSON, 
+                job_query_parameter: JobQueryParameter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -630,7 +630,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 job_name: str, 
-                resume_job_params: JSON, 
+                resume_job_params: ResumeJobParams, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -726,7 +726,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                input: JSON, 
+                input: EnableMigrationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -781,7 +781,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                migrate_input: JSON, 
+                migrate_input: MigrateInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -823,7 +823,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                pause_replication_input: JSON, 
+                pause_replication_input: PauseReplicationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -865,7 +865,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                resume_replication_input: JSON, 
+                resume_replication_input: ResumeReplicationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -907,7 +907,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                input: JSON, 
+                input: ResyncInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -949,7 +949,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                test_migrate_input: JSON, 
+                test_migrate_input: TestMigrateInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -991,7 +991,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                test_migrate_cleanup_input: JSON, 
+                test_migrate_cleanup_input: TestMigrateCleanupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1033,7 +1033,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                input: JSON, 
+                input: UpdateMigrationItemInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1121,7 +1121,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 network_name: str, 
                 network_mapping_name: str, 
-                input: JSON, 
+                input: CreateNetworkMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1174,7 +1174,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 network_name: str, 
                 network_mapping_name: str, 
-                input: JSON, 
+                input: UpdateNetworkMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1286,7 +1286,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 policy_name: str, 
-                input: JSON, 
+                input: CreatePolicyInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1331,7 +1331,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 policy_name: str, 
-                input: JSON, 
+                input: UpdatePolicyInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1431,7 +1431,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                add_disks_input: JSON, 
+                add_disks_input: AddDisksInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1473,7 +1473,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                apply_recovery_point_input: JSON, 
+                apply_recovery_point_input: ApplyRecoveryPointInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1515,7 +1515,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                input: JSON, 
+                input: EnableProtectionInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1557,7 +1557,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                disable_protection_input: JSON, 
+                disable_protection_input: DisableProtectionInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1621,7 +1621,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                failover_input: JSON, 
+                failover_input: PlannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1674,7 +1674,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                update_mobility_service_request: JSON, 
+                update_mobility_service_request: ReinstallMobilityServiceRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1716,7 +1716,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                remove_disks_input: JSON, 
+                remove_disks_input: RemoveDisksInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1769,7 +1769,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                reprotect_input: JSON, 
+                reprotect_input: ReverseReplicationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1811,7 +1811,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                resolve_health_input: JSON, 
+                resolve_health_input: ResolveHealthInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1853,7 +1853,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                switch_provider_input: JSON, 
+                switch_provider_input: SwitchProviderInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1895,7 +1895,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                testfailover_input: JSON, 
+                testfailover_input: TestFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1937,7 +1937,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                cleanup_input: JSON, 
+                cleanup_input: TestFailoverCleanupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1979,7 +1979,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                failover_input: JSON, 
+                failover_input: UnplannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2021,7 +2021,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                update_protection_input: JSON, 
+                update_protection_input: UpdateReplicationProtectedItemInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2063,7 +2063,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                appliance_update_input: JSON, 
+                appliance_update_input: UpdateApplianceForReplicationProtectedItemInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2105,7 +2105,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                update_mobility_service_request: JSON, 
+                update_mobility_service_request: UpdateMobilityServiceRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2188,7 +2188,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                apply_cluster_recovery_point_input: JSON, 
+                apply_cluster_recovery_point_input: ApplyClusterRecoveryPointInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2230,7 +2230,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                replication_protection_cluster: JSON, 
+                replication_protection_cluster: ReplicationProtectionCluster, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2305,7 +2305,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                failover_input: JSON, 
+                failover_input: ClusterTestFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2347,7 +2347,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                cleanup_input: JSON, 
+                cleanup_input: ClusterTestFailoverCleanupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2389,7 +2389,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                failover_input: JSON, 
+                failover_input: ClusterUnplannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2484,7 +2484,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 mapping_name: str, 
-                creation_input: JSON, 
+                creation_input: CreateProtectionContainerMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2526,7 +2526,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 mapping_name: str, 
-                removal_input: JSON, 
+                removal_input: RemoveProtectionContainerMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2579,7 +2579,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 mapping_name: str, 
-                update_input: JSON, 
+                update_input: UpdateProtectionContainerMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2657,7 +2657,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_name: str, 
                 fabric_name: str, 
                 protection_container_name: str, 
-                creation_input: JSON, 
+                creation_input: CreateProtectionContainerInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2706,7 +2706,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_name: str, 
                 fabric_name: str, 
                 protection_container_name: str, 
-                discover_protectable_item_request: JSON, 
+                discover_protectable_item_request: DiscoverProtectableItemRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2745,7 +2745,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_name: str, 
                 fabric_name: str, 
                 protection_container_name: str, 
-                switch_input: JSON, 
+                switch_input: SwitchClusterProtectionInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2784,7 +2784,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_name: str, 
                 fabric_name: str, 
                 protection_container_name: str, 
-                switch_input: JSON, 
+                switch_input: SwitchProtectionInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2857,7 +2857,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 intent_object_name: str, 
-                input: JSON, 
+                input: CreateProtectionIntentInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2922,7 +2922,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: CreateRecoveryPlanInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2985,7 +2985,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: RecoveryPlanPlannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3030,7 +3030,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: RecoveryPlanTestFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3066,7 +3066,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: RecoveryPlanTestFailoverCleanupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3102,7 +3102,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: RecoveryPlanUnplannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3138,7 +3138,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: UpdateRecoveryPlanInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3202,7 +3202,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_name: str, 
                 fabric_name: str, 
                 provider_name: str, 
-                add_provider_input: JSON, 
+                add_provider_input: AddRecoveryServicesProviderInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3309,7 +3309,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 fabric_name: str, 
                 storage_classification_name: str, 
                 storage_classification_mapping_name: str, 
-                pairing_input: JSON, 
+                pairing_input: StorageClassificationMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3457,7 +3457,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 vault_setting_name: str, 
-                input: JSON, 
+                input: VaultSettingCreationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3521,7 +3521,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_name: str, 
                 fabric_name: str, 
                 vcenter_name: str, 
-                add_v_center_request: JSON, 
+                add_v_center_request: AddVCenterRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3570,7 +3570,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.aio.operations
                 resource_name: str, 
                 fabric_name: str, 
                 vcenter_name: str, 
-                update_v_center_request: JSON, 
+                update_v_center_request: UpdateVCenterRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3770,6 +3770,38 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservicessiterecovery.models.A2AClusterVmManagedDiskInputDetails(_Model):
+        disk_encryption_info: Optional[DiskEncryptionInfo]
+        disk_id: str
+        primary_staging_azure_storage_account_id: str
+        recovery_disk_access_id: Optional[str]
+        recovery_disk_encryption_set_id: Optional[str]
+        recovery_network_access_policy: Optional[Union[str, DiskNetworkAccessPolicy]]
+        recovery_public_network_access: Optional[Union[str, DiskPublicNetworkAccess]]
+        recovery_replica_disk_account_type: Optional[str]
+        recovery_resource_group_id: str
+        recovery_target_disk_account_type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                disk_encryption_info: Optional[DiskEncryptionInfo] = ..., 
+                disk_id: str, 
+                primary_staging_azure_storage_account_id: str, 
+                recovery_disk_access_id: Optional[str] = ..., 
+                recovery_disk_encryption_set_id: Optional[str] = ..., 
+                recovery_network_access_policy: Optional[Union[str, DiskNetworkAccessPolicy]] = ..., 
+                recovery_public_network_access: Optional[Union[str, DiskPublicNetworkAccess]] = ..., 
+                recovery_replica_disk_account_type: Optional[str] = ..., 
+                recovery_resource_group_id: str, 
+                recovery_target_disk_account_type: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservicessiterecovery.models.A2AContainerCreationInput(ReplicationProviderSpecificContainerCreationInput, discriminator='A2A'):
         instance_type: Literal["A2A"]
 
@@ -3943,6 +3975,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         recovery_boot_diag_storage_account_id: Optional[str]
         recovery_capacity_reservation_group_id: Optional[str]
         recovery_cloud_service_id: Optional[str]
+        recovery_confidential_data_disk_encryption_identity: Optional[str]
         recovery_container_id: Optional[str]
         recovery_extended_location: Optional[ExtendedLocation]
         recovery_proximity_placement_group_id: Optional[str]
@@ -3969,6 +4002,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 recovery_boot_diag_storage_account_id: Optional[str] = ..., 
                 recovery_capacity_reservation_group_id: Optional[str] = ..., 
                 recovery_cloud_service_id: Optional[str] = ..., 
+                recovery_confidential_data_disk_encryption_identity: Optional[str] = ..., 
                 recovery_container_id: Optional[str] = ..., 
                 recovery_extended_location: Optional[ExtendedLocation] = ..., 
                 recovery_proximity_placement_group_id: Optional[str] = ..., 
@@ -4172,7 +4206,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         recovery_resource_group_id: Optional[str]
         recovery_virtual_machine_scale_set_id: Optional[str]
         replication_protected_item_name: Optional[str]
-        vm_managed_disks: Optional[list[A2AVmManagedDiskInputDetails]]
+        vm_managed_disks: Optional[list[A2AClusterVmManagedDiskInputDetails]]
 
         @overload
         def __init__(
@@ -4187,7 +4221,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 recovery_resource_group_id: Optional[str] = ..., 
                 recovery_virtual_machine_scale_set_id: Optional[str] = ..., 
                 replication_protected_item_name: Optional[str] = ..., 
-                vm_managed_disks: Optional[list[A2AVmManagedDiskInputDetails]] = ...
+                vm_managed_disks: Optional[list[A2AClusterVmManagedDiskInputDetails]] = ...
             ) -> None: ...
 
         @overload
@@ -4196,6 +4230,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
     class azure.mgmt.recoveryservicessiterecovery.models.A2AProtectedManagedDiskDetails(_Model):
         allowed_disk_level_operation: Optional[list[str]]
+        confidential_disk_encryption_info: Optional[ConfidentialDiskEncryptionInfo]
         data_pending_at_source_agent_in_mb: Optional[float]
         data_pending_in_staging_storage_account_in_mb: Optional[float]
         dek_key_vault_arm_id: Optional[str]
@@ -4213,8 +4248,11 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         monitoring_percentage_completion: Optional[int]
         primary_disk_encryption_set_id: Optional[str]
         primary_staging_azure_storage_account_id: Optional[str]
+        recovery_disk_access_id: Optional[str]
         recovery_disk_encryption_set_id: Optional[str]
+        recovery_network_access_policy: Optional[Union[str, DiskNetworkAccessPolicy]]
         recovery_orignal_target_disk_id: Optional[str]
+        recovery_public_network_access: Optional[Union[str, DiskPublicNetworkAccess]]
         recovery_replica_disk_account_type: Optional[str]
         recovery_replica_disk_id: Optional[str]
         recovery_resource_group_id: Optional[str]
@@ -4246,8 +4284,11 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 monitoring_percentage_completion: Optional[int] = ..., 
                 primary_disk_encryption_set_id: Optional[str] = ..., 
                 primary_staging_azure_storage_account_id: Optional[str] = ..., 
+                recovery_disk_access_id: Optional[str] = ..., 
                 recovery_disk_encryption_set_id: Optional[str] = ..., 
+                recovery_network_access_policy: Optional[Union[str, DiskNetworkAccessPolicy]] = ..., 
                 recovery_orignal_target_disk_id: Optional[str] = ..., 
+                recovery_public_network_access: Optional[Union[str, DiskPublicNetworkAccess]] = ..., 
                 recovery_replica_disk_account_type: Optional[str] = ..., 
                 recovery_replica_disk_id: Optional[str] = ..., 
                 recovery_resource_group_id: Optional[str] = ..., 
@@ -4423,6 +4464,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         recovery_boot_diag_storage_account_id: Optional[str]
         recovery_capacity_reservation_group_id: Optional[str]
         recovery_cloud_service: Optional[str]
+        recovery_confidential_data_disk_encryption_identity: Optional[str]
         recovery_extended_location: Optional[ExtendedLocation]
         recovery_fabric_location: Optional[str]
         recovery_fabric_object_id: Optional[str]
@@ -4489,6 +4531,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 recovery_boot_diag_storage_account_id: Optional[str] = ..., 
                 recovery_capacity_reservation_group_id: Optional[str] = ..., 
                 recovery_cloud_service: Optional[str] = ..., 
+                recovery_confidential_data_disk_encryption_identity: Optional[str] = ..., 
                 recovery_extended_location: Optional[ExtendedLocation] = ..., 
                 recovery_fabric_location: Optional[str] = ..., 
                 recovery_fabric_object_id: Optional[str] = ..., 
@@ -4724,6 +4767,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         recovery_boot_diag_storage_account_id: Optional[str]
         recovery_capacity_reservation_group_id: Optional[str]
         recovery_cloud_service_id: Optional[str]
+        recovery_confidential_data_disk_encryption_identity: Optional[str]
         recovery_container_id: Optional[str]
         recovery_proximity_placement_group_id: Optional[str]
         recovery_resource_group_id: Optional[str]
@@ -4743,6 +4787,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 recovery_boot_diag_storage_account_id: Optional[str] = ..., 
                 recovery_capacity_reservation_group_id: Optional[str] = ..., 
                 recovery_cloud_service_id: Optional[str] = ..., 
+                recovery_confidential_data_disk_encryption_identity: Optional[str] = ..., 
                 recovery_container_id: Optional[str] = ..., 
                 recovery_proximity_placement_group_id: Optional[str] = ..., 
                 recovery_resource_group_id: Optional[str] = ..., 
@@ -4833,6 +4878,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         recovery_boot_diag_storage_account_id: Optional[str]
         recovery_capacity_reservation_group_id: Optional[str]
         recovery_cloud_service_id: Optional[str]
+        recovery_confidential_data_disk_encryption_identity: Optional[str]
         recovery_proximity_placement_group_id: Optional[str]
         recovery_resource_group_id: Optional[str]
         recovery_virtual_machine_scale_set_id: Optional[str]
@@ -4849,6 +4895,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 recovery_boot_diag_storage_account_id: Optional[str] = ..., 
                 recovery_capacity_reservation_group_id: Optional[str] = ..., 
                 recovery_cloud_service_id: Optional[str] = ..., 
+                recovery_confidential_data_disk_encryption_identity: Optional[str] = ..., 
                 recovery_proximity_placement_group_id: Optional[str] = ..., 
                 recovery_resource_group_id: Optional[str] = ..., 
                 recovery_virtual_machine_scale_set_id: Optional[str] = ..., 
@@ -4878,10 +4925,14 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
 
     class azure.mgmt.recoveryservicessiterecovery.models.A2AVmManagedDiskInputDetails(_Model):
+        confidential_disk_encryption_info: Optional[ConfidentialDiskEncryptionInfo]
         disk_encryption_info: Optional[DiskEncryptionInfo]
         disk_id: str
         primary_staging_azure_storage_account_id: str
+        recovery_disk_access_id: Optional[str]
         recovery_disk_encryption_set_id: Optional[str]
+        recovery_network_access_policy: Optional[Union[str, DiskNetworkAccessPolicy]]
+        recovery_public_network_access: Optional[Union[str, DiskPublicNetworkAccess]]
         recovery_replica_disk_account_type: Optional[str]
         recovery_resource_group_id: str
         recovery_target_disk_account_type: Optional[str]
@@ -4890,10 +4941,14 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         def __init__(
                 self, 
                 *, 
+                confidential_disk_encryption_info: Optional[ConfidentialDiskEncryptionInfo] = ..., 
                 disk_encryption_info: Optional[DiskEncryptionInfo] = ..., 
                 disk_id: str, 
                 primary_staging_azure_storage_account_id: str, 
+                recovery_disk_access_id: Optional[str] = ..., 
                 recovery_disk_encryption_set_id: Optional[str] = ..., 
+                recovery_network_access_policy: Optional[Union[str, DiskNetworkAccessPolicy]] = ..., 
+                recovery_public_network_access: Optional[Union[str, DiskPublicNetworkAccess]] = ..., 
                 recovery_replica_disk_account_type: Optional[str] = ..., 
                 recovery_resource_group_id: str, 
                 recovery_target_disk_account_type: Optional[str] = ...
@@ -4904,6 +4959,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
 
     class azure.mgmt.recoveryservicessiterecovery.models.A2AVmManagedDiskUpdateDetails(_Model):
+        confidential_disk_encryption_info: Optional[UpdateConfidentialDiskEncryptionInfo]
         disk_encryption_info: Optional[DiskEncryptionInfo]
         disk_id: Optional[str]
         failover_disk_name: Optional[str]
@@ -4915,6 +4971,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         def __init__(
                 self, 
                 *, 
+                confidential_disk_encryption_info: Optional[UpdateConfidentialDiskEncryptionInfo] = ..., 
                 disk_encryption_info: Optional[DiskEncryptionInfo] = ..., 
                 disk_id: Optional[str] = ..., 
                 failover_disk_name: Optional[str] = ..., 
@@ -5762,6 +5819,22 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservicessiterecovery.models.ConfidentialDiskEncryptionInfo(_Model):
+        recovery_replica_confidential_disk_encryption_set_id: Optional[str]
+        recovery_target_confidential_disk_encryption_set_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                recovery_replica_confidential_disk_encryption_set_id: Optional[str] = ..., 
+                recovery_target_confidential_disk_encryption_set_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservicessiterecovery.models.ConfigurationSettings(_Model):
         instance_type: str
 
@@ -6233,6 +6306,17 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicessiterecovery.models.DiskNetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALLOW_ALL = "AllowAll"
+        ALLOW_PRIVATE = "AllowPrivate"
+        DENY_ALL = "DenyAll"
+
+
+    class azure.mgmt.recoveryservicessiterecovery.models.DiskPublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
 
 
     class azure.mgmt.recoveryservicessiterecovery.models.DiskReplicationProgressHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7840,6 +7924,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
     class azure.mgmt.recoveryservicessiterecovery.models.IPConfigDetails(_Model):
         ip_address_type: Optional[str]
+        ip_version: Optional[Union[str, IPVersion]]
         is_primary: Optional[bool]
         is_seleted_for_failover: Optional[bool]
         name: Optional[str]
@@ -7912,6 +7997,11 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicessiterecovery.models.IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        I_PV4 = "IPv4"
+        I_PV6 = "IPv6"
 
 
     class azure.mgmt.recoveryservicessiterecovery.models.IdentityProviderDetails(_Model):
@@ -8855,6 +8945,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
 
     class azure.mgmt.recoveryservicessiterecovery.models.InMageRcmDiskInput(_Model):
+        confidential_disk_encryption_set_id: Optional[str]
         disk_encryption_set_id: Optional[str]
         disk_id: str
         disk_size_in_gb: Optional[int]
@@ -8868,6 +8959,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         def __init__(
                 self, 
                 *, 
+                confidential_disk_encryption_set_id: Optional[str] = ..., 
                 disk_encryption_set_id: Optional[str] = ..., 
                 disk_id: str, 
                 disk_size_in_gb: Optional[int] = ..., 
@@ -8883,6 +8975,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
 
     class azure.mgmt.recoveryservicessiterecovery.models.InMageRcmDisksDefaultInput(_Model):
+        confidential_disk_encryption_set_id: Optional[str]
         disk_encryption_set_id: Optional[str]
         disk_size_in_gb: Optional[int]
         disk_type: Union[str, DiskAccountType]
@@ -8895,6 +8988,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         def __init__(
                 self, 
                 *, 
+                confidential_disk_encryption_set_id: Optional[str] = ..., 
                 disk_encryption_set_id: Optional[str] = ..., 
                 disk_size_in_gb: Optional[int] = ..., 
                 disk_type: Union[str, DiskAccountType], 
@@ -8924,6 +9018,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         target_availability_zone: Optional[str]
         target_boot_diagnostics_storage_account_id: Optional[str]
         target_capacity_reservation_group_id: Optional[str]
+        target_extended_location: Optional[ExtendedLocation]
         target_managed_disk_tags: Optional[list[UserCreatedResourceTag]]
         target_network_id: Optional[str]
         target_nic_tags: Optional[list[UserCreatedResourceTag]]
@@ -8956,6 +9051,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 target_availability_zone: Optional[str] = ..., 
                 target_boot_diagnostics_storage_account_id: Optional[str] = ..., 
                 target_capacity_reservation_group_id: Optional[str] = ..., 
+                target_extended_location: Optional[ExtendedLocation] = ..., 
                 target_managed_disk_tags: Optional[list[UserCreatedResourceTag]] = ..., 
                 target_network_id: Optional[str] = ..., 
                 target_nic_tags: Optional[list[UserCreatedResourceTag]] = ..., 
@@ -9267,7 +9363,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
     class azure.mgmt.recoveryservicessiterecovery.models.InMageRcmMobilityAgentDetails(_Model):
         agent_reinstall_attempt_to_version: Optional[str]
         agent_reinstall_job_id: Optional[str]
-        agent_reinstall_state: Optional[list[Union[str, MobilityAgentReinstallType]]]
+        agent_reinstall_state: Optional[Union[str, MobilityAgentReinstallType]]
         agent_version_expiry_date: Optional[datetime]
         distro_name: Optional[str]
         distro_name_for_which_agent_is_installed: Optional[str]
@@ -9411,6 +9507,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
     class azure.mgmt.recoveryservicessiterecovery.models.InMageRcmProtectedDiskDetails(_Model):
         capacity_in_bytes: Optional[int]
+        confidential_disk_encryption_set_id: Optional[str]
         custom_target_disk_name: Optional[str]
         data_pending_at_source_agent_in_mb: Optional[float]
         data_pending_in_log_data_store_in_mb: Optional[float]
@@ -9523,6 +9620,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         target_availability_zone: Optional[str]
         target_boot_diagnostics_storage_account_id: Optional[str]
         target_capacity_reservation_group_id: Optional[str]
+        target_extended_location: Optional[ExtendedLocation]
         target_generation: Optional[str]
         target_location: Optional[str]
         target_managed_disk_tags: Optional[list[UserCreatedResourceTag]]
@@ -9557,6 +9655,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 target_availability_zone: Optional[str] = ..., 
                 target_boot_diagnostics_storage_account_id: Optional[str] = ..., 
                 target_capacity_reservation_group_id: Optional[str] = ..., 
+                target_extended_location: Optional[ExtendedLocation] = ..., 
                 target_location: Optional[str] = ..., 
                 target_managed_disk_tags: Optional[list[UserCreatedResourceTag]] = ..., 
                 target_network_id: Optional[str] = ..., 
@@ -11351,6 +11450,11 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicessiterecovery.models.RecoveryNetworkConfigAutoSyncPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
 
 
     class azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlan(ProxyResource):
@@ -13828,6 +13932,20 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservicessiterecovery.models.UpdateConfidentialDiskEncryptionInfo(_Model):
+        recovery_target_confidential_disk_encryption_set_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                recovery_target_confidential_disk_encryption_set_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservicessiterecovery.models.UpdateDiskInput(_Model):
         disk_id: str
         disk_size_in_gb: Optional[int]
@@ -14328,6 +14446,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
 
     class azure.mgmt.recoveryservicessiterecovery.models.VMwareCbtDiskInput(_Model):
+        confidential_disk_encryption_set_id: Optional[str]
         disk_encryption_set_id: Optional[str]
         disk_id: str
         disk_size_in_gb: Optional[int]
@@ -14343,6 +14462,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
         def __init__(
                 self, 
                 *, 
+                confidential_disk_encryption_set_id: Optional[str] = ..., 
                 disk_encryption_set_id: Optional[str] = ..., 
                 disk_id: str, 
                 disk_size_in_gb: Optional[int] = ..., 
@@ -14631,6 +14751,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
     class azure.mgmt.recoveryservicessiterecovery.models.VMwareCbtProtectedDiskDetails(_Model):
         capacity_in_bytes: Optional[int]
+        confidential_disk_encryption_set_id: Optional[str]
         disk_encryption_set_id: Optional[str]
         disk_id: Optional[str]
         disk_name: Optional[str]
@@ -15064,6 +15185,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
     class azure.mgmt.recoveryservicessiterecovery.models.VaultSettingCreationInputProperties(_Model):
         migration_solution_id: Optional[str]
+        recovery_network_config_auto_sync: Optional[Union[str, RecoveryNetworkConfigAutoSyncPolicy]]
         vmware_to_azure_provider_type: Optional[str]
 
         @overload
@@ -15071,6 +15193,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 self, 
                 *, 
                 migration_solution_id: Optional[str] = ..., 
+                recovery_network_config_auto_sync: Optional[Union[str, RecoveryNetworkConfigAutoSyncPolicy]] = ..., 
                 vmware_to_azure_provider_type: Optional[str] = ...
             ) -> None: ...
 
@@ -15080,6 +15203,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
 
     class azure.mgmt.recoveryservicessiterecovery.models.VaultSettingProperties(_Model):
         migration_solution_id: Optional[str]
+        recovery_network_config_auto_sync: Optional[Union[str, RecoveryNetworkConfigAutoSyncPolicy]]
         vmware_to_azure_provider_type: Optional[str]
 
         @overload
@@ -15087,6 +15211,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.models
                 self, 
                 *, 
                 migration_solution_id: Optional[str] = ..., 
+                recovery_network_config_auto_sync: Optional[Union[str, RecoveryNetworkConfigAutoSyncPolicy]] = ..., 
                 vmware_to_azure_provider_type: Optional[str] = ...
             ) -> None: ...
 
@@ -15430,7 +15555,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 alert_setting_name: str, 
-                request: JSON, 
+                request: ConfigureAlertRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15573,7 +15698,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 fabric_name: str, 
-                input: JSON, 
+                input: FabricCreationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15636,7 +15761,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 fabric_name: str, 
-                failover_process_server_request: JSON, 
+                failover_process_server_request: FailoverProcessServerRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15681,7 +15806,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 fabric_name: str, 
-                renew_certificate: JSON, 
+                renew_certificate: RenewCertificateInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15752,7 +15877,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
-                job_query_parameter: JSON, 
+                job_query_parameter: JobQueryParameter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15796,7 +15921,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 job_name: str, 
-                resume_job_params: JSON, 
+                resume_job_params: ResumeJobParams, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15892,7 +16017,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                input: JSON, 
+                input: EnableMigrationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15947,7 +16072,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                migrate_input: JSON, 
+                migrate_input: MigrateInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -15989,7 +16114,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                pause_replication_input: JSON, 
+                pause_replication_input: PauseReplicationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16031,7 +16156,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                resume_replication_input: JSON, 
+                resume_replication_input: ResumeReplicationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16073,7 +16198,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                input: JSON, 
+                input: ResyncInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16115,7 +16240,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                test_migrate_input: JSON, 
+                test_migrate_input: TestMigrateInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16157,7 +16282,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                test_migrate_cleanup_input: JSON, 
+                test_migrate_cleanup_input: TestMigrateCleanupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16199,7 +16324,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 migration_item_name: str, 
-                input: JSON, 
+                input: UpdateMigrationItemInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16287,7 +16412,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 network_name: str, 
                 network_mapping_name: str, 
-                input: JSON, 
+                input: CreateNetworkMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16340,7 +16465,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 network_name: str, 
                 network_mapping_name: str, 
-                input: JSON, 
+                input: UpdateNetworkMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16452,7 +16577,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 policy_name: str, 
-                input: JSON, 
+                input: CreatePolicyInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16497,7 +16622,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 policy_name: str, 
-                input: JSON, 
+                input: UpdatePolicyInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16597,7 +16722,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                add_disks_input: JSON, 
+                add_disks_input: AddDisksInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16639,7 +16764,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                apply_recovery_point_input: JSON, 
+                apply_recovery_point_input: ApplyRecoveryPointInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16681,7 +16806,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                input: JSON, 
+                input: EnableProtectionInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16723,7 +16848,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                disable_protection_input: JSON, 
+                disable_protection_input: DisableProtectionInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16787,7 +16912,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                failover_input: JSON, 
+                failover_input: PlannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16840,7 +16965,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                update_mobility_service_request: JSON, 
+                update_mobility_service_request: ReinstallMobilityServiceRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16882,7 +17007,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                remove_disks_input: JSON, 
+                remove_disks_input: RemoveDisksInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16935,7 +17060,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                reprotect_input: JSON, 
+                reprotect_input: ReverseReplicationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16977,7 +17102,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                resolve_health_input: JSON, 
+                resolve_health_input: ResolveHealthInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17019,7 +17144,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                switch_provider_input: JSON, 
+                switch_provider_input: SwitchProviderInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17061,7 +17186,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                testfailover_input: JSON, 
+                testfailover_input: TestFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17103,7 +17228,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                cleanup_input: JSON, 
+                cleanup_input: TestFailoverCleanupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17145,7 +17270,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                failover_input: JSON, 
+                failover_input: UnplannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17187,7 +17312,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                update_protection_input: JSON, 
+                update_protection_input: UpdateReplicationProtectedItemInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17229,7 +17354,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                appliance_update_input: JSON, 
+                appliance_update_input: UpdateApplianceForReplicationProtectedItemInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17271,7 +17396,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replicated_protected_item_name: str, 
-                update_mobility_service_request: JSON, 
+                update_mobility_service_request: UpdateMobilityServiceRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17354,7 +17479,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                apply_cluster_recovery_point_input: JSON, 
+                apply_cluster_recovery_point_input: ApplyClusterRecoveryPointInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17396,7 +17521,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                replication_protection_cluster: JSON, 
+                replication_protection_cluster: ReplicationProtectionCluster, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17471,7 +17596,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                failover_input: JSON, 
+                failover_input: ClusterTestFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17513,7 +17638,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                cleanup_input: JSON, 
+                cleanup_input: ClusterTestFailoverCleanupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17555,7 +17680,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 replication_protection_cluster_name: str, 
-                failover_input: JSON, 
+                failover_input: ClusterUnplannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17650,7 +17775,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 mapping_name: str, 
-                creation_input: JSON, 
+                creation_input: CreateProtectionContainerMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17692,7 +17817,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 mapping_name: str, 
-                removal_input: JSON, 
+                removal_input: RemoveProtectionContainerMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17745,7 +17870,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 protection_container_name: str, 
                 mapping_name: str, 
-                update_input: JSON, 
+                update_input: UpdateProtectionContainerMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17823,7 +17948,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_name: str, 
                 fabric_name: str, 
                 protection_container_name: str, 
-                creation_input: JSON, 
+                creation_input: CreateProtectionContainerInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17872,7 +17997,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_name: str, 
                 fabric_name: str, 
                 protection_container_name: str, 
-                discover_protectable_item_request: JSON, 
+                discover_protectable_item_request: DiscoverProtectableItemRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17911,7 +18036,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_name: str, 
                 fabric_name: str, 
                 protection_container_name: str, 
-                switch_input: JSON, 
+                switch_input: SwitchClusterProtectionInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17950,7 +18075,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_name: str, 
                 fabric_name: str, 
                 protection_container_name: str, 
-                switch_input: JSON, 
+                switch_input: SwitchProtectionInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18023,7 +18148,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 intent_object_name: str, 
-                input: JSON, 
+                input: CreateProtectionIntentInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18088,7 +18213,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: CreateRecoveryPlanInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18151,7 +18276,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: RecoveryPlanPlannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18196,7 +18321,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: RecoveryPlanTestFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18232,7 +18357,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: RecoveryPlanTestFailoverCleanupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18268,7 +18393,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: RecoveryPlanUnplannedFailoverInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18304,7 +18429,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 recovery_plan_name: str, 
-                input: JSON, 
+                input: UpdateRecoveryPlanInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18368,7 +18493,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_name: str, 
                 fabric_name: str, 
                 provider_name: str, 
-                add_provider_input: JSON, 
+                add_provider_input: AddRecoveryServicesProviderInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18475,7 +18600,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 fabric_name: str, 
                 storage_classification_name: str, 
                 storage_classification_mapping_name: str, 
-                pairing_input: JSON, 
+                pairing_input: StorageClassificationMappingInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18623,7 +18748,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_group_name: str, 
                 resource_name: str, 
                 vault_setting_name: str, 
-                input: JSON, 
+                input: VaultSettingCreationInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18687,7 +18812,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_name: str, 
                 fabric_name: str, 
                 vcenter_name: str, 
-                add_v_center_request: JSON, 
+                add_v_center_request: AddVCenterRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18736,7 +18861,7 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 resource_name: str, 
                 fabric_name: str, 
                 vcenter_name: str, 
-                update_v_center_request: JSON, 
+                update_v_center_request: UpdateVCenterRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18820,6 +18945,3320 @@ namespace azure.mgmt.recoveryservicessiterecovery.operations
                 replicated_protected_item_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[TargetComputeSize]: ...
+
+
+namespace azure.mgmt.recoveryservicessiterecovery.types
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AAddDisksInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        instanceType: Literal[A2A]
+        vmDisks: list[A2AVmDiskInputDetails]
+        vmManagedDisks: list[A2AVmManagedDiskInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AApplyClusterRecoveryPointInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AApplyRecoveryPointInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AClusterTestFailoverInput(TypedDict, total=False):
+        key "clusterRecoveryPointId": str
+        key "instanceType": Required[Literal["A2A"]]
+        clusterRecoveryPointId: str
+        individualNodeRecoveryPoints: list[str]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AClusterUnplannedFailoverInput(TypedDict, total=False):
+        key "clusterRecoveryPointId": str
+        key "instanceType": Required[Literal["A2A"]]
+        clusterRecoveryPointId: str
+        individualNodeRecoveryPoints: list[str]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AClusterVmManagedDiskInputDetails(TypedDict, total=False):
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "diskId": Required[str]
+        key "primaryStagingAzureStorageAccountId": Required[str]
+        key "recoveryDiskAccessId": str
+        key "recoveryDiskEncryptionSetId": str
+        key "recoveryNetworkAccessPolicy": Union[str, DiskNetworkAccessPolicy]
+        key "recoveryPublicNetworkAccess": Union[str, DiskPublicNetworkAccess]
+        key "recoveryReplicaDiskAccountType": str
+        key "recoveryResourceGroupId": Required[str]
+        key "recoveryTargetDiskAccountType": str
+        diskEncryptionInfo: DiskEncryptionInfo
+        diskId: str
+        primaryStagingAzureStorageAccountId: str
+        recoveryDiskAccessId: str
+        recoveryDiskEncryptionSetId: str
+        recoveryNetworkAccessPolicy: Union[str, DiskNetworkAccessPolicy]
+        recoveryPublicNetworkAccess: Union[str, DiskPublicNetworkAccess]
+        recoveryReplicaDiskAccountType: str
+        recoveryResourceGroupId: str
+        recoveryTargetDiskAccountType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AContainerCreationInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AContainerMappingInput(TypedDict, total=False):
+        key "agentAutoUpdateStatus": Union[str, AgentAutoUpdateStatus]
+        key "automationAccountArmId": str
+        key "automationAccountAuthenticationType": Union[str, AutomationAccountAuthenticationType]
+        key "instanceType": Required[Literal["A2A"]]
+        agentAutoUpdateStatus: Union[str, AgentAutoUpdateStatus]
+        automationAccountArmId: str
+        automationAccountAuthenticationType: Union[str, AutomationAccountAuthenticationType]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ACreateProtectionIntentInput(TypedDict, total=False):
+        key "agentAutoUpdateStatus": Union[str, AgentAutoUpdateStatus]
+        key "autoProtectionOfDataDisk": Union[str, AutoProtectionOfDataDisk]
+        key "automationAccountArmId": str
+        key "automationAccountAuthenticationType": Union[str, AutomationAccountAuthenticationType]
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "fabricObjectId": Required[str]
+        key "instanceType": Required[Literal["A2A"]]
+        key "multiVmGroupId": str
+        key "multiVmGroupName": str
+        key "primaryLocation": Required[str]
+        key "primaryStagingStorageAccountCustomInput": ForwardRef('StorageAccountCustomDetails', module='types')
+        key "protectionProfileCustomInput": ForwardRef('ProtectionProfileCustomDetails', module='types')
+        key "recoveryAvailabilitySetCustomInput": ForwardRef('RecoveryAvailabilitySetCustomDetails', module='types')
+        key "recoveryAvailabilityType": Required[Union[str, A2ARecoveryAvailabilityType]]
+        key "recoveryAvailabilityZone": str
+        key "recoveryBootDiagStorageAccount": ForwardRef('StorageAccountCustomDetails', module='types')
+        key "recoveryLocation": Required[str]
+        key "recoveryProximityPlacementGroupCustomInput": ForwardRef('RecoveryProximityPlacementGroupCustomDetails', module='types')
+        key "recoveryResourceGroupId": Required[str]
+        key "recoverySubscriptionId": Required[str]
+        key "recoveryVirtualNetworkCustomInput": ForwardRef('RecoveryVirtualNetworkCustomDetails', module='types')
+        agentAutoUpdateStatus: Union[str, AgentAutoUpdateStatus]
+        autoProtectionOfDataDisk: Union[str, AutoProtectionOfDataDisk]
+        automationAccountArmId: str
+        automationAccountAuthenticationType: Union[str, AutomationAccountAuthenticationType]
+        diskEncryptionInfo: DiskEncryptionInfo
+        fabricObjectId: str
+        instanceType: Literal[A2A]
+        multiVmGroupId: str
+        multiVmGroupName: str
+        primaryLocation: str
+        primaryStagingStorageAccountCustomInput: StorageAccountCustomDetails
+        protectionProfileCustomInput: ProtectionProfileCustomDetails
+        recoveryAvailabilitySetCustomInput: RecoveryAvailabilitySetCustomDetails
+        recoveryAvailabilityType: Union[str, A2ARecoveryAvailabilityType]
+        recoveryAvailabilityZone: str
+        recoveryBootDiagStorageAccount: StorageAccountCustomDetails
+        recoveryLocation: str
+        recoveryProximityPlacementGroupCustomInput: RecoveryProximityPlacementGroupCustomDetails
+        recoveryResourceGroupId: str
+        recoverySubscriptionId: str
+        recoveryVirtualNetworkCustomInput: RecoveryVirtualNetworkCustomDetails
+        vmDisks: list[A2AProtectionIntentDiskInputDetails]
+        vmManagedDisks: list[A2AProtectionIntentManagedDiskInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ACrossClusterMigrationApplyRecoveryPointInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2ACrossClusterMigration"]]
+        instanceType: Literal[A2ACrossClusterMigration]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ACrossClusterMigrationContainerCreationInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2ACrossClusterMigration"]]
+        instanceType: Literal[A2ACrossClusterMigration]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ACrossClusterMigrationEnableProtectionInput(TypedDict, total=False):
+        key "fabricObjectId": str
+        key "instanceType": Required[Literal["A2ACrossClusterMigration"]]
+        key "recoveryContainerId": str
+        fabricObjectId: str
+        instanceType: Literal[A2ACrossClusterMigration]
+        recoveryContainerId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ACrossClusterMigrationPolicyCreationInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2ACrossClusterMigration"]]
+        instanceType: Literal[A2ACrossClusterMigration]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AEnableProtectionInput(TypedDict, total=False):
+        key "autoProtectionOfDataDisk": Union[str, AutoProtectionOfDataDisk]
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "fabricObjectId": Required[str]
+        key "instanceType": Required[Literal["A2A"]]
+        key "multiVmGroupId": str
+        key "multiVmGroupName": str
+        key "platformFaultDomain": int
+        key "protectionClusterId": str
+        key "recoveryAvailabilitySetId": str
+        key "recoveryAvailabilityZone": str
+        key "recoveryAzureNetworkId": str
+        key "recoveryBootDiagStorageAccountId": str
+        key "recoveryCapacityReservationGroupId": str
+        key "recoveryCloudServiceId": str
+        key "recoveryConfidentialDataDiskEncryptionIdentity": str
+        key "recoveryContainerId": str
+        key "recoveryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "recoveryProximityPlacementGroupId": str
+        key "recoveryResourceGroupId": str
+        key "recoverySubnetName": str
+        key "recoveryVirtualMachineScaleSetId": str
+        autoProtectionOfDataDisk: Union[str, AutoProtectionOfDataDisk]
+        diskEncryptionInfo: DiskEncryptionInfo
+        fabricObjectId: str
+        instanceType: Literal[A2A]
+        multiVmGroupId: str
+        multiVmGroupName: str
+        platformFaultDomain: int
+        protectionClusterId: str
+        recoveryAvailabilitySetId: str
+        recoveryAvailabilityZone: str
+        recoveryAzureNetworkId: str
+        recoveryBootDiagStorageAccountId: str
+        recoveryCapacityReservationGroupId: str
+        recoveryCloudServiceId: str
+        recoveryConfidentialDataDiskEncryptionIdentity: str
+        recoveryContainerId: str
+        recoveryExtendedLocation: ExtendedLocation
+        recoveryProximityPlacementGroupId: str
+        recoveryResourceGroupId: str
+        recoverySubnetName: str
+        recoveryVirtualMachineScaleSetId: str
+        vmDisks: list[A2AVmDiskInputDetails]
+        vmManagedDisks: list[A2AVmManagedDiskInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2APolicyCreationInput(TypedDict, total=False):
+        key "appConsistentFrequencyInMinutes": int
+        key "crashConsistentFrequencyInMinutes": int
+        key "instanceType": Required[Literal["A2A"]]
+        key "multiVmSyncStatus": Required[Union[str, SetMultiVmSyncStatus]]
+        key "recoveryPointHistory": int
+        appConsistentFrequencyInMinutes: int
+        crashConsistentFrequencyInMinutes: int
+        instanceType: Literal[A2A]
+        multiVmSyncStatus: Union[str, SetMultiVmSyncStatus]
+        recoveryPointHistory: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AProtectedItemDetail(TypedDict, total=False):
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "recoveryAvailabilitySetId": str
+        key "recoveryAvailabilityZone": str
+        key "recoveryBootDiagStorageAccountId": str
+        key "recoveryCapacityReservationGroupId": str
+        key "recoveryProximityPlacementGroupId": str
+        key "recoveryResourceGroupId": str
+        key "recoveryVirtualMachineScaleSetId": str
+        key "replicationProtectedItemName": str
+        diskEncryptionInfo: DiskEncryptionInfo
+        recoveryAvailabilitySetId: str
+        recoveryAvailabilityZone: str
+        recoveryBootDiagStorageAccountId: str
+        recoveryCapacityReservationGroupId: str
+        recoveryProximityPlacementGroupId: str
+        recoveryResourceGroupId: str
+        recoveryVirtualMachineScaleSetId: str
+        replicationProtectedItemName: str
+        vmManagedDisks: list[A2AClusterVmManagedDiskInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AProtectedManagedDiskDetails(TypedDict, total=False):
+        key "confidentialDiskEncryptionInfo": ForwardRef('ConfidentialDiskEncryptionInfo', module='types')
+        key "dataPendingAtSourceAgentInMB": float
+        key "dataPendingInStagingStorageAccountInMB": float
+        key "dekKeyVaultArmId": str
+        key "diskCapacityInBytes": int
+        key "diskId": str
+        key "diskName": str
+        key "diskState": str
+        key "diskType": str
+        key "failoverDiskName": str
+        key "isDiskEncrypted": bool
+        key "isDiskKeyEncrypted": bool
+        key "kekKeyVaultArmId": str
+        key "keyIdentifier": str
+        key "monitoringJobType": str
+        key "monitoringPercentageCompletion": int
+        key "primaryDiskEncryptionSetId": str
+        key "primaryStagingAzureStorageAccountId": str
+        key "recoveryDiskAccessId": str
+        key "recoveryDiskEncryptionSetId": str
+        key "recoveryNetworkAccessPolicy": Union[str, DiskNetworkAccessPolicy]
+        key "recoveryOrignalTargetDiskId": str
+        key "recoveryPublicNetworkAccess": Union[str, DiskPublicNetworkAccess]
+        key "recoveryReplicaDiskAccountType": str
+        key "recoveryReplicaDiskId": str
+        key "recoveryResourceGroupId": str
+        key "recoveryTargetDiskAccountType": str
+        key "recoveryTargetDiskId": str
+        key "resyncRequired": bool
+        key "secretIdentifier": str
+        key "tfoDiskName": str
+        allowedDiskLevelOperation: list[str]
+        confidentialDiskEncryptionInfo: ConfidentialDiskEncryptionInfo
+        dataPendingAtSourceAgentInMB: float
+        dataPendingInStagingStorageAccountInMB: float
+        dekKeyVaultArmId: str
+        diskCapacityInBytes: int
+        diskId: str
+        diskName: str
+        diskState: str
+        diskType: str
+        failoverDiskName: str
+        isDiskEncrypted: bool
+        isDiskKeyEncrypted: bool
+        kekKeyVaultArmId: str
+        keyIdentifier: str
+        monitoringJobType: str
+        monitoringPercentageCompletion: int
+        primaryDiskEncryptionSetId: str
+        primaryStagingAzureStorageAccountId: str
+        recoveryDiskAccessId: str
+        recoveryDiskEncryptionSetId: str
+        recoveryNetworkAccessPolicy: Union[str, DiskNetworkAccessPolicy]
+        recoveryOrignalTargetDiskId: str
+        recoveryPublicNetworkAccess: Union[str, DiskPublicNetworkAccess]
+        recoveryReplicaDiskAccountType: str
+        recoveryReplicaDiskId: str
+        recoveryResourceGroupId: str
+        recoveryTargetDiskAccountType: str
+        recoveryTargetDiskId: str
+        resyncRequired: bool
+        secretIdentifier: str
+        tfoDiskName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AProtectionIntentDiskInputDetails(TypedDict, total=False):
+        key "diskUri": Required[str]
+        key "primaryStagingStorageAccountCustomInput": ForwardRef('StorageAccountCustomDetails', module='types')
+        key "recoveryAzureStorageAccountCustomInput": ForwardRef('StorageAccountCustomDetails', module='types')
+        diskUri: str
+        primaryStagingStorageAccountCustomInput: StorageAccountCustomDetails
+        recoveryAzureStorageAccountCustomInput: StorageAccountCustomDetails
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AProtectionIntentManagedDiskInputDetails(TypedDict, total=False):
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "diskId": Required[str]
+        key "primaryStagingStorageAccountCustomInput": ForwardRef('StorageAccountCustomDetails', module='types')
+        key "recoveryDiskEncryptionSetId": str
+        key "recoveryReplicaDiskAccountType": str
+        key "recoveryResourceGroupCustomInput": ForwardRef('RecoveryResourceGroupCustomDetails', module='types')
+        key "recoveryTargetDiskAccountType": str
+        diskEncryptionInfo: DiskEncryptionInfo
+        diskId: str
+        primaryStagingStorageAccountCustomInput: StorageAccountCustomDetails
+        recoveryDiskEncryptionSetId: str
+        recoveryReplicaDiskAccountType: str
+        recoveryResourceGroupCustomInput: RecoveryResourceGroupCustomDetails
+        recoveryTargetDiskAccountType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ARemoveDisksInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        instanceType: Literal[A2A]
+        vmDisksUris: list[str]
+        vmManagedDisksIds: list[str]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AReplicationProtectionClusterDetails(TypedDict, total=False):
+        key "clusterManagementId": str
+        key "failoverRecoveryPointId": str
+        key "initialPrimaryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "initialPrimaryFabricLocation": str
+        key "initialPrimaryZone": str
+        key "initialRecoveryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "initialRecoveryFabricLocation": str
+        key "initialRecoveryZone": str
+        key "instanceType": Required[Literal["A2A"]]
+        key "lastRpoCalculatedTime": str
+        key "lifecycleId": str
+        key "multiVmGroupCreateOption": Union[str, MultiVmGroupCreateOption]
+        key "multiVmGroupId": str
+        key "multiVmGroupName": str
+        key "primaryAvailabilityZone": str
+        key "primaryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "primaryFabricLocation": str
+        key "recoveryAvailabilityZone": str
+        key "recoveryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "recoveryFabricLocation": str
+        key "rpoInSeconds": int
+        clusterManagementId: str
+        failoverRecoveryPointId: str
+        initialPrimaryExtendedLocation: ExtendedLocation
+        initialPrimaryFabricLocation: str
+        initialPrimaryZone: str
+        initialRecoveryExtendedLocation: ExtendedLocation
+        initialRecoveryFabricLocation: str
+        initialRecoveryZone: str
+        instanceType: Literal[A2A]
+        lastRpoCalculatedTime: str
+        lifecycleId: str
+        multiVmGroupCreateOption: Union[str, MultiVmGroupCreateOption]
+        multiVmGroupId: str
+        multiVmGroupName: str
+        primaryAvailabilityZone: str
+        primaryExtendedLocation: ExtendedLocation
+        primaryFabricLocation: str
+        recoveryAvailabilityZone: str
+        recoveryExtendedLocation: ExtendedLocation
+        recoveryFabricLocation: str
+        rpoInSeconds: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AReprotectInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        key "policyId": str
+        key "recoveryAvailabilitySetId": str
+        key "recoveryCloudServiceId": str
+        key "recoveryContainerId": str
+        key "recoveryResourceGroupId": str
+        instanceType: Literal[A2A]
+        policyId: str
+        recoveryAvailabilitySetId: str
+        recoveryCloudServiceId: str
+        recoveryContainerId: str
+        recoveryResourceGroupId: str
+        vmDisks: list[A2AVmDiskInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ASharedDiskIRErrorDetails(TypedDict, total=False):
+        key "errorCode": str
+        key "errorCodeEnum": str
+        key "errorMessage": str
+        key "possibleCauses": str
+        key "recommendedAction": str
+        errorCode: str
+        errorCodeEnum: str
+        errorMessage: str
+        possibleCauses: str
+        recommendedAction: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ASharedDiskReplicationDetails(TypedDict, total=False):
+        key "failoverRecoveryPointId": str
+        key "instanceType": Required[Literal["A2A"]]
+        key "lastRpoCalculatedTime": str
+        key "managementId": str
+        key "monitoringJobType": str
+        key "monitoringPercentageCompletion": int
+        key "primaryFabricLocation": str
+        key "recoveryFabricLocation": str
+        key "rpoInSeconds": int
+        failoverRecoveryPointId: str
+        instanceType: Literal[A2A]
+        lastRpoCalculatedTime: str
+        managementId: str
+        monitoringJobType: str
+        monitoringPercentageCompletion: int
+        primaryFabricLocation: str
+        protectedManagedDisks: list[A2AProtectedManagedDiskDetails]
+        recoveryFabricLocation: str
+        rpoInSeconds: int
+        sharedDiskIRErrors: list[A2ASharedDiskIRErrorDetails]
+        unprotectedDisks: list[A2AUnprotectedDiskDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ASwitchClusterProtectionInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        key "policyId": str
+        key "recoveryContainerId": str
+        instanceType: Literal[A2A]
+        policyId: str
+        protectedItemsDetail: list[A2AProtectedItemDetail]
+        recoveryContainerId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ASwitchProtectionInput(TypedDict, total=False):
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "instanceType": Required[Literal["A2A"]]
+        key "platformFaultDomain": int
+        key "policyId": str
+        key "recoveryAvailabilitySetId": str
+        key "recoveryAvailabilityZone": str
+        key "recoveryBootDiagStorageAccountId": str
+        key "recoveryCapacityReservationGroupId": str
+        key "recoveryCloudServiceId": str
+        key "recoveryConfidentialDataDiskEncryptionIdentity": str
+        key "recoveryContainerId": str
+        key "recoveryProximityPlacementGroupId": str
+        key "recoveryResourceGroupId": str
+        key "recoveryVirtualMachineScaleSetId": str
+        diskEncryptionInfo: DiskEncryptionInfo
+        instanceType: Literal[A2A]
+        platformFaultDomain: int
+        policyId: str
+        recoveryAvailabilitySetId: str
+        recoveryAvailabilityZone: str
+        recoveryBootDiagStorageAccountId: str
+        recoveryCapacityReservationGroupId: str
+        recoveryCloudServiceId: str
+        recoveryConfidentialDataDiskEncryptionIdentity: str
+        recoveryContainerId: str
+        recoveryProximityPlacementGroupId: str
+        recoveryResourceGroupId: str
+        recoveryVirtualMachineScaleSetId: str
+        vmDisks: list[A2AVmDiskInputDetails]
+        vmManagedDisks: list[A2AVmManagedDiskInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2ATestFailoverInput(TypedDict, total=False):
+        key "cloudServiceCreationOption": str
+        key "instanceType": Required[Literal["A2A"]]
+        key "recoveryPointId": str
+        cloudServiceCreationOption: str
+        instanceType: Literal[A2A]
+        recoveryPointId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AUnplannedFailoverInput(TypedDict, total=False):
+        key "cloudServiceCreationOption": str
+        key "instanceType": Required[Literal["A2A"]]
+        key "recoveryPointId": str
+        cloudServiceCreationOption: str
+        instanceType: Literal[A2A]
+        recoveryPointId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AUnprotectedDiskDetails(TypedDict, total=False):
+        key "diskAutoProtectionStatus": Union[str, AutoProtectionOfDataDisk]
+        key "diskLunId": int
+        diskAutoProtectionStatus: Union[str, AutoProtectionOfDataDisk]
+        diskLunId: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AUpdateContainerMappingInput(TypedDict, total=False):
+        key "agentAutoUpdateStatus": Union[str, AgentAutoUpdateStatus]
+        key "automationAccountArmId": str
+        key "automationAccountAuthenticationType": Union[str, AutomationAccountAuthenticationType]
+        key "instanceType": Required[Literal["A2A"]]
+        agentAutoUpdateStatus: Union[str, AgentAutoUpdateStatus]
+        automationAccountArmId: str
+        automationAccountAuthenticationType: Union[str, AutomationAccountAuthenticationType]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AUpdateReplicationProtectedItemInput(TypedDict, total=False):
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "instanceType": Required[Literal["A2A"]]
+        key "platformFaultDomain": int
+        key "recoveryAvailabilityZone": str
+        key "recoveryBootDiagStorageAccountId": str
+        key "recoveryCapacityReservationGroupId": str
+        key "recoveryCloudServiceId": str
+        key "recoveryConfidentialDataDiskEncryptionIdentity": str
+        key "recoveryProximityPlacementGroupId": str
+        key "recoveryResourceGroupId": str
+        key "recoveryVirtualMachineScaleSetId": str
+        key "tfoAzureVMName": str
+        diskEncryptionInfo: DiskEncryptionInfo
+        instanceType: Literal[A2A]
+        managedDiskUpdateDetails: list[A2AVmManagedDiskUpdateDetails]
+        platformFaultDomain: int
+        recoveryAvailabilityZone: str
+        recoveryBootDiagStorageAccountId: str
+        recoveryCapacityReservationGroupId: str
+        recoveryCloudServiceId: str
+        recoveryConfidentialDataDiskEncryptionIdentity: str
+        recoveryProximityPlacementGroupId: str
+        recoveryResourceGroupId: str
+        recoveryVirtualMachineScaleSetId: str
+        tfoAzureVMName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AVmDiskInputDetails(TypedDict, total=False):
+        key "diskUri": Required[str]
+        key "primaryStagingAzureStorageAccountId": Required[str]
+        key "recoveryAzureStorageAccountId": Required[str]
+        diskUri: str
+        primaryStagingAzureStorageAccountId: str
+        recoveryAzureStorageAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AVmManagedDiskInputDetails(TypedDict, total=False):
+        key "confidentialDiskEncryptionInfo": ForwardRef('ConfidentialDiskEncryptionInfo', module='types')
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "diskId": Required[str]
+        key "primaryStagingAzureStorageAccountId": Required[str]
+        key "recoveryDiskAccessId": str
+        key "recoveryDiskEncryptionSetId": str
+        key "recoveryNetworkAccessPolicy": Union[str, DiskNetworkAccessPolicy]
+        key "recoveryPublicNetworkAccess": Union[str, DiskPublicNetworkAccess]
+        key "recoveryReplicaDiskAccountType": str
+        key "recoveryResourceGroupId": Required[str]
+        key "recoveryTargetDiskAccountType": str
+        confidentialDiskEncryptionInfo: ConfidentialDiskEncryptionInfo
+        diskEncryptionInfo: DiskEncryptionInfo
+        diskId: str
+        primaryStagingAzureStorageAccountId: str
+        recoveryDiskAccessId: str
+        recoveryDiskEncryptionSetId: str
+        recoveryNetworkAccessPolicy: Union[str, DiskNetworkAccessPolicy]
+        recoveryPublicNetworkAccess: Union[str, DiskPublicNetworkAccess]
+        recoveryReplicaDiskAccountType: str
+        recoveryResourceGroupId: str
+        recoveryTargetDiskAccountType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.A2AVmManagedDiskUpdateDetails(TypedDict, total=False):
+        key "confidentialDiskEncryptionInfo": ForwardRef('UpdateConfidentialDiskEncryptionInfo', module='types')
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "diskId": str
+        key "failoverDiskName": str
+        key "recoveryReplicaDiskAccountType": str
+        key "recoveryTargetDiskAccountType": str
+        key "tfoDiskName": str
+        confidentialDiskEncryptionInfo: UpdateConfidentialDiskEncryptionInfo
+        diskEncryptionInfo: DiskEncryptionInfo
+        diskId: str
+        failoverDiskName: str
+        recoveryReplicaDiskAccountType: str
+        recoveryTargetDiskAccountType: str
+        tfoDiskName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AddDisksInput(TypedDict, total=False):
+        key "properties": ForwardRef('AddDisksInputProperties', module='types')
+        properties: AddDisksInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AddDisksInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": Required[AddDisksProviderSpecificInput]
+        providerSpecificDetails: AddDisksProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AddRecoveryServicesProviderInput(TypedDict, total=False):
+        key "properties": Required[AddRecoveryServicesProviderInputProperties]
+        properties: AddRecoveryServicesProviderInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AddRecoveryServicesProviderInputProperties(TypedDict, total=False):
+        key "authenticationIdentityInput": Required[IdentityProviderInput]
+        key "biosId": str
+        key "dataPlaneAuthenticationIdentityInput": ForwardRef('IdentityProviderInput', module='types')
+        key "machineId": str
+        key "machineName": Required[str]
+        key "resourceAccessIdentityInput": Required[IdentityProviderInput]
+        authenticationIdentityInput: IdentityProviderInput
+        biosId: str
+        dataPlaneAuthenticationIdentityInput: IdentityProviderInput
+        machineId: str
+        machineName: str
+        resourceAccessIdentityInput: IdentityProviderInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AddVCenterRequest(TypedDict, total=False):
+        key "properties": ForwardRef('AddVCenterRequestProperties', module='types')
+        properties: AddVCenterRequestProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AddVCenterRequestProperties(TypedDict, total=False):
+        key "friendlyName": str
+        key "ipAddress": str
+        key "port": str
+        key "processServerId": str
+        key "runAsAccountId": str
+        friendlyName: str
+        ipAddress: str
+        port: str
+        processServerId: str
+        runAsAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ApplyClusterRecoveryPointInput(TypedDict, total=False):
+        key "properties": Required[ApplyClusterRecoveryPointInputProperties]
+        properties: ApplyClusterRecoveryPointInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ApplyClusterRecoveryPointInputProperties(TypedDict, total=False):
+        key "clusterRecoveryPointId": str
+        key "providerSpecificDetails": Required[ApplyClusterRecoveryPointProviderSpecificInput]
+        clusterRecoveryPointId: str
+        individualNodeRecoveryPoints: list[str]
+        providerSpecificDetails: ApplyClusterRecoveryPointProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ApplyClusterRecoveryPointProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ApplyRecoveryPointInput(TypedDict, total=False):
+        key "properties": Required[ApplyRecoveryPointInputProperties]
+        properties: ApplyRecoveryPointInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ApplyRecoveryPointInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": Required[ApplyRecoveryPointProviderSpecificInput]
+        key "recoveryPointId": str
+        providerSpecificDetails: ApplyRecoveryPointProviderSpecificInput
+        recoveryPointId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AzureFabricCreationInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["Azure"]]
+        key "location": str
+        instanceType: Literal[Azure]
+        location: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AzureToAzureCreateNetworkMappingInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["AzureToAzure"]]
+        key "primaryNetworkId": Required[str]
+        instanceType: Literal[AzureToAzure]
+        primaryNetworkId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.AzureToAzureUpdateNetworkMappingInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["AzureToAzure"]]
+        key "primaryNetworkId": str
+        instanceType: Literal[AzureToAzure]
+        primaryNetworkId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverCleanupInput(TypedDict, total=False):
+        key "properties": Required[ClusterTestFailoverCleanupInputProperties]
+        properties: ClusterTestFailoverCleanupInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverCleanupInputProperties(TypedDict, total=False):
+        key "comments": str
+        comments: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverInput(TypedDict, total=False):
+        key "properties": Required[ClusterTestFailoverInputProperties]
+        properties: ClusterTestFailoverInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverInputProperties(TypedDict, total=False):
+        key "failoverDirection": Union[str, FailoverDirection]
+        key "networkId": str
+        key "networkType": str
+        key "providerSpecificDetails": ForwardRef('ClusterTestFailoverProviderSpecificInput', module='types')
+        failoverDirection: Union[str, FailoverDirection]
+        networkId: str
+        networkType: str
+        providerSpecificDetails: ClusterTestFailoverProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverProviderSpecificInput(TypedDict, total=False):
+        key "clusterRecoveryPointId": str
+        key "instanceType": Required[Literal["A2A"]]
+        clusterRecoveryPointId: str
+        individualNodeRecoveryPoints: list[str]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ClusterUnplannedFailoverInput(TypedDict, total=False):
+        key "properties": Required[ClusterUnplannedFailoverInputProperties]
+        properties: ClusterUnplannedFailoverInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ClusterUnplannedFailoverInputProperties(TypedDict, total=False):
+        key "failoverDirection": str
+        key "providerSpecificDetails": ForwardRef('ClusterUnplannedFailoverProviderSpecificInput', module='types')
+        key "sourceSiteOperations": str
+        failoverDirection: str
+        providerSpecificDetails: ClusterUnplannedFailoverProviderSpecificInput
+        sourceSiteOperations: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ClusterUnplannedFailoverProviderSpecificInput(TypedDict, total=False):
+        key "clusterRecoveryPointId": str
+        key "instanceType": Required[Literal["A2A"]]
+        clusterRecoveryPointId: str
+        individualNodeRecoveryPoints: list[str]
+        instanceType: Literal[A2A]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ConfidentialDiskEncryptionInfo(TypedDict, total=False):
+        key "recoveryReplicaConfidentialDiskEncryptionSetId": str
+        key "recoveryTargetConfidentialDiskEncryptionSetId": str
+        recoveryReplicaConfidentialDiskEncryptionSetId: str
+        recoveryTargetConfidentialDiskEncryptionSetId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ConfigureAlertRequest(TypedDict, total=False):
+        key "properties": ForwardRef('ConfigureAlertRequestProperties', module='types')
+        properties: ConfigureAlertRequestProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ConfigureAlertRequestProperties(TypedDict, total=False):
+        key "locale": str
+        key "sendToOwners": str
+        customEmailAddresses: list[str]
+        locale: str
+        sendToOwners: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateNetworkMappingInput(TypedDict, total=False):
+        key "properties": Required[CreateNetworkMappingInputProperties]
+        properties: CreateNetworkMappingInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateNetworkMappingInputProperties(TypedDict, total=False):
+        key "fabricSpecificDetails": ForwardRef('FabricSpecificCreateNetworkMappingInput', module='types')
+        key "recoveryFabricName": str
+        key "recoveryNetworkId": Required[str]
+        fabricSpecificDetails: FabricSpecificCreateNetworkMappingInput
+        recoveryFabricName: str
+        recoveryNetworkId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreatePolicyInput(TypedDict, total=False):
+        key "properties": ForwardRef('CreatePolicyInputProperties', module='types')
+        properties: CreatePolicyInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreatePolicyInputProperties(TypedDict, total=False):
+        key "providerSpecificInput": ForwardRef('PolicyProviderSpecificInput', module='types')
+        providerSpecificInput: PolicyProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionContainerInput(TypedDict, total=False):
+        key "properties": ForwardRef('CreateProtectionContainerInputProperties', module='types')
+        properties: CreateProtectionContainerInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionContainerInputProperties(TypedDict, total=False):
+        providerSpecificInput: list[ReplicationProviderSpecificContainerCreationInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionContainerMappingInput(TypedDict, total=False):
+        key "properties": ForwardRef('CreateProtectionContainerMappingInputProperties', module='types')
+        properties: CreateProtectionContainerMappingInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionContainerMappingInputProperties(TypedDict, total=False):
+        key "policyId": str
+        key "providerSpecificInput": ForwardRef('ReplicationProviderSpecificContainerMappingInput', module='types')
+        key "targetProtectionContainerId": str
+        policyId: str
+        providerSpecificInput: ReplicationProviderSpecificContainerMappingInput
+        targetProtectionContainerId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionIntentInput(TypedDict, total=False):
+        key "properties": ForwardRef('CreateProtectionIntentProperties', module='types')
+        properties: CreateProtectionIntentProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionIntentProperties(TypedDict, total=False):
+        key "providerSpecificDetails": ForwardRef('CreateProtectionIntentProviderSpecificDetails', module='types')
+        providerSpecificDetails: CreateProtectionIntentProviderSpecificDetails
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionIntentProviderSpecificDetails(TypedDict, total=False):
+        key "agentAutoUpdateStatus": Union[str, AgentAutoUpdateStatus]
+        key "autoProtectionOfDataDisk": Union[str, AutoProtectionOfDataDisk]
+        key "automationAccountArmId": str
+        key "automationAccountAuthenticationType": Union[str, AutomationAccountAuthenticationType]
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "fabricObjectId": Required[str]
+        key "instanceType": Required[Literal["A2A"]]
+        key "multiVmGroupId": str
+        key "multiVmGroupName": str
+        key "primaryLocation": Required[str]
+        key "primaryStagingStorageAccountCustomInput": ForwardRef('StorageAccountCustomDetails', module='types')
+        key "protectionProfileCustomInput": ForwardRef('ProtectionProfileCustomDetails', module='types')
+        key "recoveryAvailabilitySetCustomInput": ForwardRef('RecoveryAvailabilitySetCustomDetails', module='types')
+        key "recoveryAvailabilityType": Required[Union[str, A2ARecoveryAvailabilityType]]
+        key "recoveryAvailabilityZone": str
+        key "recoveryBootDiagStorageAccount": ForwardRef('StorageAccountCustomDetails', module='types')
+        key "recoveryLocation": Required[str]
+        key "recoveryProximityPlacementGroupCustomInput": ForwardRef('RecoveryProximityPlacementGroupCustomDetails', module='types')
+        key "recoveryResourceGroupId": Required[str]
+        key "recoverySubscriptionId": Required[str]
+        key "recoveryVirtualNetworkCustomInput": ForwardRef('RecoveryVirtualNetworkCustomDetails', module='types')
+        agentAutoUpdateStatus: Union[str, AgentAutoUpdateStatus]
+        autoProtectionOfDataDisk: Union[str, AutoProtectionOfDataDisk]
+        automationAccountArmId: str
+        automationAccountAuthenticationType: Union[str, AutomationAccountAuthenticationType]
+        diskEncryptionInfo: DiskEncryptionInfo
+        fabricObjectId: str
+        instanceType: Literal[A2A]
+        multiVmGroupId: str
+        multiVmGroupName: str
+        primaryLocation: str
+        primaryStagingStorageAccountCustomInput: StorageAccountCustomDetails
+        protectionProfileCustomInput: ProtectionProfileCustomDetails
+        recoveryAvailabilitySetCustomInput: RecoveryAvailabilitySetCustomDetails
+        recoveryAvailabilityType: Union[str, A2ARecoveryAvailabilityType]
+        recoveryAvailabilityZone: str
+        recoveryBootDiagStorageAccount: StorageAccountCustomDetails
+        recoveryLocation: str
+        recoveryProximityPlacementGroupCustomInput: RecoveryProximityPlacementGroupCustomDetails
+        recoveryResourceGroupId: str
+        recoverySubscriptionId: str
+        recoveryVirtualNetworkCustomInput: RecoveryVirtualNetworkCustomDetails
+        vmDisks: list[A2AProtectionIntentDiskInputDetails]
+        vmManagedDisks: list[A2AProtectionIntentManagedDiskInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateRecoveryPlanInput(TypedDict, total=False):
+        key "properties": Required[CreateRecoveryPlanInputProperties]
+        properties: CreateRecoveryPlanInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CreateRecoveryPlanInputProperties(TypedDict, total=False):
+        key "failoverDeploymentModel": Union[str, FailoverDeploymentModel]
+        key "groups": Required[list[RecoveryPlanGroup]]
+        key "primaryFabricId": Required[str]
+        key "recoveryFabricId": Required[str]
+        failoverDeploymentModel: Union[str, FailoverDeploymentModel]
+        groups: list[RecoveryPlanGroup]
+        primaryFabricId: str
+        providerSpecificInput: list[RecoveryPlanProviderSpecificInput]
+        recoveryFabricId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.CurrentScenarioDetails(TypedDict, total=False):
+        key "jobId": str
+        key "scenarioName": str
+        key "startTime": str
+        jobId: str
+        scenarioName: str
+        startTime: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.DisableProtectionInput(TypedDict, total=False):
+        key "properties": Required[DisableProtectionInputProperties]
+        properties: DisableProtectionInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.DisableProtectionInputProperties(TypedDict, total=False):
+        key "disableProtectionReason": Union[str, DisableProtectionReason]
+        key "replicationProviderInput": ForwardRef('DisableProtectionProviderSpecificInput', module='types')
+        disableProtectionReason: Union[str, DisableProtectionReason]
+        replicationProviderInput: DisableProtectionProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.DisableProtectionProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMage"]]
+        key "replicaVmDeletionStatus": str
+        instanceType: Literal[InMage]
+        replicaVmDeletionStatus: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.DiscoverProtectableItemRequest(TypedDict, total=False):
+        key "properties": ForwardRef('DiscoverProtectableItemRequestProperties', module='types')
+        properties: DiscoverProtectableItemRequestProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.DiscoverProtectableItemRequestProperties(TypedDict, total=False):
+        key "friendlyName": str
+        key "ipAddress": str
+        key "osType": str
+        friendlyName: str
+        ipAddress: str
+        osType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.DiskEncryptionInfo(TypedDict, total=False):
+        key "diskEncryptionKeyInfo": ForwardRef('DiskEncryptionKeyInfo', module='types')
+        key "keyEncryptionKeyInfo": ForwardRef('KeyEncryptionKeyInfo', module='types')
+        diskEncryptionKeyInfo: DiskEncryptionKeyInfo
+        keyEncryptionKeyInfo: KeyEncryptionKeyInfo
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.DiskEncryptionKeyInfo(TypedDict, total=False):
+        key "keyVaultResourceArmId": str
+        key "secretIdentifier": str
+        keyVaultResourceArmId: str
+        secretIdentifier: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.EnableMigrationInput(TypedDict, total=False):
+        key "properties": Required[EnableMigrationInputProperties]
+        properties: EnableMigrationInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.EnableMigrationInputProperties(TypedDict, total=False):
+        key "policyId": Required[str]
+        key "providerSpecificDetails": Required[EnableMigrationProviderSpecificInput]
+        policyId: str
+        providerSpecificDetails: EnableMigrationProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.EnableMigrationProviderSpecificInput(TypedDict, total=False):
+        key "confidentialVmKeyVaultId": str
+        key "dataMoverRunAsAccountId": Required[str]
+        key "disksToInclude": Required[list[VMwareCbtDiskInput]]
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "licenseType": Union[str, LicenseType]
+        key "linuxLicenseType": Union[str, LinuxLicenseType]
+        key "performAutoResync": str
+        key "performSqlBulkRegistration": str
+        key "snapshotRunAsAccountId": Required[str]
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilitySetId": str
+        key "targetAvailabilityZone": str
+        key "targetBootDiagnosticsStorageAccountId": str
+        key "targetCapacityReservationGroupId": str
+        key "targetNetworkId": Required[str]
+        key "targetProximityPlacementGroupId": str
+        key "targetResourceGroupId": Required[str]
+        key "targetSubnetName": str
+        key "targetVmName": str
+        key "targetVmSecurityProfile": ForwardRef('VMwareCbtSecurityProfileProperties', module='types')
+        key "targetVmSize": str
+        key "testNetworkId": str
+        key "testSubnetName": str
+        key "userSelectedOSName": str
+        key "vmwareMachineId": Required[str]
+        confidentialVmKeyVaultId: str
+        dataMoverRunAsAccountId: str
+        disksToInclude: list[VMwareCbtDiskInput]
+        instanceType: Literal[VMwareCbt]
+        licenseType: Union[str, LicenseType]
+        linuxLicenseType: Union[str, LinuxLicenseType]
+        performAutoResync: str
+        performSqlBulkRegistration: str
+        seedDiskTags: dict[str, str]
+        snapshotRunAsAccountId: str
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilitySetId: str
+        targetAvailabilityZone: str
+        targetBootDiagnosticsStorageAccountId: str
+        targetCapacityReservationGroupId: str
+        targetDiskTags: dict[str, str]
+        targetNetworkId: str
+        targetNicTags: dict[str, str]
+        targetProximityPlacementGroupId: str
+        targetResourceGroupId: str
+        targetSubnetName: str
+        targetVmName: str
+        targetVmSecurityProfile: VMwareCbtSecurityProfileProperties
+        targetVmSize: str
+        targetVmTags: dict[str, str]
+        testNetworkId: str
+        testSubnetName: str
+        userSelectedOSName: str
+        vmwareMachineId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.EnableProtectionInput(TypedDict, total=False):
+        key "properties": ForwardRef('EnableProtectionInputProperties', module='types')
+        properties: EnableProtectionInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.EnableProtectionInputProperties(TypedDict, total=False):
+        key "policyId": str
+        key "protectableItemId": str
+        key "providerSpecificDetails": ForwardRef('EnableProtectionProviderSpecificInput', module='types')
+        policyId: str
+        protectableItemId: str
+        providerSpecificDetails: EnableProtectionProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ExistingProtectionProfile(TypedDict, total=False):
+        key "protectionProfileId": Required[str]
+        key "resourceType": Required[Literal["Existing"]]
+        protectionProfileId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ExistingRecoveryAvailabilitySet(TypedDict, total=False):
+        key "recoveryAvailabilitySetId": str
+        key "resourceType": Required[Literal["Existing"]]
+        recoveryAvailabilitySetId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ExistingRecoveryProximityPlacementGroup(TypedDict, total=False):
+        key "recoveryProximityPlacementGroupId": str
+        key "resourceType": Required[Literal["Existing"]]
+        recoveryProximityPlacementGroupId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ExistingRecoveryResourceGroup(TypedDict, total=False):
+        key "recoveryResourceGroupId": str
+        key "resourceType": Required[Literal["Existing"]]
+        recoveryResourceGroupId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ExistingRecoveryVirtualNetwork(TypedDict, total=False):
+        key "recoverySubnetName": str
+        key "recoveryVirtualNetworkId": Required[str]
+        key "resourceType": Required[Literal["Existing"]]
+        recoverySubnetName: str
+        recoveryVirtualNetworkId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ExistingStorageAccount(TypedDict, total=False):
+        key "azureStorageAccountId": Required[str]
+        key "resourceType": Required[Literal["Existing"]]
+        azureStorageAccountId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ExtendedLocation(TypedDict, total=False):
+        key "name": Required[str]
+        key "type": Required[Union[str, ExtendedLocationType]]
+        name: str
+        type: Union[str, ExtendedLocationType]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.FabricCreationInput(TypedDict, total=False):
+        key "properties": ForwardRef('FabricCreationInputProperties', module='types')
+        properties: FabricCreationInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.FabricCreationInputProperties(TypedDict, total=False):
+        key "customDetails": ForwardRef('FabricSpecificCreationInput', module='types')
+        customDetails: FabricSpecificCreationInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.FailoverProcessServerRequest(TypedDict, total=False):
+        key "properties": ForwardRef('FailoverProcessServerRequestProperties', module='types')
+        properties: FailoverProcessServerRequestProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.FailoverProcessServerRequestProperties(TypedDict, total=False):
+        key "containerName": str
+        key "sourceProcessServerId": str
+        key "targetProcessServerId": str
+        key "updateType": str
+        containerName: str
+        sourceProcessServerId: str
+        targetProcessServerId: str
+        updateType: str
+        vmsToMigrate: list[str]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HealthError(TypedDict, total=False):
+        key "creationTimeUtc": str
+        key "customerResolvability": Union[str, HealthErrorCustomerResolvability]
+        key "entityId": str
+        key "errorCategory": str
+        key "errorCode": str
+        key "errorId": str
+        key "errorLevel": str
+        key "errorMessage": str
+        key "errorSource": str
+        key "errorType": str
+        key "possibleCauses": str
+        key "recommendedAction": str
+        key "recoveryProviderErrorMessage": str
+        key "summaryMessage": str
+        creationTimeUtc: str
+        customerResolvability: Union[str, HealthErrorCustomerResolvability]
+        entityId: str
+        errorCategory: str
+        errorCode: str
+        errorId: str
+        errorLevel: str
+        errorMessage: str
+        errorSource: str
+        errorType: str
+        innerHealthErrors: list[InnerHealthError]
+        possibleCauses: str
+        recommendedAction: str
+        recoveryProviderErrorMessage: str
+        summaryMessage: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzureApplyRecoveryPointInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "primaryKekCertificatePfx": str
+        key "secondaryKekCertificatePfx": str
+        instanceType: Literal[HyperVReplicaAzure]
+        primaryKekCertificatePfx: str
+        secondaryKekCertificatePfx: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzureDiskInputDetails(TypedDict, total=False):
+        key "diskEncryptionSetId": str
+        key "diskId": str
+        key "diskSizeInGB": int
+        key "diskType": Union[str, DiskAccountType]
+        key "iops": int
+        key "logStorageAccountId": str
+        key "sectorSizeInBytes": int
+        key "throughputInMbps": int
+        diskEncryptionSetId: str
+        diskId: str
+        diskSizeInGB: int
+        diskType: Union[str, DiskAccountType]
+        iops: int
+        logStorageAccountId: str
+        sectorSizeInBytes: int
+        throughputInMbps: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzureEnableProtectionInput(TypedDict, total=False):
+        key "diskEncryptionSetId": str
+        key "diskType": Union[str, DiskAccountType]
+        key "enableRdpOnTargetOption": str
+        key "hvHostVmId": str
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "licenseType": Union[str, LicenseType]
+        key "linuxLicenseType": Union[str, LinuxLicenseType]
+        key "logStorageAccountId": str
+        key "osType": str
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilitySetId": str
+        key "targetAvailabilityZone": str
+        key "targetAzureNetworkId": str
+        key "targetAzureSubnetId": str
+        key "targetAzureV1ResourceGroupId": str
+        key "targetAzureV2ResourceGroupId": str
+        key "targetAzureVmName": str
+        key "targetCapacityReservationGroupId": str
+        key "targetProximityPlacementGroupId": str
+        key "targetStorageAccountId": str
+        key "targetVmSecurityProfile": ForwardRef('SecurityProfileProperties', module='types')
+        key "targetVmSize": str
+        key "useManagedDisks": str
+        key "useManagedDisksForReplication": str
+        key "userSelectedOSName": str
+        key "vhdId": str
+        key "vmName": str
+        diskEncryptionSetId: str
+        diskType: Union[str, DiskAccountType]
+        disksToInclude: list[str]
+        disksToIncludeForManagedDisks: list[HyperVReplicaAzureDiskInputDetails]
+        enableRdpOnTargetOption: str
+        hvHostVmId: str
+        instanceType: Literal[HyperVReplicaAzure]
+        licenseType: Union[str, LicenseType]
+        linuxLicenseType: Union[str, LinuxLicenseType]
+        logStorageAccountId: str
+        osType: str
+        seedManagedDiskTags: dict[str, str]
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilitySetId: str
+        targetAvailabilityZone: str
+        targetAzureNetworkId: str
+        targetAzureSubnetId: str
+        targetAzureV1ResourceGroupId: str
+        targetAzureV2ResourceGroupId: str
+        targetAzureVmName: str
+        targetCapacityReservationGroupId: str
+        targetManagedDiskTags: dict[str, str]
+        targetNicTags: dict[str, str]
+        targetProximityPlacementGroupId: str
+        targetStorageAccountId: str
+        targetVmSecurityProfile: SecurityProfileProperties
+        targetVmSize: str
+        targetVmTags: dict[str, str]
+        useManagedDisks: str
+        useManagedDisksForReplication: str
+        userSelectedOSName: str
+        vhdId: str
+        vmName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzureFailbackProviderInput(TypedDict, total=False):
+        key "dataSyncOption": str
+        key "instanceType": Required[Literal["HyperVReplicaAzureFailback"]]
+        key "providerIdForAlternateRecovery": str
+        key "recoveryVmCreationOption": str
+        dataSyncOption: str
+        instanceType: Literal[HyperVReplicaAzureFailback]
+        providerIdForAlternateRecovery: str
+        recoveryVmCreationOption: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzurePlannedFailoverProviderInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "osUpgradeVersion": str
+        key "primaryKekCertificatePfx": str
+        key "recoveryPointId": str
+        key "secondaryKekCertificatePfx": str
+        key "targetCapacityReservationGroupId": str
+        instanceType: Literal[HyperVReplicaAzure]
+        osUpgradeVersion: str
+        primaryKekCertificatePfx: str
+        recoveryPointId: str
+        secondaryKekCertificatePfx: str
+        targetCapacityReservationGroupId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzurePolicyInput(TypedDict, total=False):
+        key "applicationConsistentSnapshotFrequencyInHours": int
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "onlineReplicationStartTime": str
+        key "recoveryPointHistoryDuration": int
+        key "replicationInterval": int
+        applicationConsistentSnapshotFrequencyInHours: int
+        instanceType: Literal[HyperVReplicaAzure]
+        onlineReplicationStartTime: str
+        recoveryPointHistoryDuration: int
+        replicationInterval: int
+        storageAccounts: list[str]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzureReprotectInput(TypedDict, total=False):
+        key "hvHostVmId": str
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "logStorageAccountId": str
+        key "osType": str
+        key "storageAccountId": str
+        key "vHDId": str
+        key "vmName": str
+        hvHostVmId: str
+        instanceType: Literal[HyperVReplicaAzure]
+        logStorageAccountId: str
+        osType: str
+        storageAccountId: str
+        vHDId: str
+        vmName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzureTestFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "osUpgradeVersion": str
+        key "primaryKekCertificatePfx": str
+        key "recoveryPointId": str
+        key "secondaryKekCertificatePfx": str
+        instanceType: Literal[HyperVReplicaAzure]
+        osUpgradeVersion: str
+        primaryKekCertificatePfx: str
+        recoveryPointId: str
+        secondaryKekCertificatePfx: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzureUnplannedFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "primaryKekCertificatePfx": str
+        key "recoveryPointId": str
+        key "secondaryKekCertificatePfx": str
+        instanceType: Literal[HyperVReplicaAzure]
+        primaryKekCertificatePfx: str
+        recoveryPointId: str
+        secondaryKekCertificatePfx: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaAzureUpdateReplicationProtectedItemInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "linuxLicenseType": Union[str, LinuxLicenseType]
+        key "recoveryAzureV1ResourceGroupId": str
+        key "recoveryAzureV2ResourceGroupId": str
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilityZone": str
+        key "targetCapacityReservationGroupId": str
+        key "targetProximityPlacementGroupId": str
+        key "useManagedDisks": str
+        key "userSelectedOSName": str
+        diskIdToDiskEncryptionMap: dict[str, str]
+        instanceType: Literal[HyperVReplicaAzure]
+        linuxLicenseType: Union[str, LinuxLicenseType]
+        recoveryAzureV1ResourceGroupId: str
+        recoveryAzureV2ResourceGroupId: str
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilityZone: str
+        targetCapacityReservationGroupId: str
+        targetManagedDiskTags: dict[str, str]
+        targetNicTags: dict[str, str]
+        targetProximityPlacementGroupId: str
+        targetVmTags: dict[str, str]
+        useManagedDisks: str
+        userSelectedOSName: str
+        vmDisks: list[UpdateDiskInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaBluePolicyInput(TypedDict, total=False):
+        key "allowedAuthenticationType": int
+        key "applicationConsistentSnapshotFrequencyInHours": int
+        key "compression": str
+        key "initialReplicationMethod": str
+        key "instanceType": Required[Literal["HyperVReplica2012R2"]]
+        key "offlineReplicationExportPath": str
+        key "offlineReplicationImportPath": str
+        key "onlineReplicationStartTime": str
+        key "recoveryPoints": int
+        key "replicaDeletion": str
+        key "replicationFrequencyInSeconds": int
+        key "replicationPort": int
+        allowedAuthenticationType: int
+        applicationConsistentSnapshotFrequencyInHours: int
+        compression: str
+        initialReplicationMethod: str
+        instanceType: Literal[HyperVReplica2012R2]
+        offlineReplicationExportPath: str
+        offlineReplicationImportPath: str
+        onlineReplicationStartTime: str
+        recoveryPoints: int
+        replicaDeletion: str
+        replicationFrequencyInSeconds: int
+        replicationPort: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.HyperVReplicaPolicyInput(TypedDict, total=False):
+        key "allowedAuthenticationType": int
+        key "applicationConsistentSnapshotFrequencyInHours": int
+        key "compression": str
+        key "initialReplicationMethod": str
+        key "instanceType": Required[Literal["HyperVReplica2012R2"]]
+        key "offlineReplicationExportPath": str
+        key "offlineReplicationImportPath": str
+        key "onlineReplicationStartTime": str
+        key "recoveryPoints": int
+        key "replicaDeletion": str
+        key "replicationFrequencyInSeconds": int
+        key "replicationPort": int
+        allowedAuthenticationType: int
+        applicationConsistentSnapshotFrequencyInHours: int
+        compression: str
+        initialReplicationMethod: str
+        instanceType: Literal[HyperVReplica2012R2]
+        offlineReplicationExportPath: str
+        offlineReplicationImportPath: str
+        onlineReplicationStartTime: str
+        recoveryPoints: int
+        replicaDeletion: str
+        replicationFrequencyInSeconds: int
+        replicationPort: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.IPConfigInputDetails(TypedDict, total=False):
+        key "ipConfigName": str
+        key "isPrimary": bool
+        key "isSeletedForFailover": bool
+        key "recoveryPublicIPAddressId": str
+        key "recoveryStaticIPAddress": str
+        key "recoverySubnetName": str
+        key "tfoPublicIPAddressId": str
+        key "tfoStaticIPAddress": str
+        key "tfoSubnetName": str
+        ipConfigName: str
+        isPrimary: bool
+        isSeletedForFailover: bool
+        recoveryLBBackendAddressPoolIds: list[str]
+        recoveryPublicIPAddressId: str
+        recoveryStaticIPAddress: str
+        recoverySubnetName: str
+        tfoLBBackendAddressPoolIds: list[str]
+        tfoPublicIPAddressId: str
+        tfoStaticIPAddress: str
+        tfoSubnetName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.IdentityProviderInput(TypedDict, total=False):
+        key "aadAuthority": Required[str]
+        key "applicationId": Required[str]
+        key "audience": Required[str]
+        key "objectId": Required[str]
+        key "tenantId": Required[str]
+        aadAuthority: str
+        applicationId: str
+        audience: str
+        objectId: str
+        tenantId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2ApplyRecoveryPointInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        instanceType: Literal[InMageAzureV2]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2DiskInputDetails(TypedDict, total=False):
+        key "diskEncryptionSetId": str
+        key "diskId": str
+        key "diskType": Union[str, DiskAccountType]
+        key "logStorageAccountId": str
+        diskEncryptionSetId: str
+        diskId: str
+        diskType: Union[str, DiskAccountType]
+        logStorageAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2EnableProtectionInput(TypedDict, total=False):
+        key "diskEncryptionSetId": str
+        key "diskType": Union[str, DiskAccountType]
+        key "enableRdpOnTargetOption": str
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "licenseType": Union[str, LicenseType]
+        key "logStorageAccountId": str
+        key "masterTargetId": str
+        key "multiVmGroupId": str
+        key "multiVmGroupName": str
+        key "processServerId": str
+        key "runAsAccountId": str
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "storageAccountId": str
+        key "targetAvailabilitySetId": str
+        key "targetAvailabilityZone": str
+        key "targetAzureNetworkId": str
+        key "targetAzureSubnetId": str
+        key "targetAzureV1ResourceGroupId": str
+        key "targetAzureV2ResourceGroupId": str
+        key "targetAzureVmName": str
+        key "targetProximityPlacementGroupId": str
+        key "targetVmSize": str
+        diskEncryptionSetId: str
+        diskType: Union[str, DiskAccountType]
+        disksToInclude: list[InMageAzureV2DiskInputDetails]
+        enableRdpOnTargetOption: str
+        instanceType: Literal[InMageAzureV2]
+        licenseType: Union[str, LicenseType]
+        logStorageAccountId: str
+        masterTargetId: str
+        multiVmGroupId: str
+        multiVmGroupName: str
+        processServerId: str
+        runAsAccountId: str
+        seedManagedDiskTags: dict[str, str]
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        storageAccountId: str
+        targetAvailabilitySetId: str
+        targetAvailabilityZone: str
+        targetAzureNetworkId: str
+        targetAzureSubnetId: str
+        targetAzureV1ResourceGroupId: str
+        targetAzureV2ResourceGroupId: str
+        targetAzureVmName: str
+        targetManagedDiskTags: dict[str, str]
+        targetNicTags: dict[str, str]
+        targetProximityPlacementGroupId: str
+        targetVmSize: str
+        targetVmTags: dict[str, str]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2PolicyInput(TypedDict, total=False):
+        key "appConsistentFrequencyInMinutes": int
+        key "crashConsistentFrequencyInMinutes": int
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "multiVmSyncStatus": Required[Union[str, SetMultiVmSyncStatus]]
+        key "recoveryPointHistory": int
+        key "recoveryPointThresholdInMinutes": int
+        appConsistentFrequencyInMinutes: int
+        crashConsistentFrequencyInMinutes: int
+        instanceType: Literal[InMageAzureV2]
+        multiVmSyncStatus: Union[str, SetMultiVmSyncStatus]
+        recoveryPointHistory: int
+        recoveryPointThresholdInMinutes: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2ReprotectInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "logStorageAccountId": str
+        key "masterTargetId": str
+        key "policyId": str
+        key "processServerId": str
+        key "runAsAccountId": str
+        key "storageAccountId": str
+        disksToInclude: list[str]
+        instanceType: Literal[InMageAzureV2]
+        logStorageAccountId: str
+        masterTargetId: str
+        policyId: str
+        processServerId: str
+        runAsAccountId: str
+        storageAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2SwitchProviderInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "targetApplianceID": Required[str]
+        key "targetFabricID": Required[str]
+        key "targetVaultID": Required[str]
+        instanceType: Literal[InMageAzureV2]
+        targetApplianceID: str
+        targetFabricID: str
+        targetVaultID: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2TestFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "osUpgradeVersion": str
+        key "recoveryPointId": str
+        instanceType: Literal[InMageAzureV2]
+        osUpgradeVersion: str
+        recoveryPointId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2UnplannedFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "osUpgradeVersion": str
+        key "recoveryPointId": str
+        instanceType: Literal[InMageAzureV2]
+        osUpgradeVersion: str
+        recoveryPointId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageAzureV2UpdateReplicationProtectedItemInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "recoveryAzureV1ResourceGroupId": str
+        key "recoveryAzureV2ResourceGroupId": str
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilityZone": str
+        key "targetProximityPlacementGroupId": str
+        key "useManagedDisks": str
+        instanceType: Literal[InMageAzureV2]
+        recoveryAzureV1ResourceGroupId: str
+        recoveryAzureV2ResourceGroupId: str
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilityZone: str
+        targetManagedDiskTags: dict[str, str]
+        targetNicTags: dict[str, str]
+        targetProximityPlacementGroupId: str
+        targetVmTags: dict[str, str]
+        useManagedDisks: str
+        vmDisks: list[UpdateDiskInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageDisableProtectionProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMage"]]
+        key "replicaVmDeletionStatus": str
+        instanceType: Literal[InMage]
+        replicaVmDeletionStatus: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageDiskExclusionInput(TypedDict, total=False):
+        diskSignatureOptions: list[InMageDiskSignatureExclusionOptions]
+        volumeOptions: list[InMageVolumeExclusionOptions]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageDiskSignatureExclusionOptions(TypedDict, total=False):
+        key "diskSignature": str
+        diskSignature: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageEnableProtectionInput(TypedDict, total=False):
+        key "datastoreName": str
+        key "diskExclusionInput": ForwardRef('InMageDiskExclusionInput', module='types')
+        key "instanceType": Required[Literal["InMage"]]
+        key "masterTargetId": Required[str]
+        key "multiVmGroupId": Required[str]
+        key "multiVmGroupName": Required[str]
+        key "processServerId": Required[str]
+        key "retentionDrive": Required[str]
+        key "runAsAccountId": str
+        key "vmFriendlyName": str
+        datastoreName: str
+        diskExclusionInput: InMageDiskExclusionInput
+        disksToInclude: list[str]
+        instanceType: Literal[InMage]
+        masterTargetId: str
+        multiVmGroupId: str
+        multiVmGroupName: str
+        processServerId: str
+        retentionDrive: str
+        runAsAccountId: str
+        vmFriendlyName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMagePolicyInput(TypedDict, total=False):
+        key "appConsistentFrequencyInMinutes": int
+        key "instanceType": Required[Literal["InMage"]]
+        key "multiVmSyncStatus": Required[Union[str, SetMultiVmSyncStatus]]
+        key "recoveryPointHistory": int
+        key "recoveryPointThresholdInMinutes": int
+        appConsistentFrequencyInMinutes: int
+        instanceType: Literal[InMage]
+        multiVmSyncStatus: Union[str, SetMultiVmSyncStatus]
+        recoveryPointHistory: int
+        recoveryPointThresholdInMinutes: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmAddDisksInput(TypedDict, total=False):
+        key "disks": Required[list[InMageRcmDiskInput]]
+        key "instanceType": Required[Literal["InMageRcm"]]
+        disks: list[InMageRcmDiskInput]
+        instanceType: Literal[InMageRcm]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmApplyRecoveryPointInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "recoveryPointId": Required[str]
+        instanceType: Literal[InMageRcm]
+        recoveryPointId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmDiskInput(TypedDict, total=False):
+        key "confidentialDiskEncryptionSetId": str
+        key "diskEncryptionSetId": str
+        key "diskId": Required[str]
+        key "diskSizeInGB": int
+        key "diskType": Required[Union[str, DiskAccountType]]
+        key "iops": int
+        key "logStorageAccountId": Required[str]
+        key "sectorSizeInBytes": int
+        key "throughputInMbps": int
+        confidentialDiskEncryptionSetId: str
+        diskEncryptionSetId: str
+        diskId: str
+        diskSizeInGB: int
+        diskType: Union[str, DiskAccountType]
+        iops: int
+        logStorageAccountId: str
+        sectorSizeInBytes: int
+        throughputInMbps: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmDisksDefaultInput(TypedDict, total=False):
+        key "confidentialDiskEncryptionSetId": str
+        key "diskEncryptionSetId": str
+        key "diskSizeInGB": int
+        key "diskType": Required[Union[str, DiskAccountType]]
+        key "iops": int
+        key "logStorageAccountId": Required[str]
+        key "sectorSizeInBytes": int
+        key "throughputInMbps": int
+        confidentialDiskEncryptionSetId: str
+        diskEncryptionSetId: str
+        diskSizeInGB: int
+        diskType: Union[str, DiskAccountType]
+        iops: int
+        logStorageAccountId: str
+        sectorSizeInBytes: int
+        throughputInMbps: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmEnableProtectionInput(TypedDict, total=False):
+        key "disksDefault": ForwardRef('InMageRcmDisksDefaultInput', module='types')
+        key "fabricDiscoveryMachineId": Required[str]
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "licenseType": Union[str, LicenseType]
+        key "linuxLicenseType": Union[str, LinuxLicenseType]
+        key "multiVmGroupName": str
+        key "processServerId": Required[str]
+        key "runAsAccountId": str
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilitySetId": str
+        key "targetAvailabilityZone": str
+        key "targetBootDiagnosticsStorageAccountId": str
+        key "targetCapacityReservationGroupId": str
+        key "targetExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "targetNetworkId": str
+        key "targetProximityPlacementGroupId": str
+        key "targetResourceGroupId": Required[str]
+        key "targetSubnetName": str
+        key "targetVmName": str
+        key "targetVmSecurityProfile": ForwardRef('SecurityProfileProperties', module='types')
+        key "targetVmSize": str
+        key "testNetworkId": str
+        key "testSubnetName": str
+        key "userSelectedOSName": str
+        disksDefault: InMageRcmDisksDefaultInput
+        disksToInclude: list[InMageRcmDiskInput]
+        fabricDiscoveryMachineId: str
+        instanceType: Literal[InMageRcm]
+        licenseType: Union[str, LicenseType]
+        linuxLicenseType: Union[str, LinuxLicenseType]
+        multiVmGroupName: str
+        processServerId: str
+        runAsAccountId: str
+        seedManagedDiskTags: list[UserCreatedResourceTag]
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilitySetId: str
+        targetAvailabilityZone: str
+        targetBootDiagnosticsStorageAccountId: str
+        targetCapacityReservationGroupId: str
+        targetExtendedLocation: ExtendedLocation
+        targetManagedDiskTags: list[UserCreatedResourceTag]
+        targetNetworkId: str
+        targetNicTags: list[UserCreatedResourceTag]
+        targetProximityPlacementGroupId: str
+        targetResourceGroupId: str
+        targetSubnetName: str
+        targetVmName: str
+        targetVmSecurityProfile: SecurityProfileProperties
+        targetVmSize: str
+        targetVmTags: list[UserCreatedResourceTag]
+        testNetworkId: str
+        testSubnetName: str
+        userSelectedOSName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmFabricCreationInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "physicalSiteId": Required[str]
+        key "sourceAgentIdentity": Required[IdentityProviderInput]
+        key "vmwareSiteId": Required[str]
+        instanceType: Literal[InMageRcm]
+        physicalSiteId: str
+        sourceAgentIdentity: IdentityProviderInput
+        vmwareSiteId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmFailbackPlannedFailoverProviderInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcmFailback"]]
+        key "recoveryPointType": Required[Union[str, InMageRcmFailbackRecoveryPointType]]
+        instanceType: Literal[InMageRcmFailback]
+        recoveryPointType: Union[str, InMageRcmFailbackRecoveryPointType]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmFailbackPolicyCreationInput(TypedDict, total=False):
+        key "appConsistentFrequencyInMinutes": int
+        key "crashConsistentFrequencyInMinutes": int
+        key "instanceType": Required[Literal["InMageRcmFailback"]]
+        appConsistentFrequencyInMinutes: int
+        crashConsistentFrequencyInMinutes: int
+        instanceType: Literal[InMageRcmFailback]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmFailbackReprotectInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcmFailback"]]
+        key "policyId": Required[str]
+        key "processServerId": Required[str]
+        key "runAsAccountId": str
+        instanceType: Literal[InMageRcmFailback]
+        policyId: str
+        processServerId: str
+        runAsAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmNicInput(TypedDict, total=False):
+        key "isPrimaryNic": Required[str]
+        key "isSelectedForFailover": str
+        key "nicId": Required[str]
+        key "targetNicName": str
+        key "targetStaticIPAddress": str
+        key "targetSubnetName": str
+        key "testStaticIPAddress": str
+        key "testSubnetName": str
+        isPrimaryNic: str
+        isSelectedForFailover: str
+        nicId: str
+        targetNicName: str
+        targetStaticIPAddress: str
+        targetSubnetName: str
+        testStaticIPAddress: str
+        testSubnetName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmPolicyCreationInput(TypedDict, total=False):
+        key "appConsistentFrequencyInMinutes": int
+        key "crashConsistentFrequencyInMinutes": int
+        key "enableMultiVmSync": str
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "recoveryPointHistoryInMinutes": int
+        appConsistentFrequencyInMinutes: int
+        crashConsistentFrequencyInMinutes: int
+        enableMultiVmSync: str
+        instanceType: Literal[InMageRcm]
+        recoveryPointHistoryInMinutes: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmReprotectInput(TypedDict, total=False):
+        key "datastoreName": Required[str]
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "logStorageAccountId": Required[str]
+        key "policyId": str
+        key "reprotectAgentId": Required[str]
+        datastoreName: str
+        instanceType: Literal[InMageRcm]
+        logStorageAccountId: str
+        policyId: str
+        reprotectAgentId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmTestFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "networkId": str
+        key "osUpgradeVersion": str
+        key "recoveryPointId": str
+        instanceType: Literal[InMageRcm]
+        networkId: str
+        osUpgradeVersion: str
+        recoveryPointId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmUnplannedFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "osUpgradeVersion": str
+        key "performShutdown": Required[str]
+        key "recoveryPointId": str
+        key "targetCapacityReservationGroupId": str
+        instanceType: Literal[InMageRcm]
+        osUpgradeVersion: str
+        performShutdown: str
+        recoveryPointId: str
+        targetCapacityReservationGroupId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmUpdateApplianceForReplicationProtectedItemInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "runAsAccountId": str
+        instanceType: Literal[InMageRcm]
+        runAsAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmUpdateContainerMappingInput(TypedDict, total=False):
+        key "enableAgentAutoUpgrade": Required[str]
+        key "instanceType": Required[Literal["InMageRcm"]]
+        enableAgentAutoUpgrade: str
+        instanceType: Literal[InMageRcm]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageRcmUpdateReplicationProtectedItemInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "licenseType": Union[str, LicenseType]
+        key "linuxLicenseType": Union[str, LinuxLicenseType]
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilitySetId": str
+        key "targetAvailabilityZone": str
+        key "targetBootDiagnosticsStorageAccountId": str
+        key "targetCapacityReservationGroupId": str
+        key "targetNetworkId": str
+        key "targetProximityPlacementGroupId": str
+        key "targetResourceGroupId": str
+        key "targetVmName": str
+        key "targetVmSize": str
+        key "testNetworkId": str
+        key "userSelectedOSName": str
+        instanceType: Literal[InMageRcm]
+        licenseType: Union[str, LicenseType]
+        linuxLicenseType: Union[str, LinuxLicenseType]
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilitySetId: str
+        targetAvailabilityZone: str
+        targetBootDiagnosticsStorageAccountId: str
+        targetCapacityReservationGroupId: str
+        targetManagedDiskTags: list[UserCreatedResourceTag]
+        targetNetworkId: str
+        targetNicTags: list[UserCreatedResourceTag]
+        targetProximityPlacementGroupId: str
+        targetResourceGroupId: str
+        targetVmName: str
+        targetVmSize: str
+        targetVmTags: list[UserCreatedResourceTag]
+        testNetworkId: str
+        userSelectedOSName: str
+        vmDisks: list[UpdateDiskInput]
+        vmNics: list[InMageRcmNicInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageReprotectInput(TypedDict, total=False):
+        key "datastoreName": str
+        key "diskExclusionInput": ForwardRef('InMageDiskExclusionInput', module='types')
+        key "instanceType": Required[Literal["InMage"]]
+        key "masterTargetId": Required[str]
+        key "processServerId": Required[str]
+        key "profileId": Required[str]
+        key "retentionDrive": Required[str]
+        key "runAsAccountId": str
+        datastoreName: str
+        diskExclusionInput: InMageDiskExclusionInput
+        disksToInclude: list[str]
+        instanceType: Literal[InMage]
+        masterTargetId: str
+        processServerId: str
+        profileId: str
+        retentionDrive: str
+        runAsAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageTestFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMage"]]
+        key "recoveryPointId": str
+        key "recoveryPointType": Union[str, RecoveryPointType]
+        instanceType: Literal[InMage]
+        recoveryPointId: str
+        recoveryPointType: Union[str, RecoveryPointType]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageUnplannedFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMage"]]
+        key "recoveryPointId": str
+        key "recoveryPointType": Union[str, RecoveryPointType]
+        instanceType: Literal[InMage]
+        recoveryPointId: str
+        recoveryPointType: Union[str, RecoveryPointType]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InMageVolumeExclusionOptions(TypedDict, total=False):
+        key "onlyExcludeIfSingleVolume": str
+        key "volumeLabel": str
+        onlyExcludeIfSingleVolume: str
+        volumeLabel: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.InnerHealthError(TypedDict, total=False):
+        key "creationTimeUtc": str
+        key "customerResolvability": Union[str, HealthErrorCustomerResolvability]
+        key "entityId": str
+        key "errorCategory": str
+        key "errorCode": str
+        key "errorId": str
+        key "errorLevel": str
+        key "errorMessage": str
+        key "errorSource": str
+        key "errorType": str
+        key "possibleCauses": str
+        key "recommendedAction": str
+        key "recoveryProviderErrorMessage": str
+        key "summaryMessage": str
+        creationTimeUtc: str
+        customerResolvability: Union[str, HealthErrorCustomerResolvability]
+        entityId: str
+        errorCategory: str
+        errorCode: str
+        errorId: str
+        errorLevel: str
+        errorMessage: str
+        errorSource: str
+        errorType: str
+        possibleCauses: str
+        recommendedAction: str
+        recoveryProviderErrorMessage: str
+        summaryMessage: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.JobQueryParameter(TypedDict, total=False):
+        key "affectedObjectTypes": str
+        key "endTime": str
+        key "fabricId": str
+        key "jobName": str
+        key "jobOutputType": Union[str, ExportJobOutputSerializationType]
+        key "jobStatus": str
+        key "startTime": str
+        key "timezoneOffset": float
+        affectedObjectTypes: str
+        endTime: str
+        fabricId: str
+        jobName: str
+        jobOutputType: Union[str, ExportJobOutputSerializationType]
+        jobStatus: str
+        startTime: str
+        timezoneOffset: float
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.KeyEncryptionKeyInfo(TypedDict, total=False):
+        key "keyIdentifier": str
+        key "keyVaultResourceArmId": str
+        keyIdentifier: str
+        keyVaultResourceArmId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ManagedRunCommandScriptInput(TypedDict, total=False):
+        key "scriptParameters": Required[str]
+        key "scriptUrl": Required[str]
+        key "stepName": Required[str]
+        scriptParameters: str
+        scriptUrl: str
+        stepName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.MigrateInput(TypedDict, total=False):
+        key "properties": Required[MigrateInputProperties]
+        properties: MigrateInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.MigrateInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": Required[MigrateProviderSpecificInput]
+        providerSpecificDetails: MigrateProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.MigrateProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "osUpgradeVersion": str
+        key "performShutdown": Required[str]
+        key "targetCapacityReservationGroupId": str
+        instanceType: Literal[VMwareCbt]
+        osUpgradeVersion: str
+        performShutdown: str
+        postMigrationSteps: list[ManagedRunCommandScriptInput]
+        targetCapacityReservationGroupId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.NewProtectionProfile(TypedDict, total=False):
+        key "appConsistentFrequencyInMinutes": int
+        key "crashConsistentFrequencyInMinutes": int
+        key "multiVmSyncStatus": Required[Union[str, SetMultiVmSyncStatus]]
+        key "policyName": Required[str]
+        key "recoveryPointHistory": int
+        key "resourceType": Required[Literal["New"]]
+        appConsistentFrequencyInMinutes: int
+        crashConsistentFrequencyInMinutes: int
+        multiVmSyncStatus: Union[str, SetMultiVmSyncStatus]
+        policyName: str
+        recoveryPointHistory: int
+        resourceType: Literal[New]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.NewRecoveryVirtualNetwork(TypedDict, total=False):
+        key "recoveryVirtualNetworkName": str
+        key "recoveryVirtualNetworkResourceGroupName": str
+        key "resourceType": Required[Literal["New"]]
+        recoveryVirtualNetworkName: str
+        recoveryVirtualNetworkResourceGroupName: str
+        resourceType: Literal[New]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.PauseReplicationInput(TypedDict, total=False):
+        key "properties": Required[PauseReplicationInputProperties]
+        properties: PauseReplicationInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.PauseReplicationInputProperties(TypedDict, total=False):
+        key "instanceType": Required[str]
+        instanceType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.PlannedFailoverInput(TypedDict, total=False):
+        key "properties": ForwardRef('PlannedFailoverInputProperties', module='types')
+        properties: PlannedFailoverInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.PlannedFailoverInputProperties(TypedDict, total=False):
+        key "failoverDirection": str
+        key "providerSpecificDetails": ForwardRef('PlannedFailoverProviderSpecificFailoverInput', module='types')
+        failoverDirection: str
+        providerSpecificDetails: PlannedFailoverProviderSpecificFailoverInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryAvailabilitySetCustomDetails(TypedDict, total=False):
+        key "recoveryAvailabilitySetId": str
+        key "resourceType": Required[Literal["Existing"]]
+        recoveryAvailabilitySetId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanA2AFailoverInput(TypedDict, total=False):
+        key "cloudServiceCreationOption": str
+        key "instanceType": Required[Literal["A2A"]]
+        key "multiVmSyncPointOption": Union[str, MultiVmSyncPointOption]
+        key "recoveryPointType": Required[Union[str, A2ARpRecoveryPointType]]
+        cloudServiceCreationOption: str
+        instanceType: Literal[A2A]
+        multiVmSyncPointOption: Union[str, MultiVmSyncPointOption]
+        recoveryPointType: Union[str, A2ARpRecoveryPointType]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanA2AInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        key "primaryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "primaryZone": str
+        key "recoveryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "recoveryZone": str
+        instanceType: Literal[A2A]
+        primaryExtendedLocation: ExtendedLocation
+        primaryZone: str
+        recoveryExtendedLocation: ExtendedLocation
+        recoveryZone: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanAction(TypedDict, total=False):
+        key "actionName": Required[str]
+        key "customDetails": Required[RecoveryPlanActionDetails]
+        key "failoverDirections": Required[list[Union[str, PossibleOperationsDirections]]]
+        key "failoverTypes": Required[list[Union[str, ReplicationProtectedItemOperation]]]
+        actionName: str
+        customDetails: RecoveryPlanActionDetails
+        failoverDirections: list[Union[str, PossibleOperationsDirections]]
+        failoverTypes: list[Union[str, ReplicationProtectedItemOperation]]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanAutomationRunbookActionDetails(TypedDict, total=False):
+        key "fabricLocation": Required[Union[str, RecoveryPlanActionLocation]]
+        key "instanceType": Required[Literal["AutomationRunbookActionDetails"]]
+        key "runbookId": str
+        key "timeout": str
+        fabricLocation: Union[str, RecoveryPlanActionLocation]
+        instanceType: Literal[AutomationRunbookActionDetails]
+        runbookId: str
+        timeout: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanGroup(TypedDict, total=False):
+        key "groupType": Required[Union[str, RecoveryPlanGroupType]]
+        endGroupActions: list[RecoveryPlanAction]
+        groupType: Union[str, RecoveryPlanGroupType]
+        replicationProtectedItems: list[RecoveryPlanProtectedItem]
+        startGroupActions: list[RecoveryPlanAction]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanHyperVReplicaAzureFailbackInput(TypedDict, total=False):
+        key "dataSyncOption": Required[Union[str, DataSyncStatus]]
+        key "instanceType": Required[Literal["HyperVReplicaAzureFailback"]]
+        key "recoveryVmCreationOption": Required[Union[str, AlternateLocationRecoveryOption]]
+        dataSyncOption: Union[str, DataSyncStatus]
+        instanceType: Literal[HyperVReplicaAzureFailback]
+        recoveryVmCreationOption: Union[str, AlternateLocationRecoveryOption]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanHyperVReplicaAzureFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["HyperVReplicaAzure"]]
+        key "primaryKekCertificatePfx": str
+        key "recoveryPointType": Union[str, HyperVReplicaAzureRpRecoveryPointType]
+        key "secondaryKekCertificatePfx": str
+        instanceType: Literal[HyperVReplicaAzure]
+        primaryKekCertificatePfx: str
+        recoveryPointType: Union[str, HyperVReplicaAzureRpRecoveryPointType]
+        secondaryKekCertificatePfx: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanInMageAzureV2FailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "recoveryPointType": Required[Union[str, InMageV2RpRecoveryPointType]]
+        key "useMultiVmSyncPoint": str
+        instanceType: Literal[InMageAzureV2]
+        recoveryPointType: Union[str, InMageV2RpRecoveryPointType]
+        useMultiVmSyncPoint: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanInMageFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMage"]]
+        key "recoveryPointType": Required[Union[str, RpInMageRecoveryPointType]]
+        instanceType: Literal[InMage]
+        recoveryPointType: Union[str, RpInMageRecoveryPointType]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanInMageRcmFailbackFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcmFailback"]]
+        key "recoveryPointType": Required[Union[str, InMageRcmFailbackRecoveryPointType]]
+        key "useMultiVmSyncPoint": str
+        instanceType: Literal[InMageRcmFailback]
+        recoveryPointType: Union[str, InMageRcmFailbackRecoveryPointType]
+        useMultiVmSyncPoint: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanInMageRcmFailoverInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "recoveryPointType": Required[Union[str, RecoveryPlanPointType]]
+        key "useMultiVmSyncPoint": str
+        instanceType: Literal[InMageRcm]
+        recoveryPointType: Union[str, RecoveryPlanPointType]
+        useMultiVmSyncPoint: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanManualActionDetails(TypedDict, total=False):
+        key "description": str
+        key "instanceType": Required[Literal["ManualActionDetails"]]
+        description: str
+        instanceType: Literal[ManualActionDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanPlannedFailoverInput(TypedDict, total=False):
+        key "properties": Required[RecoveryPlanPlannedFailoverInputProperties]
+        properties: RecoveryPlanPlannedFailoverInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanPlannedFailoverInputProperties(TypedDict, total=False):
+        key "failoverDirection": Required[Union[str, PossibleOperationsDirections]]
+        failoverDirection: Union[str, PossibleOperationsDirections]
+        providerSpecificDetails: list[RecoveryPlanProviderSpecificFailoverInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanProtectedItem(TypedDict, total=False):
+        key "id": str
+        key "virtualMachineId": str
+        id: str
+        virtualMachineId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        key "primaryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "primaryZone": str
+        key "recoveryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "recoveryZone": str
+        instanceType: Literal[A2A]
+        primaryExtendedLocation: ExtendedLocation
+        primaryZone: str
+        recoveryExtendedLocation: ExtendedLocation
+        recoveryZone: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanScriptActionDetails(TypedDict, total=False):
+        key "fabricLocation": Required[Union[str, RecoveryPlanActionLocation]]
+        key "instanceType": Required[Literal["ScriptActionDetails"]]
+        key "path": Required[str]
+        key "timeout": str
+        fabricLocation: Union[str, RecoveryPlanActionLocation]
+        instanceType: Literal[ScriptActionDetails]
+        path: str
+        timeout: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanTestFailoverCleanupInput(TypedDict, total=False):
+        key "properties": Required[RecoveryPlanTestFailoverCleanupInputProperties]
+        properties: RecoveryPlanTestFailoverCleanupInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanTestFailoverCleanupInputProperties(TypedDict, total=False):
+        key "comments": str
+        comments: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanTestFailoverInput(TypedDict, total=False):
+        key "properties": Required[RecoveryPlanTestFailoverInputProperties]
+        properties: RecoveryPlanTestFailoverInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanTestFailoverInputProperties(TypedDict, total=False):
+        key "failoverDirection": Required[Union[str, PossibleOperationsDirections]]
+        key "networkId": str
+        key "networkType": Required[str]
+        failoverDirection: Union[str, PossibleOperationsDirections]
+        networkId: str
+        networkType: str
+        providerSpecificDetails: list[RecoveryPlanProviderSpecificFailoverInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanUnplannedFailoverInput(TypedDict, total=False):
+        key "properties": Required[RecoveryPlanUnplannedFailoverInputProperties]
+        properties: RecoveryPlanUnplannedFailoverInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanUnplannedFailoverInputProperties(TypedDict, total=False):
+        key "failoverDirection": Required[Union[str, PossibleOperationsDirections]]
+        key "sourceSiteOperations": Required[Union[str, SourceSiteOperations]]
+        failoverDirection: Union[str, PossibleOperationsDirections]
+        providerSpecificDetails: list[RecoveryPlanProviderSpecificFailoverInput]
+        sourceSiteOperations: Union[str, SourceSiteOperations]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryProximityPlacementGroupCustomDetails(TypedDict, total=False):
+        key "recoveryProximityPlacementGroupId": str
+        key "resourceType": Required[Literal["Existing"]]
+        recoveryProximityPlacementGroupId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RecoveryResourceGroupCustomDetails(TypedDict, total=False):
+        key "recoveryResourceGroupId": str
+        key "resourceType": Required[Literal["Existing"]]
+        recoveryResourceGroupId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RegisteredClusterNodes(TypedDict, total=False):
+        key "biosId": str
+        key "clusterNodeFqdn": str
+        key "isSharedDiskVirtualNode": bool
+        key "machineId": str
+        biosId: str
+        clusterNodeFqdn: str
+        isSharedDiskVirtualNode: bool
+        machineId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ReinstallMobilityServiceRequest(TypedDict, total=False):
+        key "properties": ForwardRef('ReinstallMobilityServiceRequestProperties', module='types')
+        properties: ReinstallMobilityServiceRequestProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ReinstallMobilityServiceRequestProperties(TypedDict, total=False):
+        key "runAsAccountId": str
+        runAsAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RemoveDisksInput(TypedDict, total=False):
+        key "properties": ForwardRef('RemoveDisksInputProperties', module='types')
+        properties: RemoveDisksInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RemoveDisksInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": ForwardRef('RemoveDisksProviderSpecificInput', module='types')
+        providerSpecificDetails: RemoveDisksProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RemoveDisksProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        instanceType: Literal[A2A]
+        vmDisksUris: list[str]
+        vmManagedDisksIds: list[str]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RemoveProtectionContainerMappingInput(TypedDict, total=False):
+        key "properties": ForwardRef('RemoveProtectionContainerMappingInputProperties', module='types')
+        properties: RemoveProtectionContainerMappingInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RemoveProtectionContainerMappingInputProperties(TypedDict, total=False):
+        key "providerSpecificInput": ForwardRef('ReplicationProviderContainerUnmappingInput', module='types')
+        providerSpecificInput: ReplicationProviderContainerUnmappingInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RenewCertificateInput(TypedDict, total=False):
+        key "properties": ForwardRef('RenewCertificateInputProperties', module='types')
+        properties: RenewCertificateInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.RenewCertificateInputProperties(TypedDict, total=False):
+        key "renewCertificateType": str
+        renewCertificateType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ReplicationClusterProviderSpecificSettings(TypedDict, total=False):
+        key "clusterManagementId": str
+        key "failoverRecoveryPointId": str
+        key "initialPrimaryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "initialPrimaryFabricLocation": str
+        key "initialPrimaryZone": str
+        key "initialRecoveryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "initialRecoveryFabricLocation": str
+        key "initialRecoveryZone": str
+        key "instanceType": Required[Literal["A2A"]]
+        key "lastRpoCalculatedTime": str
+        key "lifecycleId": str
+        key "multiVmGroupCreateOption": Union[str, MultiVmGroupCreateOption]
+        key "multiVmGroupId": str
+        key "multiVmGroupName": str
+        key "primaryAvailabilityZone": str
+        key "primaryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "primaryFabricLocation": str
+        key "recoveryAvailabilityZone": str
+        key "recoveryExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "recoveryFabricLocation": str
+        key "rpoInSeconds": int
+        clusterManagementId: str
+        failoverRecoveryPointId: str
+        initialPrimaryExtendedLocation: ExtendedLocation
+        initialPrimaryFabricLocation: str
+        initialPrimaryZone: str
+        initialRecoveryExtendedLocation: ExtendedLocation
+        initialRecoveryFabricLocation: str
+        initialRecoveryZone: str
+        instanceType: Literal[A2A]
+        lastRpoCalculatedTime: str
+        lifecycleId: str
+        multiVmGroupCreateOption: Union[str, MultiVmGroupCreateOption]
+        multiVmGroupId: str
+        multiVmGroupName: str
+        primaryAvailabilityZone: str
+        primaryExtendedLocation: ExtendedLocation
+        primaryFabricLocation: str
+        recoveryAvailabilityZone: str
+        recoveryExtendedLocation: ExtendedLocation
+        recoveryFabricLocation: str
+        rpoInSeconds: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ReplicationProtectionCluster(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ReplicationProtectionClusterProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ReplicationProtectionClusterProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ReplicationProtectionClusterProperties(TypedDict, total=False):
+        key "activeLocation": str
+        key "agentClusterId": str
+        key "areAllClusterNodesRegistered": bool
+        key "clusterFqdn": str
+        key "currentScenario": ForwardRef('CurrentScenarioDetails', module='types')
+        key "lastSuccessfulFailoverTime": str
+        key "lastSuccessfulTestFailoverTime": str
+        key "policyFriendlyName": str
+        key "policyId": str
+        key "primaryFabricFriendlyName": str
+        key "primaryFabricProvider": str
+        key "primaryProtectionContainerFriendlyName": str
+        key "protectionClusterType": str
+        key "protectionState": str
+        key "protectionStateDescription": str
+        key "providerSpecificDetails": ForwardRef('ReplicationClusterProviderSpecificSettings', module='types')
+        key "provisioningState": str
+        key "recoveryContainerId": str
+        key "recoveryFabricFriendlyName": str
+        key "recoveryFabricId": str
+        key "recoveryProtectionContainerFriendlyName": str
+        key "replicationHealth": str
+        key "sharedDiskProperties": ForwardRef('SharedDiskReplicationItemProperties', module='types')
+        key "testFailoverState": str
+        key "testFailoverStateDescription": str
+        activeLocation: str
+        agentClusterId: str
+        allowedOperations: list[str]
+        areAllClusterNodesRegistered: bool
+        clusterFqdn: str
+        clusterNodeFqdns: list[str]
+        clusterProtectedItemIds: list[str]
+        clusterRegisteredNodes: list[RegisteredClusterNodes]
+        currentScenario: CurrentScenarioDetails
+        healthErrors: list[HealthError]
+        lastSuccessfulFailoverTime: str
+        lastSuccessfulTestFailoverTime: str
+        policyFriendlyName: str
+        policyId: str
+        primaryFabricFriendlyName: str
+        primaryFabricProvider: str
+        primaryProtectionContainerFriendlyName: str
+        protectionClusterType: str
+        protectionState: str
+        protectionStateDescription: str
+        providerSpecificDetails: ReplicationClusterProviderSpecificSettings
+        provisioningState: str
+        recoveryContainerId: str
+        recoveryFabricFriendlyName: str
+        recoveryFabricId: str
+        recoveryProtectionContainerFriendlyName: str
+        replicationHealth: str
+        sharedDiskProperties: SharedDiskReplicationItemProperties
+        testFailoverState: str
+        testFailoverStateDescription: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ReplicationProviderContainerUnmappingInput(TypedDict, total=False):
+        key "instanceType": str
+        instanceType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResolveHealthError(TypedDict, total=False):
+        key "healthErrorId": str
+        healthErrorId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResolveHealthInput(TypedDict, total=False):
+        key "properties": ForwardRef('ResolveHealthInputProperties', module='types')
+        properties: ResolveHealthInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResolveHealthInputProperties(TypedDict, total=False):
+        healthErrors: list[ResolveHealthError]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResumeJobParams(TypedDict, total=False):
+        key "properties": ForwardRef('ResumeJobParamsProperties', module='types')
+        properties: ResumeJobParamsProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResumeJobParamsProperties(TypedDict, total=False):
+        key "comments": str
+        comments: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResumeReplicationInput(TypedDict, total=False):
+        key "properties": Required[ResumeReplicationInputProperties]
+        properties: ResumeReplicationInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResumeReplicationInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": Required[ResumeReplicationProviderSpecificInput]
+        providerSpecificDetails: ResumeReplicationProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResumeReplicationProviderSpecificInput(TypedDict, total=False):
+        key "deleteMigrationResources": str
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        deleteMigrationResources: str
+        instanceType: Literal[VMwareCbt]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResyncInput(TypedDict, total=False):
+        key "properties": Required[ResyncInputProperties]
+        properties: ResyncInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResyncInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": Required[ResyncProviderSpecificInput]
+        providerSpecificDetails: ResyncProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ResyncProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "skipCbtReset": Required[str]
+        instanceType: Literal[VMwareCbt]
+        skipCbtReset: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ReverseReplicationInput(TypedDict, total=False):
+        key "properties": ForwardRef('ReverseReplicationInputProperties', module='types')
+        properties: ReverseReplicationInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.ReverseReplicationInputProperties(TypedDict, total=False):
+        key "failoverDirection": str
+        key "providerSpecificDetails": ForwardRef('ReverseReplicationProviderSpecificInput', module='types')
+        failoverDirection: str
+        providerSpecificDetails: ReverseReplicationProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SecurityProfileProperties(TypedDict, total=False):
+        key "targetVmConfidentialEncryption": Union[str, SecurityConfiguration]
+        key "targetVmMonitoring": Union[str, SecurityConfiguration]
+        key "targetVmSecureBoot": Union[str, SecurityConfiguration]
+        key "targetVmSecurityType": Union[str, SecurityType]
+        key "targetVmTpm": Union[str, SecurityConfiguration]
+        targetVmConfidentialEncryption: Union[str, SecurityConfiguration]
+        targetVmMonitoring: Union[str, SecurityConfiguration]
+        targetVmSecureBoot: Union[str, SecurityConfiguration]
+        targetVmSecurityType: Union[str, SecurityType]
+        targetVmTpm: Union[str, SecurityConfiguration]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SharedDiskReplicationItemProperties(TypedDict, total=False):
+        key "activeLocation": str
+        key "currentScenario": ForwardRef('CurrentScenarioDetails', module='types')
+        key "protectionState": str
+        key "replicationHealth": str
+        key "sharedDiskProviderSpecificDetails": ForwardRef('SharedDiskReplicationProviderSpecificSettings', module='types')
+        key "testFailoverState": str
+        activeLocation: str
+        allowedOperations: list[str]
+        currentScenario: CurrentScenarioDetails
+        healthErrors: list[HealthError]
+        protectionState: str
+        replicationHealth: str
+        sharedDiskProviderSpecificDetails: SharedDiskReplicationProviderSpecificSettings
+        testFailoverState: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SharedDiskReplicationProviderSpecificSettings(TypedDict, total=False):
+        key "failoverRecoveryPointId": str
+        key "instanceType": Required[Literal["A2A"]]
+        key "lastRpoCalculatedTime": str
+        key "managementId": str
+        key "monitoringJobType": str
+        key "monitoringPercentageCompletion": int
+        key "primaryFabricLocation": str
+        key "recoveryFabricLocation": str
+        key "rpoInSeconds": int
+        failoverRecoveryPointId: str
+        instanceType: Literal[A2A]
+        lastRpoCalculatedTime: str
+        managementId: str
+        monitoringJobType: str
+        monitoringPercentageCompletion: int
+        primaryFabricLocation: str
+        protectedManagedDisks: list[A2AProtectedManagedDiskDetails]
+        recoveryFabricLocation: str
+        rpoInSeconds: int
+        sharedDiskIRErrors: list[A2ASharedDiskIRErrorDetails]
+        unprotectedDisks: list[A2AUnprotectedDiskDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.StorageAccountCustomDetails(TypedDict, total=False):
+        key "azureStorageAccountId": Required[str]
+        key "resourceType": Required[Literal["Existing"]]
+        azureStorageAccountId: str
+        resourceType: Literal[Existing]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.StorageClassificationMappingInput(TypedDict, total=False):
+        key "properties": ForwardRef('StorageMappingInputProperties', module='types')
+        properties: StorageMappingInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.StorageMappingInputProperties(TypedDict, total=False):
+        key "targetStorageClassificationId": str
+        targetStorageClassificationId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchClusterProtectionInput(TypedDict, total=False):
+        key "properties": ForwardRef('SwitchClusterProtectionInputProperties', module='types')
+        properties: SwitchClusterProtectionInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchClusterProtectionInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": ForwardRef('SwitchClusterProtectionProviderSpecificInput', module='types')
+        key "replicationProtectionClusterName": str
+        providerSpecificDetails: SwitchClusterProtectionProviderSpecificInput
+        replicationProtectionClusterName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchClusterProtectionProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["A2A"]]
+        key "policyId": str
+        key "recoveryContainerId": str
+        instanceType: Literal[A2A]
+        policyId: str
+        protectedItemsDetail: list[A2AProtectedItemDetail]
+        recoveryContainerId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchProtectionInput(TypedDict, total=False):
+        key "properties": ForwardRef('SwitchProtectionInputProperties', module='types')
+        properties: SwitchProtectionInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchProtectionInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": ForwardRef('SwitchProtectionProviderSpecificInput', module='types')
+        key "replicationProtectedItemName": str
+        providerSpecificDetails: SwitchProtectionProviderSpecificInput
+        replicationProtectedItemName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchProtectionProviderSpecificInput(TypedDict, total=False):
+        key "diskEncryptionInfo": ForwardRef('DiskEncryptionInfo', module='types')
+        key "instanceType": Required[Literal["A2A"]]
+        key "platformFaultDomain": int
+        key "policyId": str
+        key "recoveryAvailabilitySetId": str
+        key "recoveryAvailabilityZone": str
+        key "recoveryBootDiagStorageAccountId": str
+        key "recoveryCapacityReservationGroupId": str
+        key "recoveryCloudServiceId": str
+        key "recoveryConfidentialDataDiskEncryptionIdentity": str
+        key "recoveryContainerId": str
+        key "recoveryProximityPlacementGroupId": str
+        key "recoveryResourceGroupId": str
+        key "recoveryVirtualMachineScaleSetId": str
+        diskEncryptionInfo: DiskEncryptionInfo
+        instanceType: Literal[A2A]
+        platformFaultDomain: int
+        policyId: str
+        recoveryAvailabilitySetId: str
+        recoveryAvailabilityZone: str
+        recoveryBootDiagStorageAccountId: str
+        recoveryCapacityReservationGroupId: str
+        recoveryCloudServiceId: str
+        recoveryConfidentialDataDiskEncryptionIdentity: str
+        recoveryContainerId: str
+        recoveryProximityPlacementGroupId: str
+        recoveryResourceGroupId: str
+        recoveryVirtualMachineScaleSetId: str
+        vmDisks: list[A2AVmDiskInputDetails]
+        vmManagedDisks: list[A2AVmManagedDiskInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchProviderInput(TypedDict, total=False):
+        key "properties": ForwardRef('SwitchProviderInputProperties', module='types')
+        properties: SwitchProviderInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchProviderInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": ForwardRef('SwitchProviderSpecificInput', module='types')
+        key "targetInstanceType": str
+        providerSpecificDetails: SwitchProviderSpecificInput
+        targetInstanceType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SwitchProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageAzureV2"]]
+        key "targetApplianceID": Required[str]
+        key "targetFabricID": Required[str]
+        key "targetVaultID": Required[str]
+        instanceType: Literal[InMageAzureV2]
+        targetApplianceID: str
+        targetFabricID: str
+        targetVaultID: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestFailoverCleanupInput(TypedDict, total=False):
+        key "properties": Required[TestFailoverCleanupInputProperties]
+        properties: TestFailoverCleanupInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestFailoverCleanupInputProperties(TypedDict, total=False):
+        key "comments": str
+        comments: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestFailoverInput(TypedDict, total=False):
+        key "properties": Required[TestFailoverInputProperties]
+        properties: TestFailoverInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestFailoverInputProperties(TypedDict, total=False):
+        key "failoverDirection": str
+        key "networkId": str
+        key "networkType": str
+        key "providerSpecificDetails": ForwardRef('TestFailoverProviderSpecificInput', module='types')
+        failoverDirection: str
+        networkId: str
+        networkType: str
+        providerSpecificDetails: TestFailoverProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestMigrateCleanupInput(TypedDict, total=False):
+        key "properties": Required[TestMigrateCleanupInputProperties]
+        properties: TestMigrateCleanupInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestMigrateCleanupInputProperties(TypedDict, total=False):
+        key "comments": str
+        comments: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestMigrateInput(TypedDict, total=False):
+        key "properties": Required[TestMigrateInputProperties]
+        properties: TestMigrateInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestMigrateInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": Required[TestMigrateProviderSpecificInput]
+        providerSpecificDetails: TestMigrateProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.TestMigrateProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "networkId": Required[str]
+        key "osUpgradeVersion": str
+        key "recoveryPointId": Required[str]
+        instanceType: Literal[VMwareCbt]
+        networkId: str
+        osUpgradeVersion: str
+        postMigrationSteps: list[ManagedRunCommandScriptInput]
+        recoveryPointId: str
+        vmNics: list[VMwareCbtNicInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UnplannedFailoverInput(TypedDict, total=False):
+        key "properties": Required[UnplannedFailoverInputProperties]
+        properties: UnplannedFailoverInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UnplannedFailoverInputProperties(TypedDict, total=False):
+        key "failoverDirection": str
+        key "providerSpecificDetails": ForwardRef('UnplannedFailoverProviderSpecificInput', module='types')
+        key "sourceSiteOperations": str
+        failoverDirection: str
+        providerSpecificDetails: UnplannedFailoverProviderSpecificInput
+        sourceSiteOperations: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateApplianceForReplicationProtectedItemInput(TypedDict, total=False):
+        key "properties": Required[UpdateApplianceForReplicationProtectedItemInputProperties]
+        properties: UpdateApplianceForReplicationProtectedItemInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateApplianceForReplicationProtectedItemInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": Required[UpdateApplianceForReplicationProtectedItemProviderSpecificInput]
+        key "targetApplianceId": Required[str]
+        providerSpecificDetails: UpdateApplianceForReplicationProtectedItemProviderSpecificInput
+        targetApplianceId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateApplianceForReplicationProtectedItemProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["InMageRcm"]]
+        key "runAsAccountId": str
+        instanceType: Literal[InMageRcm]
+        runAsAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateConfidentialDiskEncryptionInfo(TypedDict, total=False):
+        key "recoveryTargetConfidentialDiskEncryptionSetId": str
+        recoveryTargetConfidentialDiskEncryptionSetId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateDiskInput(TypedDict, total=False):
+        key "diskId": Required[str]
+        key "diskSizeInGB": int
+        key "iops": int
+        key "targetDiskName": str
+        key "throughputInMbps": int
+        diskId: str
+        diskSizeInGB: int
+        iops: int
+        targetDiskName: str
+        throughputInMbps: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateMigrationItemInput(TypedDict, total=False):
+        key "properties": ForwardRef('UpdateMigrationItemInputProperties', module='types')
+        properties: UpdateMigrationItemInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateMigrationItemInputProperties(TypedDict, total=False):
+        key "providerSpecificDetails": Required[UpdateMigrationItemProviderSpecificInput]
+        providerSpecificDetails: UpdateMigrationItemProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateMigrationItemProviderSpecificInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "licenseType": Union[str, LicenseType]
+        key "linuxLicenseType": Union[str, LinuxLicenseType]
+        key "performAutoResync": str
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilitySetId": str
+        key "targetAvailabilityZone": str
+        key "targetBootDiagnosticsStorageAccountId": str
+        key "targetCapacityReservationGroupId": str
+        key "targetNetworkId": str
+        key "targetProximityPlacementGroupId": str
+        key "targetResourceGroupId": str
+        key "targetVmName": str
+        key "targetVmSize": str
+        key "testNetworkId": str
+        key "userSelectedOSName": str
+        instanceType: Literal[VMwareCbt]
+        licenseType: Union[str, LicenseType]
+        linuxLicenseType: Union[str, LinuxLicenseType]
+        performAutoResync: str
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilitySetId: str
+        targetAvailabilityZone: str
+        targetBootDiagnosticsStorageAccountId: str
+        targetCapacityReservationGroupId: str
+        targetDiskTags: dict[str, str]
+        targetNetworkId: str
+        targetNicTags: dict[str, str]
+        targetProximityPlacementGroupId: str
+        targetResourceGroupId: str
+        targetVmName: str
+        targetVmSize: str
+        targetVmTags: dict[str, str]
+        testNetworkId: str
+        userSelectedOSName: str
+        vmDisks: list[VMwareCbtUpdateDiskInput]
+        vmNics: list[VMwareCbtNicInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateMobilityServiceRequest(TypedDict, total=False):
+        key "properties": ForwardRef('UpdateMobilityServiceRequestProperties', module='types')
+        properties: UpdateMobilityServiceRequestProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateMobilityServiceRequestProperties(TypedDict, total=False):
+        key "runAsAccountId": str
+        runAsAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateNetworkMappingInput(TypedDict, total=False):
+        key "properties": ForwardRef('UpdateNetworkMappingInputProperties', module='types')
+        properties: UpdateNetworkMappingInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateNetworkMappingInputProperties(TypedDict, total=False):
+        key "fabricSpecificDetails": ForwardRef('FabricSpecificUpdateNetworkMappingInput', module='types')
+        key "recoveryFabricName": str
+        key "recoveryNetworkId": str
+        fabricSpecificDetails: FabricSpecificUpdateNetworkMappingInput
+        recoveryFabricName: str
+        recoveryNetworkId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdatePolicyInput(TypedDict, total=False):
+        key "properties": ForwardRef('UpdatePolicyInputProperties', module='types')
+        properties: UpdatePolicyInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdatePolicyInputProperties(TypedDict, total=False):
+        key "replicationProviderSettings": ForwardRef('PolicyProviderSpecificInput', module='types')
+        replicationProviderSettings: PolicyProviderSpecificInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateProtectionContainerMappingInput(TypedDict, total=False):
+        key "properties": ForwardRef('UpdateProtectionContainerMappingInputProperties', module='types')
+        properties: UpdateProtectionContainerMappingInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateProtectionContainerMappingInputProperties(TypedDict, total=False):
+        key "providerSpecificInput": ForwardRef('ReplicationProviderSpecificUpdateContainerMappingInput', module='types')
+        providerSpecificInput: ReplicationProviderSpecificUpdateContainerMappingInput
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateRecoveryPlanInput(TypedDict, total=False):
+        key "properties": ForwardRef('UpdateRecoveryPlanInputProperties', module='types')
+        properties: UpdateRecoveryPlanInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateRecoveryPlanInputProperties(TypedDict, total=False):
+        groups: list[RecoveryPlanGroup]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateReplicationProtectedItemInput(TypedDict, total=False):
+        key "properties": ForwardRef('UpdateReplicationProtectedItemInputProperties', module='types')
+        properties: UpdateReplicationProtectedItemInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateReplicationProtectedItemInputProperties(TypedDict, total=False):
+        key "enableRdpOnTargetOption": str
+        key "licenseType": Union[str, LicenseType]
+        key "providerSpecificDetails": ForwardRef('UpdateReplicationProtectedItemProviderInput', module='types')
+        key "recoveryAvailabilitySetId": str
+        key "recoveryAzureVMName": str
+        key "recoveryAzureVMSize": str
+        key "selectedRecoveryAzureNetworkId": str
+        key "selectedSourceNicId": str
+        key "selectedTfoAzureNetworkId": str
+        enableRdpOnTargetOption: str
+        licenseType: Union[str, LicenseType]
+        providerSpecificDetails: UpdateReplicationProtectedItemProviderInput
+        recoveryAvailabilitySetId: str
+        recoveryAzureVMName: str
+        recoveryAzureVMSize: str
+        selectedRecoveryAzureNetworkId: str
+        selectedSourceNicId: str
+        selectedTfoAzureNetworkId: str
+        vmNics: list[VMNicInputDetails]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateVCenterRequest(TypedDict, total=False):
+        key "properties": ForwardRef('UpdateVCenterRequestProperties', module='types')
+        properties: UpdateVCenterRequestProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UpdateVCenterRequestProperties(TypedDict, total=False):
+        key "friendlyName": str
+        key "ipAddress": str
+        key "port": str
+        key "processServerId": str
+        key "runAsAccountId": str
+        friendlyName: str
+        ipAddress: str
+        port: str
+        processServerId: str
+        runAsAccountId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.UserCreatedResourceTag(TypedDict, total=False):
+        key "tagName": str
+        key "tagValue": str
+        tagName: str
+        tagValue: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMNicInputDetails(TypedDict, total=False):
+        key "enableAcceleratedNetworkingOnRecovery": bool
+        key "enableAcceleratedNetworkingOnTfo": bool
+        key "nicId": str
+        key "recoveryNetworkSecurityGroupId": str
+        key "recoveryNicName": str
+        key "recoveryNicResourceGroupName": str
+        key "reuseExistingNic": bool
+        key "selectionType": str
+        key "targetNicName": str
+        key "tfoNetworkSecurityGroupId": str
+        key "tfoNicName": str
+        key "tfoNicResourceGroupName": str
+        key "tfoReuseExistingNic": bool
+        enableAcceleratedNetworkingOnRecovery: bool
+        enableAcceleratedNetworkingOnTfo: bool
+        ipConfigs: list[IPConfigInputDetails]
+        nicId: str
+        recoveryNetworkSecurityGroupId: str
+        recoveryNicName: str
+        recoveryNicResourceGroupName: str
+        reuseExistingNic: bool
+        selectionType: str
+        targetNicName: str
+        tfoNetworkSecurityGroupId: str
+        tfoNicName: str
+        tfoNicResourceGroupName: str
+        tfoReuseExistingNic: bool
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtContainerCreationInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        instanceType: Literal[VMwareCbt]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtContainerMappingInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "keyVaultId": str
+        key "keyVaultUri": str
+        key "serviceBusConnectionStringSecretName": str
+        key "storageAccountId": Required[str]
+        key "storageAccountSasSecretName": str
+        key "targetLocation": Required[str]
+        instanceType: Literal[VMwareCbt]
+        keyVaultId: str
+        keyVaultUri: str
+        serviceBusConnectionStringSecretName: str
+        storageAccountId: str
+        storageAccountSasSecretName: str
+        targetLocation: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtDiskInput(TypedDict, total=False):
+        key "confidentialDiskEncryptionSetId": str
+        key "diskEncryptionSetId": str
+        key "diskId": Required[str]
+        key "diskSizeInGB": int
+        key "diskType": Union[str, DiskAccountType]
+        key "iops": int
+        key "isOSDisk": Required[str]
+        key "logStorageAccountId": Required[str]
+        key "logStorageAccountSasSecretName": Required[str]
+        key "sectorSizeInBytes": int
+        key "throughputInMbps": int
+        confidentialDiskEncryptionSetId: str
+        diskEncryptionSetId: str
+        diskId: str
+        diskSizeInGB: int
+        diskType: Union[str, DiskAccountType]
+        iops: int
+        isOSDisk: str
+        logStorageAccountId: str
+        logStorageAccountSasSecretName: str
+        sectorSizeInBytes: int
+        throughputInMbps: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtEnableMigrationInput(TypedDict, total=False):
+        key "confidentialVmKeyVaultId": str
+        key "dataMoverRunAsAccountId": Required[str]
+        key "disksToInclude": Required[list[VMwareCbtDiskInput]]
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "licenseType": Union[str, LicenseType]
+        key "linuxLicenseType": Union[str, LinuxLicenseType]
+        key "performAutoResync": str
+        key "performSqlBulkRegistration": str
+        key "snapshotRunAsAccountId": Required[str]
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilitySetId": str
+        key "targetAvailabilityZone": str
+        key "targetBootDiagnosticsStorageAccountId": str
+        key "targetCapacityReservationGroupId": str
+        key "targetNetworkId": Required[str]
+        key "targetProximityPlacementGroupId": str
+        key "targetResourceGroupId": Required[str]
+        key "targetSubnetName": str
+        key "targetVmName": str
+        key "targetVmSecurityProfile": ForwardRef('VMwareCbtSecurityProfileProperties', module='types')
+        key "targetVmSize": str
+        key "testNetworkId": str
+        key "testSubnetName": str
+        key "userSelectedOSName": str
+        key "vmwareMachineId": Required[str]
+        confidentialVmKeyVaultId: str
+        dataMoverRunAsAccountId: str
+        disksToInclude: list[VMwareCbtDiskInput]
+        instanceType: Literal[VMwareCbt]
+        licenseType: Union[str, LicenseType]
+        linuxLicenseType: Union[str, LinuxLicenseType]
+        performAutoResync: str
+        performSqlBulkRegistration: str
+        seedDiskTags: dict[str, str]
+        snapshotRunAsAccountId: str
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilitySetId: str
+        targetAvailabilityZone: str
+        targetBootDiagnosticsStorageAccountId: str
+        targetCapacityReservationGroupId: str
+        targetDiskTags: dict[str, str]
+        targetNetworkId: str
+        targetNicTags: dict[str, str]
+        targetProximityPlacementGroupId: str
+        targetResourceGroupId: str
+        targetSubnetName: str
+        targetVmName: str
+        targetVmSecurityProfile: VMwareCbtSecurityProfileProperties
+        targetVmSize: str
+        targetVmTags: dict[str, str]
+        testNetworkId: str
+        testSubnetName: str
+        userSelectedOSName: str
+        vmwareMachineId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtMigrateInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "osUpgradeVersion": str
+        key "performShutdown": Required[str]
+        key "targetCapacityReservationGroupId": str
+        instanceType: Literal[VMwareCbt]
+        osUpgradeVersion: str
+        performShutdown: str
+        postMigrationSteps: list[ManagedRunCommandScriptInput]
+        targetCapacityReservationGroupId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtNicInput(TypedDict, total=False):
+        key "isPrimaryNic": Required[str]
+        key "isSelectedForMigration": str
+        key "nicId": Required[str]
+        key "targetNicName": str
+        key "targetStaticIPAddress": str
+        key "targetSubnetName": str
+        key "testStaticIPAddress": str
+        key "testSubnetName": str
+        isPrimaryNic: str
+        isSelectedForMigration: str
+        nicId: str
+        targetNicName: str
+        targetStaticIPAddress: str
+        targetSubnetName: str
+        testStaticIPAddress: str
+        testSubnetName: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtPolicyCreationInput(TypedDict, total=False):
+        key "appConsistentFrequencyInMinutes": int
+        key "crashConsistentFrequencyInMinutes": int
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "recoveryPointHistoryInMinutes": int
+        appConsistentFrequencyInMinutes: int
+        crashConsistentFrequencyInMinutes: int
+        instanceType: Literal[VMwareCbt]
+        recoveryPointHistoryInMinutes: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtResumeReplicationInput(TypedDict, total=False):
+        key "deleteMigrationResources": str
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        deleteMigrationResources: str
+        instanceType: Literal[VMwareCbt]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtResyncInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "skipCbtReset": Required[str]
+        instanceType: Literal[VMwareCbt]
+        skipCbtReset: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtSecurityProfileProperties(TypedDict, total=False):
+        key "isTargetVmConfidentialEncryptionEnabled": str
+        key "isTargetVmIntegrityMonitoringEnabled": str
+        key "isTargetVmSecureBootEnabled": str
+        key "isTargetVmTpmEnabled": str
+        key "targetVmSecurityType": Union[str, SecurityType]
+        isTargetVmConfidentialEncryptionEnabled: str
+        isTargetVmIntegrityMonitoringEnabled: str
+        isTargetVmSecureBootEnabled: str
+        isTargetVmTpmEnabled: str
+        targetVmSecurityType: Union[str, SecurityType]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtTestMigrateInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "networkId": Required[str]
+        key "osUpgradeVersion": str
+        key "recoveryPointId": Required[str]
+        instanceType: Literal[VMwareCbt]
+        networkId: str
+        osUpgradeVersion: str
+        postMigrationSteps: list[ManagedRunCommandScriptInput]
+        recoveryPointId: str
+        vmNics: list[VMwareCbtNicInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtUpdateDiskInput(TypedDict, total=False):
+        key "diskId": Required[str]
+        key "diskSizeInGB": int
+        key "iops": int
+        key "isOSDisk": str
+        key "targetDiskName": str
+        key "throughputInMbps": int
+        diskId: str
+        diskSizeInGB: int
+        iops: int
+        isOSDisk: str
+        targetDiskName: str
+        throughputInMbps: int
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareCbtUpdateMigrationItemInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareCbt"]]
+        key "licenseType": Union[str, LicenseType]
+        key "linuxLicenseType": Union[str, LinuxLicenseType]
+        key "performAutoResync": str
+        key "sqlServerLicenseType": Union[str, SqlServerLicenseType]
+        key "targetAvailabilitySetId": str
+        key "targetAvailabilityZone": str
+        key "targetBootDiagnosticsStorageAccountId": str
+        key "targetCapacityReservationGroupId": str
+        key "targetNetworkId": str
+        key "targetProximityPlacementGroupId": str
+        key "targetResourceGroupId": str
+        key "targetVmName": str
+        key "targetVmSize": str
+        key "testNetworkId": str
+        key "userSelectedOSName": str
+        instanceType: Literal[VMwareCbt]
+        licenseType: Union[str, LicenseType]
+        linuxLicenseType: Union[str, LinuxLicenseType]
+        performAutoResync: str
+        sqlServerLicenseType: Union[str, SqlServerLicenseType]
+        targetAvailabilitySetId: str
+        targetAvailabilityZone: str
+        targetBootDiagnosticsStorageAccountId: str
+        targetCapacityReservationGroupId: str
+        targetDiskTags: dict[str, str]
+        targetNetworkId: str
+        targetNicTags: dict[str, str]
+        targetProximityPlacementGroupId: str
+        targetResourceGroupId: str
+        targetVmName: str
+        targetVmSize: str
+        targetVmTags: dict[str, str]
+        testNetworkId: str
+        userSelectedOSName: str
+        vmDisks: list[VMwareCbtUpdateDiskInput]
+        vmNics: list[VMwareCbtNicInput]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VMwareV2FabricCreationInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VMwareV2"]]
+        key "migrationSolutionId": Required[str]
+        key "physicalSiteId": str
+        key "vmwareSiteId": str
+        instanceType: Literal[VMwareV2]
+        migrationSolutionId: str
+        physicalSiteId: str
+        vmwareSiteId: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VaultSettingCreationInput(TypedDict, total=False):
+        key "properties": Required[VaultSettingCreationInputProperties]
+        properties: VaultSettingCreationInputProperties
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VaultSettingCreationInputProperties(TypedDict, total=False):
+        key "migrationSolutionId": str
+        key "recoveryNetworkConfigAutoSync": Union[str, RecoveryNetworkConfigAutoSyncPolicy]
+        key "vmwareToAzureProviderType": str
+        migrationSolutionId: str
+        recoveryNetworkConfigAutoSync: Union[str, RecoveryNetworkConfigAutoSyncPolicy]
+        vmwareToAzureProviderType: str
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VmmToAzureCreateNetworkMappingInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VmmToAzure"]]
+        instanceType: Literal[VmmToAzure]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VmmToAzureUpdateNetworkMappingInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VmmToAzure"]]
+        instanceType: Literal[VmmToAzure]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VmmToVmmCreateNetworkMappingInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VmmToVmm"]]
+        instanceType: Literal[VmmToVmm]
+
+
+    class azure.mgmt.recoveryservicessiterecovery.types.VmmToVmmUpdateNetworkMappingInput(TypedDict, total=False):
+        key "instanceType": Required[Literal["VmmToVmm"]]
+        instanceType: Literal[VmmToVmm]
 
 
 ```

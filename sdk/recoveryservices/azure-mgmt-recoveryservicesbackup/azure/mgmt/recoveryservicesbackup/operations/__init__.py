@@ -61,6 +61,7 @@ from ._operations import SecurityPINsOperations  # type: ignore
 from ._operations import FetchTieringCostOperations  # type: ignore
 from ._operations import GetTieringCostOperationResultOperations  # type: ignore
 from ._operations import TieringCostOperationStatusOperations  # type: ignore
+from ._operations import ProtectionContainerRefreshOperationStatusesOperations  # type: ignore
 from ._operations import ProtectionIntentOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionOperations  # type: ignore
 from ._operations import PrivateEndpointOperations  # type: ignore
@@ -121,6 +122,7 @@ __all__ = [
     "FetchTieringCostOperations",
     "GetTieringCostOperationResultOperations",
     "TieringCostOperationStatusOperations",
+    "ProtectionContainerRefreshOperationStatusesOperations",
     "ProtectionIntentOperations",
     "PrivateEndpointConnectionOperations",
     "PrivateEndpointOperations",

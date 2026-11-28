@@ -12,7 +12,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as Batch
 from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType
-from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.operations import (
@@ -188,6 +188,48 @@ class TestBatchEndpointOperations:
         mock_batch_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
         mock_create_or_update_batch_endpoint.assert_called_once()
         # mock_batch_endpoint_operations.create_or_update.assert_called_once()
+
+    def test_batch_invoke_uses_request_local_headers(
+        self,
+        mock_batch_endpoint_operations: BatchEndpointOperations,
+        mocker: MockFixture,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.setattr(EndpointInvokeFields, "DEFAULT_HEADER", {"Content-Type": "application/json"})
+        operations = mock_batch_endpoint_operations
+        scoring_uris = {"endpoint-a": "https://endpoint-a.test/jobs", "endpoint-b": "https://endpoint-b.test/jobs"}
+        operations._batch_operation.get.side_effect = lambda **kwargs: Mock(
+            properties=Mock(scoring_uri=scoring_uris[kwargs["endpoint_name"]])
+        )
+        operations._credentials = Mock()
+        operations._credentials.get_token.side_effect = [Mock(token="token-a"), Mock(token="token-b")]
+        mocker.patch.object(operations, "_validate_deployment_name")
+        mocker.patch("azure.ai.ml.operations._batch_endpoint_operations.BatchJob._from_rest_object")
+        response = Mock(status_code=200, text=lambda: "{}")
+        sent_headers = {}
+
+        def post(url, json, headers):
+            if url == scoring_uris["endpoint-a"]:
+                # Simulate another invocation running before endpoint-a's request copies its headers.
+                operations.invoke(endpoint_name="endpoint-b")
+            sent_headers[url] = dict(headers)
+            return response
+
+        mocker.patch.object(operations._requests_pipeline, "post", side_effect=post)
+
+        operations.invoke(endpoint_name="endpoint-a", deployment_name="blue")
+
+        endpoint_a_headers = sent_headers[scoring_uris["endpoint-a"]]
+        endpoint_b_headers = sent_headers[scoring_uris["endpoint-b"]]
+        assert endpoint_a_headers[EndpointInvokeFields.AUTHORIZATION] == "Bearer token-a"
+        assert endpoint_a_headers[EndpointInvokeFields.MODEL_DEPLOYMENT] == "blue"
+        assert endpoint_b_headers[EndpointInvokeFields.AUTHORIZATION] == "Bearer token-b"
+        assert EndpointInvokeFields.MODEL_DEPLOYMENT not in endpoint_b_headers
+        assert (
+            endpoint_a_headers[EndpointInvokeFields.REPEATABILITY_REQUEST_ID]
+            != endpoint_b_headers[EndpointInvokeFields.REPEATABILITY_REQUEST_ID]
+        )
+        assert EndpointInvokeFields.DEFAULT_HEADER == {"Content-Type": "application/json"}
 
     @pytest.mark.skip(reason="invoke is going to change in the next pr until then it is commented")
     @patch.object(BatchEndpoint, "_from_rest_object")

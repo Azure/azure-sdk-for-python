@@ -59,7 +59,6 @@ class TestCognitiveServicesManagementComputesOperationsAsync(AzureMgmtRecordedTe
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
-                    "tags": {"str": "str"},
                     "type": "str",
                 },
             )

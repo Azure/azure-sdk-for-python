@@ -4,6 +4,7 @@ import:
   - ../../.vscode/cspell.json
 words:
   - aadtoken
+  - abfss
   - adamw
   - adla
   - aisupercomputer
@@ -150,6 +151,7 @@ words:
   - vnext
   - wargs
   - wasb
+  - wasbs
   - wsid
   - xdist
   - yolov

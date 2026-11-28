@@ -1,0 +1,4 @@
+directory: specification/azuredatatransfer/resource-manager/Microsoft.AzureDataTransfer/AzureDataTransfer
+commit: 9969c2f086105356220a370bb316291fd26d87af
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

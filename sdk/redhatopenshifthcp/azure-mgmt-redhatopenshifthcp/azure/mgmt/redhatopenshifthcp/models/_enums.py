@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -151,6 +151,15 @@ class KeyVaultVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The keyvault is not visible from the internet."""
 
 
+class KmsKeyVaultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of keyvault used for KMS encryption."""
+
+    KEY_VAULT = "KeyVault"
+    """Standard Azure Key Vault."""
+    MANAGED_HSM = "ManagedHSM"
+    """Azure Managed Hardware Security Module."""
+
+
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -187,7 +196,7 @@ class OperatorIdentityRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"

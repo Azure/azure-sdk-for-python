@@ -12,7 +12,6 @@ from _async_test_case import AsyncCertificatesClientPreparer
 from _test_case import get_decorator
 from devtools_testutils.aio import recorded_by_proxy_async
 
-
 all_api_versions = get_decorator(is_async=True)
 exclude_2016_10_01 = get_decorator(is_async=True, api_versions=[v for v in ApiVersion if v != ApiVersion.V2016_10_01])
 
@@ -271,8 +270,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
-            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+            CertificateContact(email="admin@contoso.example.invalid", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.example.invalid", name="John Doe2", phone="2222222222"),
         ]
 
         contacts = await certificate_client.set_contacts(contact_list)
@@ -311,7 +310,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # First we specify the AdministratorContact for a issuer.
         admin_contacts = [
-            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(
+                first_name="John", last_name="Doe", email="admin@microsoft.example.invalid", phone="4255555555"
+            )
         ]
 
         issuer = await certificate_client.create_issuer(

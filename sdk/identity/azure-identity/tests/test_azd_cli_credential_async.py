@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 import re
 import sys
@@ -107,7 +107,7 @@ async def test_get_token(get_token_method):
     expected_expires_on = 1602015811
     successful_output = json.dumps(
         {
-            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "expiresOn": datetime.fromtimestamp(expected_expires_on, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "token": access_token,
             "subscription": "some-guid",
             "tenant": "some-guid",
@@ -125,6 +125,20 @@ async def test_get_token(get_token_method):
     assert token.expires_on == expected_expires_on
 
 
+@pytest.mark.parametrize("time_zone", ("America/Los_Angeles", "Asia/Tokyo"), indirect=True)
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_expires_on_is_utc(get_token_method, time_zone):
+    """The CLI's "expiresOn" is UTC, so the parsed value shouldn't depend on the local time zone"""
+
+    successful_output = json.dumps({"expiresOn": "2020-10-06T20:23:31Z", "token": "access token"})
+
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec(successful_output)):
+            token = await getattr(AzureDeveloperCliCredential(), get_token_method)("scope")
+
+    assert token.expires_on == 1602015811
+
+
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 async def test_command_list(get_token_method):
     """The credential should formulate the command arg list correctly"""
@@ -132,7 +146,7 @@ async def test_command_list(get_token_method):
     expected_expires_on = 1602015811
     successful_output = json.dumps(
         {
-            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "expiresOn": datetime.fromtimestamp(expected_expires_on, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "token": access_token,
             "subscription": "some-guid",
             "tenant": "some-guid",
@@ -377,7 +391,7 @@ async def test_empty_claims_does_not_raise_error(get_token_method):
     expected_expires_on = 1602015811
     successful_output = json.dumps(
         {
-            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "expiresOn": datetime.fromtimestamp(expected_expires_on, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "token": access_token,
             "subscription": "some-guid",
             "tenant": "some-guid",
@@ -429,7 +443,7 @@ async def test_claims_command_line_argument(get_token_method):
 
         output = json.dumps(
             {
-                "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "expiresOn": datetime.fromtimestamp(expected_expires_on, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "token": access_token,
                 "subscription": "some-guid",
                 "tenant": "some-guid",

@@ -27,6 +27,7 @@ USAGE:
 import asyncio
 import os
 import random
+import uuid
 
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
@@ -114,7 +115,7 @@ async def main():
 
     async with service_client:
         # generate a random name for testing purpose
-        fs_name = "testfs{}asyncdownload".format(random.randint(1, 1000))
+        fs_name = "testfs{}asyncdownload".format(uuid.uuid4().hex[:12])
         print("Generating a test filesystem named '{}'.".format(fs_name))
 
         # create the filesystem

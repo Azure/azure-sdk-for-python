@@ -43,7 +43,7 @@ def build_authorization_operations_list_request(**kwargs: Any) -> HttpRequest:  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -64,7 +64,7 @@ def build_management_locks_create_or_update_at_resource_group_level_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -97,9 +97,12 @@ def build_management_locks_create_or_update_at_resource_group_level_request(  # 
 def build_management_locks_delete_at_resource_group_level_request(  # pylint: disable=name-too-long
     resource_group_name: str, lock_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -118,7 +121,10 @@ def build_management_locks_delete_at_resource_group_level_request(  # pylint: di
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_management_locks_get_at_resource_group_level_request(  # pylint: disable=name-too-long
@@ -127,7 +133,7 @@ def build_management_locks_get_at_resource_group_level_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +166,7 @@ def build_management_locks_create_or_update_by_scope_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -187,9 +193,12 @@ def build_management_locks_create_or_update_by_scope_request(  # pylint: disable
 def build_management_locks_delete_by_scope_request(  # pylint: disable=name-too-long
     scope: str, lock_name: str, **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/{scope}/providers/Microsoft.Authorization/locks/{lockName}")
     path_format_arguments = {
@@ -202,7 +211,10 @@ def build_management_locks_delete_by_scope_request(  # pylint: disable=name-too-
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_management_locks_get_by_scope_request(  # pylint: disable=name-too-long
@@ -211,7 +223,7 @@ def build_management_locks_get_by_scope_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -245,7 +257,7 @@ def build_management_locks_create_or_update_at_resource_level_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -289,9 +301,12 @@ def build_management_locks_delete_at_resource_level_request(  # pylint: disable=
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -314,7 +329,10 @@ def build_management_locks_delete_at_resource_level_request(  # pylint: disable=
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_management_locks_get_at_resource_level_request(  # pylint: disable=name-too-long
@@ -330,7 +348,7 @@ def build_management_locks_get_at_resource_level_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -367,7 +385,7 @@ def build_management_locks_create_or_update_at_subscription_level_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -396,9 +414,12 @@ def build_management_locks_create_or_update_at_subscription_level_request(  # py
 def build_management_locks_delete_at_subscription_level_request(  # pylint: disable=name-too-long
     lock_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = kwargs.pop(
         "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}"
@@ -413,7 +434,10 @@ def build_management_locks_delete_at_subscription_level_request(  # pylint: disa
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_management_locks_get_at_subscription_level_request(  # pylint: disable=name-too-long
@@ -422,7 +446,7 @@ def build_management_locks_get_at_subscription_level_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -451,7 +475,7 @@ def build_management_locks_list_at_resource_group_level_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -493,7 +517,7 @@ def build_management_locks_list_at_resource_level_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -531,7 +555,7 @@ def build_management_locks_list_at_subscription_level_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -559,7 +583,7 @@ def build_management_locks_list_by_scope_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -667,7 +691,11 @@ class AuthorizationOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -829,7 +857,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
@@ -889,7 +921,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -941,7 +977,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
@@ -1075,7 +1115,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
@@ -1130,7 +1174,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1179,7 +1227,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
@@ -1370,7 +1422,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
@@ -1451,7 +1507,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1523,7 +1583,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
@@ -1650,7 +1714,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
@@ -1707,7 +1775,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1754,7 +1826,11 @@ class ManagementLocksOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
@@ -1841,7 +1917,11 @@ class ManagementLocksOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -1944,7 +2024,11 @@ class ManagementLocksOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -2024,7 +2108,11 @@ class ManagementLocksOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -2110,7 +2198,11 @@ class ManagementLocksOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 

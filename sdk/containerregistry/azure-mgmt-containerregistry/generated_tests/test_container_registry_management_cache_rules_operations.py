@@ -39,15 +39,8 @@ class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestC
             cache_rule_name="str",
             cache_rule_create_parameters={
                 "id": "str",
-                "identity": {
-                    "principalId": "str",
-                    "tenantId": "str",
-                    "type": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
                 "name": "str",
                 "properties": {
-                    "additionalAuthenticationProperties": "additional_authentication_properties",
                     "creationDate": "2020-02-20 00:00:00",
                     "credentialSetResourceId": "str",
                     "provisioningState": "str",
@@ -76,18 +69,7 @@ class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             registry_name="str",
             cache_rule_name="str",
-            cache_rule_update_parameters={
-                "identity": {
-                    "principalId": "str",
-                    "tenantId": "str",
-                    "type": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
-                "properties": {
-                    "additionalAuthenticationProperties": "additional_authentication_properties",
-                    "credentialSetResourceId": "str",
-                },
-            },
+            cache_rule_update_parameters={"properties": {"credentialSetResourceId": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

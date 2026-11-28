@@ -36,6 +36,7 @@ from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._file_system_client_async import FileSystemClient
 from ._models import FileSystemPropertiesPaged
+from ._session_async import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -76,6 +77,19 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this file system.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided AsyncTokenCredential. Only supported with an AsyncTokenCredential;
+        TypeError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.filedatalake.aio.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -120,7 +134,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
-
+        _configure_session(kwargs)
         super(DataLakeServiceClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, **kwargs
         )
@@ -415,6 +429,16 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         The file system and any files contained within it are later deleted during garbage collection.
         If the file system is not found, a ResourceNotFoundError will be raised.
+
+        When a file system is deleted, a file system with the same name can't be created
+        for at least 30 seconds.  The file system might not be available for more than
+        30 seconds if the service is still processing the request.  While the file system
+        is being deleted, attempts to create a file system of the same name fail with
+        status code 409 (Conflict).  The service indicates that the file system is being
+        deleted.  Operations on files within the file system, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the file system and its files
+        fail with status code 404 (Not Found).
 
         :param file_system:
             The file system to delete. This can either be the name of the file system,

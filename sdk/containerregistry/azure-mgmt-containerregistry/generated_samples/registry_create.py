@@ -35,14 +35,19 @@ def main():
         registry_name="myRegistry",
         registry={
             "location": "westus",
-            "properties": {"adminUserEnabled": True},
-            "sku": {"name": "Standard"},
+            "properties": {
+                "adminUserEnabled": True,
+                "dataEndpointEnabled": True,
+                "endpointProtocol": "IPv4AndIPv6",
+                "regionalEndpoints": "Enabled",
+            },
+            "sku": {"name": "Premium"},
             "tags": {"key": "value"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/RegistryCreate.json
+# x-ms-original-file: 2026-11-01/RegistryCreate.json
 if __name__ == "__main__":
     main()

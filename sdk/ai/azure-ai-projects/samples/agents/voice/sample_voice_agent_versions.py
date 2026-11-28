@@ -6,24 +6,23 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates working with voice-agent versions. Agents are
-    immutable: every `create_version` call produces a new version. This sample
-    creates an agent, adds a new version to it, adds a draft version, lists the
-    versions, and reads a single version back.
+    Create published and draft versions of a voice agent, list them, and read
+    their settings. Each create_version call makes a new version rather than
+    changing an existing one.
+    Published versioning is GA. Only the draft creation call opts in to the
+    separate Draft Agents preview; it does not enable Voice Agents preview.
 
 USAGE:
     python sample_voice_agent_versions.py
 
-    Before running the sample:
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
-    pip install "azure-ai-projects>=2.7.0" python-dotenv
-
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
-       Defaults to "gpt-realtime".
-    3) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
-       set, defaults to "sample-versioned-voice-agent".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_MODEL (optional) - Managed Realtime model;
+       defaults to "gpt-realtime".
+    3) FOUNDRY_VOICE_AGENT_NAME (optional) - Agent name;
+       defaults to "sample-versioned-voice-agent".
 """
 
 import os
@@ -35,7 +34,7 @@ from azure.ai.projects.models import VoiceAgentDefinition, VoiceModelType
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or "gpt-realtime"
 agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-versioned-voice-agent"
 
 
@@ -46,7 +45,7 @@ def make_definition(instructions: str) -> VoiceAgentDefinition:
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     created_versions = []
     try:
@@ -74,6 +73,7 @@ with (
             definition=make_definition("You are a helpful voice assistant. Experimental draft persona."),
             description="Candidate persona under review.",
             draft=True,
+            headers={"Foundry-Features": "DraftAgents=V1Preview"},
         )
         created_versions.append(draft_version)
         print(f"Created draft version: {draft_version.version}")

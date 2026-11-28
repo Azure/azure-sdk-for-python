@@ -41,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-08-01/MigrationRecoveryPoints_ListByReplicationMigrationItems.json
+# x-ms-original-file: 2026-11-01/MigrationRecoveryPoints_ListByReplicationMigrationItems.json
 if __name__ == "__main__":
     main()

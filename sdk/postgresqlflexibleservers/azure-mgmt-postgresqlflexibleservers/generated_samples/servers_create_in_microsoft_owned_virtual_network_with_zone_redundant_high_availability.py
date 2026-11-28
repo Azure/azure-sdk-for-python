@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,7 +39,7 @@ def main():
                 "administratorLogin": "exampleadministratorlogin",
                 "administratorLoginPassword": "examplepassword",
                 "availabilityZone": "1",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Enabled"},
+                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Enabled", "immutableBackup": "Enabled"},
                 "createMode": "Create",
                 "highAvailability": {"mode": "ZoneRedundant"},
                 "network": {"publicNetworkAccess": "Enabled"},
@@ -54,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/ServersCreateInMicrosoftOwnedVirtualNetworkWithZoneRedundantHighAvailability.json
+# x-ms-original-file: 2026-10-01/ServersCreateInMicrosoftOwnedVirtualNetworkWithZoneRedundantHighAvailability.json
 if __name__ == "__main__":
     main()

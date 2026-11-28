@@ -4,8 +4,10 @@
 from unittest.mock import MagicMock
 
 import pytest
+
 from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._legacy.prompty._utils import _LLMOutput, _LLMOutputDiagnosticMetadata
 
 
 # Mock flow side effect that mimics the output of the prompty (the _flow call)
@@ -95,6 +97,19 @@ class TestTaskCompletionEvaluator:
         assert result[f"{prefix}_passed"] is False
         assert f"{prefix}_reason" in result
         assert f"{prefix}_properties" in result
+
+    def test_missing_score_logs_diagnostic_and_preserves_default_fail(self, mock_model_config, caplog):
+        evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
+
+        async def missing_score_flow(timeout, **kwargs):
+            return {"llm_output": {"reason": "The judge omitted a score."}}
+
+        evaluator._flow = MagicMock(side_effect=missing_score_flow)
+        result = evaluator(query="Complete this task", response="Done")
+
+        assert result["task_completion"] == 0
+        assert result["task_completion_result"] == "fail"
+        assert "no valid score" in caplog.text
 
     def test_task_partially_completed(self, mock_model_config):
         """Test when task is only partially completed"""
@@ -239,7 +254,16 @@ class TestTaskCompletionEvaluator:
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
 
         async def invalid_output_flow(timeout, **kwargs):
-            return {"llm_output": "This is a string, not a dictionary"}
+            output = _LLMOutput(
+                {
+                    "llm_output": "This is a string, not a dictionary",
+                    "finish_reason": "length",
+                    "output_token_count": 800,
+                    "model_id": "judge-model",
+                }
+            )
+            output.diagnostic_metadata = _LLMOutputDiagnosticMetadata("length", 800, "judge-model")
+            return output
 
         evaluator._flow = MagicMock(side_effect=invalid_output_flow)
 
@@ -248,7 +272,11 @@ class TestTaskCompletionEvaluator:
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, response=response)
 
-        assert "Evaluator returned invalid output" in str(exc_info.value)
+        message = str(exc_info.value)
+        assert "Evaluator returned invalid output" in message
+        assert "truncated" in message
+        assert "finish_reason=length, output_tokens=800, model=judge-model" in message
+        assert "not a dictionary" not in message
 
     def test_default_success_value(self, mock_model_config):
         """Test that default success value is 0 when not provided"""

@@ -31,7 +31,12 @@ from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
+    FoundryAgentRequestContext,
+    FoundryOriginalSubject,
+    reset_request_context,
+    set_request_context,
 )
+from azure.ai.agentserver.core.platform_headers import FOUNDRY_CALL_ID, USER_ID
 
 from ._constants import InvocationsWSConstants
 
@@ -168,6 +173,12 @@ class _WSHandlerMixin(_MixinBase):
         until ``@ws_handler`` is called is safe.
         """
         from starlette.routing import WebSocketRoute  # pylint: disable=import-outside-toplevel
+        from azure.ai.agentserver.core._middleware import (  # pylint: disable=import-outside-toplevel
+            _task_access_middleware,
+        )
+        from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+            resilient_tasks_enabled,
+        )
 
         for route in self.router.routes:
             if isinstance(route, WebSocketRoute) and getattr(route, "path", None) == InvocationsWSConstants.ROUTE_PATH:
@@ -177,6 +188,7 @@ class _WSHandlerMixin(_MixinBase):
                 InvocationsWSConstants.ROUTE_PATH,
                 self._ws_endpoint,
                 name="invocations_ws",
+                middleware=_task_access_middleware(self, resilient_tasks_enabled),
             )
         )
 
@@ -221,13 +233,32 @@ class _WSHandlerMixin(_MixinBase):
             )
             logger.error(
                 "WebSocket accept failed for session %s: %s",
-                session_id, exc, exc_info=True,
+                session_id,
+                exc,
+                exc_info=True,
             )
             return
 
         close_code: int = InvocationsWSConstants.CLOSE_NORMAL
         handler_exc: Optional[BaseException] = None
+        error_code: Optional[str] = None
+        context_token = None
+        # The platform dispatch binds one invocation to this connection. Never
+        # infer an original subject from arbitrary WebSocket message payloads.
         try:
+            try:
+                original_subject = FoundryOriginalSubject.from_headers(websocket.headers)
+            except ValueError:
+                close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+                error_code = "invalid_original_subject"
+                logger.warning("WebSocket rejected: invalid original-subject platform header.")
+                return
+            context_token = set_request_context(FoundryAgentRequestContext(
+                call_id=websocket.headers.get(FOUNDRY_CALL_ID),
+                user_id=websocket.headers.get(USER_ID),
+                session_id=session_id,
+                original_subject=original_subject,
+            ))
             close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
         except BaseException as exc:  # pylint: disable=broad-exception-caught
             # ``_invoke_user_handler`` catches ``Exception`` but not
@@ -239,16 +270,13 @@ class _WSHandlerMixin(_MixinBase):
             handler_exc = exc
             raise
         finally:
+            if context_token is not None:
+                reset_request_context(context_token)
             # Always finalize — emits the close-event log line and
             # best-effort closes the socket — even when the handler
             # raised a ``BaseException`` like ``CancelledError``.
-            error_code: Optional[str]
-            if handler_exc is None:
-                error_code = None
-            elif isinstance(handler_exc, Exception):
-                error_code = "internal_error"
-            else:
-                error_code = "cancelled"
+            if error_code is None and handler_exc is not None:
+                error_code = "internal_error" if isinstance(handler_exc, Exception) else "cancelled"
             await self._finalize_session(
                 websocket=websocket,
                 session_id=session_id,
@@ -258,7 +286,9 @@ class _WSHandlerMixin(_MixinBase):
             )
 
     async def _invoke_user_handler(
-        self, websocket: WebSocket, session_id: str,
+        self,
+        websocket: WebSocket,
+        session_id: str,
     ) -> tuple[int, Optional[BaseException]]:
         """Run the registered user handler and classify the outcome.
 
@@ -291,7 +321,9 @@ class _WSHandlerMixin(_MixinBase):
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
                 "WebSocket handler raised for session %s: %s",
-                session_id, exc, exc_info=True,
+                session_id,
+                exc,
+                exc_info=True,
             )
             return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
 
@@ -326,21 +358,16 @@ class _WSHandlerMixin(_MixinBase):
         # application hasn't already done so (e.g. the user handler
         # may have called ``websocket.close`` itself, or the client
         # may have disconnected).
-        if (
-            websocket is not None
-            and websocket.application_state != WebSocketState.DISCONNECTED
-        ):
-            reason = (
-                "Internal server error"
-                if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR
-                else ""
-            )
+        if websocket is not None and websocket.application_state != WebSocketState.DISCONNECTED:
+            reason = "Internal server error" if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR else ""
             try:
                 await websocket.close(code=close_code, reason=reason)
             except Exception:  # pylint: disable=broad-exception-caught
                 # Connection already gone — nothing to recover here.
                 logger.debug(
-                    "Error closing WebSocket session %s", session_id, exc_info=True,
+                    "Error closing WebSocket session %s",
+                    session_id,
+                    exc_info=True,
                 )
 
         self._emit_close_event(

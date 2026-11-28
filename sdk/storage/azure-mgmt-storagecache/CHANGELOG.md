@@ -1,5 +1,22 @@
 # Release History
 
+## 4.1.0 (2026-09-02)
+
+### Features Added
+
+  - Client `StorageCacheManagementClient` added operation group `rebalance_jobs`
+  - Model `ExpansionJobProperties` added property `rebalance_job_id`
+  - Model `ExpansionJobProperties` added property `run_rebalance_job`
+  - Added model `RebalanceJob`
+  - Added enum `RebalanceJobAdminStatus`
+  - Added model `RebalanceJobProperties`
+  - Added enum `RebalanceJobPropertiesProvisioningState`
+  - Added model `RebalanceJobPropertiesStatus`
+  - Added enum `RebalanceJobStatusType`
+  - Added model `RebalanceJobUpdate`
+  - Added model `RebalanceJobUpdateProperties`
+  - Added operation group `RebalanceJobsOperations`
+
 ## 4.0.0 (2026-07-08)
 
 ### Features Added

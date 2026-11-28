@@ -45,6 +45,8 @@ class TestSqlManagementManagedInstanceLongTermRetentionPoliciesOperations(AzureM
                 "properties": {
                     "backupStorageAccessTier": "str",
                     "monthlyRetention": "str",
+                    "timeBasedImmutability": "str",
+                    "timeBasedImmutabilityMode": "str",
                     "weekOfYear": 0,
                     "weeklyRetention": "str",
                     "yearlyRetention": "str",

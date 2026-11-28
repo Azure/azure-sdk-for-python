@@ -15,14 +15,16 @@ async def main():
     from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient
 
     client = WebPubSubChatServiceClient.from_connection_string(
-        connection_string,
+        os.environ["WPS_CHAT_CONNECTION_STRING"],
         os.environ.get("WPS_CHAT_HUB", "test_hub"),
     )
     try:
+        # [START client_access_async]
         access = await client.get_client_access_token(user_id="sample-user")
         # Give access["url"] to the intended client to connect; it includes the access token.
         # Print only the token-free base URL here. Do not log access["url"].
         print(access["baseUrl"])
+        # [END client_access_async]
     finally:
         await client.close()
 

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 import logging
 import os
@@ -210,8 +210,7 @@ class AzureDeveloperCliCredential:
 def parse_token(output: str) -> Optional[AccessTokenInfo]:
     """Parse to an AccessToken.
 
-    In particular, convert the "expiresOn" value to epoch seconds. This value is a naive local datetime as returned by
-    datetime.fromtimestamp.
+    In particular, convert the "expiresOn" value to epoch seconds. This value is a UTC datetime in RFC 3339 format.
 
     :param str output: The output of the Azure Developer CLI command.
     :return: An AccessToken or None if the output isn't valid.
@@ -219,7 +218,7 @@ def parse_token(output: str) -> Optional[AccessTokenInfo]:
     """
     try:
         token = json.loads(output)
-        dt = datetime.strptime(token["expiresOn"], "%Y-%m-%dT%H:%M:%SZ")
+        dt = datetime.strptime(token["expiresOn"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
         expires_on = dt.timestamp()
 
         return AccessTokenInfo(token["token"], int(expires_on))

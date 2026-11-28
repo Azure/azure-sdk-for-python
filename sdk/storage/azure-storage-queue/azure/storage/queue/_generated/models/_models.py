@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessPolicy(_Model):
+class AccessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The access policy.
 
     :ivar start: The date-time the policy is active.
@@ -79,7 +79,7 @@ class AccessPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CorsRule(_Model):
+class CorsRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The CORS rules.
 
     :ivar allowed_origins: The allowed origins. Required.
@@ -154,7 +154,7 @@ class CorsRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_Model):
+class Error(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error response.
 
     :ivar code: The error code. Known values are: "AccountAlreadyExists", "AccountBeingCreated",
@@ -232,7 +232,7 @@ class Error(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GeoReplication(_Model):
+class GeoReplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Geo replication information for the secondary storage location.
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
@@ -283,7 +283,7 @@ class GeoReplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyInfo(_Model):
+class KeyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key information for user delegation key.
 
     :ivar start: The date-time the key is active in ISO 8601 UTC time.
@@ -336,7 +336,7 @@ class KeyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListOfSentMessage(_Model):
+class ListOfSentMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of send message.
 
     :ivar items_property: The list of sent messages. Required.
@@ -371,7 +371,7 @@ class ListOfSentMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListQueuesResponse(_Model):
+class ListQueuesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list queues response.
 
     :ivar service_endpoint: The service endpoint. Required.
@@ -455,7 +455,7 @@ class ListQueuesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Logging(_Model):
+class Logging(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Analytics Logging settings.
 
     :ivar version: The version of the logging properties. Required.
@@ -525,7 +525,7 @@ class Logging(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Metrics(_Model):
+class Metrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metrics properties.
 
     :ivar version: The version of the metrics properties.
@@ -587,7 +587,7 @@ class Metrics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PeekedMessage(_Model):
+class PeekedMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The peeked queue message.
 
     :ivar message_id: The ID of the message. Required.
@@ -665,7 +665,7 @@ class PeekedMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PeekedMessages(_Model):
+class PeekedMessages(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of peek messages.
 
     :ivar items_property: The list of peeked messages. Required.
@@ -700,7 +700,7 @@ class PeekedMessages(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueueItem(_Model):
+class QueueItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Storage Queue.
 
     :ivar name: The name of the queue. Required.
@@ -742,7 +742,7 @@ class QueueItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueueMessage(_Model):
+class QueueMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The queue message.
 
     :ivar message_text: The content of the message. Required.
@@ -777,7 +777,7 @@ class QueueMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueueServiceProperties(_Model):
+class QueueServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The service properties.
 
     :ivar logging: The logging properties.
@@ -836,7 +836,7 @@ class QueueServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueueServiceStats(_Model):
+class QueueServiceStats(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Statistics for the storage queue service.
 
     :ivar geo_replication: The geo replication stats.
@@ -870,7 +870,7 @@ class QueueServiceStats(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReceivedMessage(_Model):
+class ReceivedMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The received queue message.
 
     :ivar message_id: The ID of the message. Required.
@@ -972,7 +972,7 @@ class ReceivedMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReceivedMessages(_Model):
+class ReceivedMessages(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of receive messages.
 
     :ivar items_property: The list of received messages. Required.
@@ -1007,7 +1007,7 @@ class ReceivedMessages(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicy(_Model):
+class RetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The retention policy.
 
     :ivar enabled: Whether to enable the retention policy. Required.
@@ -1050,7 +1050,7 @@ class RetentionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentMessage(_Model):
+class SentMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sent queue message.
 
     :ivar message_id: The ID of the message. Required.
@@ -1132,7 +1132,7 @@ class SentMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignedIdentifier(_Model):
+class SignedIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The signed identifier.
 
     :ivar id: The unique ID for the signed identifier. Required.
@@ -1175,7 +1175,7 @@ class SignedIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignedIdentifiers(_Model):
+class SignedIdentifiers(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An array of signed identifiers.
 
     :ivar items_property: The list of signed identifiers. Required.
@@ -1216,7 +1216,7 @@ class SignedIdentifiers(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserDelegationKey(_Model):
+class UserDelegationKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A user delegation key.
 
     :ivar signed_oid: The Entra ID object ID in GUID format. Required.

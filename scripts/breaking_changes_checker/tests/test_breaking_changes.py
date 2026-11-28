@@ -374,6 +374,42 @@ def test_replace_all_classes():
     assert changes == expected_msg
 
 
+def test_removed_operation_group_class():
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "methods": {},
+                    "properties": {},
+                }
+            }
+        },
+        "azure.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "methods": {},
+                    "properties": {},
+                }
+            }
+        },
+    }
+    current = {
+        "azure.contoso.models": {"class_nodes": {}},
+        "azure.contoso.operations": {"class_nodes": {}},
+    }
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes([
+        "(RemovedOrRenamedClass): Deleted or renamed model `ContosoModel`",
+        "(RemovedOrRenamedOperationGroup): Deleted or renamed operation group `ContosoOperations`",
+    ])
+    assert len(bc.breaking_changes) == 2
+    assert changes == expected_msg
+
+
 def test_replace_all_modules():
     current = {}
 
@@ -1089,3 +1125,125 @@ def test_report_mode_without_setup_py():
         assert result.returncode == 0, (
             f"detect_breaking_changes.py failed with:\n{result.stderr}"
         )
+
+
+def test_parameter_ordering_reports_positional_reordering():
+    def params(positional, keyword_only, include_self=False):
+        parameters = {}
+        if include_self:
+            parameters["self"] = {"default": None, "param_type": "positional_or_keyword"}
+        parameters.update(
+            {name: {"default": None, "param_type": "positional_or_keyword"} for name in positional}
+        )
+        parameters.update(
+            {name: {"default": None, "param_type": "keyword_only"} for name in keyword_only}
+        )
+        return parameters
+
+    stable_method_parameters = params(["first", "second"], ["alpha", "beta"], include_self=True)
+    current_method_parameters = params(["second", "first"], ["beta", "alpha"], include_self=True)
+    stable_function_parameters = params(["first", "second"], ["alpha", "beta"])
+    current_function_parameters = params(["second", "first"], ["beta", "alpha"])
+    stable_keyword_only_parameters = params(["value"], ["alpha", "beta"], include_self=True)
+    current_keyword_only_parameters = params(["value"], ["beta", "alpha"], include_self=True)
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {
+                        "method": {"parameters": stable_method_parameters},
+                        "keyword_only_method": {"parameters": stable_keyword_only_parameters},
+                    },
+                    "properties": {},
+                }
+            },
+            "function_nodes": {
+                "function": {"parameters": stable_function_parameters},
+                "keyword_only_function": {
+                    "parameters": params(["value"], ["alpha", "beta"])
+                },
+            },
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {
+                        "method": {"parameters": current_method_parameters},
+                        "keyword_only_method": {"parameters": current_keyword_only_parameters},
+                    },
+                    "properties": {},
+                }
+            },
+            "function_nodes": {
+                "function": {"parameters": current_function_parameters},
+                "keyword_only_function": {
+                    "parameters": params(["value"], ["beta", "alpha"])
+                },
+            },
+        }
+    }
+
+    tracker = BreakingChangesTracker(stable, current, "azure-contoso")
+    tracker.check_parameter_ordering()
+
+    assert len(tracker.breaking_changes) == 2
+    assert {
+        change[0].format(*change[3:])
+        for change in tracker.breaking_changes
+        if change[1] == BreakingChangeType.CHANGED_PARAMETER_ORDERING
+    } == {
+        "Method `ContosoClient.method` re-ordered its parameters from "
+        "`['self', 'first', 'second', 'alpha', 'beta']` to "
+        "`['self', 'second', 'first', 'beta', 'alpha']`",
+        "Function `function` re-ordered its parameters from "
+        "`['first', 'second', 'alpha', 'beta']` to "
+        "`['second', 'first', 'beta', 'alpha']`",
+    }
+
+
+def test_parameter_ordering_skips_when_parameter_count_changes():
+    def params(positional, keyword_only, include_self=False):
+        parameters = {}
+        if include_self:
+            parameters["self"] = {"default": None, "param_type": "positional_or_keyword"}
+        parameters.update(
+            {name: {"default": None, "param_type": "positional_or_keyword"} for name in positional}
+        )
+        parameters.update(
+            {name: {"default": None, "param_type": "keyword_only"} for name in keyword_only}
+        )
+        return parameters
+
+    stable_method_parameters = params(["first", "second"], ["alpha"], include_self=True)
+    current_method_parameters = params(["second", "first"], ["alpha", "beta"], include_self=True)
+    stable_function_parameters = params(["first", "second"], ["alpha"])
+    current_function_parameters = params(["second", "first"], ["alpha", "beta"])
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {"method": {"parameters": stable_method_parameters}},
+                    "properties": {},
+                }
+            },
+            "function_nodes": {"function": {"parameters": stable_function_parameters}},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "methods": {"method": {"parameters": current_method_parameters}},
+                    "properties": {},
+                }
+            },
+            "function_nodes": {"function": {"parameters": current_function_parameters}},
+        }
+    }
+
+    tracker = BreakingChangesTracker(stable, current, "azure-contoso")
+    tracker.check_parameter_ordering()
+
+    assert tracker.breaking_changes == []

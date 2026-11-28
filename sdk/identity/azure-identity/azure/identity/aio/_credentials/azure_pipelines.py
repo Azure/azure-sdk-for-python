@@ -6,13 +6,13 @@ from typing import Any, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from azure.core.rest import HttpResponse
+from azure.core.rest import AsyncHttpResponse
 
 from .client_assertion import ClientAssertionCredential
 from ..._credentials.azure_pipelines import TROUBLESHOOTING_GUIDE, build_oidc_request, validate_env_vars
 from .._internal import AsyncContextManager
 from ..._internal import validate_tenant_id
-from ..._internal.pipeline import build_pipeline
+from ..._internal.pipeline import build_async_pipeline
 
 
 class AzurePipelinesCredential(AsyncContextManager):
@@ -68,7 +68,7 @@ class AzurePipelinesCredential(AsyncContextManager):
         self._client_assertion_credential = ClientAssertionCredential(
             tenant_id=tenant_id, client_id=client_id, func=self._get_oidc_token, **kwargs
         )
-        self._pipeline = build_pipeline(**kwargs)
+        self._pipeline = build_async_pipeline(**kwargs)
 
     async def get_token(
         self,
@@ -122,10 +122,10 @@ class AzurePipelinesCredential(AsyncContextManager):
         validate_env_vars()
         return await self._client_assertion_credential.get_token_info(*scopes, options=options)
 
-    def _get_oidc_token(self) -> str:
+    async def _get_oidc_token(self) -> str:
         request = build_oidc_request(self._service_connection_id, self._system_access_token)
-        response = self._pipeline.run(request, retry_on_methods=[request.method])
-        http_response: HttpResponse = response.http_response
+        response = await self._pipeline.run(request, retry_on_methods=[request.method])
+        http_response: AsyncHttpResponse = response.http_response
         if http_response.status_code not in [200]:
             raise ClientAuthenticationError(
                 message="Unexpected response from OIDC token endpoint.", response=http_response
@@ -137,10 +137,10 @@ class AzurePipelinesCredential(AsyncContextManager):
 
     async def __aenter__(self) -> "AzurePipelinesCredential":
         await self._client_assertion_credential.__aenter__()
-        self._pipeline.__enter__()
+        await self._pipeline.__aenter__()
         return self
 
     async def close(self) -> None:
         """Close the credential's transport session."""
         await self._client_assertion_credential.close()
-        self._pipeline.__exit__()
+        await self._pipeline.__aexit__()

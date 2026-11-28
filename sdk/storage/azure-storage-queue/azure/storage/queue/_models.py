@@ -501,6 +501,7 @@ class QueueMessage(DictMixin):
         self.content = content
         self.pop_receipt = kwargs.pop("pop_receipt", None)
         self.next_visible_on = kwargs.pop("next_visible_on", None)
+        self._is_encrypted = False
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -511,6 +512,7 @@ class QueueMessage(DictMixin):
         if content is None:
             content = generated.message_text
         message = cls(content=content)
+        message._is_encrypted = getattr(generated, "_is_encrypted", False)
         message.id = generated.message_id
         message.inserted_on = generated.insertion_time
         message.expires_on = generated.expiration_time

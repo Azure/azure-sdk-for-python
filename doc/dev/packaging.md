@@ -1,6 +1,6 @@
 # Azure packaging
 
-[comment]: # ( cspell:ignore myservice )
+[comment]: # ( cspell:ignore myservice azuremyservice msvc MSRUSTUP )
 
 > **Note:** This document covers legacy packaging using `setup.py`. New packages should use `pyproject.toml` instead. See the [`sdk/template/azure-template`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/template/azure-template) for the current package template.
 
@@ -144,6 +144,86 @@ Since the package is Python 3 only, do NOT make this wheel universal. This usual
 - wheel file must NOT contain a `azure/__init__.py` file (you can open it with a zip util to check)
 - wheel file name suffix is `py3-none-any`, and NOT `py2.py3-none-any`.
 - sdist must contain a `azure/__init__.py` file that declares `azure` as a namespace package using the `pkgutil` syntax
+
+# Native wheel builds in CI
+
+`sdk_build` uses `cibuildwheel` when a package declares setuptools `ext_modules`
+or a `[tool.cibuildwheel]` table in `pyproject.toml`. The latter supports
+non-setuptools backends, including Maturin/PyO3. The package owns its wheel
+matrix, backend requirements, and native build hooks.
+
+For these packages, `sdk_build_package --package_type sdist` builds only the
+source distribution with build isolation, which installs the backend declared
+in `[build-system].requires` without invoking `cibuildwheel`.
+
+Set `signBinaries: true` on the package's artifact entry in the service `ci.yml`
+to enable Windows and macOS wheel builds and the existing binary-signing release
+path. The platform resolver uses this artifact property, not package names.
+
+Packages using the Microsoft Rust toolchain can opt in through
+`archetype-sdk-client.yml`:
+
+```yaml
+extends:
+  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: myservice
+    InstallMsRustToolchain: true
+    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/myservice/azure-myservice
+    MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/<approved-rust-feed>/nuget/v3/index.json
+    MsRustAdditionalTargets: aarch64-pc-windows-msvc
+    Artifacts:
+      - name: azure-myservice
+        safeName: azuremyservice
+        signBinaries: true
+```
+
+Replace `<approved-rust-feed>` with an approved organization-local feed that
+provides the internal Rust toolchain. No prototype test feed is selected by
+default. The working directory must contain `rust-toolchain.toml`.
+The installer refuses to overwrite an existing Cargo configuration in its
+`CARGO_HOME`; provide a clean build environment.
+Rust installation is disabled by default. When enabled, it applies to wheel-build
+jobs that target an artifact with `signBinaries: true`, including on Linux, and
+to the documentation job when `BuildDocs` is enabled. Documentation continues
+to install the source distribution, using the host Rust toolchain and
+authenticated Cargo feed.
+Opted-in wheel-build jobs have a 240-minute timeout and a 210-minute package-build
+timeout; other jobs keep their existing limits.
+
+Linux wheels build inside manylinux containers. The package's `before-all` hook
+must install the internal toolchain and configure Cargo source replacement
+inside each container. The pipeline forwards `PIP_INDEX_URL`,
+`MSRUSTUP_ACCESS_TOKEN`, `MSRUSTUP_FEED_URL`, and the
+`CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_*` index, token, and credential-provider
+variables. Credentials stay in the build environment, not checked-in files.
+
+This opt-in also provisions Rust for analysis jobs, but not for source-installing
+test jobs. Prepare test jobs separately before enabling a Rust package,
+and keep real source-distribution testing. Packages with a static
+`[project].version` also need version synchronization with `_version.py` for
+nightly builds. No package is activated by adding this shared support.
+
+## Windows ARM64 Rust wheels
+
+Our Windows CI builds ARM64 wheels on AMD64 agents. The `sdk_build` helper
+supplies matching ARM64 Python import libraries and a temporary PyO3 configuration
+so Maturin does not mistake the AMD64 build interpreter for the ARM64 target.
+
+Version-specific packages need no extra setting. If your package enables PyO3's
+stable ABI, add the matching minimum to `pyproject.toml`. For Cargo's `abi3-py310`:
+
+```toml
+[tool.azure-sdk-build]
+pyo3-abi3-minimum = "3.10"
+```
+
+The helper does not read Cargo features: keep these settings aligned and retain
+your strict ABI audit. The minimum cannot exceed the target Python version or be
+combined with a free-threaded ARM64 target.
+
+A package-owned `PYO3_CONFIG_FILE` is preserved and controls its own ABI settings.
+ARM64 runtime/import tests require an ARM64 runner.
 
 # I already have a package that supports Python 2, can I get short version on how to udpate to Python 3 only?
 

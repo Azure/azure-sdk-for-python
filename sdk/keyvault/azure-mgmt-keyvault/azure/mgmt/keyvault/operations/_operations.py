@@ -32,14 +32,14 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import KeyVaultManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_vaults_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_vaults_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_vaults_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_vaults_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
     path_format_arguments = {
@@ -183,7 +183,7 @@ def build_vaults_list_by_resource_group_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -212,7 +212,7 @@ def build_vaults_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -245,7 +245,7 @@ def build_vaults_update_access_policy_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -276,7 +276,7 @@ def build_vaults_get_deleted_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -303,7 +303,7 @@ def build_vaults_purge_deleted_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}/purge"
     path_format_arguments = {
@@ -324,7 +324,7 @@ def build_vaults_list_deleted_request(subscription_id: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -381,7 +381,7 @@ def build_vaults_check_name_availability_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -413,7 +413,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -449,7 +449,7 @@ def build_private_endpoint_connections_put_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -486,7 +486,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -517,7 +517,7 @@ def build_private_endpoint_connections_list_by_resource_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -539,13 +539,105 @@ def build_private_endpoint_connections_list_by_resource_request(  # pylint: disa
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_network_security_perimeter_configurations_get_configuration_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    vault_name: str,
+    network_security_perimeter_configuration_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/networkSecurityPerimeterConfigurations/{networkSecurityPerimeterConfigurationName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+        "networkSecurityPerimeterConfigurationName": _SERIALIZER.url(
+            "network_security_perimeter_configuration_name", network_security_perimeter_configuration_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_network_security_perimeter_configurations_list_configurations_request(  # pylint: disable=name-too-long
+    resource_group_name: str, vault_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/networkSecurityPerimeterConfigurations"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_network_security_perimeter_configurations_reconcile_configuration_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    vault_name: str,
+    network_security_perimeter_configuration_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/networkSecurityPerimeterConfigurations/{networkSecurityPerimeterConfigurationName}/reconcile"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+        "networkSecurityPerimeterConfigurationName": _SERIALIZER.url(
+            "network_security_perimeter_configuration_name", network_security_perimeter_configuration_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
 def build_managed_hsms_get_request(
     resource_group_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -574,7 +666,7 @@ def build_managed_hsms_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -605,7 +697,7 @@ def build_managed_hsms_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -634,7 +726,7 @@ def build_managed_hsms_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/managedHSMs/{name}"
     path_format_arguments = {
@@ -657,7 +749,7 @@ def build_managed_hsms_list_by_resource_group_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -686,7 +778,7 @@ def build_managed_hsms_list_by_subscription_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -714,7 +806,7 @@ def build_managed_hsms_get_deleted_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -741,7 +833,7 @@ def build_managed_hsms_purge_deleted_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedManagedHSMs/{name}/purge"
     path_format_arguments = {
@@ -762,7 +854,7 @@ def build_managed_hsms_list_deleted_request(subscription_id: str, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -789,7 +881,7 @@ def build_managed_hsms_check_mhsm_name_availability_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -817,7 +909,7 @@ def build_secrets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -847,7 +939,7 @@ def build_secrets_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -879,7 +971,7 @@ def build_secrets_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -910,7 +1002,7 @@ def build_secrets_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -940,7 +1032,7 @@ def build_keys_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -970,7 +1062,7 @@ def build_keys_create_if_not_exist_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1001,7 +1093,7 @@ def build_keys_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1029,7 +1121,7 @@ def build_keys_get_version_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1059,7 +1151,7 @@ def build_keys_list_versions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1088,7 +1180,7 @@ def build_managed_hsm_keys_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1118,7 +1210,7 @@ def build_managed_hsm_keys_create_if_not_exist_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1149,7 +1241,7 @@ def build_managed_hsm_keys_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1177,7 +1269,7 @@ def build_managed_hsm_keys_get_version_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1207,7 +1299,7 @@ def build_managed_hsm_keys_list_versions_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1236,7 +1328,7 @@ def build_private_link_resources_list_by_vault_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1264,7 +1356,7 @@ def build_mhsm_private_link_resources_list_by_mhsm_resource_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1292,7 +1384,7 @@ def build_mhsm_regions_list_by_resource_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1320,7 +1412,7 @@ def build_mhsm_private_endpoint_connections_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1352,7 +1444,7 @@ def build_mhsm_private_endpoint_connections_put_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1385,7 +1477,7 @@ def build_mhsm_private_endpoint_connections_delete_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1416,7 +1508,7 @@ def build_mhsm_private_endpoint_connections_list_by_resource_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1438,7 +1530,7 @@ def build_mhsm_private_endpoint_connections_list_by_resource_request(  # pylint:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1502,7 +1594,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1545,7 +1640,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class VaultsOperations:
+class VaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1636,7 +1731,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VaultCreateOrUpdateParameters, _types.VaultCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1740,7 +1835,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.VaultCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1753,7 +1848,7 @@ class VaultsOperations:
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
         :param parameters: Parameters to create or update the vault. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.VaultCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1796,7 +1891,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VaultCreateOrUpdateParameters, _types.VaultCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Vault]:
         """Create or update a key vault in the specified subscription.
@@ -1806,10 +1901,10 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
-        :param parameters: Parameters to create or update the vault. Is one of the following types:
-         VaultCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters to create or update the vault. Is either a
+         VaultCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters or
+         ~azure.mgmt.keyvault.types.VaultCreateOrUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns Vault. The Vault is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.keyvault.models.Vault]
@@ -1899,7 +1994,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.VaultPatchParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1912,7 +2007,7 @@ class VaultsOperations:
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
         :param parameters: Parameters to patch the vault. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.VaultPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1953,7 +2048,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultPatchParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VaultPatchParameters, _types.VaultPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Vault:
         """Update a key vault in the specified subscription.
@@ -1963,9 +2058,10 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
-        :param parameters: Parameters to patch the vault. Is one of the following types:
-         VaultPatchParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.VaultPatchParameters or JSON or IO[bytes]
+        :param parameters: Parameters to patch the vault. Is either a VaultPatchParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.VaultPatchParameters or
+         ~azure.mgmt.keyvault.types.VaultPatchParameters or IO[bytes]
         :return: Vault. The Vault is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.Vault
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2154,7 +2250,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2247,7 +2346,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2327,7 +2429,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         operation_kind: Union[str, _models.AccessPolicyUpdateKind],
-        parameters: JSON,
+        parameters: _types.VaultAccessPolicyParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2343,7 +2445,7 @@ class VaultsOperations:
          Required.
         :type operation_kind: str or ~azure.mgmt.keyvault.models.AccessPolicyUpdateKind
         :param parameters: Access policy to merge into the vault. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.VaultAccessPolicyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2391,7 +2493,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         operation_kind: Union[str, _models.AccessPolicyUpdateKind],
-        parameters: Union[_models.VaultAccessPolicyParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VaultAccessPolicyParameters, _types.VaultAccessPolicyParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.VaultAccessPolicyParameters:
         """Update access policies in a key vault in the specified subscription.
@@ -2404,9 +2506,10 @@ class VaultsOperations:
         :param operation_kind: Name of the operation. Known values are: "add", "replace", and "remove".
          Required.
         :type operation_kind: str or ~azure.mgmt.keyvault.models.AccessPolicyUpdateKind
-        :param parameters: Access policy to merge into the vault. Is one of the following types:
-         VaultAccessPolicyParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.VaultAccessPolicyParameters or JSON or IO[bytes]
+        :param parameters: Access policy to merge into the vault. Is either a
+         VaultAccessPolicyParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.VaultAccessPolicyParameters or
+         ~azure.mgmt.keyvault.types.VaultAccessPolicyParameters or IO[bytes]
         :return: VaultAccessPolicyParameters. The VaultAccessPolicyParameters is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.VaultAccessPolicyParameters
@@ -2712,7 +2815,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2808,9 +2914,12 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = api_version
+                _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2875,12 +2984,16 @@ class VaultsOperations:
 
     @overload
     def check_name_availability(
-        self, vault_name: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        vault_name: _types.VaultCheckNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the vault name is valid and is not already in use.
 
         :param vault_name: The name of the vault. Required.
-        :type vault_name: JSON
+        :type vault_name: ~azure.mgmt.keyvault.types.VaultCheckNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2909,14 +3022,18 @@ class VaultsOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, vault_name: Union[_models.VaultCheckNameAvailabilityParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        vault_name: Union[
+            _models.VaultCheckNameAvailabilityParameters, _types.VaultCheckNameAvailabilityParameters, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the vault name is valid and is not already in use.
 
-        :param vault_name: The name of the vault. Is one of the following types:
-         VaultCheckNameAvailabilityParameters, JSON, IO[bytes] Required.
-        :type vault_name: ~azure.mgmt.keyvault.models.VaultCheckNameAvailabilityParameters or JSON or
-         IO[bytes]
+        :param vault_name: The name of the vault. Is either a VaultCheckNameAvailabilityParameters type
+         or a IO[bytes] type. Required.
+        :type vault_name: ~azure.mgmt.keyvault.models.VaultCheckNameAvailabilityParameters or
+         ~azure.mgmt.keyvault.types.VaultCheckNameAvailabilityParameters or IO[bytes]
         :return: CheckNameAvailabilityResult. The CheckNameAvailabilityResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.CheckNameAvailabilityResult
@@ -2988,7 +3105,7 @@ class VaultsOperations:
         return deserialized  # type: ignore
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3122,7 +3239,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         vault_name: str,
         private_endpoint_connection_name: str,
-        properties: JSON,
+        properties: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3138,7 +3255,7 @@ class PrivateEndpointConnectionsOperations:
          with the key vault. Required.
         :type private_endpoint_connection_name: str
         :param properties: The intended state of private endpoint connection. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.keyvault.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3186,7 +3303,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         vault_name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        properties: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Updates the specified private endpoint connection associated with the key vault.
@@ -3199,9 +3316,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: Name of the private endpoint connection associated
          with the key vault. Required.
         :type private_endpoint_connection_name: str
-        :param properties: The intended state of private endpoint connection. Is one of the following
-         types: PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.keyvault.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param properties: The intended state of private endpoint connection. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.keyvault.models.PrivateEndpointConnection or
+         ~azure.mgmt.keyvault.types.PrivateEndpointConnection or IO[bytes]
         :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.PrivateEndpointConnection
@@ -3470,7 +3588,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3513,7 +3634,310 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ManagedHsmsOperations:
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.keyvault.KeyVaultManagementClient`'s
+        :attr:`network_security_perimeter_configurations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: KeyVaultManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01-preview",
+        params_added_on={
+            "2026-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "network_security_perimeter_configuration_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01-preview"],
+    )
+    def get_configuration(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        network_security_perimeter_configuration_name: str,
+        **kwargs: Any
+    ) -> _models.NetworkSecurityPerimeterConfiguration:
+        """Gets the specified network security perimeter configuration for a key vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the key vault. Required.
+        :type vault_name: str
+        :param network_security_perimeter_configuration_name: The name of the
+         NetworkSecurityPerimeterConfiguration. Required.
+        :type network_security_perimeter_configuration_name: str
+        :return: NetworkSecurityPerimeterConfiguration. The NetworkSecurityPerimeterConfiguration is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.keyvault.models.NetworkSecurityPerimeterConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.NetworkSecurityPerimeterConfiguration] = kwargs.pop("cls", None)
+
+        _request = build_network_security_perimeter_configurations_get_configuration_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            network_security_perimeter_configuration_name=network_security_perimeter_configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.NetworkSecurityPerimeterConfiguration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01-preview",
+        params_added_on={
+            "2026-10-01-preview": ["api_version", "subscription_id", "resource_group_name", "vault_name", "accept"]
+        },
+        api_versions_list=["2026-10-01-preview"],
+    )
+    def list_configurations(
+        self, resource_group_name: str, vault_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.NetworkSecurityPerimeterConfiguration"]:
+        """Lists the network security perimeter configurations associated with a key vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the key vault. Required.
+        :type vault_name: str
+        :return: An iterator like instance of NetworkSecurityPerimeterConfiguration
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.models.NetworkSecurityPerimeterConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.NetworkSecurityPerimeterConfiguration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_network_security_perimeter_configurations_list_configurations_request(
+                    resource_group_name=resource_group_name,
+                    vault_name=vault_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.NetworkSecurityPerimeterConfiguration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01-preview",
+        params_added_on={
+            "2026-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "network_security_perimeter_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-10-01-preview"],
+    )
+    def reconcile_configuration(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        network_security_perimeter_configuration_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Reconciles the specified network security perimeter configuration for a key vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the key vault. Required.
+        :type vault_name: str
+        :param network_security_perimeter_configuration_name: The name of the
+         NetworkSecurityPerimeterConfiguration. Required.
+        :type network_security_perimeter_configuration_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_network_security_perimeter_configurations_reconcile_configuration_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            network_security_perimeter_configuration_name=network_security_perimeter_configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class ManagedHsmsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3603,7 +4027,11 @@ class ManagedHsmsOperations:
         return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, name: str, parameters: Union[_models.ManagedHsm, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        parameters: Union[_models.ManagedHsm, _types.ManagedHsm, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3706,7 +4134,7 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: JSON,
+        parameters: _types.ManagedHsm,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3719,7 +4147,7 @@ class ManagedHsmsOperations:
         :param name: The name of the managed HSM Pool. Required.
         :type name: str
         :param parameters: Parameters to create or update the managed HSM Pool. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.ManagedHsm
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3759,7 +4187,11 @@ class ManagedHsmsOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, name: str, parameters: Union[_models.ManagedHsm, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        parameters: Union[_models.ManagedHsm, _types.ManagedHsm, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.ManagedHsm]:
         """Create or update a managed HSM Pool in the specified subscription.
 
@@ -3768,9 +4200,10 @@ class ManagedHsmsOperations:
         :type resource_group_name: str
         :param name: The name of the managed HSM Pool. Required.
         :type name: str
-        :param parameters: Parameters to create or update the managed HSM Pool. Is one of the following
-         types: ManagedHsm, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsm or JSON or IO[bytes]
+        :param parameters: Parameters to create or update the managed HSM Pool. Is either a ManagedHsm
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsm or
+         ~azure.mgmt.keyvault.types.ManagedHsm or IO[bytes]
         :return: An instance of LROPoller that returns ManagedHsm. The ManagedHsm is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.keyvault.models.ManagedHsm]
@@ -3829,7 +4262,11 @@ class ManagedHsmsOperations:
         )
 
     def _update_initial(
-        self, resource_group_name: str, name: str, parameters: Union[_models.ManagedHsm, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        parameters: Union[_models.ManagedHsm, _types.ManagedHsm, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3932,7 +4369,7 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: JSON,
+        parameters: _types.ManagedHsm,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3945,7 +4382,7 @@ class ManagedHsmsOperations:
         :param name: The name of the managed HSM Pool. Required.
         :type name: str
         :param parameters: Parameters to patch the managed HSM Pool. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.ManagedHsm
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3985,7 +4422,11 @@ class ManagedHsmsOperations:
 
     @distributed_trace
     def begin_update(
-        self, resource_group_name: str, name: str, parameters: Union[_models.ManagedHsm, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        parameters: Union[_models.ManagedHsm, _types.ManagedHsm, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.ManagedHsm]:
         """Update a managed HSM Pool in the specified subscription.
 
@@ -3994,9 +4435,10 @@ class ManagedHsmsOperations:
         :type resource_group_name: str
         :param name: The name of the managed HSM Pool. Required.
         :type name: str
-        :param parameters: Parameters to patch the managed HSM Pool. Is one of the following types:
-         ManagedHsm, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsm or JSON or IO[bytes]
+        :param parameters: Parameters to patch the managed HSM Pool. Is either a ManagedHsm type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsm or
+         ~azure.mgmt.keyvault.types.ManagedHsm or IO[bytes]
         :return: An instance of LROPoller that returns ManagedHsm. The ManagedHsm is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.keyvault.models.ManagedHsm]
@@ -4228,7 +4670,10 @@ class ManagedHsmsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4322,7 +4767,10 @@ class ManagedHsmsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4591,7 +5039,10 @@ class ManagedHsmsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4656,12 +5107,16 @@ class ManagedHsmsOperations:
 
     @overload
     def check_mhsm_name_availability(
-        self, mhsm_name: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        mhsm_name: _types.CheckMhsmNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckMhsmNameAvailabilityResult:
         """Checks that the managed hsm name is valid and is not already in use.
 
         :param mhsm_name: The request body. Required.
-        :type mhsm_name: JSON
+        :type mhsm_name: ~azure.mgmt.keyvault.types.CheckMhsmNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4690,14 +5145,18 @@ class ManagedHsmsOperations:
 
     @distributed_trace
     def check_mhsm_name_availability(
-        self, mhsm_name: Union[_models.CheckMhsmNameAvailabilityParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        mhsm_name: Union[
+            _models.CheckMhsmNameAvailabilityParameters, _types.CheckMhsmNameAvailabilityParameters, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.CheckMhsmNameAvailabilityResult:
         """Checks that the managed hsm name is valid and is not already in use.
 
-        :param mhsm_name: The request body. Is one of the following types:
-         CheckMhsmNameAvailabilityParameters, JSON, IO[bytes] Required.
-        :type mhsm_name: ~azure.mgmt.keyvault.models.CheckMhsmNameAvailabilityParameters or JSON or
-         IO[bytes]
+        :param mhsm_name: The request body. Is either a CheckMhsmNameAvailabilityParameters type or a
+         IO[bytes] type. Required.
+        :type mhsm_name: ~azure.mgmt.keyvault.models.CheckMhsmNameAvailabilityParameters or
+         ~azure.mgmt.keyvault.types.CheckMhsmNameAvailabilityParameters or IO[bytes]
         :return: CheckMhsmNameAvailabilityResult. The CheckMhsmNameAvailabilityResult is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.CheckMhsmNameAvailabilityResult
@@ -4769,7 +5228,7 @@ class ManagedHsmsOperations:
         return deserialized  # type: ignore
 
 
-class SecretsOperations:
+class SecretsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4898,7 +5357,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: JSON,
+        parameters: _types.SecretCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4915,7 +5374,7 @@ class SecretsOperations:
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :param parameters: Parameters to create or update the secret. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.SecretCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4962,7 +5421,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: Union[_models.SecretCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SecretCreateOrUpdateParameters, _types.SecretCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Secret:
         """Create or update a secret in a key vault in the specified subscription.  NOTE: This API is
@@ -4976,10 +5435,10 @@ class SecretsOperations:
         :type vault_name: str
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param parameters: Parameters to create or update the secret. Is one of the following types:
-         SecretCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.SecretCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters to create or update the secret. Is either a
+         SecretCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.SecretCreateOrUpdateParameters or
+         ~azure.mgmt.keyvault.types.SecretCreateOrUpdateParameters or IO[bytes]
         :return: Secret. The Secret is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.Secret
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5090,7 +5549,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: JSON,
+        parameters: _types.SecretPatchParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5107,7 +5566,7 @@ class SecretsOperations:
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :param parameters: Parameters to patch the secret. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.SecretPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5154,7 +5613,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: Union[_models.SecretPatchParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SecretPatchParameters, _types.SecretPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Secret:
         """Update a secret in the specified subscription.  NOTE: This API is intended for internal use in
@@ -5168,9 +5627,10 @@ class SecretsOperations:
         :type vault_name: str
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param parameters: Parameters to patch the secret. Is one of the following types:
-         SecretPatchParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.SecretPatchParameters or JSON or IO[bytes]
+        :param parameters: Parameters to patch the secret. Is either a SecretPatchParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.SecretPatchParameters or
+         ~azure.mgmt.keyvault.types.SecretPatchParameters or IO[bytes]
         :return: Secret. The Secret is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.Secret
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5305,7 +5765,10 @@ class SecretsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5348,7 +5811,7 @@ class SecretsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class KeysOperations:
+class KeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5476,7 +5939,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        parameters: JSON,
+        parameters: _types.KeyCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5493,7 +5956,7 @@ class KeysOperations:
         :param key_name: The name of the key to be retrieved. Required.
         :type key_name: str
         :param parameters: The parameters used to create the specified key. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.KeyCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5540,7 +6003,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        parameters: Union[_models.KeyCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.KeyCreateParameters, _types.KeyCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Key:
         """Creates the first version of a new key if it does not exist. If it already exists, then the
@@ -5554,9 +6017,10 @@ class KeysOperations:
         :type vault_name: str
         :param key_name: The name of the key to be retrieved. Required.
         :type key_name: str
-        :param parameters: The parameters used to create the specified key. Is one of the following
-         types: KeyCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.KeyCreateParameters or JSON or IO[bytes]
+        :param parameters: The parameters used to create the specified key. Is either a
+         KeyCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.KeyCreateParameters or
+         ~azure.mgmt.keyvault.types.KeyCreateParameters or IO[bytes]
         :return: Key. The Key is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.Key
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5684,7 +6148,10 @@ class KeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5866,7 +6333,10 @@ class KeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5909,7 +6379,7 @@ class KeysOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ManagedHsmKeysOperations:
+class ManagedHsmKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6041,7 +6511,7 @@ class ManagedHsmKeysOperations:
         resource_group_name: str,
         name: str,
         key_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedHsmKeyCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6060,7 +6530,7 @@ class ManagedHsmKeysOperations:
          personally identifiable or sensitive information. Required.
         :type key_name: str
         :param parameters: The parameters used to create the specified key. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.ManagedHsmKeyCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6109,7 +6579,7 @@ class ManagedHsmKeysOperations:
         resource_group_name: str,
         name: str,
         key_name: str,
-        parameters: Union[_models.ManagedHsmKeyCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedHsmKeyCreateParameters, _types.ManagedHsmKeyCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagedHsmKey:
         """Creates the first version of a new key if it does not exist. If it already exists, then the
@@ -6125,10 +6595,10 @@ class ManagedHsmKeysOperations:
          globally for the purpose of running the service. The value provided should not include
          personally identifiable or sensitive information. Required.
         :type key_name: str
-        :param parameters: The parameters used to create the specified key. Is one of the following
-         types: ManagedHsmKeyCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsmKeyCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters used to create the specified key. Is either a
+         ManagedHsmKeyCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsmKeyCreateParameters or
+         ~azure.mgmt.keyvault.types.ManagedHsmKeyCreateParameters or IO[bytes]
         :return: ManagedHsmKey. The ManagedHsmKey is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.ManagedHsmKey
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6256,7 +6726,10 @@ class ManagedHsmKeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6440,7 +6913,10 @@ class ManagedHsmKeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6483,7 +6959,7 @@ class ManagedHsmKeysOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6574,7 +7050,7 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
 
-class MHSMPrivateLinkResourcesOperations:
+class MHSMPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6665,7 +7141,7 @@ class MHSMPrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
 
-class MHSMRegionsOperations:
+class MHSMRegionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6739,7 +7215,10 @@ class MHSMRegionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6782,7 +7261,7 @@ class MHSMRegionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MHSMPrivateEndpointConnectionsOperations:
+class MHSMPrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6914,7 +7393,7 @@ class MHSMPrivateEndpointConnectionsOperations:
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        properties: JSON,
+        properties: _types.MHSMPrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6930,7 +7409,7 @@ class MHSMPrivateEndpointConnectionsOperations:
          with the managed hsm pool. Required.
         :type private_endpoint_connection_name: str
         :param properties: The intended state of private endpoint connection. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.keyvault.types.MHSMPrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6978,7 +7457,7 @@ class MHSMPrivateEndpointConnectionsOperations:
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.MHSMPrivateEndpointConnection, JSON, IO[bytes]],
+        properties: Union[_models.MHSMPrivateEndpointConnection, _types.MHSMPrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.MHSMPrivateEndpointConnection:
         """Updates the specified private endpoint connection associated with the managed hsm pool.
@@ -6991,10 +7470,10 @@ class MHSMPrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: Name of the private endpoint connection associated
          with the managed hsm pool. Required.
         :type private_endpoint_connection_name: str
-        :param properties: The intended state of private endpoint connection. Is one of the following
-         types: MHSMPrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.keyvault.models.MHSMPrivateEndpointConnection or JSON or
-         IO[bytes]
+        :param properties: The intended state of private endpoint connection. Is either a
+         MHSMPrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.keyvault.models.MHSMPrivateEndpointConnection or
+         ~azure.mgmt.keyvault.types.MHSMPrivateEndpointConnection or IO[bytes]
         :return: MHSMPrivateEndpointConnection. The MHSMPrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.MHSMPrivateEndpointConnection
@@ -7264,7 +7743,10 @@ class MHSMPrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccountResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The value must be "account" for all account operations."""
+    """The value must be \"account\" for all account operations."""
 
     ACCOUNT = "account"
     """The account resource type."""
@@ -25,7 +25,7 @@ class EncryptionAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class FileSystemResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The value must be "filesystem" for all filesystem operations."""
+    """The value must be \"filesystem\" for all filesystem operations."""
 
     FILESYSTEM = "filesystem"
     """The filesystem resource type."""
@@ -108,7 +108,7 @@ class PathLeaseAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PathRenameMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The rename mode. The value must be "legacy" or "posix"."""
+    """The rename mode. The value must be \"legacy\" or \"posix\"."""
 
     LEGACY = "legacy"
     """Legacy rename mode."""
@@ -117,7 +117,7 @@ class PathRenameMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PathResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Required only for Create File and Create Directory. The value must be "file" or "directory"."""
+    """Required only for Create File and Create Directory. The value must be \"file\" or \"directory\"."""
 
     DIRECTORY = "directory"
     """A directory resource type."""

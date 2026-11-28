@@ -41,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-08-01/TargetComputeSizes_ListByReplicationProtectedItems.json
+# x-ms-original-file: 2026-11-01/TargetComputeSizes_ListByReplicationProtectedItems.json
 if __name__ == "__main__":
     main()

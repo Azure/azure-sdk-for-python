@@ -58,6 +58,77 @@ def _build_file_knowledge_source(name, endpoint, deployment, model):
 
 class TestSearchIndexClientKnowledgeSourceFiles(AzureRecordedTestCase):
     @live_test()
+    def test_begin_ingest_upload_and_replace_returns_files(
+        self,
+        endpoint: str,
+        search_azure_openai_endpoint: str,
+        search_azure_openai_embedding_deployment: str,
+        search_azure_openai_embedding_model: str,
+    ) -> None:
+        require_capability(
+            *_FILE_CAPABILITIES,
+            "azure.search.documents.indexes.models.KnowledgeSourceFile",
+            "azure.search.documents.indexes.SearchIndexClient.begin_ingest_knowledge_source_file_multipart",
+            "azure.search.documents.indexes.SearchIndexClient.begin_ingest_knowledge_source_file_replacement",
+        )
+        from azure.search.documents.indexes.models import (
+            FileUploadMetadata,
+            KnowledgeSourceFile,
+            UpdateKnowledgeSourceFileRequest,
+            UploadKnowledgeSourceFileMultipartRequest,
+        )
+
+        source_name = self.get_resource_name("knowledge-source-files-ingest")
+        file_id = None
+        with make_index_client(endpoint) as client:
+            try:
+                client.create_or_update_knowledge_source(
+                    _build_file_knowledge_source(
+                        source_name,
+                        search_azure_openai_endpoint,
+                        search_azure_openai_embedding_deployment,
+                        search_azure_openai_embedding_model,
+                    )
+                )
+                poller = client.begin_ingest_knowledge_source_file_multipart(
+                    source_name,
+                    UploadKnowledgeSourceFileMultipartRequest(
+                        metadata=FileUploadMetadata(file_name="hotels/ingest.txt", metadata={"category": "hotel"}),
+                        content=("ingest.txt", b"Harbor Hotel has free parking.", "text/plain"),
+                    ),
+                    polling_interval=5,
+                )
+                uploaded = poller.result(timeout=300)
+                assert poller.done(), "File upload did not finish within 300 seconds"
+                assert isinstance(uploaded, KnowledgeSourceFile)
+                file_id = uploaded.file_id
+                assert file_id is not None
+                assert uploaded.error_message is None
+
+                replacement_poller = client.begin_ingest_knowledge_source_file_replacement(
+                    source_name,
+                    file_id,
+                    UpdateKnowledgeSourceFileRequest(
+                        metadata=FileUploadMetadata(
+                            file_name="hotels/ingest.txt", metadata={"category": "hotel", "city": "Seattle"}
+                        ),
+                        content=("ingest.txt", b"Harbor Hotel has free parking and Wi-Fi.", "text/plain"),
+                    ),
+                    polling_interval=5,
+                )
+                replacement = replacement_poller.result(timeout=300)
+                assert replacement_poller.done(), "File replacement did not finish within 300 seconds"
+                assert isinstance(replacement, KnowledgeSourceFile)
+                assert replacement.file_id == file_id
+                assert replacement.metadata == {"category": "hotel", "city": "Seattle"}
+                assert replacement.error_message is None
+                assert [file.file_id for file in client.list_knowledge_source_files(source_name)] == [file_id]
+            finally:
+                if file_id is not None:
+                    safe_delete(client.delete_knowledge_source_file, source_name, file_id)
+                safe_delete(client.delete_knowledge_source, source_name)
+
+    @live_test()
     def test_multipart_upload_update_list_and_delete(
         self,
         endpoint: str,

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AzureMonitorWorkspace(_Model):
+class AzureMonitorWorkspace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an Azure Monitor Workspace.
 
     :ivar account_id: The immutable Id of the Azure Monitor Workspace. This property is read-only.
@@ -33,12 +33,16 @@ class AzureMonitorWorkspace(_Model):
      default.
     :vartype default_ingestion_settings:
      ~azure.mgmt.monitorworkspaces.models.AzureMonitorWorkspaceDefaultIngestionSettings
+    :ivar endpoints: Query endpoints for the Azure Monitor Workspace.
+    :vartype endpoints: ~azure.mgmt.monitorworkspaces.models.AzureMonitorWorkspaceEndpoints
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.monitorworkspaces.models.PrivateEndpointConnection]
     :ivar public_network_access: Gets or sets allow or disallow public network access to Azure
      Monitor Workspace. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.monitorworkspaces.models.PublicNetworkAccess
+    :ivar actions: Action configuration for the Azure Monitor Workspace.
+    :vartype actions: ~azure.mgmt.monitorworkspaces.models.AzureMonitorWorkspaceActions
     """
 
     account_id: Optional[str] = rest_field(name="accountId", visibility=["read"])
@@ -56,6 +60,8 @@ class AzureMonitorWorkspace(_Model):
         name="defaultIngestionSettings", visibility=["read"]
     )
     """The Data Collection Rule and Endpoint used for ingestion by default."""
+    endpoints: Optional["_models.AzureMonitorWorkspaceEndpoints"] = rest_field(visibility=["read"])
+    """Query endpoints for the Azure Monitor Workspace."""
     private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
@@ -65,6 +71,10 @@ class AzureMonitorWorkspace(_Model):
     )
     """Gets or sets allow or disallow public network access to Azure Monitor Workspace. Known values
      are: \"Enabled\" and \"Disabled\"."""
+    actions: Optional["_models.AzureMonitorWorkspaceActions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action configuration for the Azure Monitor Workspace."""
 
     @overload
     def __init__(
@@ -72,6 +82,39 @@ class AzureMonitorWorkspace(_Model):
         *,
         metrics: Optional["_models.AzureMonitorWorkspaceMetrics"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        actions: Optional["_models.AzureMonitorWorkspaceActions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureMonitorWorkspaceActions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Action configuration for an Azure Monitor Workspace.
+
+    :ivar default_action_groups: The default action groups associated with the Azure Monitor
+     Workspace.
+    :vartype default_action_groups:
+     list[~azure.mgmt.monitorworkspaces.models.DefaultActionGroupResource]
+    """
+
+    default_action_groups: Optional[list["_models.DefaultActionGroupResource"]] = rest_field(
+        name="defaultActionGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default action groups associated with the Azure Monitor Workspace."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_action_groups: Optional[list["_models.DefaultActionGroupResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -119,7 +162,18 @@ class AzureMonitorWorkspaceDefaultIngestionSettings(_Model):  # pylint: disable=
     """The ingestion endpoints for this Azure Monitor Workspace."""
 
 
-class AzureMonitorWorkspaceMetrics(_Model):
+class AzureMonitorWorkspaceEndpoints(_Model):
+    """Query endpoints for an Azure Monitor Workspace.
+
+    :ivar query: The query endpoint for the Azure Monitor Workspace.
+    :vartype query: str
+    """
+
+    query: Optional[str] = rest_field(visibility=["read"])
+    """The query endpoint for the Azure Monitor Workspace."""
+
+
+class AzureMonitorWorkspaceMetrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties related to the metrics container in the Azure Monitor Workspace.
 
     :ivar prometheus_query_endpoint: The Prometheus query endpoint for the Azure Monitor Workspace.
@@ -187,7 +241,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -231,7 +285,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AzureMonitorWorkspaceResource(TrackedResource):
+class AzureMonitorWorkspaceResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Monitor Workspace definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -295,7 +349,7 @@ class AzureMonitorWorkspaceResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class AzureMonitorWorkspaceResourceUpdate(_Model):
+class AzureMonitorWorkspaceResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for updating an Azure Monitor Workspace.
 
     :ivar tags: Resource tags.
@@ -337,7 +391,7 @@ class AzureMonitorWorkspaceResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Background(_Model):
+class Background(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The issue background information.
 
     :ivar type: The background type.
@@ -377,7 +431,7 @@ class Background(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackgroundDetails(_Model):
+class BackgroundDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A background details element.
 
     :ivar name: The background details name. Required.
@@ -410,7 +464,7 @@ class BackgroundDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackgroundVisualization(_Model):
+class BackgroundVisualization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The issue background visualization.
 
     :ivar visualization: The background visualization content, in Adaptive Card format. Required.
@@ -429,6 +483,34 @@ class BackgroundVisualization(_Model):
         self,
         *,
         visualization: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DefaultActionGroupResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reference to an Azure Monitor action group.
+
+    :ivar id: The resource ID of the action group.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource ID of the action group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -486,7 +568,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -514,7 +596,24 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FetchInvestigationResultParameters(_Model):
+class ExtensionResource(Resource):
+    """The base extension resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitorworkspaces.models.SystemData
+    """
+
+
+class FetchInvestigationResultParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters provided to get the investigation result.
 
     :ivar investigation_id: The unique identifier of the investigation. Required.
@@ -555,7 +654,7 @@ class IngestionEndpoints(_Model):
     """The metrics ingestion endpoint for this Azure Monitor Workspace."""
 
 
-class InvestigationMetadata(_Model):
+class InvestigationMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the current investigation.
 
     :ivar id: The unique identifier of the investigation. Required.
@@ -590,7 +689,7 @@ class InvestigationMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InvestigationResult(_Model):
+class InvestigationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about the investigation result.
 
     :ivar id: The identifier of the investigation. Required.
@@ -642,7 +741,7 @@ class InvestigationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IssueNotificationType(_Model):
+class IssueNotificationType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base properties for an issue notification type.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -705,7 +804,7 @@ class IssueCreationNotificationType(IssueNotificationType, discriminator="IssueC
         self.update_type = UpdateType.ISSUE_CREATION  # type: ignore
 
 
-class IssueProperties(_Model):
+class IssueProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The issue properties.
 
     :ivar title: The issue title. Required.
@@ -781,7 +880,7 @@ class IssueProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IssuePropertiesUpdate(_Model):
+class IssuePropertiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The issue properties for update.
 
     :ivar title: The issue title.
@@ -859,7 +958,7 @@ class ProxyResource(Resource):
     """
 
 
-class IssueResource(ProxyResource):
+class IssueResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Issue resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -900,7 +999,7 @@ class IssueResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class IssueResourceUpdate(_Model):
+class IssueResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Issue resource update.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -930,7 +1029,7 @@ class IssueResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListParameter(_Model):
+class ListParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for listing related entities.
 
     :ivar filter: The filter to apply on the operation. For example, to filter by relevance, use
@@ -962,7 +1061,7 @@ class ListParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1014,13 +1113,267 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsContainer(_Model):
+class MetricAggregationConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An aggregation configuration for an aggregated metric.
+
+    :ivar store_aggregated_data: Whether aggregated metric data is stored.
+    :vartype store_aggregated_data: bool
+    :ivar dimensions: Dimensions included in this aggregation.
+    :vartype dimensions: list[str]
+    :ivar aggregation_functions: Aggregation functions enabled for this aggregation.
+    :vartype aggregation_functions: ~azure.mgmt.monitorworkspaces.models.MetricAggregationFunctions
+    """
+
+    store_aggregated_data: Optional[bool] = rest_field(
+        name="storeAggregatedData", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether aggregated metric data is stored."""
+    dimensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dimensions included in this aggregation."""
+    aggregation_functions: Optional["_models.MetricAggregationFunctions"] = rest_field(
+        name="aggregationFunctions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Aggregation functions enabled for this aggregation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        store_aggregated_data: Optional[bool] = None,
+        dimensions: Optional[list[str]] = None,
+        aggregation_functions: Optional["_models.MetricAggregationFunctions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MetricAggregationFunctions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Aggregation functions enabled for an aggregated metric.
+
+    :ivar enable_min_max: Whether minimum and maximum aggregations are enabled. Required.
+    :vartype enable_min_max: bool
+    :ivar enable_percentiles: Whether percentile aggregations are enabled. Required.
+    :vartype enable_percentiles: bool
+    """
+
+    enable_min_max: bool = rest_field(name="enableMinMax", visibility=["read", "create", "update", "delete", "query"])
+    """Whether minimum and maximum aggregations are enabled. Required."""
+    enable_percentiles: bool = rest_field(
+        name="enablePercentiles", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether percentile aggregations are enabled. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enable_min_max: bool,
+        enable_percentiles: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MetricConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a metric configuration.
+
+    :ivar provisioning_state: The provisioning state of the metric configuration. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitorworkspaces.models.ResourceProvisioningState
+    :ivar namespace: The actual metric namespace before route encoding.
+    :vartype namespace: str
+    :ivar metric_name: The actual ingested metric name before route encoding.
+    :vartype metric_name: str
+    :ivar metric_type: The metric type. Known values are: "Raw" and "Aggregated".
+    :vartype metric_type: str or ~azure.mgmt.monitorworkspaces.models.MetricConfigurationType
+    :ivar dimensions: Dimensions emitted by the metric.
+    :vartype dimensions: list[str]
+    :ivar store_raw_data: Whether raw metric data is stored.
+    :vartype store_raw_data: bool
+    :ivar aggregation_configurations: Aggregation configurations for an aggregated metric.
+    :vartype aggregation_configurations:
+     list[~azure.mgmt.monitorworkspaces.models.MetricAggregationConfiguration]
+    :ivar source_metric_resource_id: The resource ID of the source metric for an aggregated metric.
+    :vartype source_metric_resource_id: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the metric configuration. Known values are: \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The actual metric namespace before route encoding."""
+    metric_name: Optional[str] = rest_field(
+        name="metricName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The actual ingested metric name before route encoding."""
+    metric_type: Optional[Union[str, "_models.MetricConfigurationType"]] = rest_field(
+        name="metricType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The metric type. Known values are: \"Raw\" and \"Aggregated\"."""
+    dimensions: Optional[list[str]] = rest_field(visibility=["read"])
+    """Dimensions emitted by the metric."""
+    store_raw_data: Optional[bool] = rest_field(
+        name="storeRawData", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether raw metric data is stored."""
+    aggregation_configurations: Optional[list["_models.MetricAggregationConfiguration"]] = rest_field(
+        name="aggregationConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Aggregation configurations for an aggregated metric."""
+    source_metric_resource_id: Optional[str] = rest_field(
+        name="sourceMetricResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the source metric for an aggregated metric."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace: Optional[str] = None,
+        metric_name: Optional[str] = None,
+        metric_type: Optional[Union[str, "_models.MetricConfigurationType"]] = None,
+        store_raw_data: Optional[bool] = None,
+        aggregation_configurations: Optional[list["_models.MetricAggregationConfiguration"]] = None,
+        source_metric_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MetricConfigurationResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A metric configuration in an Azure Monitor Workspace metric namespace.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitorworkspaces.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.monitorworkspaces.models.MetricConfigurationProperties
+    """
+
+    properties: Optional["_models.MetricConfigurationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MetricConfigurationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MetricNamespaceProperties(_Model):
+    """Properties of a metric namespace.
+
+    :ivar provisioning_state: The provisioning state of the metric namespace. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitorworkspaces.models.ResourceProvisioningState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the metric namespace. Known values are: \"Succeeded\", \"Failed\",
+     and \"Canceled\"."""
+
+
+class MetricNamespaceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A metric namespace in an Azure Monitor Workspace metrics container.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitorworkspaces.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.monitorworkspaces.models.MetricNamespaceProperties
+    """
+
+    properties: Optional["_models.MetricNamespaceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MetricNamespaceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MetricsContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a metrics container.
 
     :ivar provisioning_state: The provisioning state of the metrics container. Known values are:
      "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.monitorworkspaces.models.ResourceProvisioningState
+    :ivar limits: Metrics limits.
+    :vartype limits: ~azure.mgmt.monitorworkspaces.models.MetricsLimits
     :ivar version: The version of Metrics Query Service that this AMW will use for all metric
      queries.
     :vartype version: str
@@ -1031,6 +1384,8 @@ class MetricsContainer(_Model):
     )
     """The provisioning state of the metrics container. Known values are: \"Succeeded\", \"Failed\",
      and \"Canceled\"."""
+    limits: Optional["_models.MetricsLimits"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Metrics limits."""
     version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of Metrics Query Service that this AMW will use for all metric queries."""
 
@@ -1038,6 +1393,7 @@ class MetricsContainer(_Model):
     def __init__(
         self,
         *,
+        limits: Optional["_models.MetricsLimits"] = None,
         version: Optional[str] = None,
     ) -> None: ...
 
@@ -1052,7 +1408,7 @@ class MetricsContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsContainerResource(ProxyResource):
+class MetricsContainerResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metrics container resource for an Azure Monitor Workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1093,7 +1449,53 @@ class MetricsContainerResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class Notifications(_Model):
+class MetricsLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Definition of Metrics limits.
+
+    :ivar enable_auto_scale: Indicates whether automatic scaling of ingestion limits is enabled.
+    :vartype enable_auto_scale: bool
+    :ivar max_active_time_series: Maximum number of active time series allowed on the metrics
+     containers.
+    :vartype max_active_time_series: int
+    :ivar max_events_per_minute: Maximum rate (events per minute) that can be processed on the
+     metrics containers.
+    :vartype max_events_per_minute: int
+    """
+
+    enable_auto_scale: Optional[bool] = rest_field(
+        name="enableAutoScale", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether automatic scaling of ingestion limits is enabled."""
+    max_active_time_series: Optional[int] = rest_field(
+        name="maxActiveTimeSeries", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of active time series allowed on the metrics containers."""
+    max_events_per_minute: Optional[int] = rest_field(
+        name="maxEventsPerMinute", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum rate (events per minute) that can be processed on the metrics containers."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enable_auto_scale: Optional[bool] = None,
+        max_active_time_series: Optional[int] = None,
+        max_events_per_minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Notifications(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue notification settings.
 
     :ivar update_types: The types of updates that trigger notifications.
@@ -1167,7 +1569,7 @@ class OnChangeNotificationType(IssueNotificationType, discriminator="OnChange"):
         self.update_type = UpdateType.ON_CHANGE  # type: ignore
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1255,7 +1657,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class Origin(_Model):
+class Origin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about the origin of the entity - the source that added it to the issue.
 
     :ivar added_by: The ID of the origin - for example, in case of 'Manual', the user ID/app ID,
@@ -1294,7 +1696,7 @@ class Origin(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PagedRelatedAlert(_Model):
+class PagedRelatedAlert(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Paged collection of RelatedAlert items.
 
     :ivar value: The RelatedAlert items on this page. Required.
@@ -1327,7 +1729,7 @@ class PagedRelatedAlert(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PagedRelatedResource(_Model):
+class PagedRelatedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Paged collection of RelatedResource items.
 
     :ivar value: The RelatedResource items on this page. Required.
@@ -1371,7 +1773,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1412,7 +1814,7 @@ class PrivateEndpointConnection(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -1465,7 +1867,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -1512,7 +1914,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RelatedAlert(_Model):
+class RelatedAlert(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an alert which is related to the issue.
 
     :ivar id: The alert ID. Required.
@@ -1559,7 +1961,7 @@ class RelatedAlert(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RelatedAlerts(_Model):
+class RelatedAlerts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of related alerts.
 
     :ivar value: A list of related alerts. Required.
@@ -1587,7 +1989,7 @@ class RelatedAlerts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RelatedResource(_Model):
+class RelatedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a resource which is related to the issue.
 
     :ivar id: The resource ID. Required.
@@ -1634,7 +2036,7 @@ class RelatedResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RelatedResources(_Model):
+class RelatedResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of related resources.
 
     :ivar value: A list of related resources. Required.
@@ -1662,7 +2064,7 @@ class RelatedResources(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1729,7 +2131,9 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeBasedUpdatesNotificationType(IssueNotificationType, discriminator="TimeBased"):
+class TimeBasedUpdatesNotificationType(
+    IssueNotificationType, discriminator="TimeBased"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Notification type for time-based updates.
 
     :ivar update_type: The type of update that triggers the notification. Required. Notification
@@ -1762,6 +2166,177 @@ class TimeBasedUpdatesNotificationType(IssueNotificationType, discriminator="Tim
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.update_type = UpdateType.TIME_BASED  # type: ignore
+
+
+class TraceAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a trace association.
+
+    :ivar azure_monitor_workspace_resource_id: The resource ID of the Azure Monitor Workspace that
+     receives traces from the target scope. Required.
+    :vartype azure_monitor_workspace_resource_id: str
+    """
+
+    azure_monitor_workspace_resource_id: str = rest_field(
+        name="azureMonitorWorkspaceResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the Azure Monitor Workspace that receives traces from the target scope.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_monitor_workspace_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TraceAssociationResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An association between an Azure resource scope and an Azure Monitor Workspace.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitorworkspaces.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.monitorworkspaces.models.TraceAssociation
+    """
+
+    properties: Optional["_models.TraceAssociation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.TraceAssociation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TraceContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a trace container.
+
+    :ivar provisioning_state: The provisioning state of the trace container. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitorworkspaces.models.ResourceProvisioningState
+    :ivar trace_duration_window_in_seconds: The trace duration window in seconds. Required.
+    :vartype trace_duration_window_in_seconds: int
+    :ivar trace_retention_in_days: The number of days for which the traces are retained. Value must
+     be between 4 and 730 days. Required.
+    :vartype trace_retention_in_days: int
+    :ivar trace_metrics_state: Controls whether trace-derived metrics are emitted for this trace
+     container. Required. Known values are: "Enabled" and "Disabled".
+    :vartype trace_metrics_state: str or ~azure.mgmt.monitorworkspaces.models.TraceMetricsState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the trace container. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+    trace_duration_window_in_seconds: int = rest_field(
+        name="traceDurationWindowInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The trace duration window in seconds. Required."""
+    trace_retention_in_days: int = rest_field(
+        name="traceRetentionInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of days for which the traces are retained. Value must be between 4 and 730 days.
+     Required."""
+    trace_metrics_state: Union[str, "_models.TraceMetricsState"] = rest_field(
+        name="traceMetricsState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls whether trace-derived metrics are emitted for this trace container. Required. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        trace_duration_window_in_seconds: int,
+        trace_retention_in_days: int,
+        trace_metrics_state: Union[str, "_models.TraceMetricsState"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TraceContainerResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The trace container for an Azure Monitor Workspace.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitorworkspaces.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.monitorworkspaces.models.TraceContainer
+    """
+
+    properties: Optional["_models.TraceContainer"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.TraceContainer"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class UserAssignedIdentity(_Model):

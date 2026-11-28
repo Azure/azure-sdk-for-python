@@ -45,6 +45,7 @@ class TestCommvaultContentStoreMgmtStoragesOperations(AzureMgmtRecordedTestCase)
                     "location": "str",
                     "storageType": "str",
                     "vendor": "str",
+                    "complianceLockStatus": "str",
                     "provisioningState": "str",
                 },
                 "systemData": {
@@ -82,5 +83,41 @@ class TestCommvaultContentStoreMgmtStoragesOperations(AzureMgmtRecordedTestCase)
             cloud_account_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storages_enable_compliance_lock(self, resource_group):
+        response = self.client.storages.enable_compliance_lock(
+            resource_group_name=resource_group.name,
+            cloud_account_name="str",
+            storage_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storages_disable_compliance_lock(self, resource_group):
+        response = self.client.storages.disable_compliance_lock(
+            resource_group_name=resource_group.name,
+            cloud_account_name="str",
+            storage_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storages_refresh(self, resource_group):
+        response = self.client.storages.refresh(
+            resource_group_name=resource_group.name,
+            cloud_account_name="str",
+            storage_name="str",
+        )
+
         # please add some check logic here by yourself
         # ...

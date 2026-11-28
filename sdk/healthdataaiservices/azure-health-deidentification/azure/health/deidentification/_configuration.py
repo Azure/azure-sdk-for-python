@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DeidentificationClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class DeidentificationClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for DeidentificationClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -26,8 +27,9 @@ class DeidentificationClientConfiguration:  # pylint: disable=too-many-instance-
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-07-15-preview". Note that overriding this default value may result in unsupported
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2025-07-15-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """

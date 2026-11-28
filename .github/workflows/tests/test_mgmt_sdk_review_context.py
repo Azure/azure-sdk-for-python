@@ -3,6 +3,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+import sys
 import unittest
 from unittest import mock
 import urllib.error
@@ -10,6 +11,7 @@ import urllib.parse
 
 
 SCRIPT = Path(__file__).parents[1] / "scripts" / "mgmt_sdk_review_context.py"
+sys.path.insert(0, str(SCRIPT.parent))
 SPEC = importlib.util.spec_from_file_location("mgmt_sdk_review_context", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
@@ -316,14 +318,14 @@ class CollectionTests(unittest.TestCase):
                     response = io.BytesIO(json.dumps([{"type": "file", "name": "README.md"}]).encode())
                     response.headers = {}
                     return response
-                if filename == ".github/copilot-instructions.md":
-                    content = "## MGMT SDK Code Review Rules\nReview the package.\n"
+                if filename == MODULE.MANAGEMENT_RULES_PATH:
+                    content = "# Management SDK Review\n\nReview the package.\n"
                 elif filename.endswith("/CHANGELOG.md"):
                     if query["ref"][0] == "c" * 40 and old_status != 200:
                         raise urllib.error.HTTPError(request.full_url, old_status, "baseline unavailable", {}, None)
                     content = changelog
                 elif filename.endswith("/_metadata.json"):
-                    content = json.dumps({"apiVersion": "2026-01-01"})
+                    content = json.dumps({"apiVersion": None, "apiVersions": {"Contoso": "2026-01-01"}})
                 else:
                     content = "{}"
                 data = {
@@ -339,7 +341,15 @@ class CollectionTests(unittest.TestCase):
 
         output = mock.mock_open()
         with (
-            mock.patch.dict(MODULE.os.environ, {"GH_REPOSITORY": "Azure/azure-sdk-for-python", "GH_TOKEN": "test", "PR_NUMBER": "1"}),
+            mock.patch.dict(
+                MODULE.os.environ,
+                {
+                    "GH_REPOSITORY": "Azure/azure-sdk-for-python",
+                    "GH_TOKEN": "test",
+                    "PR_NUMBER": "1",
+                    "REVIEW_TOOLING_SHA": "f" * 40,
+                },
+            ),
             mock.patch.object(MODULE.urllib.request, "urlopen", side_effect=respond) as requests,
             mock.patch("builtins.open", output),
         ):
@@ -355,6 +365,7 @@ class CollectionTests(unittest.TestCase):
     def test_snapshot_matches_event_and_tracks_tooling_separately(self):
         context = self.collect_context(event_head="b" * 40)
         self.assertEqual("9" * 40, context["toolingRevision"])
+        self.assertEqual(MODULE.MANAGEMENT_RULES_PATH + "@" + "9" * 40, context["rulesSource"])
         self.assertEqual("c" * 40, context["mergeBaseRevision"])
         self.assertEqual("a" * 40, context["firstRevision"])
 
@@ -363,6 +374,30 @@ class CollectionTests(unittest.TestCase):
             self.collect_context(event_head="8" * 40)
         with self.assertRaisesRegex(MODULE.GitHubApiError, "during evidence collection"):
             self.collect_context(event_head="b" * 40, later_head="8" * 40)
+
+    def test_rules_require_the_trusted_tooling_revision_without_default_branch_fallback(self):
+        for revision in ("main", ""):
+            with (
+                self.subTest(revision=revision),
+                mock.patch.dict(
+                    MODULE.os.environ,
+                    {
+                        "GH_REPOSITORY": "Azure/azure-sdk-for-python",
+                        "GH_TOKEN": "test",
+                        "PR_NUMBER": "1",
+                        "REVIEW_TOOLING_SHA": revision,
+                    },
+                ),
+                mock.patch.object(MODULE.GitHubClient, "get") as request,
+            ):
+                with self.assertRaisesRegex(MODULE.GitHubApiError, "trusted workflow commit"):
+                    MODULE.collect()
+                request.assert_not_called()
+        with self.assertRaisesRegex(MODULE.GitHubApiError, "404"):
+            self.collect_context(
+                event_head="b" * 40,
+                file_errors={("9" * 40, MODULE.MANAGEMENT_RULES_PATH): 404},
+            )
 
     def collect_initial_release(self, **overrides):
         package = "sdk/contoso/azure-mgmt-contoso0"
@@ -558,21 +593,21 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(3, len(context["affectedPackages"]))
         self.assertEqual(["complete", "unverified", "unverified"], [package["status"] for package in packages])
         self.assertEqual(["unchanged", "unverified", "unverified"], [drift["status"] for drift in context["apiVersionDrift"]])
-        self.assertEqual(31, context["collectionLimits"]["githubApiRequests"])
+        self.assertEqual(39, context["collectionLimits"]["githubApiRequests"])
         for package in packages[1:]:
             self.assertEqual([], package["introducedEntries"])
             self.assertIn("Needs human review", package["collectionIssues"][0])
-            self.assertIn("only 9 API requests remain", package["collectionIssues"][0])
+            self.assertIn("only 11 API requests remain", package["collectionIssues"][0])
 
     def test_budget_boundary_allows_full_package_or_explicit_handoff(self):
-        for limit, expected in ((30, "unverified"), (31, "complete")):
+        for limit, expected in ((28, "unverified"), (29, "complete")):
             with self.subTest(limit=limit), mock.patch.object(MODULE, "MAX_API_REQUESTS", limit):
                 context = self.collect_context(annotated_tag=True)
                 self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
                 self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], limit)
 
     def test_event_head_budget_reserves_the_final_consistency_request(self):
-        for limit, expected in ((31, "unverified"), (32, "complete")):
+        for limit, expected in ((29, "unverified"), (30, "complete")):
             with self.subTest(limit=limit), mock.patch.object(MODULE, "MAX_API_REQUESTS", limit):
                 context = self.collect_context(annotated_tag=True, event_head="b" * 40)
                 self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
@@ -582,8 +617,20 @@ class CollectionTests(unittest.TestCase):
 
 
 class FailureHandlingTests(unittest.TestCase):
+
     def test_drift_reports_missing_or_invalid_api_version(self):
-        for metadata in ({}, [], None, {"apiVersion": ""}, {"apiVersion": 42}):
+        for metadata in (
+            {},
+            [],
+            None,
+            {"apiVersion": "2026-01-01"},
+            {"apiVersions": None},
+            {"apiVersions": []},
+            {"apiVersions": {}},
+            {"apiVersions": {"Example": None}},
+            {"apiVersions": {"Example": ""}},
+            {"apiVersions": {"Example": ["2026-01-01"]}},
+        ):
             with self.subTest(metadata=metadata):
                 provenance = MODULE.summarize_provenance(
                     [{"status": "available", "path": "pkg/_metadata.json", "content": json.dumps(metadata)}]
@@ -593,12 +640,12 @@ class FailureHandlingTests(unittest.TestCase):
                 self.assertEqual("unverified", result["status"])
                 self.assertIn(f"first revision {'a' * 40}", result["error"])
                 self.assertIn(f"latest revision {'b' * 40}", result["error"])
-                self.assertIn("non-empty string apiVersion", result["error"])
+                self.assertIn("apiVersions", result["error"])
                 self.assertEqual([], provenance["issues"])
 
     def test_drift_preserves_valid_comparisons_and_failure_details(self):
-        first = {"metadata": {"apiVersion": {"value": "2026-01-01"}}, "issues": []}
-        latest = {"metadata": {"apiVersion": {"value": "2026-02-01"}}, "issues": []}
+        first = {"metadata": {"apiVersions": {"value": {"Example": "2026-01-01"}}}, "issues": []}
+        latest = {"metadata": {"apiVersions": {"value": {"Example": "2026-02-01"}}}, "issues": []}
         for provenance, expected in ((first, "unchanged"), (latest, "changed")):
             result = MODULE.api_version_drift("pkg", "a" * 40, "b" * 40, first, provenance)
             self.assertEqual(expected, result["status"])

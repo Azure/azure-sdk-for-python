@@ -246,6 +246,7 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
                                 "readOnly": bool,
                                 "storageAccountKey": "str",
                                 "storageAccountKeyReference": "str",
+                                "userAssignedIdentityClientId": "str",
                             },
                             "emptyDir": {},
                             "gitRepo": {"repository": "str", "directory": "str", "revision": "str"},

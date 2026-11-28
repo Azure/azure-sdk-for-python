@@ -90,6 +90,21 @@ def _reject(code: str, message: str) -> NoReturn:
     raise _HostedConflict(_code=code, status_code=400, message=message)
 
 
+def normalize_list_limit(limit: int | None) -> int | None:
+    """Validate a total result cap while preserving complete enumeration.
+
+    :param limit: Requested result cap, or ``None`` for all matches.
+    :type limit: int | None
+    :return: The positive cap clamped to 100, or ``None``.
+    :rtype: int | None
+    """
+    if limit is None:
+        return None
+    if limit <= 0:
+        _reject("invalid_request", "limit must be greater than 0.")
+    return min(limit, 100)
+
+
 def _canonical_json_bytes(value: Any) -> int:
     """Return the UTF-8 byte length of ``value`` serialized as canonical JSON.
 

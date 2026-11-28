@@ -25,7 +25,7 @@ class RequestCaptured(Exception):
 
 
 class FakeAsyncTokenCredential:
-    async def get_token(self, *scopes, **kwargs):
+    async def get_token(self, *_scopes, **_kwargs):
         return AccessToken("entra-token", int(time.time()) + 3600)
 
 

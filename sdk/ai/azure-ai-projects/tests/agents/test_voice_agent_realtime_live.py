@@ -6,7 +6,7 @@
 # cSpell:disable
 
 """
-Live-only tests for the hand-written sync ``client.beta.voice_agents.realtime`` WebSocket streaming client.
+Live-only tests for the hand-written sync ``client.voice_agents.realtime`` WebSocket streaming client.
 
 Unlike ``tests/agents/test_realtime_client.py`` (which mocks the transport to unit-test URL
 construction, auth, and error paths without a live service), these tests open a REAL WebSocket
@@ -17,7 +17,7 @@ generous per-event timeouts, and assert on event *types* and content presence/le
 exact audio bytes (the model's actual audio/text output is not deterministic).
 
 These tests do not use ``store=True`` / read back a persisted conversation -- that surface
-(``project_client.beta.voice_agents.conversations.*``) is covered by the separate recorded
+(``project_client.voice_agents.conversations.*``) is covered by the separate recorded
 tests in ``test_voice_agent_conversations.py``, which need a real conversation id but replay
 against a recorded cassette rather than opening a live WebSocket connection on every run.
 """
@@ -74,7 +74,7 @@ def _get_weather(city: str) -> str:
 )
 class TestVoiceAgentRealtimeLive(TestBase):
     """
-    Live tests covering ``client.beta.voice_agents.realtime.connect()`` (the hand-written sync WebSocket streaming
+    Live tests covering ``client.voice_agents.realtime.connect()`` (the hand-written sync WebSocket streaming
     client) against a real voice agent and a real service connection.
     """
 
@@ -112,7 +112,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
         try:
             self._create_basic_agent(project_client, agent_name, model)
 
-            with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+            with project_client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 event = conn.recv(timeout=_EVENT_TIMEOUT)
                 assert isinstance(event, RealtimeServerEventSessionCreated)
                 assert event.type == "session.created"
@@ -143,7 +143,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
         try:
             self._create_basic_agent(project_client, agent_name, model)
 
-            with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+            with project_client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 session_created = conn.recv(timeout=_EVENT_TIMEOUT)
                 assert isinstance(session_created, RealtimeServerEventSessionCreated)
 
@@ -195,7 +195,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
         Configures the agent with a ``get_weather`` function tool, sends a prompt that should
         trigger it, executes the tool call locally when the service asks for it, and sends the
         result back so the agent can finish its reply -- mirroring
-        ``samples/agents/voice/sample_voice_agent_live_function_tool.py``, which this test
+        ``samples/agents/voice/sample_voice_agent_realtime_function_tool_async.py``, which this test
         adapts into an automated assertion-based form.
         """
         print("\n")
@@ -232,7 +232,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
                 ),
             )
 
-            with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+            with project_client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 session_created = conn.recv(timeout=_EVENT_TIMEOUT)
                 assert isinstance(session_created, RealtimeServerEventSessionCreated)
 

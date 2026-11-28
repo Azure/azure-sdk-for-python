@@ -25,7 +25,7 @@ from test_content_validation import (
     assert_structured_message_get,
     TestIter,
 )
-from test_helpers import _deterministic_urandom
+from test_helpers import _deterministic_urandom, CaptureAuthHeader
 
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobType, ContainerClient as SyncContainerClient
@@ -657,3 +657,35 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # decompress=False should work fine
         downloader = await blob.download_blob(validate_content=a, decompress=False)
         assert await downloader.read() == data
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_create_session_download_crc64(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient, is_async=True)
+        capture_auth_header = CaptureAuthHeader()
+
+        async with BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=True,
+        ) as service:
+            container = service.get_container_client(self.get_resource_name("utcontainer"))
+            self.container = container
+            try:
+                await container.create_container()
+            except ResourceExistsError:
+                pass
+
+            blob_name, data = self.get_resource_name("blob"), b"abcd" * 1024
+            await container.upload_blob(blob_name, data, overwrite=True)
+
+            downloader = await container.download_blob(
+                blob_name, validate_content="crc64", raw_response_hook=capture_auth_header.hook("download")
+            )
+            result = await downloader.readall()
+
+            assert result == data
+            is_session_auth = capture_auth_header["download"].startswith("Session ")
+            assert is_session_auth

@@ -46,7 +46,7 @@ class ActionLifecycle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -63,8 +63,6 @@ class ConnectionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A connection backed by the Chaos AKS cluster extension."""
     CHAOS_AGENT = "ChaosAgent"
     """A connection backed by the Chaos agent installed on the target resource."""
-    CSFI = "Csfi"
-    """A connection backed by Cloud Service Fault Injection (CSFI)."""
 
 
 class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -105,6 +103,23 @@ class ExperimentActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CONTINUOUS."""
 
 
+class FailureBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of how a scenario run reacts when an action fails."""
+
+    STOP = "Stop"
+    """The action failure stops the scenario run and drives it to the ``Failed`` terminal state. This
+    is the effective behavior when no ``failureBehavior`` is supplied."""
+    CONTINUE = "Continue"
+    """The action failure is suppressed: it does not by itself end the scenario run, and the run
+    continues with its remaining actions. Suppression affects the run's result only. It does not
+    change dependency scheduling, which stays under the control of each action's ``runAfter`` —
+    an action that should still start after a failed dependency says so there.
+    
+    A run that completes normally and whose action failures were all suppressed terminates as
+    ``PartiallySucceeded``. Any failure that is not suppressed still drives the run to ``Failed``,
+    and cancellation keeps its existing result."""
+
+
 class FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum that discriminates between filter types. Currently only ``Simple`` type is supported."""
 
@@ -129,7 +144,7 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -138,6 +153,21 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class ParameterFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of the built-in formats a scenario parameter's value can be validated against."""
+
+    AZURE_RESOURCE_ID = "AzureResourceId"
+    """The value must be an Azure resource ID."""
+    AZURE_REGION = "AzureRegion"
+    """The value must be an Azure region name."""
+    AZURE_ZONE = "AzureZone"
+    """The value must be an Azure availability zone."""
+    DURATION = "Duration"
+    """The value must be an ISO 8601 duration."""
+    JSON = "Json"
+    """The value must be well-formed JSON."""
 
 
 class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -172,17 +202,6 @@ class PermissionsFixState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """What-if analysis completed (no changes made)."""
 
 
-class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private endpoint connection status."""
-
-    PENDING = "Pending"
-    """Pending status."""
-    APPROVED = "Approved"
-    """Approved status."""
-    REJECTED = "Rejected"
-    """Rejected status."""
-
-
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current provisioning state for a given Azure Chaos resource."""
 
@@ -200,15 +219,6 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Deletion in progress."""
     RUNNING = "Running"
     """Action is running."""
-
-
-class PublicNetworkAccessOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Public Network Access Control for PrivateAccess resource."""
-
-    ENABLED = "Enabled"
-    """Enabled access."""
-    DISABLED = "Disabled"
-    """Disabled access."""
 
 
 class RecommendationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -252,6 +262,17 @@ class RunAfterBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """At least one dependency must be satisfied to continue."""
 
 
+class ScenarioActionSelectorName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported action selector names."""
+
+    LOGICAL_ZONE = "logicalZone"
+    """Select targets by logical availability zone."""
+    PHYSICAL_ZONE = "physicalZone"
+    """Select targets by physical availability zone."""
+    LOCATION = "location"
+    """Select targets by Azure location."""
+
+
 class ScenarioRunState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of the scenario run state."""
 
@@ -279,8 +300,28 @@ class ScenarioRunState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scenario run has been canceled."""
     SUCCEEDED = "Succeeded"
     """The scenario run has completed successfully."""
+    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
+    """The scenario run completed, but one or more actions failed and every one of those failures was
+    suppressed by the effective ``failureBehavior``."""
     FAILED = "Failed"
     """The scenario run has failed."""
+
+
+class ScenarioRunTargetState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of the execution states for a concrete action target."""
+
+    SUCCEEDED = "Succeeded"
+    """The action completed successfully for the target."""
+    NOT_APPLICABLE = "NotApplicable"
+    """Evaluation determined that the action cannot apply because the target lacks required properties
+    or capabilities, or does not satisfy the action criteria. For example, a SQL server without
+    failover configured."""
+    SKIPPED = "Skipped"
+    """The action applies, but execution intentionally made no change because the target is already in
+    the desired state or the change would not be safely recoverable. For example, a virtual machine
+    that is already shut down."""
+    FAILED = "Failed"
+    """Evaluation, authorization, lookup, mutation, or cleanup failed for the target."""
 
 
 class ScenarioSummaryState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -347,6 +388,24 @@ class TargetReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Chaos target reference type."""
 
 
+class WorkspaceDiscoveryCompleteness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The coverage classification of the accepted Azure Resource Manager discovery result,
+    independent of operation status and cause.
+    """
+
+    ESTABLISHED = "Established"
+    """All attainable expected resource occurrences were classified and represented, with no observed
+    shortfall."""
+    BASELINE_UNKNOWN = "BaselineUnknown"
+    """Required work completed without an observed gap, but a complete inventory denominator is
+    structurally unavailable."""
+    VERIFICATION_INCOMPLETE = "VerificationIncomplete"
+    """Required system verification did not complete or a proven accessible required resource was not
+    represented."""
+    KNOWN_PARTIAL = "KnownPartial"
+    """Confirmed undelivered obligations remain and no required system-verification gap remains."""
+
+
 class WorkspaceDiscoveryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of the workspace discovery status."""
 
@@ -358,10 +417,51 @@ class WorkspaceDiscoveryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The discovery is in progress."""
     SUCCEEDED = "Succeeded"
     """The discovery completed successfully."""
+    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
+    """Discovery produced an admissible result with an observed coverage shortfall. This status does
+    not itself block scenario runs or evaluations; consumers requiring established coverage must
+    also check completeness."""
     FAILED = "Failed"
     """The discovery failed."""
     CANCELED = "Canceled"
     """The discovery was canceled."""
+
+
+class WorkspaceDiscoveryWarningReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The confirmed guidance reason. Unknown future reasons preserve the common warning fields and
+    must not be interpreted as a permission denial.
+    """
+
+    RBAC_VALIDATION_FAILED = "RbacValidationFailed"
+    """The affected resource could not be read because of a confirmed authorization denial."""
+    TARGET_NOT_FOUND = "TargetNotFound"
+    """The affected resource or configured membership was confirmed missing."""
+    ACCESS_INDETERMINATE = "AccessIndeterminate"
+    """Access versus absence could not be determined; guidance must state both possibilities."""
+
+
+class WorkspaceEncryptionProtection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The last directly observed protection of active Workspace customer data."""
+
+    CUSTOMER_MANAGED = "CustomerManaged"
+    """Active customer data uses customer-managed key protection."""
+    MICROSOFT_MANAGED = "MicrosoftManaged"
+    """Active customer data uses Microsoft-managed key protection."""
+
+
+class WorkspaceEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The observed encryption state; this does not replace Workspace provisioningState."""
+
+    NOT_CONFIGURED = "NotConfigured"
+    """No per-Workspace encryption configuration exists. Microsoft-managed protection applies."""
+    PENDING = "Pending"
+    """An encryption configuration operation is in progress."""
+    APPLIED = "Applied"
+    """A fresh check confirms the requested customer key and scoped customer-data access."""
+    FAILED = "Failed"
+    """An encryption configuration step or health check failed. See the error for corrective action."""
+    UNKNOWN = "Unknown"
+    """No usable fresh observation is available."""
 
 
 class WorkspaceEvaluationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -376,11 +476,18 @@ class WorkspaceEvaluationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     """The evaluation completed successfully."""
     PARTIALLY_SUCCEEDED = "PartiallySucceeded"
-    """The evaluation partially succeeded — some scenarios succeeded while others failed."""
+    """Unless cancellation won terminal settlement, at least one template applicability test completed
+    and at least one failed or was canceled. Discovery completeness does not determine this
+    processing status. The first terminal settlement is authoritative; a later cancellation does
+    not replace it."""
     FAILED = "Failed"
-    """The evaluation failed."""
+    """No template applicability test completed and at least one failed, unless cancellation won
+    terminal settlement. The accepted resource snapshot and discovery result reference remain
+    present; an admission failure creates no evaluation result."""
     CANCELED = "Canceled"
-    """The evaluation was canceled."""
+    """Cancellation won terminal settlement, or all admitted template tests were canceled. Previously
+    recorded outcomes may remain. A later callback cannot replace this terminal result, and
+    cancellation cannot replace an already settled result."""
 
 
 class ZoneResolutionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

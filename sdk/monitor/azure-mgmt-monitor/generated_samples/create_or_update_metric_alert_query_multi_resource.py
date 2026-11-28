@@ -74,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-03-01-preview/createOrUpdateMetricAlertQueryMultiResource.json
+# x-ms-original-file: 2026-01-01/createOrUpdateMetricAlertQueryMultiResource.json
 if __name__ == "__main__":
     main()

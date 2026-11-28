@@ -7,8 +7,7 @@
 # --------------------------------------------------------------------------
 import functools
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.textanalytics import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -20,23 +19,27 @@ from azure.ai.textanalytics.models import (
 )
 
 TextAnalysisPreparer = functools.partial(
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
     "text_analysis",
     text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
-    text_analysis_key="fake_key",
 )
 
 
 class TestTextAnalysis(AzureRecordedTestCase):
-    def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
-        return TextAnalysisClient(endpoint, AzureKeyCredential(key))
+    def create_client(self, endpoint: str) -> TextAnalysisClient:
+        credential = self.get_credential(TextAnalysisClient)
+        return self.create_client_from_credential(
+            TextAnalysisClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
 
 
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def test_extract_key_phrases(self, text_analysis_endpoint, text_analysis_key):
-        client = self.create_client(text_analysis_endpoint, text_analysis_key)
+    def test_extract_key_phrases(self, text_analysis_endpoint):
+        client = self.create_client(text_analysis_endpoint)
 
         text_a = (
             "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "

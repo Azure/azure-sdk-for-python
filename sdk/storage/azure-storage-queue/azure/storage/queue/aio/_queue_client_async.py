@@ -679,6 +679,9 @@ class QueueClient(  # type: ignore [misc]
                 pop_receipt=enqueued.items_property[0].pop_receipt,
                 next_visible_on=enqueued.items_property[0].time_next_visible,
             )
+            queue_message._is_encrypted = (  # pylint: disable=protected-access
+                bool(content) and self.key_encryption_key is not None
+            )
             return queue_message
         except HttpResponseError as error:
             process_storage_error(error)
@@ -897,6 +900,12 @@ class QueueClient(  # type: ignore [misc]
             this object is also populated with the content, although it is not returned by the service.
         :rtype: ~azure.storage.queue.QueueMessage
 
+        :raises ValueError:
+            If the message is marked as client-side encrypted and no key-encryption-key
+            is configured, including for visibility-only updates. A key resolver alone
+            is not sufficient. Messages returned by encryption or successful decryption
+            are marked as encrypted. Message IDs and custom message objects are not checked.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/queue_samples_message_async.py
@@ -915,6 +924,8 @@ class QueueClient(  # type: ignore [misc]
             )
 
         if isinstance(message, QueueMessage):
+            if self.key_encryption_key is None and message._is_encrypted:  # pylint: disable=protected-access
+                raise ValueError("A key-encryption-key is required to update an encrypted message.")
             message_id = message.id
             message_text = content or message.content
             receipt = pop_receipt or message.pop_receipt
@@ -976,6 +987,11 @@ class QueueClient(  # type: ignore [misc]
                 expires_on=expires_on,
                 pop_receipt=response["popreceipt"],
                 next_visible_on=response["time_next_visible"],
+            )
+            new_message._is_encrypted = (  # pylint: disable=protected-access
+                bool(message_text) and self.key_encryption_key is not None
+                if updated is not None
+                else isinstance(message, QueueMessage) and message._is_encrypted  # pylint: disable=protected-access
             )
             return new_message
         except HttpResponseError as error:

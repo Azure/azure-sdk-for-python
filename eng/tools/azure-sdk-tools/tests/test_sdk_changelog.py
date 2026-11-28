@@ -7,6 +7,117 @@ import shutil
 
 from packaging_tools.sdk_changelog import main as changelog_main
 from packaging_tools.sdk_changelog import trim_changelog_if_needed
+from packaging_tools.sdk_changelog import update_api_versions_in_changelog
+
+
+@pytest.mark.parametrize(
+    "api_versions, expected",
+    [
+        ({"Microsoft.Test": "2026-01-01-preview"}, "Microsoft.Test: `2026-01-01-preview`"),
+        (
+            {"Gallery": "2025-12-03", "Compute": "2026-03-01", "Disk": "2026-03-02"},
+            "Compute: `2026-03-01`, Disk: `2026-03-02`, Gallery: `2025-12-03`",
+        ),
+    ],
+)
+def test_api_versions_are_first_feature_and_preserve_history(tmp_path, api_versions, expected):
+    history = "## 1.0.0 (2026-01-01)\n\n### Features Added\n\n- Package API versions: Old: `2025-01-01`.\n"
+    (tmp_path / "_metadata.json").write_text(json.dumps({"apiVersions": api_versions, "apiVersion": "ignored"}))
+    changelog = tmp_path / "CHANGELOG.md"
+    changelog.write_text(
+        "# Release History\n\n## 1.0.1 (Unreleased)\n\n"
+        "> Existing warning.\n\n### Bugs Fixed\n\n- Fixed a bug.\n\n"
+        "### Features Added\n\n- Existing feature.\n\n"
+        "- Package API versions: Stale: `2024-01-01`.\n\n" + history
+    )
+
+    update_api_versions_in_changelog(tmp_path, "1.0.1")
+    updated = changelog.read_text()
+    update_api_versions_in_changelog(tmp_path, "1.0.1")
+
+    assert changelog.read_text() == updated
+    assert f"### Features Added\n\n- Package API versions: {expected}.\n- Existing feature." in updated
+    assert "Stale:" not in updated
+    assert "> Existing warning.\n\n### Bugs Fixed\n\n- Fixed a bug." in updated
+    assert updated.endswith(history)
+
+
+@pytest.mark.parametrize(
+    "release",
+    [
+        "\n### Bugs Fixed\n\n- Fixed a bug.\n\n",
+        "\n### Other Changes\n\n- Initial version\n",
+        "\n> Existing warning.\n",
+        "",
+        "\n### Features Added",
+    ],
+)
+def test_api_versions_create_features_section(tmp_path, release):
+    (tmp_path / "_metadata.json").write_text(json.dumps({"apiVersions": {"Test": "v1"}}))
+    changelog = tmp_path / "CHANGELOG.md"
+    changelog.write_text("# Release History\n\n## 1.0.0b1 (Unreleased)\n" + release)
+
+    update_api_versions_in_changelog(tmp_path, "1.0.0b1")
+
+    updated = changelog.read_text()
+    features = updated.split("### Features Added", 1)[1]
+    assert features.lstrip().startswith("- Package API versions: Test: `v1`.\n")
+    assert updated.count("### Features Added") == 1
+    if "### Bugs Fixed" in release:
+        assert updated.index("### Features Added") < updated.index("### Bugs Fixed")
+        assert "- Fixed a bug." in updated
+    if "Initial version" in release:
+        assert "- Initial version" in updated
+    if "Existing warning" in release:
+        assert "> Existing warning." in updated
+
+
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        None,
+        "{",
+        "[]",
+        '{"apiVersion": "2026-01-01"}',
+        '{"apiVersions": {}}',
+        '{"apiVersions": []}',
+        '{"apiVersions": {"Test": null}}',
+        '{"apiVersions": {"Test": ""}}',
+        '{"apiVersions": {"": "2026-01-01"}}',
+        '{"apiVersions": {"Test": "2026-01-01\\ninvalid"}}',
+    ],
+)
+def test_invalid_api_versions_leave_changelog_unchanged(tmp_path, metadata, caplog):
+    if metadata is not None:
+        (tmp_path / "_metadata.json").write_text(metadata)
+    changelog = tmp_path / "CHANGELOG.md"
+    original = "# Release History\n\n## 1.0.0 (Unreleased)\n\n### Features Added\n\n- Existing feature.\n"
+    changelog.write_text(original)
+
+    update_api_versions_in_changelog(tmp_path, "1.0.0")
+
+    assert changelog.read_text() == original
+    assert "Skip API-version disclosure" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        None,
+        "# Release History\n",
+        "## 2.0.0 (Unreleased)\n\n## 1.0.0 (2026-01-01)\n",
+    ],
+)
+def test_api_versions_do_not_update_missing_or_historical_release(tmp_path, content, caplog):
+    (tmp_path / "_metadata.json").write_text(json.dumps({"apiVersions": {"Test": "v1"}}))
+    changelog = tmp_path / "CHANGELOG.md"
+    if content is not None:
+        changelog.write_text(content)
+
+    update_api_versions_in_changelog(tmp_path, "1.0.0")
+
+    assert (changelog.read_text() if changelog.exists() else None) == content
+    assert "Skip API-version disclosure" in caplog.text
 
 
 @pytest.fixture
@@ -184,8 +295,9 @@ def test_timeout_default_is_900(mock_get_changelog_content, temp_package):
     assert kwargs["timeout"] == 900
 
 
+@patch("pypi_tools.pypi.PyPIClient.project", return_value={"releases": {"1.2.3": [{}]}})
 @patch("packaging_tools.sdk_changelog.get_changelog_content")
-def test_output_json_detector_mode_breaking(mock_get_changelog_content, temp_arm_package):
+def test_output_json_detector_mode_breaking(mock_get_changelog_content, mock_project, temp_arm_package):
     package_path, changelog_path = temp_arm_package
     md_output = "### Features Added\n\n  - foo\n\n### Breaking Changes\n\n  - dropped bar\n"
     mock_get_changelog_content.return_value = (md_output, "1.2.3")
@@ -226,6 +338,136 @@ def test_output_json_detector_mode_no_breaking(mock_get_changelog_content, temp_
     # CHANGELOG.md must NOT be modified in detector mode
     with open(changelog_path, "r") as f:
         assert f.read() == "# Release History\n\n"
+
+
+@pytest.mark.parametrize("tag_is_stable", [False, True], ids=["preview-target", "stable-target"])
+@pytest.mark.parametrize(
+    "releases, expected_breaking",
+    [
+        pytest.param(
+            {"1.0.0b1": [{}], "1.0.0rc1": [{}], "1.0.0.dev1": [{}]},
+            False,
+            id="preview-only",
+        ),
+        pytest.param({}, False, id="unpublished"),
+        pytest.param(
+            {"0.0.0": [{}], "0.0.0b1": [{}], "1.0.0b1": [{}]},
+            False,
+            id="placeholder-only-stable",
+        ),
+        pytest.param({"1.0.0": [], "1.0.0b1": [{}]}, False, id="stable-without-files"),
+        pytest.param({"1.0.0": [{}], "2.0.0b1": [{}]}, True, id="prior-ga"),
+        pytest.param({"1.0.0": [{"yanked": True}], "2.0.0b1": [{}]}, True, id="yanked-prior-ga"),
+        pytest.param({"1.0.0.post1": [{}]}, True, id="stable-post-release"),
+    ],
+)
+def test_breaking_change_reporting_uses_published_ga_history(
+    temp_arm_package, tag_is_stable, releases, expected_breaking
+):
+    package_path, changelog_path = temp_arm_package
+    md_output = "### Features Added\n\n  - foo\n\n### Breaking Changes\n\n  - dropped bar\n"
+    package_result = {"tagIsStable": tag_is_stable}
+    output_json = package_path / "changes.json"
+
+    with (
+        patch("packaging_tools.sdk_changelog.get_changelog_content", return_value=(md_output, "1.0.0b1")),
+        patch("pypi_tools.pypi.PyPIClient") as mock_client,
+    ):
+        mock_client.return_value.project.return_value = {"releases": releases}
+
+        changelog_main(package_path, package_result=package_result, output_json=output_json)
+
+        mock_client.assert_called_once_with(force_pypi=True)
+        mock_client.return_value.project.assert_called_once_with(package_path.name)
+
+    assert package_result["changelog"] == {
+        "content": md_output,
+        "hasBreakingChange": expected_breaking,
+        "breakingChangeItems": ["dropped bar"],
+    }
+    assert package_result["version"] == "1.0.0b1"
+    assert json.loads(output_json.read_text(encoding="utf-8")) == {
+        "changes": md_output,
+        "hasBreakingChange": expected_breaking,
+    }
+    assert changelog_path.read_text() == "# Release History\n\n"
+
+
+@pytest.mark.parametrize(
+    "project",
+    [{}, {"releases": None}, {"releases": {"invalid-version": [{}]}}],
+    ids=["missing-release-history", "invalid-release-history", "invalid-version"],
+)
+def test_unknown_release_history_preserves_breaking_change_reporting(temp_arm_package, project, caplog):
+    package_path, _ = temp_arm_package
+    md_output = "### Breaking Changes\n\n  - dropped bar\n"
+    package_result = {"tagIsStable": True}
+    output_json = package_path / "changes.json"
+
+    with (
+        patch("packaging_tools.sdk_changelog.get_changelog_content", return_value=(md_output, "1.0.0b1")),
+        patch("pypi_tools.pypi.PyPIClient.project", return_value=project),
+    ):
+        changelog_main(package_path, package_result=package_result, output_json=output_json)
+
+    assert package_result["changelog"]["hasBreakingChange"] is True
+    assert package_result["changelog"]["content"] == md_output
+    assert json.loads(output_json.read_text()) == {"changes": md_output, "hasBreakingChange": True}
+    assert "keeping breaking-change reporting enabled" in caplog.text
+
+
+def test_release_history_lookup_failure_preserves_breaking_change_reporting(temp_arm_package, caplog):
+    package_path, _ = temp_arm_package
+    md_output = "### Breaking Changes\n\n  - dropped bar\n"
+    package_result = {"tagIsStable": True}
+    output_json = package_path / "changes.json"
+
+    with (
+        patch("packaging_tools.sdk_changelog.get_changelog_content", return_value=(md_output, "1.0.0b1")),
+        patch("pypi_tools.pypi.PyPIClient.project", side_effect=RuntimeError("PyPI unavailable")),
+    ):
+        changelog_main(package_path, package_result=package_result, output_json=output_json)
+
+    assert package_result["changelog"]["hasBreakingChange"] is True
+    assert package_result["changelog"]["breakingChangeItems"] == ["dropped bar"]
+    assert json.loads(output_json.read_text()) == {"changes": md_output, "hasBreakingChange": True}
+    assert "PyPI unavailable" in caplog.text
+    assert "keeping breaking-change reporting enabled" in caplog.text
+
+
+def test_pre_ga_changelog_preserves_breaking_change_details(temp_arm_package):
+    package_path, changelog_path = temp_arm_package
+    md_output = "### Breaking Changes\n\n  - dropped bar\n"
+    package_result = {"tagIsStable": True}
+
+    with (
+        patch("packaging_tools.sdk_changelog.get_changelog_content", return_value=(md_output, "1.0.0b1")),
+        patch("pypi_tools.pypi.PyPIClient.project", return_value={"releases": {"1.0.0b1": [{}]}}),
+    ):
+        changelog_main(package_path, package_result=package_result)
+
+    assert package_result["changelog"]["hasBreakingChange"] is False
+    assert package_result["changelog"]["breakingChangeItems"] == ["dropped bar"]
+    assert md_output in changelog_path.read_text()
+
+
+def test_non_breaking_changes_do_not_query_release_history(temp_arm_package):
+    package_path, _ = temp_arm_package
+    md_output = "### Features Added\n\n  - new feature\n"
+    package_result = {"tagIsStable": True}
+    output_json = package_path / "changes.json"
+
+    with (
+        patch("packaging_tools.sdk_changelog.get_changelog_content", return_value=(md_output, "1.0.0")),
+        patch("pypi_tools.pypi.PyPIClient") as mock_client,
+    ):
+        changelog_main(package_path, package_result=package_result, output_json=output_json)
+
+        mock_client.assert_not_called()
+
+    assert package_result["changelog"]["hasBreakingChange"] is False
+    assert package_result["changelog"]["breakingChangeItems"] == []
+    assert json.loads(output_json.read_text()) == {"changes": md_output, "hasBreakingChange": False}
 
 
 def _make_changelog(num_versions: int, body_per_version: str = "  - some change\n") -> str:

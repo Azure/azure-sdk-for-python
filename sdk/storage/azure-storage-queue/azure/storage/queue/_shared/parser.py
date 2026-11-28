@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import date, datetime, timezone
+from typing import Optional, Union
 
 EPOCH_AS_FILETIME = 116444736000000000  # January 1, 1970 as MS filetime
 HUNDREDS_OF_NANOSECONDS = 10000000
@@ -19,7 +19,9 @@ DEVSTORE_ACCOUNT_NAME = "devstoreaccount1"
 DEVSTORE_ACCOUNT_KEY = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
 
 
-def _to_utc_datetime(value: datetime) -> str:
+def _to_utc_datetime(value: Union[date, datetime]) -> str:
+    if isinstance(value, datetime) and value.utcoffset() is not None:
+        value = value.astimezone(timezone.utc)
     return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 

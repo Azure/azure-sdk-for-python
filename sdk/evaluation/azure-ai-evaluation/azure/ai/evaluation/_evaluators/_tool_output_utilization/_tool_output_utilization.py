@@ -1,29 +1,31 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
-import math
 import logging
-from typing import Dict, Union, List, Optional
+import math
+import os
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import (
-    EvaluationException,
-    ErrorBlame,
-    ErrorCategory,
-    ErrorTarget,
-)
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
-from ..._common.utils import (
-    reformat_conversation_history,
-    reformat_agent_response,
-    reformat_tool_definitions,
-    filter_to_used_tools,
-)
-from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
+    parse_judge_score,
+)
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import Message
+
+from ..._common.utils import (
+    filter_to_used_tools,
+    reformat_agent_response,
+    reformat_conversation_history,
+    reformat_tool_definitions,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -39,9 +41,14 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     The evaluation includes the score, a brief explanation, and a final pass/fail result.
 
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword probability_threshold: The decision model probability, in [0, 1], at or above which the score is 1.
+        Defaults to 0.75 and overrides ``probability_threshold`` in a decision ``model_config``. Chat models
+        ignore it with a warning.
+    :paramtype probability_threshold: Optional[float]
 
     .. admonition:: Example:
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
@@ -64,7 +71,10 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_output_utilization.prompty"
+    _DECISION_FILE = "tool_output_utilization.decision.yaml"
     _RESULT_KEY = "tool_output_utilization"
+    _supports_decision_models = True
+    _binary_decision = True
 
     _DEFAULT_TOOL_OUTPUT_UTILIZATION_SCORE = 1
 
@@ -79,6 +89,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         model_config,
         *,
         credential=None,
+        probability_threshold=None,
         **kwargs,
     ):
         current_dir = os.path.dirname(__file__)
@@ -92,13 +103,20 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
 
         super().__init__(
-            model_config=model_config,
+            model_config=with_probability_threshold(model_config, probability_threshold, type(self).__name__),
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=self._DEFAULT_TOOL_OUTPUT_UTILIZATION_SCORE,
             credential=credential,
             _higher_is_better=True,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(
+                self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR
+            )
+            if self._uses_decision_model
+            else None
         )
 
     @override
@@ -225,6 +243,10 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if not isinstance(eval_input.get("response"), str):
             eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
 
+        if self._uses_decision_model:
+            state = {key: eval_input[key] for key in ("query", "response", "tool_definitions")}
+            return await self._decision.evaluate(state)
+
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
@@ -234,7 +256,9 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self._threshold)
 
-            score = float(llm_output.get("score", 0))
+            score = parse_judge_score(
+                llm_output.get("score", 0), prompty_output_dict, missing="score" not in llm_output
+            )
             score_result = "pass" if score >= 1.0 else "fail"
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
@@ -250,8 +274,10 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_properties": llm_properties,
             }
+        diagnostic = judge_output_diagnostic(prompty_output_dict)
+        log_judge_output_diagnostic(diagnostic)
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {diagnostic}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,

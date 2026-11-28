@@ -1,5 +1,19 @@
 # Release History
 
+## 10.1.0 (2026-11-03)
+
+### Features Added
+
+  - Model `BackupPolicy` added property `backup_retention_lock_expiration_timestamp`
+  - Model `ContinuousModeBackupPolicy` added property `backup_retention_lock_expiration_timestamp`
+  - Model `DatabaseAccountCreateUpdateProperties` added property `per_partition_automatic_failover_enabled`
+  - Model `DatabaseAccountGetProperties` added property `per_partition_automatic_failover_enabled`
+  - Model `DatabaseAccountUpdateProperties` added property `per_partition_automatic_failover_enabled`
+  - Model `PeriodicModeBackupPolicy` added property `backup_retention_lock_expiration_timestamp`
+  - Model `ThroughputSettingsGetPropertiesResource` added property `throughput_buckets`
+  - Model `ThroughputSettingsResource` added property `throughput_buckets`
+  - Added model `ThroughputBucketResource`
+
 ## 10.1.0b1 (2026-08-20)
 
 ### Features Added

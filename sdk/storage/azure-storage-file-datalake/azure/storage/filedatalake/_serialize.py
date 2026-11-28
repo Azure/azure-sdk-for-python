@@ -52,6 +52,8 @@ _SUPPORTED_API_VERSIONS = [
     "2026-04-06",
     "2026-06-06",
     "2026-10-06",
+    "2026-12-06",
+    "2027-03-07",
 ]  # This list must be in chronological order!
 
 

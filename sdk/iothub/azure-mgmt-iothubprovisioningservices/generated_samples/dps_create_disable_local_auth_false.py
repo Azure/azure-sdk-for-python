@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-31/DPSCreate_DisableLocalAuthFalse.json
+# x-ms-original-file: 2026-11-01/DPSCreate_DisableLocalAuthFalse.json
 if __name__ == "__main__":
     main()

@@ -7895,6 +7895,19 @@ namespace azure.ai.ml.entities
             ): ...
 
 
+    @experimental
+    class azure.ai.ml.entities.ResolvedDataPath:
+
+        def __init__(
+                self,
+                *,
+                uri: str,
+                path_type: Optional[str] = None,
+                sources: Optional[List[ResolvedDataPath]] = None,
+                transformations: Optional[List[Dict[str, Any]]] = None
+            ) -> None: ...
+
+
     class azure.ai.ml.entities.Resource(abc.ABC):
         property base_path: str    # Read-only
         property creation_context: Optional[SystemData]    # Read-only
@@ -10289,6 +10302,15 @@ namespace azure.ai.ml.operations
                 persistent: bool = False, 
                 **kwargs
             ) -> None: ...
+
+        @monitor_with_activity(ops_logger, 'Data.ResolvePath', ActivityType.PUBLICAPI)
+        @experimental
+        def resolve_path(
+                self,
+                path: str,
+                *,
+                follow_mltable: bool = True
+            ) -> ResolvedDataPath: ...
 
         @monitor_with_activity(ops_logger, 'Data.Restore', ActivityType.PUBLICAPI)
         def restore(

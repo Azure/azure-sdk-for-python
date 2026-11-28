@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ArmIdentity(_Model):
+class ArmIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ArmIdentity.
 
     :ivar principal_id: Principal Id.
@@ -126,7 +126,7 @@ class ProxyResource(Resource):
     """
 
 
-class CertificateDescription(ProxyResource):
+class CertificateDescription(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The X509 Certificate.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -171,7 +171,7 @@ class CertificateDescription(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CertificateListDescription(_Model):
+class CertificateListDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON-serialized array of Certificate objects.
 
     :ivar value: The array of Certificate objects.
@@ -201,7 +201,7 @@ class CertificateListDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateProperties(_Model):
+class CertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The description of an X509 CA Certificate.
 
     :ivar subject: The certificate's subject name.
@@ -218,8 +218,9 @@ class CertificateProperties(_Model):
     :vartype updated: ~datetime.datetime
     :ivar certificate: The certificate content.
     :vartype certificate: str
-    :ivar policy_resource_id: The reference to policy stored in Azure Device Registry (ADR).
-    :vartype policy_resource_id: str
+    :ivar certificate_authority_resource_id: Full certificate authority resource ID for ADR linked
+     standard SKU hubs.
+    :vartype certificate_authority_resource_id: str
     """
 
     subject: Optional[str] = rest_field(visibility=["read"])
@@ -238,10 +239,10 @@ class CertificateProperties(_Model):
     """The certificate's last update date and time."""
     certificate: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The certificate content."""
-    policy_resource_id: Optional[str] = rest_field(
-        name="policyResourceId", visibility=["read", "create", "update", "delete", "query"]
+    certificate_authority_resource_id: Optional[str] = rest_field(
+        name="certificateAuthorityResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The reference to policy stored in Azure Device Registry (ADR)."""
+    """Full certificate authority resource ID for ADR linked standard SKU hubs."""
 
     @overload
     def __init__(
@@ -249,7 +250,7 @@ class CertificateProperties(_Model):
         *,
         is_verified: Optional[bool] = None,
         certificate: Optional[str] = None,
-        policy_resource_id: Optional[str] = None,
+        certificate_authority_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -263,7 +264,7 @@ class CertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificatePropertiesWithNonce(_Model):
+class CertificatePropertiesWithNonce(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The description of an X509 CA Certificate including the challenge nonce issued for the
     Proof-Of-Possession flow.
 
@@ -284,8 +285,9 @@ class CertificatePropertiesWithNonce(_Model):
     :vartype verification_code: str
     :ivar certificate: The certificate content.
     :vartype certificate: str
-    :ivar policy_resource_id: The reference to policy stored in Azure Device Registry (ADR).
-    :vartype policy_resource_id: str
+    :ivar certificate_authority_resource_id: Full certificate authority resource ID for ADR linked
+     standard SKU hubs.
+    :vartype certificate_authority_resource_id: str
     """
 
     subject: Optional[str] = rest_field(visibility=["read"])
@@ -304,16 +306,16 @@ class CertificatePropertiesWithNonce(_Model):
     """The certificate's verification code that will be used for proof of possession."""
     certificate: Optional[str] = rest_field(visibility=["read"])
     """The certificate content."""
-    policy_resource_id: Optional[str] = rest_field(
-        name="policyResourceId", visibility=["read", "create", "update", "delete", "query"]
+    certificate_authority_resource_id: Optional[str] = rest_field(
+        name="certificateAuthorityResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The reference to policy stored in Azure Device Registry (ADR)."""
+    """Full certificate authority resource ID for ADR linked standard SKU hubs."""
 
     @overload
     def __init__(
         self,
         *,
-        policy_resource_id: Optional[str] = None,
+        certificate_authority_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -327,7 +329,7 @@ class CertificatePropertiesWithNonce(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateVerificationDescription(_Model):
+class CertificateVerificationDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON-serialized leaf certificate.
 
     :ivar certificate: base-64 representation of X509 certificate .cer file or just .pem file
@@ -356,7 +358,7 @@ class CertificateVerificationDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateWithNonceDescription(_Model):
+class CertificateWithNonceDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The X509 Certificate.
 
     :ivar properties: The description of an X509 CA Certificate including the challenge nonce
@@ -404,7 +406,7 @@ class CertificateWithNonceDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudToDeviceProperties(_Model):
+class CloudToDeviceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IoT hub cloud-to-device messaging properties.
 
     :ivar max_delivery_count: The max delivery count for cloud-to-device messages in the device
@@ -458,30 +460,52 @@ class CloudToDeviceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeviceRegistry(_Model):
+class DeviceRegistry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents properties related to the Azure Device Registry (ADR).
 
     :ivar namespace_resource_id: The identifier of the Azure Device Registry namespace.
     :vartype namespace_resource_id: str
-    :ivar identity_resource_id: The identity used to manage the ADR namespace from the data plane.
-    :vartype identity_resource_id: str
+    :ivar namespace_uuid: The UUID of the associated Azure Device Registry namespace.
+    :vartype namespace_uuid: str
+    :ivar data_plane_host_name: The host name for the data plane endpoint of the associated Azure
+     Device Registry.
+    :vartype data_plane_host_name: str
+    :ivar identity: The identity used to manage the ADR namespace from the data plane.
+    :vartype identity: ~azure.mgmt.iothub.models.DeviceRegistryIdentity
+    :ivar linking_properties: The properties related to linking the IoT Hub with the Azure Device
+     Registry.
+    :vartype linking_properties: ~azure.mgmt.iothub.models.DeviceRegistryLinkingProperties
     """
 
     namespace_resource_id: Optional[str] = rest_field(
         name="namespaceResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identifier of the Azure Device Registry namespace."""
-    identity_resource_id: Optional[str] = rest_field(
-        name="identityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    namespace_uuid: Optional[str] = rest_field(
+        name="namespaceUuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The UUID of the associated Azure Device Registry namespace."""
+    data_plane_host_name: Optional[str] = rest_field(
+        name="dataPlaneHostName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The host name for the data plane endpoint of the associated Azure Device Registry."""
+    identity: Optional["_models.DeviceRegistryIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """The identity used to manage the ADR namespace from the data plane."""
+    linking_properties: Optional["_models.DeviceRegistryLinkingProperties"] = rest_field(
+        name="linkingProperties", visibility=["read"]
+    )
+    """The properties related to linking the IoT Hub with the Azure Device Registry."""
 
     @overload
     def __init__(
         self,
         *,
         namespace_resource_id: Optional[str] = None,
-        identity_resource_id: Optional[str] = None,
+        namespace_uuid: Optional[str] = None,
+        data_plane_host_name: Optional[str] = None,
+        identity: Optional["_models.DeviceRegistryIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -495,28 +519,31 @@ class DeviceRegistry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionPropertiesDescription(_Model):
-    """The encryption properties for the IoT hub.
+class DeviceRegistryIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The identity used to manage the ADR namespace from the data plane.
 
-    :ivar key_source: The source of the key.
-    :vartype key_source: str
-    :ivar key_vault_properties: The properties of the KeyVault key.
-    :vartype key_vault_properties: list[~azure.mgmt.iothub.models.KeyVaultKeyProperties]
+    :ivar type: The type of the identity. Known values are: "SystemAssigned" and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.iothub.models.DeviceRegistryIdentityType
+    :ivar user_assigned_identity: The user assigned identity if the identity type is
+     'UserAssigned'.
+    :vartype user_assigned_identity: str
     """
 
-    key_source: Optional[str] = rest_field(name="keySource", visibility=["read", "create", "update", "delete", "query"])
-    """The source of the key."""
-    key_vault_properties: Optional[list["_models.KeyVaultKeyProperties"]] = rest_field(
-        name="keyVaultProperties", visibility=["read", "create", "update", "delete", "query"]
+    type: Optional[Union[str, "_models.DeviceRegistryIdentityType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """The properties of the KeyVault key."""
+    """The type of the identity. Known values are: \"SystemAssigned\" and \"UserAssigned\"."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user assigned identity if the identity type is 'UserAssigned'."""
 
     @overload
     def __init__(
         self,
         *,
-        key_source: Optional[str] = None,
-        key_vault_properties: Optional[list["_models.KeyVaultKeyProperties"]] = None,
+        type: Optional[Union[str, "_models.DeviceRegistryIdentityType"]] = None,
+        user_assigned_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -530,7 +557,24 @@ class EncryptionPropertiesDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointHealthData(_Model):
+class DeviceRegistryLinkingProperties(_Model):
+    """The properties related to linking the IoT Hub with the Azure Device Registry.
+
+    :ivar state: Indicates whether the IoT Hub is linked with an Azure Device Registry. Known
+     values are: "InProgress", "Success", "Orphaned", and "Failed".
+    :vartype state: str or ~azure.mgmt.iothub.models.DeviceRegistryLinkingState
+    :ivar error: The last error encountered when linking the IoT Hub with an Azure Device Registry.
+    :vartype error: ~azure.mgmt.iothub.models.ErrorDetails
+    """
+
+    state: Optional[Union[str, "_models.DeviceRegistryLinkingState"]] = rest_field(visibility=["read"])
+    """Indicates whether the IoT Hub is linked with an Azure Device Registry. Known values are:
+     \"InProgress\", \"Success\", \"Orphaned\", and \"Failed\"."""
+    error: Optional["_models.ErrorDetails"] = rest_field(visibility=["read"])
+    """The last error encountered when linking the IoT Hub with an Azure Device Registry."""
+
+
+class EndpointHealthData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The health data for an endpoint.
 
     :ivar endpoint_id: Id of the endpoint.
@@ -616,7 +660,7 @@ class EndpointHealthData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentProperties(_Model):
+class EnrichmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an enrichment that your IoT hub applies to messages delivered to endpoints.
 
     :ivar key: The key or name for the enrichment property. Required.
@@ -680,7 +724,7 @@ class ErrorDetails(_Model):
     """The error details."""
 
 
-class EventHubConsumerGroupBodyDescription(_Model):
+class EventHubConsumerGroupBodyDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The EventHub consumer group.
 
     :ivar properties: The EventHub consumer group name. Required.
@@ -710,7 +754,7 @@ class EventHubConsumerGroupBodyDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHubConsumerGroupInfo(ProxyResource):
+class EventHubConsumerGroupInfo(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the EventHubConsumerGroupInfo object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -753,7 +797,7 @@ class EventHubConsumerGroupInfo(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EventHubConsumerGroupName(_Model):
+class EventHubConsumerGroupName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The EventHub consumer group name.
 
     :ivar name: EventHub consumer group name. Required.
@@ -781,7 +825,7 @@ class EventHubConsumerGroupName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHubProperties(_Model):
+class EventHubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the provisioned Event Hub-compatible endpoint used by the IoT hub.
 
     :ivar retention_time_in_days: The retention time for device-to-cloud messages in days. See:
@@ -840,7 +884,7 @@ class EventHubProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportDevicesRequest(_Model):
+class ExportDevicesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Use to provide parameters when requesting an export of all devices in the IoT hub.
 
     :ivar export_blob_container_uri: The export blob container URI. Required.
@@ -917,7 +961,7 @@ class ExportDevicesRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverInput(_Model):
+class FailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Use to provide failover region when requesting manual Failover for a hub.
 
     :ivar failover_region: Region the hub will be failed over to. Required.
@@ -945,7 +989,7 @@ class FailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FallbackRouteProperties(_Model):
+class FallbackRouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the fallback route. IoT Hub uses these properties when it routes messages to
     the fallback endpoint.
 
@@ -953,10 +997,8 @@ class FallbackRouteProperties(_Model):
      underscores, hyphens, has a maximum length of 64 characters, and must be unique.
     :vartype name: str
     :ivar source: The source to which the routing rule is to be applied to. For example,
-     DeviceMessages. Required. Known values are: "Invalid", "DeviceMessages", "TwinChangeEvents",
-     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", "DigitalTwinChangeEvents",
-     "DeviceConnectionStateEvents", and "MqttBrokerMessages".
-    :vartype source: str or ~azure.mgmt.iothub.models.RoutingSource
+     DeviceMessages. Required. "DeviceMessages"
+    :vartype source: str or ~azure.mgmt.iothub.models.FallbackRouteSource
     :ivar condition: The condition which is evaluated in order to apply the fallback route. If the
      condition is not provided it will evaluate to true by default. For grammar, See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
@@ -972,11 +1014,11 @@ class FallbackRouteProperties(_Model):
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the route. The name can only include alphanumeric characters, periods, underscores,
      hyphens, has a maximum length of 64 characters, and must be unique."""
-    source: Union[str, "_models.RoutingSource"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Union[str, "_models.FallbackRouteSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The source to which the routing rule is to be applied to. For example, DeviceMessages.
-     Required. Known values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\",
-     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\",
-     \"DeviceConnectionStateEvents\", and \"MqttBrokerMessages\"."""
+     Required. \"DeviceMessages\""""
     condition: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The condition which is evaluated in order to apply the fallback route. If the condition is not
      provided it will evaluate to true by default. For grammar, See:
@@ -994,7 +1036,7 @@ class FallbackRouteProperties(_Model):
     def __init__(
         self,
         *,
-        source: Union[str, "_models.RoutingSource"],
+        source: Union[str, "_models.FallbackRouteSource"],
         endpoint_names: list[str],
         is_enabled: bool,
         name: Optional[str] = None,
@@ -1012,7 +1054,7 @@ class FallbackRouteProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeedbackProperties(_Model):
+class FeedbackProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the feedback queue for cloud-to-device messages.
 
     :ivar lock_duration_as_iso8601: The lock duration for the feedback queue. See:
@@ -1071,7 +1113,7 @@ class FeedbackProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupIdInformation(_Model):
+class GroupIdInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The group information for creating a private endpoint on an IotHub.
 
     :ivar id: The resource identifier.
@@ -1113,7 +1155,7 @@ class GroupIdInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupIdInformationProperties(_Model):
+class GroupIdInformationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties for a group information object.
 
     :ivar group_id: The group id.
@@ -1155,7 +1197,7 @@ class GroupIdInformationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportDevicesRequest(_Model):
+class ImportDevicesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Use to provide parameters when requesting an import of all devices in the hub.
 
     :ivar input_blob_container_uri: The input blob container URI. Required.
@@ -1262,7 +1304,7 @@ class IotHubCapacity(_Model):
     """The type of the scaling enabled. Known values are: \"Automatic\", \"Manual\", and \"None\"."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1306,7 +1348,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class IotHubDescription(TrackedResource):
+class IotHubDescription(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The description of the IoT hub.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1370,7 +1412,7 @@ class IotHubDescription(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class IotHubDetails(_Model):
+class IotHubDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of additional read-only properties for the IoT hub.
 
     :ivar gateway_version: The IoT hub Gateway version. Known values are: "V1" and "V2".
@@ -1400,7 +1442,7 @@ class IotHubDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IotHubLocationDescription(_Model):
+class IotHubLocationDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Public representation of one of the locations where a resource is provisioned.
 
     :ivar location: The name of the Azure region.
@@ -1441,7 +1483,7 @@ class IotHubLocationDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IotHubNameAvailabilityInfo(_Model):
+class IotHubNameAvailabilityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties indicating whether a given IoT hub name is available.
 
     :ivar name_available: The value which indicates whether the provided name is available.
@@ -1477,7 +1519,7 @@ class IotHubNameAvailabilityInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IotHubProperties(_Model):
+class IotHubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an IoT hub.
 
     :ivar authorization_policies: The shared access policies you can use to secure a connection to
@@ -1546,23 +1588,14 @@ class IotHubProperties(_Model):
     :vartype cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :ivar comments: IoT hub comments.
     :vartype comments: str
-    :ivar device_streams: The device streams properties of iothub.
-    :vartype device_streams: ~azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams
     :ivar features: The capabilities and features enabled for the IoT hub. Known values are: "None"
      and "DeviceManagement".
     :vartype features: str or ~azure.mgmt.iothub.models.Capabilities
-    :ivar encryption: The encryption properties for the IoT hub.
-    :vartype encryption: ~azure.mgmt.iothub.models.EncryptionPropertiesDescription
     :ivar locations: Primary and secondary location for iot hub.
     :vartype locations: list[~azure.mgmt.iothub.models.IotHubLocationDescription]
     :ivar enable_data_residency: This property when set to true, will enable data residency, thus,
      disabling disaster recovery.
     :vartype enable_data_residency: bool
-    :ivar root_certificate: This property store root certificate related information.
-    :vartype root_certificate: ~azure.mgmt.iothub.models.RootCertificateProperties
-    :ivar ip_version: This property specifies the IP Version the hub is currently utilizing. Known
-     values are: "ipv4", "ipv6", and "ipv4ipv6".
-    :vartype ip_version: str or ~azure.mgmt.iothub.models.IpVersion
     :ivar device_registry: Represents properties related to the Azure Device Registry (ADR).
     :vartype device_registry: ~azure.mgmt.iothub.models.DeviceRegistry
     :ivar iot_hub_details: Set of additional read-only properties for the IoT hub.
@@ -1660,37 +1693,18 @@ class IotHubProperties(_Model):
     """The IoT hub cloud-to-device messaging properties."""
     comments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """IoT hub comments."""
-    device_streams: Optional["_models.IotHubPropertiesDeviceStreams"] = rest_field(
-        name="deviceStreams", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The device streams properties of iothub."""
     features: Optional[Union[str, "_models.Capabilities"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The capabilities and features enabled for the IoT hub. Known values are: \"None\" and
      \"DeviceManagement\"."""
-    encryption: Optional["_models.EncryptionPropertiesDescription"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The encryption properties for the IoT hub."""
     locations: Optional[list["_models.IotHubLocationDescription"]] = rest_field(visibility=["read"])
     """Primary and secondary location for iot hub."""
     enable_data_residency: Optional[bool] = rest_field(
         name="enableDataResidency", visibility=["read", "create", "update", "delete", "query"]
     )
     """This property when set to true, will enable data residency, thus, disabling disaster recovery."""
-    root_certificate: Optional["_models.RootCertificateProperties"] = rest_field(
-        name="rootCertificate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This property store root certificate related information."""
-    ip_version: Optional[Union[str, "_models.IpVersion"]] = rest_field(
-        name="ipVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This property specifies the IP Version the hub is currently utilizing. Known values are:
-     \"ipv4\", \"ipv6\", and \"ipv4ipv6\"."""
-    device_registry: Optional["_models.DeviceRegistry"] = rest_field(
-        name="deviceRegistry", visibility=["read", "create", "update", "delete", "query"]
-    )
+    device_registry: Optional["_models.DeviceRegistry"] = rest_field(name="deviceRegistry", visibility=["read"])
     """Represents properties related to the Azure Device Registry (ADR)."""
     iot_hub_details: Optional["_models.IotHubDetails"] = rest_field(name="iotHubDetails", visibility=["read"])
     """Set of additional read-only properties for the IoT hub."""
@@ -1717,43 +1731,8 @@ class IotHubProperties(_Model):
         enable_file_upload_notifications: Optional[bool] = None,
         cloud_to_device: Optional["_models.CloudToDeviceProperties"] = None,
         comments: Optional[str] = None,
-        device_streams: Optional["_models.IotHubPropertiesDeviceStreams"] = None,
         features: Optional[Union[str, "_models.Capabilities"]] = None,
-        encryption: Optional["_models.EncryptionPropertiesDescription"] = None,
         enable_data_residency: Optional[bool] = None,
-        root_certificate: Optional["_models.RootCertificateProperties"] = None,
-        ip_version: Optional[Union[str, "_models.IpVersion"]] = None,
-        device_registry: Optional["_models.DeviceRegistry"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class IotHubPropertiesDeviceStreams(_Model):
-    """The device streams properties of iothub.
-
-    :ivar streaming_endpoints: List of Device Streams Endpoints.
-    :vartype streaming_endpoints: list[str]
-    """
-
-    streaming_endpoints: Optional[list[str]] = rest_field(
-        name="streamingEndpoints", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of Device Streams Endpoints."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        streaming_endpoints: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1786,7 +1765,7 @@ class IotHubQuotaMetricInfo(_Model):
     """The maximum value of the quota metric."""
 
 
-class IotHubSkuDescription(_Model):
+class IotHubSkuDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU properties.
 
     :ivar resource_type: The type of the resource.
@@ -1823,7 +1802,7 @@ class IotHubSkuDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IotHubSkuInfo(_Model):
+class IotHubSkuInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the SKU of the IoT hub.
 
     :ivar name: The name of the SKU. Required. Known values are: "F1", "S1", "S2", "S3", "B1",
@@ -1867,7 +1846,7 @@ class IotHubSkuInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpFilterRule(_Model):
+class IpFilterRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP filter rules for the IoT hub.
 
     :ivar filter_name: The name of the IP filter rule. Required.
@@ -1955,44 +1934,7 @@ class JobResponse(_Model):
     """The job identifier of the parent job, if any."""
 
 
-class KeyVaultKeyProperties(_Model):
-    """The properties of the KeyVault key.
-
-    :ivar key_identifier: The identifier of the key.
-    :vartype key_identifier: str
-    :ivar identity: Managed identity properties of KeyVault Key.
-    :vartype identity: ~azure.mgmt.iothub.models.ManagedIdentity
-    """
-
-    key_identifier: Optional[str] = rest_field(
-        name="keyIdentifier", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identifier of the key."""
-    identity: Optional["_models.ManagedIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Managed identity properties of KeyVault Key."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key_identifier: Optional[str] = None,
-        identity: Optional["_models.ManagedIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ManagedIdentity(_Model):
+class ManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Managed identity.
 
     :ivar user_assigned_identity: The user assigned identity.
@@ -2022,7 +1964,7 @@ class ManagedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MatchedRoute(_Model):
+class MatchedRoute(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Routes that matched.
 
     :ivar properties: Properties of routes that matched.
@@ -2052,7 +1994,7 @@ class MatchedRoute(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MessagingEndpointProperties(_Model):
+class MessagingEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the messaging endpoints used by this IoT hub.
 
     :ivar lock_duration_as_iso8601: The lock duration. See:
@@ -2108,7 +2050,7 @@ class MessagingEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Name(_Model):
+class Name(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Name of Iot Hub type.
 
     :ivar value: IotHub type.
@@ -2143,7 +2085,7 @@ class Name(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSetIpRule(_Model):
+class NetworkRuleSetIpRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Rule to be applied as part of Network Rule Set.
 
     :ivar filter_name: Name of the IP filter rule. Required.
@@ -2184,7 +2126,7 @@ class NetworkRuleSetIpRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSetProperties(_Model):
+class NetworkRuleSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Rule Set Properties of IotHub.
 
     :ivar default_action: Default Action for Network Rule Set. Known values are: "Deny" and
@@ -2231,7 +2173,7 @@ class NetworkRuleSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IoT Hub REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{read | write | action | delete}.
@@ -2288,7 +2230,7 @@ class OperationDisplay(_Model):
     """Description of the operation."""
 
 
-class OperationInputs(_Model):
+class OperationInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input values.
 
     :ivar name: The name of the IoT hub to check. Required.
@@ -2327,7 +2269,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection of an IotHub.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2368,7 +2310,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a private endpoint connection.
 
     :ivar private_endpoint: The private endpoint property of a private endpoint connection.
@@ -2407,7 +2349,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResources(_Model):
+class PrivateLinkResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available private link resources for an IotHub.
 
     :ivar value: The list of available private link resources for an IotHub.
@@ -2437,7 +2379,7 @@ class PrivateLinkResources(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current state of a private endpoint connection.
 
     :ivar status: The status of a private endpoint connection. Required. Known values are:
@@ -2501,45 +2443,7 @@ class RegistryStatistics(_Model):
     """The count of disabled devices in the identity registry."""
 
 
-class RootCertificateProperties(_Model):
-    """This property store root certificate related information.
-
-    :ivar enable_root_certificate_v2: This property when set to true, hub will use G2 cert; while
-     it's set to false, hub uses Baltimore Cert.
-    :vartype enable_root_certificate_v2: bool
-    :ivar last_updated_time_utc: the last update time to root certificate flag.
-    :vartype last_updated_time_utc: ~datetime.datetime
-    """
-
-    enable_root_certificate_v2: Optional[bool] = rest_field(
-        name="enableRootCertificateV2", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This property when set to true, hub will use G2 cert; while it's set to false, hub uses
-     Baltimore Cert."""
-    last_updated_time_utc: Optional[datetime.datetime] = rest_field(
-        name="lastUpdatedTimeUtc", visibility=["read"], format="rfc3339"
-    )
-    """the last update time to root certificate flag."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enable_root_certificate_v2: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RouteCompilationError(_Model):
+class RouteCompilationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Compilation error when evaluating route.
 
     :ivar message: Route error message.
@@ -2581,7 +2485,7 @@ class RouteCompilationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RouteErrorPosition(_Model):
+class RouteErrorPosition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Position where the route error happened.
 
     :ivar line: Line where the route error happened.
@@ -2614,7 +2518,7 @@ class RouteErrorPosition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RouteErrorRange(_Model):
+class RouteErrorRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Range of route errors.
 
     :ivar start: Start where the route error happened.
@@ -2649,7 +2553,7 @@ class RouteErrorRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RouteProperties(_Model):
+class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a routing rule that your IoT hub uses to route messages to endpoints.
 
     :ivar name: The name of the route. The name can only include alphanumeric characters, periods,
@@ -2657,8 +2561,7 @@ class RouteProperties(_Model):
     :vartype name: str
     :ivar source: The source that the routing rule is to be applied to, such as DeviceMessages.
      Required. Known values are: "Invalid", "DeviceMessages", "TwinChangeEvents",
-     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", "DigitalTwinChangeEvents",
-     "DeviceConnectionStateEvents", and "MqttBrokerMessages".
+     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", and "DeviceConnectionStateEvents".
     :vartype source: str or ~azure.mgmt.iothub.models.RoutingSource
     :ivar condition: The condition that is evaluated to apply the routing rule. If no condition is
      provided, it evaluates to true by default. For grammar, see:
@@ -2678,8 +2581,7 @@ class RouteProperties(_Model):
     source: Union[str, "_models.RoutingSource"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The source that the routing rule is to be applied to, such as DeviceMessages. Required. Known
      values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\", \"DeviceLifecycleEvents\",
-     \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\", \"DeviceConnectionStateEvents\", and
-     \"MqttBrokerMessages\"."""
+     \"DeviceJobLifecycleEvents\", and \"DeviceConnectionStateEvents\"."""
     condition: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The condition that is evaluated to apply the routing rule. If no condition is provided, it
      evaluates to true by default. For grammar, see:
@@ -2715,7 +2617,7 @@ class RouteProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingCosmosDBSqlApiProperties(_Model):
+class RoutingCosmosDBSqlApiProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to a cosmos DB sql container endpoint.
 
     :ivar name: The name that identifies this endpoint. The name can only include alphanumeric
@@ -2838,7 +2740,7 @@ class RoutingCosmosDBSqlApiProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingEndpoints(_Model):
+class RoutingEndpoints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to the custom endpoints to which your IoT hub routes messages based on
     the routing rules. A maximum of 10 custom endpoints are allowed across all endpoint types for
     paid hubs and only 1 custom endpoint is allowed across all endpoint types for free hubs.
@@ -2919,7 +2821,7 @@ class RoutingEndpoints(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingEventHubProperties(_Model):
+class RoutingEventHubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to an event hub endpoint.
 
     :ivar id: Id of the event hub endpoint.
@@ -3009,7 +2911,7 @@ class RoutingEventHubProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingEventStreamProperties(_Model):
+class RoutingEventStreamProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to an event stream endpoint.
 
     :ivar name: The name that identifies this endpoint. The name can only include alphanumeric
@@ -3094,7 +2996,7 @@ class RoutingEventStreamProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingMessage(_Model):
+class RoutingMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Routing message.
 
     :ivar body: Body of routing message.
@@ -3136,7 +3038,7 @@ class RoutingMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingProperties(_Model):
+class RoutingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The routing related properties of the IoT hub. See:
     `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging
     <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging>`_.
@@ -3208,7 +3110,7 @@ class RoutingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingServiceBusQueueEndpointProperties(_Model):
+class RoutingServiceBusQueueEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to service bus queue endpoint types.
 
     :ivar id: Id of the service bus queue endpoint.
@@ -3299,7 +3201,7 @@ class RoutingServiceBusQueueEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingServiceBusTopicEndpointProperties(_Model):
+class RoutingServiceBusTopicEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to service bus topic endpoint types.
 
     :ivar id: Id of the service bus topic endpoint.
@@ -3391,7 +3293,7 @@ class RoutingServiceBusTopicEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingStorageContainerProperties(_Model):
+class RoutingStorageContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to a storage container endpoint.
 
     :ivar id: Id of the storage container endpoint.
@@ -3519,7 +3421,7 @@ class RoutingStorageContainerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingTwin(_Model):
+class RoutingTwin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Twin reference input parameter. This is an optional parameter.
 
     :ivar tags: Twin Tags.
@@ -3553,7 +3455,7 @@ class RoutingTwin(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingTwinProperties(_Model):
+class RoutingTwinProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RoutingTwinProperties.
 
     :ivar desired: Twin desired properties.
@@ -3586,7 +3488,7 @@ class RoutingTwinProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedAccessSignatureAuthorizationRule(_Model):
+class SharedAccessSignatureAuthorizationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an IoT hub shared access policy.
 
     :ivar key_name: The name of the shared access policy. Required.
@@ -3646,7 +3548,7 @@ class SharedAccessSignatureAuthorizationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageEndpointProperties(_Model):
+class StorageEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Azure Storage endpoint for file upload.
 
     :ivar sas_ttl_as_iso8601: The period of time for which the SAS URI generated by IoT Hub for
@@ -3712,7 +3614,7 @@ class StorageEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3779,7 +3681,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResource(_Model):
+class TagsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A container holding only the Tags for a resource, allowing the user to update the tags on an
     IoT Hub instance.
 
@@ -3808,12 +3710,12 @@ class TagsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestAllRoutesInput(_Model):
+class TestAllRoutesInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for testing all routes.
 
     :ivar routing_source: Routing source. Known values are: "Invalid", "DeviceMessages",
-     "TwinChangeEvents", "DeviceLifecycleEvents", "DeviceJobLifecycleEvents",
-     "DigitalTwinChangeEvents", "DeviceConnectionStateEvents", and "MqttBrokerMessages".
+     "TwinChangeEvents", "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", and
+     "DeviceConnectionStateEvents".
     :vartype routing_source: str or ~azure.mgmt.iothub.models.RoutingSource
     :ivar message: Routing message.
     :vartype message: ~azure.mgmt.iothub.models.RoutingMessage
@@ -3825,8 +3727,7 @@ class TestAllRoutesInput(_Model):
         name="routingSource", visibility=["read", "create", "update", "delete", "query"]
     )
     """Routing source. Known values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\",
-     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\",
-     \"DeviceConnectionStateEvents\", and \"MqttBrokerMessages\"."""
+     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", and \"DeviceConnectionStateEvents\"."""
     message: Optional["_models.RoutingMessage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Routing message."""
     twin: Optional["_models.RoutingTwin"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3852,7 +3753,7 @@ class TestAllRoutesInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestAllRoutesResult(_Model):
+class TestAllRoutesResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of testing all routes.
 
     :ivar routes: JSON-serialized array of matched routes.
@@ -3882,7 +3783,7 @@ class TestAllRoutesResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRouteInput(_Model):
+class TestRouteInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for testing route.
 
     :ivar message: Routing message.
@@ -3920,7 +3821,7 @@ class TestRouteInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRouteResult(_Model):
+class TestRouteResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of testing one route.
 
     :ivar result: Result of testing route. Known values are: "undefined", "false", and "true".
@@ -3957,7 +3858,7 @@ class TestRouteResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRouteResultDetails(_Model):
+class TestRouteResultDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Detailed result of testing a route.
 
     :ivar compilation_errors: JSON-serialized list of route compilation errors.
@@ -3987,7 +3888,7 @@ class TestRouteResultDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserSubscriptionQuota(_Model):
+class UserSubscriptionQuota(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User subscription quota response.
 
     :ivar id: IotHub type id.
@@ -4042,7 +3943,7 @@ class UserSubscriptionQuota(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserSubscriptionQuotaListResult(_Model):
+class UserSubscriptionQuotaListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Json-serialized array of User subscription quota response.
 
     :ivar value: The UserSubscriptionQuota items on this page.

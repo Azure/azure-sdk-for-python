@@ -7,9 +7,12 @@
 import pytest
 import asyncio
 import time
+from unittest.mock import AsyncMock
 
 from azure.eventhub import EventData, LoadBalancingStrategy
+from azure.eventhub._pyamqp.error import AMQPLinkError
 from azure.eventhub.aio import EventHubConsumerClient
+from azure.eventhub.aio._consumer_async import EventHubConsumer
 from azure.eventhub.aio._eventprocessor.event_processor import (
     EventProcessor,
     CloseReason,
@@ -18,7 +21,7 @@ from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import (
     InMemoryCheckpointStore,
 )
 from azure.eventhub.aio._eventprocessor._ownership_manager import OwnershipManager
-from azure.eventhub.exceptions import OwnershipLostError, EventHubError
+from azure.eventhub.exceptions import ConnectionLostError, OwnershipLostError, EventHubError
 from azure.eventhub._client_base import _Address
 
 
@@ -30,6 +33,34 @@ TEST_OWNER = "test_owner_id"
 
 async def event_handler(partition_context, event):
     pass
+
+
+@pytest.mark.asyncio
+async def test_receive_invalid_offset_calls_on_error(monkeypatch, caplog):
+    error_reported = asyncio.Event()
+    on_error = AsyncMock(side_effect=lambda *_: error_reported.set())
+    error = AMQPLinkError(
+        condition=b"com.microsoft:georeplication:invalid-offset", description="Receiver link rejected."
+    )
+    monkeypatch.setattr(EventHubConsumer, "_open", AsyncMock(side_effect=error))
+
+    async with EventHubConsumerClient(
+        TEST_NAMESPACE, TEST_EVENTHUB, TEST_CONSUMER_GROUP, None, retry_total=0
+    ) as client:
+        monkeypatch.setattr(client, "get_partition_ids", AsyncMock(return_value=["0"]))
+        receive_task = asyncio.create_task(client.receive(event_handler, partition_id="0", on_error=on_error))
+        try:
+            await asyncio.wait_for(error_reported.wait(), timeout=5)
+        finally:
+            receive_task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await receive_task
+
+    on_error.assert_awaited_once()
+    exception = on_error.call_args.args[1]
+    assert isinstance(exception, ConnectionLostError)
+    assert exception.error == "georeplication:invalid-offset"
+    assert "com.microsoft:georeplication:invalid-offset" in caplog.text
 
 
 @pytest.mark.asyncio

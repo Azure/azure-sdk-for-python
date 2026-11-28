@@ -35,11 +35,11 @@ def main():
         managed_instance_name="testsvr",
         restorable_dropped_database_id="testdb,131403269876900000",
         policy_name="default",
-        parameters={"properties": {"retentionDays": 14}},
+        parameters={"properties": {"lockImmutability": False, "retentionDays": 14}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/UpdateManagedShortTermRetentionPolicyRestorableDropped.json
+# x-ms-original-file: 2026-08-01-preview/UpdateManagedShortTermRetentionPolicyRestorableDropped.json
 if __name__ == "__main__":
     main()

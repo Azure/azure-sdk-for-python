@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.11 (Unreleased)
+## 1.8.13 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,24 @@
 
 ### Bugs Fixed
 
+- With `enable_trace_based_sampling_for_logs=True`, retained logs now carry the matching span's sampling rate so
+  Application Insights reports the correct `ItemCount`. A 5% span rate counts as 20 items per retained log.
+  Without a usable rate from a matching span, each log still counts as one, regardless of the configured trace
+  sampling ratio. This fix does not change which logs are exported.
+  ([#50089](https://github.com/Azure/azure-sdk-for-python/pull/50089))
+
 ### Other Changes
+
+## 1.8.12 (2026-11-05)
+
+### Other Changes
+- Bump exporter minimum version to 1.0.0b59
+
+## 1.8.11 (2026-10-07)
+
+### Other Changes
+- Corrected the package metadata to require Python 3.10 or later, matching the existing support policy
+  ([#49200](https://github.com/Azure/azure-sdk-for-python/pull/49200))
 
 ## 1.8.10 (2026-09-09)
 

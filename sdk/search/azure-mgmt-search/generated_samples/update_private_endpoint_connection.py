@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,16 +36,13 @@ def main():
         private_endpoint_connection_name="testEndpoint.50bf4fbe-d7c1-4b48-a642-4f5892642546",
         private_endpoint_connection={
             "properties": {
-                "privateLinkServiceConnectionState": {
-                    "description": "Connection is rejected due to lack of authorization or failure to meet security compliance requirements.",
-                    "status": "Rejected",
-                }
+                "privateLinkServiceConnectionState": {"description": "Rejected for some reason.", "status": "Rejected"}
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/UpdatePrivateEndpointConnection.json
+# x-ms-original-file: 2026-11-01/UpdatePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()

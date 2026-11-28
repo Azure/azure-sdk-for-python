@@ -95,6 +95,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
             _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
             _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
             _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
+            _STATSBEAT_STATE["GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET"] = False
+            _STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"] = False
             _STATSBEAT_STATE["FEATURE_ATTRIBUTE_BITS"] = 0
 
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(_StatsbeatMetrics_COMMON_ATTRS)
@@ -534,6 +536,59 @@ class TestStatsbeatMetrics(unittest.TestCase):
         observations = metric._get_feature_metric(options=None)
         self.assertEqual(len(observations), 0)
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
+
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._utils.get_instrumentations", return_value=0
+    )
+    def test_get_feature_metric_experimental_features(self, mock_instrumentations):
+        cases = (
+            (False, False, 0),
+            (True, False, 2048),
+            (False, True, 4096),
+            (True, True, 6144),
+        )
+        existing_bits = _StatsbeatFeature.DISK_RETRY | _StatsbeatFeature.AAD | _StatsbeatFeature.DISTRO
+        for enabled_before_metrics in (True, False):
+            for gen_ai_enabled, routing_enabled, expected_bits in cases:
+                with self.subTest(
+                    gen_ai_enabled=gen_ai_enabled,
+                    routing_enabled=routing_enabled,
+                    enabled_before_metrics=enabled_before_metrics,
+                ), mock.patch.dict(
+                    _STATSBEAT_STATE,
+                    {
+                        "GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET": (
+                            gen_ai_enabled if enabled_before_metrics else False
+                        ),
+                        "MULTI_ENDPOINT_ROUTING_FEATURE_SET": routing_enabled if enabled_before_metrics else False,
+                        "FEATURE_ATTRIBUTE_BITS": 0,
+                    },
+                ), mock.patch.dict(
+                    _StatsbeatMetrics._FEATURE_ATTRIBUTES, {"feature": None}
+                ):
+                    mp = MeterProvider()
+                    self.addCleanup(mp.shutdown)
+                    metric = _StatsbeatMetrics(
+                        mp,
+                        "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334",
+                        "https://westus-1.in.applicationinsights.azure.com/",
+                        False,
+                        0,
+                        True,
+                        "1.0.0",
+                    )
+                    self.assertEqual(
+                        metric._feature, existing_bits | expected_bits if enabled_before_metrics else existing_bits
+                    )
+                    if not enabled_before_metrics:
+                        _STATSBEAT_STATE["GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET"] = gen_ai_enabled
+                        _STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"] = routing_enabled
+                    attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+                    attributes.update({"feature": existing_bits | expected_bits, "type": _FEATURE_TYPES.FEATURE})
+                    for _ in range(2):
+                        observations = metric._get_feature_metric(options=None)
+                        self.assertEqual(observations, [Observation(1, attributes)])
+                        self.assertEqual(get_statsbeat_feature_attribute_bits(), existing_bits | expected_bits)
 
     # pylint: disable=protected-access
     def test_get_feature_metric_aad(self):

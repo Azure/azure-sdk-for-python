@@ -6,16 +6,12 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import load_online_deployment, load_online_endpoint
 from azure.ai.ml._azure_environments import _resource_to_scopes
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
-)
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    OnlineDeployment as OnlineDeploymentData,
-    OnlineDeploymentProperties as OnlineDeploymentDetails,
-    OnlineEndpoint as OnlineEndpointData,
-)
-from azure.ai.ml._restclient.arm_ml_service.models import OnlineEndpointProperties as RestOnlineEndpoint
 from azure.ai.ml._restclient.arm_ml_service.models import EndpointAuthKeys
+from azure.ai.ml._restclient.arm_ml_service.models import KubernetesOnlineDeployment as RestKubernetesOnlineDeployment
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineDeployment as OnlineDeploymentData
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineDeploymentProperties as OnlineDeploymentDetails
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineEndpoint as OnlineEndpointData
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineEndpointProperties as RestOnlineEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import (
     AAD_TOKEN_RESOURCE_ENDPOINT,
@@ -23,6 +19,8 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     HttpResponseStatusCode,
 )
+from azure.ai.ml.constants._endpoint import EndpointInvokeFields
+from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys as OnlineEndpointAuthKeys
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.operations import (
     DatastoreOperations,
@@ -436,6 +434,52 @@ class TestOnlineEndpointsOperations:
         assert mock_online_endpoint_operations.invoke(endpoint_name=random_name, request_file=request_file)
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
+
+    def test_online_invoke_uses_request_local_headers(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations,
+        request_file: str,
+        mocker: MockFixture,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.setattr(EndpointInvokeFields, "DEFAULT_HEADER", {"Content-Type": "application/json"})
+        operations = mock_online_endpoint_operations
+        scoring_uris = {"endpoint-a": "https://endpoint-a.test/score", "endpoint-b": "https://endpoint-b.test/score"}
+        operations._online_operation.get.side_effect = lambda **kwargs: OnlineEndpointData(
+            name=kwargs["endpoint_name"],
+            location="eastus",
+            properties=RestOnlineEndpoint(auth_mode="Key", scoring_uri=scoring_uris[kwargs["endpoint_name"]]),
+        )
+        operations._online_operation.list_keys.side_effect = lambda **kwargs: OnlineEndpointAuthKeys(
+            primary_key=f"key-{kwargs['endpoint_name'][-1]}", secondary_key="unused"
+        )
+        mocker.patch.object(operations, "_validate_deployment_name")
+        response = Mock(status_code=200, text=lambda: "{}")
+        sent_headers = {}
+
+        def post(url, json, headers):
+            if url == scoring_uris["endpoint-a"]:
+                # Simulate another invocation running before endpoint-a's request copies its headers.
+                operations.invoke(endpoint_name="endpoint-b", request_file=request_file)
+            sent_headers[url] = dict(headers)
+            return response
+
+        mocker.patch.object(operations._requests_pipeline, "post", side_effect=post)
+
+        operations.invoke(endpoint_name="endpoint-a", request_file=request_file, deployment_name="blue")
+
+        assert sent_headers == {
+            scoring_uris["endpoint-a"]: {
+                "Content-Type": "application/json",
+                EndpointInvokeFields.AUTHORIZATION: "Bearer key-a",
+                EndpointInvokeFields.MODEL_DEPLOYMENT: "blue",
+            },
+            scoring_uris["endpoint-b"]: {
+                "Content-Type": "application/json",
+                EndpointInvokeFields.AUTHORIZATION: "Bearer key-b",
+            },
+        }
+        assert EndpointInvokeFields.DEFAULT_HEADER == {"Content-Type": "application/json"}
 
     def test_create_no_file_throw_exception(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         with pytest.raises(Exception):

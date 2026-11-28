@@ -1079,7 +1079,7 @@ class HcpOpenShiftClustersOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
     )
     async def _request_admin_credential_initial(
         self,
@@ -1260,7 +1260,7 @@ class HcpOpenShiftClustersOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
     )
     async def begin_request_admin_credential(
         self,

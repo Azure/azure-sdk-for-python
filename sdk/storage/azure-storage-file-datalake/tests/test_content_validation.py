@@ -10,6 +10,7 @@ import pytest
 from devtools_testutils import is_live, recorded_by_proxy
 from devtools_testutils.storage import GenericTestProxyParametrize1, StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
+from test_helpers import CaptureAuthHeader
 
 from azure.storage.filedatalake import DataLakeServiceClient
 
@@ -309,3 +310,30 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         # Assert
         assert content == data
         assert partial == data[5 * 1024 * 1024 : 30 * 1024 * 1024]
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_create_session_download_crc64(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        self._setup(datalake_storage_account_name)
+        capture_auth_header = CaptureAuthHeader()
+
+        with DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "dfs"),
+            credential=self.get_credential(DataLakeServiceClient),
+            use_session=True,
+        ) as service:
+            file = service.get_file_system_client(self.file_system.file_system_name).get_file_client(
+                self._get_file_reference()
+            )
+            data = b"abcd" * 1024
+            file.upload_data(data, overwrite=True)
+
+            result = file.download_file(
+                validate_content="crc64", raw_response_hook=capture_auth_header.hook("download")
+            ).readall()
+
+            assert result == data
+            is_session_auth = capture_auth_header["download"].startswith("Session ")
+            assert is_session_auth

@@ -25,7 +25,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.get(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -345,6 +345,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "ipConfigurations": [...],
                                                                                         "macAddress": "str",
                                                                                         "migrationPhase": "str",
+                                                                                        "networkAdapterIndex": 0,
                                                                                         "networkSecurityGroup": ...,
                                                                                         "nicType": "str",
                                                                                         "primary": bool,
@@ -936,6 +937,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "ipConfigurations": [...],
                                                                                             "macAddress": "str",
                                                                                             "migrationPhase": "str",
+                                                                                            "networkAdapterIndex": 0,
                                                                                             "networkSecurityGroup": {
                                                                                                 "etag": "str",
                                                                                                 "id": "str",
@@ -1789,6 +1791,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "ipConfigurations": [...],
                                                                         "macAddress": "str",
                                                                         "migrationPhase": "str",
+                                                                        "networkAdapterIndex": 0,
                                                                         "networkSecurityGroup": ...,
                                                                         "nicType": "str",
                                                                         "primary": bool,
@@ -2566,6 +2569,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "ipConfigurations": [...],
                                                                             "macAddress": "str",
                                                                             "migrationPhase": "str",
+                                                                            "networkAdapterIndex": 0,
                                                                             "networkSecurityGroup": {
                                                                                 "etag": "str",
                                                                                 "id": "str",
@@ -3600,6 +3604,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             ],
                                                                                                             "macAddress": "str",
                                                                                                             "migrationPhase": "str",
+                                                                                                            "networkAdapterIndex": 0,
                                                                                                             "networkSecurityGroup": ...,
                                                                                                             "nicType": "str",
                                                                                                             "primary": bool,
@@ -4104,6 +4109,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 ],
                                                                                                                 "macAddress": "str",
                                                                                                                 "migrationPhase": "str",
+                                                                                                                "networkAdapterIndex": 0,
                                                                                                                 "networkSecurityGroup": {
                                                                                                                     "etag": "str",
                                                                                                                     "id": "str",
@@ -4913,6 +4919,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "ipConfigurations": [...],
                                                                                             "macAddress": "str",
                                                                                             "migrationPhase": "str",
+                                                                                            "networkAdapterIndex": 0,
                                                                                             "networkSecurityGroup": ...,
                                                                                             "nicType": "str",
                                                                                             "primary": bool,
@@ -5401,6 +5408,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 ],
                                                                                                 "macAddress": "str",
                                                                                                 "migrationPhase": "str",
+                                                                                                "networkAdapterIndex": 0,
                                                                                                 "networkSecurityGroup": {
                                                                                                     "etag": "str",
                                                                                                     "id": "str",
@@ -6320,6 +6328,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             ],
                                                                             "macAddress": "str",
                                                                             "migrationPhase": "str",
+                                                                            "networkAdapterIndex": 0,
                                                                             "networkSecurityGroup": ...,
                                                                             "nicType": "str",
                                                                             "primary": bool,
@@ -7137,6 +7146,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                 ],
                                                                                 "macAddress": "str",
                                                                                 "migrationPhase": "str",
+                                                                                "networkAdapterIndex": 0,
                                                                                 "networkSecurityGroup": {
                                                                                     "etag": "str",
                                                                                     "id": "str",
@@ -8281,6 +8291,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             ],
                                                             "macAddress": "str",
                                                             "migrationPhase": "str",
+                                                            "networkAdapterIndex": 0,
                                                             "networkSecurityGroup": ...,
                                                             "nicType": "str",
                                                             "primary": bool,
@@ -9249,6 +9260,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 ],
                                                                 "macAddress": "str",
                                                                 "migrationPhase": "str",
+                                                                "networkAdapterIndex": 0,
                                                                 "networkSecurityGroup": {
                                                                     "etag": "str",
                                                                     "id": "str",
@@ -10268,6 +10280,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "ipConfigurations": [...],
                                                                                     "macAddress": "str",
                                                                                     "migrationPhase": "str",
+                                                                                    "networkAdapterIndex": 0,
                                                                                     "networkSecurityGroup": ...,
                                                                                     "nicType": "str",
                                                                                     "primary": bool,
@@ -10842,6 +10855,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "ipConfigurations": [...],
                                                                                         "macAddress": "str",
                                                                                         "migrationPhase": "str",
+                                                                                        "networkAdapterIndex": 0,
                                                                                         "networkSecurityGroup": {
                                                                                             "etag": "str",
                                                                                             "id": "str",
@@ -11684,6 +11698,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "ipConfigurations": [...],
                                                                     "macAddress": "str",
                                                                     "migrationPhase": "str",
+                                                                    "networkAdapterIndex": 0,
                                                                     "networkSecurityGroup": ...,
                                                                     "nicType": "str",
                                                                     "primary": bool,
@@ -12445,6 +12460,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "ipConfigurations": [...],
                                                                         "macAddress": "str",
                                                                         "migrationPhase": "str",
+                                                                        "networkAdapterIndex": 0,
                                                                         "networkSecurityGroup": {
                                                                             "etag": "str",
                                                                             "id": "str",
@@ -13461,6 +13477,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         ],
                                                                                                         "macAddress": "str",
                                                                                                         "migrationPhase": "str",
+                                                                                                        "networkAdapterIndex": 0,
                                                                                                         "networkSecurityGroup": ...,
                                                                                                         "nicType": "str",
                                                                                                         "primary": bool,
@@ -13965,6 +13982,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             ],
                                                                                                             "macAddress": "str",
                                                                                                             "migrationPhase": "str",
+                                                                                                            "networkAdapterIndex": 0,
                                                                                                             "networkSecurityGroup": {
                                                                                                                 "etag": "str",
                                                                                                                 "id": "str",
@@ -14766,6 +14784,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "ipConfigurations": [...],
                                                                                         "macAddress": "str",
                                                                                         "migrationPhase": "str",
+                                                                                        "networkAdapterIndex": 0,
                                                                                         "networkSecurityGroup": ...,
                                                                                         "nicType": "str",
                                                                                         "primary": bool,
@@ -15242,6 +15261,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "ipConfigurations": [...],
                                                                                             "macAddress": "str",
                                                                                             "migrationPhase": "str",
+                                                                                            "networkAdapterIndex": 0,
                                                                                             "networkSecurityGroup": {
                                                                                                 "etag": "str",
                                                                                                 "id": "str",
@@ -15787,7 +15807,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -15800,7 +15820,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -15812,7 +15832,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.begin_delete(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -15823,7 +15843,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
     def test_load_balancers_list(self, resource_group):
         response = self.client.load_balancers.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -15833,7 +15853,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_load_balancers_list_all(self, resource_group):
         response = self.client.load_balancers.list_all(
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -15845,7 +15865,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.migrate_to_ip_based(
             group_name="str",
             load_balancer_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -15859,7 +15879,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
             load_balancer_name="str",
             backend_pool_name="str",
             parameters={"ipAddress": "str", "ipConfiguration": {"id": "str"}},
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -15871,7 +15891,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.begin_swap_public_ip_addresses(
             location="str",
             parameters={"frontendIPConfigurations": [{"id": "str", "properties": {"publicIPAddress": {"id": "str"}}}]},
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

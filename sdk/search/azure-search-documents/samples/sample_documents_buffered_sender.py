@@ -55,14 +55,20 @@ def sample_batching_client():
     with SearchIndexingBufferedSender(service_endpoint, index_name, AzureKeyCredential(key)) as buffered_sender:
         # add upload actions
         buffered_sender.upload_documents(documents=[document])
+        if buffered_sender.flush():
+            raise RuntimeError("Uploading the document failed.")
         print(f"Uploaded: document {document['HotelId']}")
 
         # add merge actions
         buffered_sender.merge_documents(documents=[{"HotelId": "100", "Rating": 4.5}])
+        if buffered_sender.flush():
+            raise RuntimeError("Merging the document failed.")
         print(f"Merged: document {document['HotelId']}")
 
         # add delete actions
         buffered_sender.delete_documents(documents=[{"HotelId": "100"}])
+        if buffered_sender.flush():
+            raise RuntimeError("Deleting the document failed.")
         print(f"Deleted: document {document['HotelId']}")
     # [END sample_batching_client]
 

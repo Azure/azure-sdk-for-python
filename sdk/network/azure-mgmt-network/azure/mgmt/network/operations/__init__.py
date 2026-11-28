@@ -33,6 +33,7 @@ from ._operations import ExpressRoutePortsLocationsOperations  # type: ignore
 from ._operations import ExpressRoutePortsOperations  # type: ignore
 from ._operations import ExpressRoutePortAuthorizationsOperations  # type: ignore
 from ._operations import ExpressRouteLagsOperations  # type: ignore
+from ._operations import ExpressRouteLagAuthorizationsOperations  # type: ignore
 from ._operations import FirewallPoliciesOperations  # type: ignore
 from ._operations import FirewallPolicyRuleCollectionGroupsOperations  # type: ignore
 from ._operations import FirewallPolicyKubeSelectorGroupsOperations  # type: ignore
@@ -109,6 +110,7 @@ from ._operations import HubRouteTablesOperations  # type: ignore
 from ._operations import ConnectionPoliciesOperations  # type: ignore
 from ._operations import WebApplicationFirewallPoliciesOperations  # type: ignore
 from ._operations import VirtualNetworkAppliancesOperations  # type: ignore
+from ._operations import VirtualNetworkApplianceCapabilitiesOperations  # type: ignore
 from ._operations import ServiceGatewaysOperations  # type: ignore
 from ._operations import InterconnectGroupsOperations  # type: ignore
 from ._operations import SubgroupsOperations  # type: ignore
@@ -207,6 +209,7 @@ __all__ = [
     "ExpressRoutePortsOperations",
     "ExpressRoutePortAuthorizationsOperations",
     "ExpressRouteLagsOperations",
+    "ExpressRouteLagAuthorizationsOperations",
     "FirewallPoliciesOperations",
     "FirewallPolicyRuleCollectionGroupsOperations",
     "FirewallPolicyKubeSelectorGroupsOperations",
@@ -283,6 +286,7 @@ __all__ = [
     "ConnectionPoliciesOperations",
     "WebApplicationFirewallPoliciesOperations",
     "VirtualNetworkAppliancesOperations",
+    "VirtualNetworkApplianceCapabilitiesOperations",
     "ServiceGatewaysOperations",
     "InterconnectGroupsOperations",
     "SubgroupsOperations",

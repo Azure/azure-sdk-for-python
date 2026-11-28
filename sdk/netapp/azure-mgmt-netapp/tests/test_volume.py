@@ -26,13 +26,12 @@ GIGABYTE = 1024 * 1024 * 1024
 SUBSID = "69a75bda-882e-44d5-8431-63421204132a"
 
 
-def create_volume_body(volume_name, location, rg=setup.TEST_RG, vnet=setup.PERMA_VNET, enable_subvolumes=None):
+def create_volume_body(volume_name, location, rg=setup.TEST_RG, vnet=setup.PERMA_VNET):
     default_protocol_type = ["NFSv3"]
     volume_properties = VolumeProperties(
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
-        enable_subvolumes=enable_subvolumes,
         service_level=setup.SERVICE_LEVEL,
         subnet_id="/subscriptions/"
         + SUBSID
@@ -58,13 +57,12 @@ def create_volume(
     location=setup.LOCATION,
     vnet=setup.PERMA_VNET,
     volume_only=False,
-    enable_subvolumes=None,
 ):
     if not volume_only:
         create_pool(client, rg, account_name, pool_name, location, False)
     print("Creating volume {0} in NetApp Account {1}".format(volume_name, account_name))
 
-    volume_body = create_volume_body(volume_name, location, rg, vnet, enable_subvolumes)
+    volume_body = create_volume_body(volume_name, location, rg, vnet)
     client.volumes.begin_create_or_update(rg, account_name, pool_name, volume_name, volume_body).result()
     volume = wait_for_volume(client, rg, account_name, pool_name, volume_name)
     print("\tDone creating volume {0} in NetApp Account {1}".format(volume_name, account_name))

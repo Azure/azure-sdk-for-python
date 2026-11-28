@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2020-02-02/ComponentsGet.json
+# x-ms-original-file: 2025-01-23-preview/ComponentsGet.json
 if __name__ == "__main__":
     main()

@@ -68,17 +68,22 @@ async def _teardown_manager(manager, mgr_mod):
 def test_drain_does_not_read_payload_input() -> None:
     """Source-level assertion that ``_try_drain_steering`` doesn't read payload['input'].
 
-    The drain primitive operates only on ``_steering`` sub-keys. Cleared input
-    on suspend (from T-082) does not break drain on subsequent resumes.
+    Drain reads from the steering queue, then writes the promoted current input.
+    Cleared input on suspend does not break subsequent steering turns.
     """
+    import ast
     import inspect
+    import textwrap
 
     from azure.ai.agentserver.core.tasks._manager import TaskManager
 
     src = inspect.getsource(TaskManager._try_drain_steering)
-    # Drain reads `payload.get("steering", ...)` but never indexes
-    # `payload["input"]` or `payload.get("input", ...)`.
-    assert 'payload["input"]' not in src
+    tree = ast.parse(textwrap.dedent(src))
+    assert not any(
+        isinstance(node.ctx, ast.Load)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Subscript) and ast.unparse(node) == "payload['input']"
+    )
     assert 'payload.get("input"' not in src
 
 

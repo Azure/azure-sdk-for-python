@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBTableMigrateToAutoscale.json
+# x-ms-original-file: 2026-07-15/CosmosDBTableMigrateToAutoscale.json
 if __name__ == "__main__":
     main()

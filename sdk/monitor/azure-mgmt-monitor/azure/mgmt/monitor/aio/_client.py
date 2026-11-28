@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -29,6 +30,8 @@ from .operations import (
     DataCollectionEndpointsOperations,
     DataCollectionRuleAssociationsOperations,
     DataCollectionRulesOperations,
+    DiagnosticSettingsCategoryOperations,
+    DiagnosticSettingsOperations,
     EventCategoriesOperations,
     LogProfilesOperations,
     MetricAlertsOperations,
@@ -45,7 +48,10 @@ from .operations import (
     ScheduledQueryRuleOperations,
     ScheduledQueryRulesOperations,
     ServiceDiagnosticSettingsOperations,
+    TenantActionGroupsOperations,
     TenantActivityLogsOperations,
+    VMInsightsOperations,
+    _MonitorManagementClientOperationsMixin,
 )
 
 if sys.version_info >= (3, 11):
@@ -58,7 +64,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class MonitorManagementClient(
+    _MonitorManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """MonitorManagementClient.
 
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
@@ -120,6 +128,15 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     :vartype baselines: azure.mgmt.monitor.aio.operations.BaselinesOperations
     :ivar action_groups: ActionGroupsOperations operations
     :vartype action_groups: azure.mgmt.monitor.aio.operations.ActionGroupsOperations
+    :ivar tenant_action_groups: TenantActionGroupsOperations operations
+    :vartype tenant_action_groups: azure.mgmt.monitor.aio.operations.TenantActionGroupsOperations
+    :ivar vm_insights: VMInsightsOperations operations
+    :vartype vm_insights: azure.mgmt.monitor.aio.operations.VMInsightsOperations
+    :ivar diagnostic_settings: DiagnosticSettingsOperations operations
+    :vartype diagnostic_settings: azure.mgmt.monitor.aio.operations.DiagnosticSettingsOperations
+    :ivar diagnostic_settings_category: DiagnosticSettingsCategoryOperations operations
+    :vartype diagnostic_settings_category:
+     azure.mgmt.monitor.aio.operations.DiagnosticSettingsCategoryOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -248,6 +265,16 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
         )
         self.baselines = BaselinesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.action_groups = ActionGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.tenant_action_groups = TenantActionGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vm_insights = VMInsightsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.diagnostic_settings = DiagnosticSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.diagnostic_settings_category = DiagnosticSettingsCategoryOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

@@ -18,7 +18,6 @@ USAGE:
 """
 
 import os
-import random
 import uuid
 
 from azure.core.exceptions import ResourceExistsError
@@ -95,7 +94,7 @@ def run():
     )
 
     # generate a random name for testing purpose
-    fs_name = "dicretorytestfs{}".format(random.randint(1, 1000))
+    fs_name = "dicretorytestfs{}".format(uuid.uuid4().hex[:12])
     print("Generating a test filesystem named '{}'.".format(fs_name))
 
     # create the filesystem

@@ -25,7 +25,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.service_gateways.get(
             resource_group_name=resource_group.name,
             service_gateway_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -664,6 +664,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                     ],
                                                     "macAddress": "str",
                                                     "migrationPhase": "str",
+                                                    "networkAdapterIndex": 0,
                                                     "networkSecurityGroup": ...,
                                                     "nicType": "str",
                                                     "primary": bool,
@@ -1978,6 +1979,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                         ],
                                                         "macAddress": "str",
                                                         "migrationPhase": "str",
+                                                        "networkAdapterIndex": 0,
                                                         "networkSecurityGroup": {
                                                             "etag": "str",
                                                             "id": "str",
@@ -3501,6 +3503,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                     ],
                                                     "macAddress": "str",
                                                     "migrationPhase": "str",
+                                                    "networkAdapterIndex": 0,
                                                     "networkSecurityGroup": ...,
                                                     "nicType": "str",
                                                     "primary": bool,
@@ -4815,6 +4818,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                         ],
                                                         "macAddress": "str",
                                                         "migrationPhase": "str",
+                                                        "networkAdapterIndex": 0,
                                                         "networkSecurityGroup": {
                                                             "etag": "str",
                                                             "id": "str",
@@ -6447,6 +6451,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                             ],
                                                             "macAddress": "str",
                                                             "migrationPhase": "str",
+                                                            "networkAdapterIndex": 0,
                                                             "networkSecurityGroup": ...,
                                                             "nicType": "str",
                                                             "primary": bool,
@@ -7854,6 +7859,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                 ],
                                                                 "macAddress": "str",
                                                                 "migrationPhase": "str",
+                                                                "networkAdapterIndex": 0,
                                                                 "networkSecurityGroup": {
                                                                     "etag": "str",
                                                                     "id": "str",
@@ -8925,7 +8931,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -8938,7 +8944,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -8950,7 +8956,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.service_gateways.begin_delete(
             resource_group_name=resource_group.name,
             service_gateway_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -8961,7 +8967,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
     def test_service_gateways_list(self, resource_group):
         response = self.client.service_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8971,7 +8977,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_service_gateways_list_all(self, resource_group):
         response = self.client.service_gateways.list_all(
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8993,7 +8999,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -9334,6 +9340,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     ],
                                                                                                     "macAddress": "str",
                                                                                                     "migrationPhase": "str",
+                                                                                                    "networkAdapterIndex": 0,
                                                                                                     "networkSecurityGroup": ...,
                                                                                                     "nicType": "str",
                                                                                                     "primary": bool,
@@ -9951,6 +9958,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         ],
                                                                                                         "macAddress": "str",
                                                                                                         "migrationPhase": "str",
+                                                                                                        "networkAdapterIndex": 0,
                                                                                                         "networkSecurityGroup": {
                                                                                                             "etag": "str",
                                                                                                             "id": "str",
@@ -10853,6 +10861,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "ipConfigurations": [...],
                                                                                     "macAddress": "str",
                                                                                     "migrationPhase": "str",
+                                                                                    "networkAdapterIndex": 0,
                                                                                     "networkSecurityGroup": ...,
                                                                                     "nicType": "str",
                                                                                     "primary": bool,
@@ -11673,6 +11682,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "ipConfigurations": [...],
                                                                                         "macAddress": "str",
                                                                                         "migrationPhase": "str",
+                                                                                        "networkAdapterIndex": 0,
                                                                                         "networkSecurityGroup": {
                                                                                             "etag": "str",
                                                                                             "id": "str",
@@ -12756,6 +12766,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                         ],
                                                                                                                         "macAddress": "str",
                                                                                                                         "migrationPhase": "str",
+                                                                                                                        "networkAdapterIndex": 0,
                                                                                                                         "networkSecurityGroup": ...,
                                                                                                                         "nicType": "str",
                                                                                                                         "primary": bool,
@@ -13264,6 +13275,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                             ],
                                                                                                                             "macAddress": "str",
                                                                                                                             "migrationPhase": "str",
+                                                                                                                            "networkAdapterIndex": 0,
                                                                                                                             "networkSecurityGroup": {
                                                                                                                                 "etag": "str",
                                                                                                                                 "id": "str",
@@ -14129,6 +14141,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         ],
                                                                                                         "macAddress": "str",
                                                                                                         "migrationPhase": "str",
+                                                                                                        "networkAdapterIndex": 0,
                                                                                                         "networkSecurityGroup": ...,
                                                                                                         "nicType": "str",
                                                                                                         "primary": bool,
@@ -14633,6 +14646,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                             ],
                                                                                                             "macAddress": "str",
                                                                                                             "migrationPhase": "str",
+                                                                                                            "networkAdapterIndex": 0,
                                                                                                             "networkSecurityGroup": {
                                                                                                                 "etag": "str",
                                                                                                                 "id": "str",
@@ -15155,7 +15169,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -15167,7 +15181,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.service_gateways.get_address_locations(
             resource_group_name=resource_group.name,
             service_gateway_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -15179,7 +15193,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.service_gateways.get_services(
             resource_group_name=resource_group.name,
             service_gateway_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -2,6 +2,7 @@
 namespace azure.mgmt.privatedns
 
     class azure.mgmt.privatedns.PrivateDnsManagementClient: implements ContextManager 
+        private_dns_resource_reference: PrivateDnsResourceReferenceOperations
         private_zones: PrivateZonesOperations
         record_sets: RecordSetsOperations
         virtual_network_links: VirtualNetworkLinksOperations
@@ -32,6 +33,7 @@ namespace azure.mgmt.privatedns
 namespace azure.mgmt.privatedns.aio
 
     class azure.mgmt.privatedns.aio.PrivateDnsManagementClient: implements AsyncContextManager 
+        private_dns_resource_reference: PrivateDnsResourceReferenceOperations
         private_zones: PrivateZonesOperations
         record_sets: RecordSetsOperations
         virtual_network_links: VirtualNetworkLinksOperations
@@ -60,6 +62,42 @@ namespace azure.mgmt.privatedns.aio
 
 
 namespace azure.mgmt.privatedns.aio.operations
+
+    class azure.mgmt.privatedns.aio.operations.PrivateDnsResourceReferenceOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def get_by_target_resources(
+                self, 
+                parameters: PrivateDnsResourceReferenceRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PrivateDnsResourceReferenceResult: ...
+
+        @overload
+        async def get_by_target_resources(
+                self, 
+                parameters: PrivateDnsResourceReferenceRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PrivateDnsResourceReferenceResult: ...
+
+        @overload
+        async def get_by_target_resources(
+                self, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PrivateDnsResourceReferenceResult: ...
+
 
     class azure.mgmt.privatedns.aio.operations.PrivateZonesOperations:
 
@@ -554,6 +592,94 @@ namespace azure.mgmt.privatedns.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.privatedns.models.PrivateDnsResourceReference(_Model):
+        private_dns_resources: Optional[list[SubResource]]
+        target_resource: Optional[SubResource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                private_dns_resources: Optional[list[SubResource]] = ..., 
+                target_resource: Optional[SubResource] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.privatedns.models.PrivateDnsResourceReferenceRequest(_Model):
+        properties: Optional[PrivateDnsResourceReferenceRequestProperties]
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PrivateDnsResourceReferenceRequestProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.privatedns.models.PrivateDnsResourceReferenceRequestProperties(_Model):
+        target_resources: Optional[list[SubResource]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_resources: Optional[list[SubResource]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResult(_Model):
+        properties: Optional[PrivateDnsResourceReferenceResultProperties]
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PrivateDnsResourceReferenceResultProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResultProperties(_Model):
+        private_dns_resource_references: Optional[list[PrivateDnsResourceReference]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                private_dns_resource_references: Optional[list[PrivateDnsResourceReference]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.privatedns.models.PrivateZone(ProxyResource):
         etag: Optional[str]
         id: str
@@ -663,9 +789,11 @@ namespace azure.mgmt.privatedns.models
         is_auto_registered: Optional[bool]
         metadata: Optional[dict[str, str]]
         mx_records: Optional[list[MxRecord]]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
         ptr_records: Optional[list[PtrRecord]]
         soa_record: Optional[SoaRecord]
         srv_records: Optional[list[SrvRecord]]
+        traffic_management_profile: Optional[SubResource]
         ttl: Optional[int]
         txt_records: Optional[list[TxtRecord]]
 
@@ -681,6 +809,7 @@ namespace azure.mgmt.privatedns.models
                 ptr_records: Optional[list[PtrRecord]] = ..., 
                 soa_record: Optional[SoaRecord] = ..., 
                 srv_records: Optional[list[SrvRecord]] = ..., 
+                traffic_management_profile: Optional[SubResource] = ..., 
                 ttl: Optional[int] = ..., 
                 txt_records: Optional[list[TxtRecord]] = ...
             ) -> None: ...
@@ -868,6 +997,42 @@ namespace azure.mgmt.privatedns.models
 
 
 namespace azure.mgmt.privatedns.operations
+
+    class azure.mgmt.privatedns.operations.PrivateDnsResourceReferenceOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def get_by_target_resources(
+                self, 
+                parameters: PrivateDnsResourceReferenceRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PrivateDnsResourceReferenceResult: ...
+
+        @overload
+        def get_by_target_resources(
+                self, 
+                parameters: PrivateDnsResourceReferenceRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PrivateDnsResourceReferenceResult: ...
+
+        @overload
+        def get_by_target_resources(
+                self, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PrivateDnsResourceReferenceResult: ...
+
 
     class azure.mgmt.privatedns.operations.PrivateZonesOperations:
 
@@ -1265,12 +1430,12 @@ namespace azure.mgmt.privatedns.types
 
     class azure.mgmt.privatedns.types.ARecord(TypedDict, total=False):
         key "ipv4Address": str
-        ipv4_address: str
+        ipv4Address: str
 
 
     class azure.mgmt.privatedns.types.AaaaRecord(TypedDict, total=False):
         key "ipv6Address": str
-        ipv6_address: str
+        ipv6Address: str
 
 
     class azure.mgmt.privatedns.types.CnameRecord(TypedDict, total=False):
@@ -1283,6 +1448,15 @@ namespace azure.mgmt.privatedns.types
         key "preference": int
         exchange: str
         preference: int
+
+
+    class azure.mgmt.privatedns.types.PrivateDnsResourceReferenceRequest(TypedDict, total=False):
+        key "properties": ForwardRef('PrivateDnsResourceReferenceRequestProperties', module='types')
+        properties: PrivateDnsResourceReferenceRequestProperties
+
+
+    class azure.mgmt.privatedns.types.PrivateDnsResourceReferenceRequestProperties(TypedDict, total=False):
+        targetResources: list[SubResource]
 
 
     class azure.mgmt.privatedns.types.PrivateZone(ProxyResource):
@@ -1298,7 +1472,7 @@ namespace azure.mgmt.privatedns.types
         location: str
         name: str
         properties: PrivateZoneProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -1312,14 +1486,14 @@ namespace azure.mgmt.privatedns.types
         key "numberOfVirtualNetworkLinks": int
         key "numberOfVirtualNetworkLinksWithRegistration": int
         key "provisioningState": Union[str, ProvisioningState]
-        internal_id: str
-        max_number_of_record_sets: int
-        max_number_of_virtual_network_links: int
-        max_number_of_virtual_network_links_with_registration: int
-        number_of_record_sets: int
-        number_of_virtual_network_links: int
-        number_of_virtual_network_links_with_registration: int
-        provisioning_state: Union[str, ProvisioningState]
+        internalId: str
+        maxNumberOfRecordSets: int
+        maxNumberOfVirtualNetworkLinks: int
+        maxNumberOfVirtualNetworkLinksWithRegistration: int
+        numberOfRecordSets: int
+        numberOfVirtualNetworkLinks: int
+        numberOfVirtualNetworkLinksWithRegistration: int
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.privatedns.types.ProxyResource(Resource):
@@ -1329,7 +1503,7 @@ namespace azure.mgmt.privatedns.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1349,7 +1523,7 @@ namespace azure.mgmt.privatedns.types
         id: str
         name: str
         properties: RecordSetProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1357,26 +1531,24 @@ namespace azure.mgmt.privatedns.types
         key "cnameRecord": ForwardRef('CnameRecord', module='types')
         key "fqdn": str
         key "isAutoRegistered": bool
+        key "provisioningState": Union[str, ProvisioningState]
         key "soaRecord": ForwardRef('SoaRecord', module='types')
+        key "trafficManagementProfile": ForwardRef('SubResource', module='types')
         key "ttl": int
         aRecords: list[ARecord]
-        a_records: list[ARecord]
         aaaaRecords: list[AaaaRecord]
-        aaaa_records: list[AaaaRecord]
-        cname_record: CnameRecord
+        cnameRecord: CnameRecord
         fqdn: str
-        is_auto_registered: bool
+        isAutoRegistered: bool
         metadata: dict[str, str]
         mxRecords: list[MxRecord]
-        mx_records: list[MxRecord]
+        provisioningState: Union[str, ProvisioningState]
         ptrRecords: list[PtrRecord]
-        ptr_records: list[PtrRecord]
-        soa_record: SoaRecord
+        soaRecord: SoaRecord
         srvRecords: list[SrvRecord]
-        srv_records: list[SrvRecord]
+        trafficManagementProfile: SubResource
         ttl: int
         txtRecords: list[TxtRecord]
-        txt_records: list[TxtRecord]
 
 
     class azure.mgmt.privatedns.types.Resource(TypedDict, total=False):
@@ -1386,7 +1558,7 @@ namespace azure.mgmt.privatedns.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1399,12 +1571,12 @@ namespace azure.mgmt.privatedns.types
         key "retryTime": int
         key "serialNumber": int
         email: str
-        expire_time: int
+        expireTime: int
         host: str
-        minimum_ttl: int
-        refresh_time: int
-        retry_time: int
-        serial_number: int
+        minimumTtl: int
+        refreshTime: int
+        retryTime: int
+        serialNumber: int
 
 
     class azure.mgmt.privatedns.types.SrvRecord(TypedDict, total=False):
@@ -1430,12 +1602,12 @@ namespace azure.mgmt.privatedns.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.privatedns.types.TxtRecord(TypedDict, total=False):
@@ -1455,7 +1627,7 @@ namespace azure.mgmt.privatedns.types
         location: str
         name: str
         properties: VirtualNetworkLinkProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -1466,11 +1638,11 @@ namespace azure.mgmt.privatedns.types
         key "resolutionPolicy": Union[str, ResolutionPolicy]
         key "virtualNetwork": ForwardRef('SubResource', module='types')
         key "virtualNetworkLinkState": Union[str, VirtualNetworkLinkState]
-        provisioning_state: Union[str, ProvisioningState]
-        registration_enabled: bool
-        resolution_policy: Union[str, ResolutionPolicy]
-        virtual_network: SubResource
-        virtual_network_link_state: Union[str, VirtualNetworkLinkState]
+        provisioningState: Union[str, ProvisioningState]
+        registrationEnabled: bool
+        resolutionPolicy: Union[str, ResolutionPolicy]
+        virtualNetwork: SubResource
+        virtualNetworkLinkState: Union[str, VirtualNetworkLinkState]
 
 
 ```

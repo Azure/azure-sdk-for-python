@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class EkmConnection(_Model):
+class EkmConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A EkmConnection model object.
 
     :ivar host: EKM proxy FQDN (Fully Qualified Domain Name). Only allowed characters are a-z, A-Z,
@@ -88,7 +88,7 @@ class EkmProxyClientCertificateInfo(_Model):
      Required."""
 
 
-class EkmProxyInfo(_Model):
+class EkmProxyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EKM proxy information.
 
     :ivar api_version: The highest version of proxy interface API supported by the EKM Proxy.
@@ -137,7 +137,7 @@ class EkmProxyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FullBackupOperation(_Model):
+class FullBackupOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full backup operation.
 
     :ivar status: Status of the backup operation. Known values are: "InProgress", "Succeeded",
@@ -240,7 +240,7 @@ class KeyVaultError(_Model):
     """The key vault server error."""
 
 
-class Permission(_Model):
+class Permission(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role definition permissions.
 
     :ivar actions: Action permissions that are granted.
@@ -294,7 +294,7 @@ class Permission(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreBackupOperationParameters(_Model):
+class PreBackupOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication method and location for the backup operation.
 
     :ivar storage_resource_uri: Azure Blob storage container Uri.
@@ -340,7 +340,7 @@ class PreBackupOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreRestoreOperationParameters(_Model):
+class PreRestoreOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication method and location for the restore operation.
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
@@ -379,7 +379,7 @@ class PreRestoreOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreOperation(_Model):
+class RestoreOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore operation.
 
     :ivar status: Status of the restore operation. Known values are: "InProgress", "Succeeded",
@@ -444,7 +444,7 @@ class RestoreOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreOperationParameters(_Model):
+class RestoreOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication method and location for the restore operation.
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
@@ -484,7 +484,7 @@ class RestoreOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignment(_Model):
+class RoleAssignment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role Assignments.
 
     :ivar id: The role assignment ID.
@@ -527,7 +527,7 @@ class RoleAssignment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignmentCreateParameters(_Model):
+class RoleAssignmentCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role assignment create parameters.
 
     :ivar properties: Role assignment properties. Required.
@@ -557,7 +557,7 @@ class RoleAssignmentCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignmentProperties(_Model):
+class RoleAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role assignment properties.
 
     :ivar role_definition_id: The role definition ID used in the role assignment. Required.
@@ -594,7 +594,7 @@ class RoleAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignmentPropertiesWithScope(_Model):
+class RoleAssignmentPropertiesWithScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role assignment properties with scope.
 
     :ivar scope: The role scope. Known values are: "/" and "/keys".
@@ -638,7 +638,7 @@ class RoleAssignmentPropertiesWithScope(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleDefinition(_Model):
+class RoleDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role definition.
 
     :ivar id: The role definition ID.
@@ -700,7 +700,7 @@ class RoleDefinition(_Model):
             super().__setattr__(key, value)
 
 
-class RoleDefinitionCreateParameters(_Model):
+class RoleDefinitionCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role definition create parameters.
 
     :ivar properties: Role definition properties. Required.
@@ -730,7 +730,7 @@ class RoleDefinitionCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleDefinitionProperties(_Model):
+class RoleDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role definition properties.
 
     :ivar role_name: The role name.
@@ -785,7 +785,7 @@ class RoleDefinitionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SASTokenParameter(_Model):
+class SASTokenParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An authentication method and location for the operation.
 
     :ivar storage_resource_uri: Azure Blob storage container Uri. Required.
@@ -831,7 +831,7 @@ class SASTokenParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelectiveKeyRestoreOperation(_Model):
+class SelectiveKeyRestoreOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Selective Key Restore operation.
 
     :ivar status: Status of the restore operation. Known values are: "InProgress", "Succeeded",
@@ -896,7 +896,7 @@ class SelectiveKeyRestoreOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelectiveKeyRestoreOperationParameters(_Model):
+class SelectiveKeyRestoreOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication method and location for the selective key restore operation.
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
@@ -934,7 +934,7 @@ class SelectiveKeyRestoreOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Setting(_Model):
+class Setting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Key Vault account setting.
 
     :ivar name: The account setting to be updated. Required.
@@ -986,7 +986,7 @@ class SettingsListResult(_Model):
     """A response message containing a list of account settings with their associated value."""
 
 
-class UpdateSettingRequest(_Model):
+class UpdateSettingRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The update settings request object.
 
     :ivar value: The value of the pool setting. Required.

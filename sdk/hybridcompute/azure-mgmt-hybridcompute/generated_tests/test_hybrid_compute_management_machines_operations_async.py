@@ -345,6 +345,7 @@ class TestHybridComputeManagementMachinesOperationsAsync(AzureMgmtRecordedTestCa
                         "lastAttemptStatus": "str",
                         "lastAttemptTimestamp": "2020-02-20 00:00:00",
                     },
+                    "clientPublicKey": "str",
                     "cloudMetadata": {"provider": "str"},
                     "identityKeyStore": "str",
                     "locationData": {"name": "str", "city": "str", "countryOrRegion": "str", "district": "str"},

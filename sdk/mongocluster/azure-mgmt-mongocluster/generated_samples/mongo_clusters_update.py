@@ -44,13 +44,13 @@ def main():
                 "publicNetworkAccess": "Enabled",
                 "serverVersion": "5.0",
                 "sharding": {"shardCount": 4},
-                "storage": {"sizeGb": 256, "type": "PremiumSSD"},
+                "storage": {"sizeGb": 256, "type": "PremiumSSDv2"},
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-06-15-preview/MongoClusters_Update.json
+# x-ms-original-file: 2026-09-01/MongoClusters_Update.json
 if __name__ == "__main__":
     main()

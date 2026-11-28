@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBGremlinGraphGet.json
+# x-ms-original-file: 2026-07-15/CosmosDBGremlinGraphGet.json
 if __name__ == "__main__":
     main()

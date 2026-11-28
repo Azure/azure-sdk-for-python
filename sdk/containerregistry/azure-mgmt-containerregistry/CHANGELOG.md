@@ -1,5 +1,36 @@
 # Release History
 
+## 16.0.0 (2026-11-20)
+
+### Features Added
+
+  - Model `NetworkRuleSet` added property `virtual_network_rules`
+  - Model `RegistryProperties` added property `endpoint_protocol`
+  - Model `RegistryProperties` added property `regional_endpoint_host_names`
+  - Model `RegistryProperties` added property `regional_endpoints`
+  - Model `RegistryPropertiesUpdateParameters` added property `endpoint_protocol`
+  - Model `RegistryPropertiesUpdateParameters` added property `regional_endpoints`
+  - Added enum `EndpointProtocol`
+  - Added enum `RegionalEndpoints`
+  - Added model `VirtualNetworkRule`
+
+### Breaking Changes
+
+  - Model `SyncProperties` property `token_id` (JSON `tokenId`) is no longer required and is now `Optional[str]` with constructor default `None`; type-checked readers may need to handle `None`.
+
+## 15.1.0b4 (2026-11-11)
+
+### Features Added
+
+  - Enum `AdditionalAuthenticationType` added member `AWS_ELASTIC_CONTAINER_REGISTRY`
+  - Enum `AdditionalAuthenticationType` added member `ENTRA_FEDERATED_IDENTITY_CREDENTIAL`
+  - Added model `AdditionalAuthenticationUpdateProperties`
+  - Added model `EcrAuthenticationProperties`
+  - Added model `EcrAuthenticationUpdateProperties`
+  - Added model `EntraFederatedIdentityCredentialAuthenticationProperties`
+  - Added model `EntraFederatedIdentityCredentialAuthenticationUpdateProperties`
+  - Added model `GarAuthenticationUpdateProperties`
+
 ## 15.1.0b3 (2026-09-06)
 
 ### Features Added

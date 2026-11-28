@@ -35,7 +35,7 @@ def main():
         search_service_name="mysearchservice",
         service={
             "properties": {
-                "networkRuleSet": {"bypass": "None", "ipRules": [{"value": "123.4.5.6"}, {"value": "123.4.6.0/18"}]},
+                "networkRuleSet": {"ipRules": [{"value": "123.4.5.6"}, {"value": "123.4.6.0/18"}]},
                 "partitionCount": 1,
                 "publicNetworkAccess": "Enabled",
                 "replicaCount": 3,
@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/SearchUpdateServiceToAllowAccessFromPublicCustomIPs.json
+# x-ms-original-file: 2026-11-01/SearchUpdateServiceToAllowAccessFromPublicCustomIPs.json
 if __name__ == "__main__":
     main()

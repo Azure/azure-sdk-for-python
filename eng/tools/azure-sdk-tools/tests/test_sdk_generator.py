@@ -2,6 +2,7 @@ import pytest
 import json
 import tempfile
 import shutil
+from contextlib import ExitStack
 from pathlib import Path
 from unittest.mock import call, patch
 
@@ -45,6 +46,7 @@ def _common_patches():
         "sdk_changelog_generate": patch(f"{MODULE}.sdk_changelog_generate"),
         "sdk_update_version": patch(f"{MODULE}.sdk_update_version"),
         "sdk_update_metadata": patch(f"{MODULE}.sdk_update_metadata"),
+        "update_api_versions_in_changelog": patch(f"{MODULE}.update_api_versions_in_changelog"),
         "create_package": patch(f"{MODULE}.create_package"),
         "check_file": patch(f"{MODULE}.check_file"),
         "del_outdated_generated_files": patch(f"{MODULE}.del_outdated_generated_files"),
@@ -59,6 +61,7 @@ def _run_main(
     package_names,
     judge_return=False,
     expected_create_package_calls=None,
+    changelog_side_effect=None,
 ):
     """Helper that wires up all the mocks and calls main()."""
     _write_input(input_path, input_data)
@@ -69,6 +72,7 @@ def _run_main(
     # get_package_names returns our controlled list
     mocks["get_package_names"].return_value = package_names
     mocks["judge_tag_preview"].return_value = judge_return
+    mocks["sdk_changelog_generate"].side_effect = changelog_side_effect
 
     # create_package needs a dist folder with a .whl
     def fake_create_package(folder, pkg):
@@ -91,6 +95,124 @@ def _run_main(
             p.stop()
 
     return _read_output(output_path)
+
+
+@pytest.mark.parametrize("enable_changelog", [True, False])
+def test_api_version_disclosure_uses_final_metadata_before_build(tmp_path, io_paths, enable_changelog):
+    from packaging_tools.sdk_changelog import update_api_versions_in_changelog
+    from packaging_tools.sdk_generator import main
+
+    input_path, output_path = io_paths
+    package_path = tmp_path / "azure-mgmt-test"
+    package_path.mkdir()
+    changelog = package_path / "CHANGELOG.md"
+    metadata = package_path / "_metadata.json"
+    dist = package_path / "dist"
+    dist.mkdir()
+    (dist / "test.whl").touch()
+    events = []
+    diff = "### Bugs Fixed\n\n- Fixed a bug.\n"
+
+    def generate_changelog(path, *, package_result, **kwargs):
+        events.append("changelog")
+        assert kwargs["enable_changelog"] is enable_changelog
+        changelog.write_text("# Release History\n\n## 0.0.0 (Unreleased)\n\n" + diff)
+        package_result["changelog"] = {"content": diff, "hasBreakingChange": False, "breakingChangeItems": []}
+        package_result["version"] = "1.0.0"
+
+    def update_version(path, *, package_result):
+        events.append("version")
+        assert package_result["changelog"]["content"] == diff
+        assert "Package API versions:" not in changelog.read_text()
+        package_result["version"] = "1.0.1"
+        changelog.write_text(changelog.read_text().replace("0.0.0", "1.0.1"))
+
+    def update_metadata(*args, **kwargs):
+        events.append("metadata")
+        metadata.write_text(json.dumps({"apiVersions": {"Test": "2025-01-01"}}))
+
+    def post_emitter(*args):
+        events.append("post-emitter")
+        metadata.write_text(json.dumps({"apiVersions": {"Test": "2026-01-01"}}))
+
+    def build(*args):
+        events.append("build")
+        assert "### Features Added\n\n- Package API versions: Test: `2026-01-01`.\n" in changelog.read_text()
+        assert "2025-01-01" not in changelog.read_text()
+
+    _write_input(
+        input_path,
+        {
+            "relatedTypeSpecProjectFolder": ["Microsoft.Test/Test.Management"],
+            "headSha": "abc123",
+            "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
+            "enableChangelog": enable_changelog,
+        },
+    )
+    with ExitStack() as stack:
+        mocks = {name: stack.enter_context(patch_context) for name, patch_context in _common_patches().items()}
+        mocks["get_package_names"].return_value = [(str(tmp_path), package_path.name)]
+        mocks["sdk_changelog_generate"].side_effect = generate_changelog
+        mocks["sdk_update_version"].side_effect = update_version
+        mocks["sdk_update_metadata"].side_effect = update_metadata
+        mocks["update_api_versions_in_changelog"].side_effect = update_api_versions_in_changelog
+        mocks["create_package"].side_effect = build
+        stack.enter_context(patch(f"{MODULE}.run_post_emitter_script", side_effect=post_emitter))
+
+        main(input_path, output_path)
+
+    package = _read_output(output_path)["packages"][0]
+    assert events == ["changelog", "version", "metadata", "post-emitter", "build"]
+    assert package["version"] == "1.0.1"
+    assert package["changelog"]["content"] == diff
+
+
+@pytest.mark.parametrize("sdk_release_type", ["preview", "stable"])
+@pytest.mark.parametrize(
+    "releases, expected_breaking",
+    [
+        pytest.param({"1.0.0b1": [{}]}, False, id="preview-only"),
+        pytest.param({}, False, id="unpublished"),
+        pytest.param({"1.0.0": [{}], "2.0.0b1": [{}]}, True, id="prior-ga"),
+    ],
+)
+def test_generation_output_uses_published_ga_history(io_paths, tmp_path, sdk_release_type, releases, expected_breaking):
+    from packaging_tools.sdk_changelog import main as changelog_main
+
+    input_path, output_path = io_paths
+    package_path = tmp_path / "azure-mgmt-test"
+    package_path.mkdir()
+    changelog_path = package_path / "CHANGELOG.md"
+    changelog_path.write_text("# Release History\n\n")
+    md_output = "### Breaking Changes\n\n  - dropped bar\n"
+
+    with (
+        patch("packaging_tools.sdk_changelog.get_changelog_content", return_value=(md_output, "1.0.0b1")),
+        patch("pypi_tools.pypi.PyPIClient.project", return_value={"releases": releases}),
+    ):
+        result = _run_main(
+            input_path,
+            output_path,
+            {
+                "specFolder": "spec",
+                "headSha": "abc123",
+                "repoHttpsUrl": "https://github.com/test/repo",
+                "relatedTypeSpecProjectFolder": ["Microsoft.Test/Test.Management"],
+                "sdkReleaseType": sdk_release_type,
+                "runMode": "spec-pull-request",
+            },
+            package_names=[(str(tmp_path), package_path.name)],
+            changelog_side_effect=changelog_main,
+        )
+
+    package = result["packages"][0]
+    assert package["tagIsStable"] is (sdk_release_type == "stable")
+    assert package["changelog"] == {
+        "content": md_output,
+        "hasBreakingChange": expected_breaking,
+        "breakingChangeItems": ["dropped bar"],
+    }
+    assert md_output in changelog_path.read_text()
 
 
 class TestTagIsStableForTypeSpec:

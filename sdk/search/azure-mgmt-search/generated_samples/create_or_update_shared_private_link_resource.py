@@ -38,7 +38,7 @@ def main():
         shared_private_link_resource={
             "properties": {
                 "groupId": "blob",
-                "privateLinkResourceId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Storage/storageAccounts/storageAccountName",
+                "privateLinkResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Storage/storageAccounts/storageAccountName",
                 "requestMessage": "please approve",
                 "resourceRegion": None,
             }
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/CreateOrUpdateSharedPrivateLinkResource.json
+# x-ms-original-file: 2026-11-01/CreateOrUpdateSharedPrivateLinkResource.json
 if __name__ == "__main__":
     main()

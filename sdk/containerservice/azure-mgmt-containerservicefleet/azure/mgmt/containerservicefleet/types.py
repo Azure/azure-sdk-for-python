@@ -27,6 +27,8 @@ if TYPE_CHECKING:
         FleetUpdateStrategyProvisioningState,
         GateState,
         GateType,
+        IdentityBindingLabelSelectorOperator,
+        IdentityBindingProfileProvisioningState,
         LabelSelectorOperator,
         ManagedClusterUpgradeType,
         ManagedServiceIdentityType,
@@ -84,6 +86,34 @@ class AgentProfile(TypedDict, total=False):
      vnet and subnet will be generated and used."""
     vmSize: str
     """The virtual machine size of the Fleet hub."""
+
+
+class AllowedSubject(TypedDict, total=False):
+    """A subject authorized to use the identity binding for token exchange. The namespace selector is
+    required and must be non-empty. The service account selector is optional; when omitted, all
+    service accounts in matching namespaces are authorized. Selectors within a single
+    AllowedSubject are AND'd; multiple AllowedSubjects on an identity binding profile are OR'd.
+
+    :ivar namespaceSelector: Label selector matching the namespaces in which this identity may be
+     used. Must be non-empty: an empty selector would match every namespace and is rejected to
+     prevent overly permissive bindings. Use the built-in ``kubernetes.io/metadata.name`` label to
+     target specific namespaces by name. Required.
+    :vartype namespaceSelector: "IdentityBindingLabelSelector"
+    :ivar serviceAccountSelector: Optional label selector matching the service accounts (within the
+     namespaces matched by ``namespaceSelector``) that may use this identity. When omitted, all
+     service accounts in matching namespaces are authorized. When provided, it must be non-empty.
+    :vartype serviceAccountSelector: "IdentityBindingLabelSelector"
+    """
+
+    namespaceSelector: Required["IdentityBindingLabelSelector"]
+    """Label selector matching the namespaces in which this identity may be used. Must be non-empty:
+     an empty selector would match every namespace and is rejected to prevent overly permissive
+     bindings. Use the built-in ``kubernetes.io/metadata.name`` label to target specific namespaces
+     by name. Required."""
+    serviceAccountSelector: "IdentityBindingLabelSelector"
+    """Optional label selector matching the service accounts (within the namespaces matched by
+     ``namespaceSelector``) that may use this identity. When omitted, all service accounts in
+     matching namespaces are authorized. When provided, it must be non-empty."""
 
 
 class APIServerAccessProfile(TypedDict, total=False):
@@ -1066,6 +1096,195 @@ class GatePatchProperties(TypedDict, total=False):
 
     state: Required[Union[str, "GateState"]]
     """The state of the Gate. Required. Known values are: \"Pending\", \"Skipped\", and \"Completed\"."""
+
+
+class IdentityBindingLabelSelector(TypedDict, total=False):
+    """A label selector is a label query over a set of resources. The result of matchLabels and
+    matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
+    matches no objects.
+
+    :ivar matchLabels: matchLabels is an array of {key=value} pairs. A single {key=value} in the
+     matchLabels map is equivalent to an element of matchExpressions, whose key field is ``key``,
+     the operator is ``In``, and the values array contains only ``value``. The requirements are
+     ANDed.
+    :vartype matchLabels: list[str]
+    :ivar matchExpressions: matchExpressions is a list of label selector requirements. The
+     requirements are ANDed.
+    :vartype matchExpressions: list["IdentityBindingLabelSelectorRequirement"]
+    """
+
+    matchLabels: list[str]
+    """matchLabels is an array of {key=value} pairs. A single {key=value} in the matchLabels map is
+     equivalent to an element of matchExpressions, whose key field is ``key``, the operator is
+     ``In``, and the values array contains only ``value``. The requirements are ANDed."""
+    matchExpressions: list["IdentityBindingLabelSelectorRequirement"]
+    """matchExpressions is a list of label selector requirements. The requirements are ANDed."""
+
+
+class IdentityBindingLabelSelectorRequirement(TypedDict, total=False):
+    """A label selector requirement is a selector that contains values, a key, and an operator that
+    relates the key and values.
+
+    :ivar key: key is the label key that the selector applies to.
+    :vartype key: str
+    :ivar operator: operator represents a key's relationship to a set of values. Valid operators
+     are In, NotIn, Exists and DoesNotExist. Known values are: "In", "NotIn", "Exists", and
+     "DoesNotExist".
+    :vartype operator: Union[str, "IdentityBindingLabelSelectorOperator"]
+    :ivar values: values is an array of string values. For In or NotIn, the array must be
+     non-empty. For Exists or DoesNotExist, the array must be empty or omitted.
+    :vartype values: list[str]
+    """
+
+    key: str
+    """key is the label key that the selector applies to."""
+    operator: Union[str, "IdentityBindingLabelSelectorOperator"]
+    """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
+     Exists and DoesNotExist. Known values are: \"In\", \"NotIn\", \"Exists\", and \"DoesNotExist\"."""
+    values: list[str]
+    """values is an array of string values. For In or NotIn, the array must be non-empty. For Exists
+     or DoesNotExist, the array must be empty or omitted."""
+
+
+class IdentityBindingManagedIdentityProfile(TypedDict, total=False):
+    """Managed identity profile for the identity binding.
+
+    :ivar resourceId: The resource ID of the user-assigned managed identity. Required.
+    :vartype resourceId: str
+    :ivar objectId: The object ID of the managed identity.
+    :vartype objectId: str
+    :ivar clientId: The client ID of the managed identity.
+    :vartype clientId: str
+    :ivar tenantId: The tenant ID of the managed identity.
+    :vartype tenantId: str
+    """
+
+    resourceId: Required[str]
+    """The resource ID of the user-assigned managed identity. Required."""
+    objectId: str
+    """The object ID of the managed identity."""
+    clientId: str
+    """The client ID of the managed identity."""
+    tenantId: str
+    """The tenant ID of the managed identity."""
+
+
+class IdentityBindingOidcIssuerProfile(TypedDict, total=False):
+    """The OIDC issuer profile of the identity binding profile.
+
+    :ivar oidcIssuerUrl: The OIDC issuer URL of the identity binding profile.
+    :vartype oidcIssuerUrl: str
+    """
+
+    oidcIssuerUrl: str
+    """The OIDC issuer URL of the identity binding profile."""
+
+
+class IdentityBindingProfile(ProxyResource):
+    """A fleet identity binding profile.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "IdentityBindingProfileProperties"
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype eTag: str
+    """
+
+    properties: "IdentityBindingProfileProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class IdentityBindingProfileProperties(TypedDict, total=False):
+    """The properties of an identity binding profile.
+
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Applying".
+    :vartype provisioningState: Union[str, "IdentityBindingProfileProvisioningState"]
+    :ivar memberSelector: Select the fleet members that this identity binding profile is applied
+     to.
+
+     * Only key/value pairs with the `=` operator are accepted in the label selector.
+     * If empty or not specified, no fleet members will be selected.
+    :vartype memberSelector: "MemberSelector"
+    :ivar identityBindingProperties: The identity binding properties applied to each selected fleet
+     member. Required.
+    :vartype identityBindingProperties: "IdentityBindingProperties"
+    :ivar status: The identity binding profile status.
+    :vartype status: "IdentityBindingProfileStatus"
+    """
+
+    provisioningState: Union[str, "IdentityBindingProfileProvisioningState"]
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     and \"Applying\"."""
+    memberSelector: "MemberSelector"
+    """Select the fleet members that this identity binding profile is applied to.
+ 
+      * Only key/value pairs with the `=` operator are accepted in the label selector.
+      * If empty or not specified, no fleet members will be selected."""
+    identityBindingProperties: Required["IdentityBindingProperties"]
+    """The identity binding properties applied to each selected fleet member. Required."""
+    status: "IdentityBindingProfileStatus"
+    """The identity binding profile status."""
+
+
+class IdentityBindingProfileStatus(TypedDict, total=False):
+    """Status of the identity binding profile.
+
+    :ivar lastOperationId: The last operation ID for the identity binding profile.
+    :vartype lastOperationId: str
+    :ivar lastOperationError: The last operation error of the identity binding profile.
+    :vartype lastOperationError: "ErrorDetail"
+    """
+
+    lastOperationId: str
+    """The last operation ID for the identity binding profile."""
+    lastOperationError: "ErrorDetail"
+    """The last operation error of the identity binding profile."""
+
+
+class IdentityBindingProperties(TypedDict, total=False):
+    """The properties of the identity bindings created on each selected fleet member.
+
+    :ivar managedIdentity: Managed identity profile for the identity binding. Required.
+    :vartype managedIdentity: "IdentityBindingManagedIdentityProfile"
+    :ivar allowedSubjects: Optional list of subjects authorized to use this identity binding for
+     token exchange. Each entry pairs a required namespace label selector with an optional service
+     account label selector; selectors within an entry are AND'd, and multiple entries are OR'd.
+     When omitted or empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding
+     evaluation. Maximum 100 entries.
+    :vartype allowedSubjects: list["AllowedSubject"]
+    :ivar oidcIssuer: The OIDC issuer profile of the identity binding profile.
+    :vartype oidcIssuer: "IdentityBindingOidcIssuerProfile"
+    """
+
+    managedIdentity: Required["IdentityBindingManagedIdentityProfile"]
+    """Managed identity profile for the identity binding. Required."""
+    allowedSubjects: list["AllowedSubject"]
+    """Optional list of subjects authorized to use this identity binding for token exchange. Each
+     entry pairs a required namespace label selector with an optional service account label
+     selector; selectors within an entry are AND'd, and multiple entries are OR'd. When omitted or
+     empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding evaluation.
+     Maximum 100 entries."""
+    oidcIssuer: "IdentityBindingOidcIssuerProfile"
+    """The OIDC issuer profile of the identity binding profile."""
 
 
 class LabelSelector(TypedDict, total=False):

@@ -3,7 +3,18 @@
 ## 1.36.0 (unreleased)
 
 ### Features Added
+- Added experimental `MLClient.data.resolve_path()` to resolve AML datastore paths to Blob HTTPS or ADLS Gen2/OneLake ABFSS locations, preserving Blob-backed MLTable sources and transformations.
 - Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
+
+### Bugs Fixed
+- Fixed `MLClient.models.get()` for registry models returning `system_metadata` as `None` even when the model has system metadata.
+- Validated datastore storage account names before creating storage clients.
+- Fixed artifact cache path validation for component `additional_includes` on Python 3.15.
+- Fixed online and batch endpoint `invoke()` to build request headers for each call.
+
+## 1.35.1 (2026-09-30)
+
+### Features Added
 
 ### Bugs Fixed
 - Fixed artifact cache path validation, wildcard version handling across supported Python versions, and concurrent downloads for component `additional_includes`.
@@ -12,7 +23,8 @@
 - Fixed `MLClient.jobs.download(..., output_name=...)` returning without downloading named data outputs ([#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)).
 - Fixed `MLClient.jobs.stream()` failing for jobs using identity-based or SAS-authenticated datastores.
 - Fixed datastore-backed log streaming for output paths ending in a slash and corrected log URL generation for Azure Data Lake Storage Gen2.
-
+- Fixed Azure DevOps artifact tool downloads to validate request URLs and extracted executables before installing an override.
+  
 ## 1.35.0 (2026-09-08)
 
 ### Features Added

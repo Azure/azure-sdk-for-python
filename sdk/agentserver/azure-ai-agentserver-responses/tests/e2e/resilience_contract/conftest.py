@@ -98,7 +98,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     Returns a callable that takes:
 
     - ``resilient_background`` (bool, default True) — server option.
-    - ```` (bool, default False) — server option.
+    - ``steerable_conversations`` (bool, default False) — server option.
     - ``handler_sleep_ms`` (int, default 50) — handler sleep before
       emitting completion.
     - ``shutdown_grace_seconds`` (int, default LONG_GRACE_S) — server's
@@ -114,6 +114,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     def _factory(
         *,
         resilient_background: bool = True,
+        steerable_conversations: bool = False,
         handler_sleep_ms: int = 50,
         pre_sleep_deltas: int = 0,
         explicit_exit_for_recovery: bool = False,
@@ -123,6 +124,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     ) -> CrashHarness:
         env = {
             "CONFORMANCE_RESILIENT_BACKGROUND": "true" if resilient_background else "false",
+            "CONFORMANCE_STEERABLE_CONVERSATIONS": "true" if steerable_conversations else "false",
             "CONFORMANCE_HANDLER_SLEEP_MS": str(handler_sleep_ms),
             "CONFORMANCE_PRE_SLEEP_DELTAS": str(pre_sleep_deltas),
             "CONFORMANCE_EXPLICIT_EXIT_FOR_RECOVERY": ("true" if explicit_exit_for_recovery else "false"),

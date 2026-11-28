@@ -1,6 +1,17 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.3.2 (Unreleased)
+
+### Bugs Fixed
+
+- The async connection now raises `ConnectionClosed` with the server's close reason when the WebSocket is closed, instead of an empty reason ([#45555](https://github.com/Azure/azure-sdk-for-python/issues/45555)).
+- A WebSocket `CLOSING` message now ends `recv()` and iteration with `ConnectionClosed`, instead of logging "Unexpected WebSocket message type" and raising a misleading code `1006` "Empty WebSocket frame" error ([#45555](https://github.com/Azure/azure-sdk-for-python/issues/45555)).
+
+## 1.3.1 (2026-10-23)
+
+### Bugs Fixed
+
+- WebSocket connections now reject HTTP redirects to prevent forwarding authentication headers to redirected endpoints.
 
 ### Other Changes
 

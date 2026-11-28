@@ -6,6 +6,7 @@
 
 import json
 from types import SimpleNamespace
+from typing import get_type_hints, TypedDict
 from unittest import mock
 
 import pytest
@@ -22,6 +23,12 @@ AUDIENCE = "https://search.azure.com/"
 class _Response:
     def __init__(self):
         self.closed = False
+        self.status_code = 200
+        self.headers = {"Content-Type": "text/event-stream"}
+        self.raw_stream = None
+
+    def iter_bytes(self):
+        return self.raw_stream
 
     def close(self):
         self.closed = True
@@ -63,7 +70,53 @@ class TestKnowledgeBaseRetrievalClientConstructor:
         assert client._config.credential_scopes == ["https://search.azure.com/.default"]
 
 
+class TestKnowledgeBaseRetrievalTypes:
+    @pytest.mark.parametrize(
+        "parameter_type_name",
+        [
+            "AzureBlobKnowledgeSourceParams",
+            "FileKnowledgeSourceParams",
+            "IndexedOneLakeKnowledgeSourceParams",
+            "IndexedSharePointKnowledgeSourceParams",
+            "IndexedSqlKnowledgeSourceParams",
+            "SearchIndexKnowledgeSourceParams",
+        ],
+    )
+    def test_knowledge_source_params_preserve_generated_query_hint_contract(self, parameter_type_name):
+        require_capability(f"azure.search.documents.knowledgebases.types.{parameter_type_name}")
+        from azure.search.documents.indexes import types as index_types
+        from azure.search.documents.knowledgebases import types
+
+        parameter_type = getattr(types, parameter_type_name)
+        if "queryHintOverrides" in parameter_type.__optional_keys__:
+            contract = TypedDict("QueryHintsContract", {"hints": parameter_type.__annotations__["queryHintOverrides"]})
+            annotations = get_type_hints(contract, globalns=vars(types), localns=vars(types))
+            assert annotations["hints"] is index_types.SearchIndexKnowledgeSourceQueryHints
+        else:
+            assert "queryHintOverrides" not in parameter_type.__annotations__
+
+
 class TestKnowledgeBaseRetrievalStream:
+    def test_retrieve_stream_closes_response_when_cls_raises(self):
+        from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
+        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
+
+        response = _Response()
+        response.raw_stream = _RawStream([])
+        failure = RuntimeError("response callback failed")
+        callback = mock.Mock(side_effect=failure)
+        with KnowledgeBaseRetrievalClient(
+            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        ) as client:
+            with mock.patch.object(
+                client._client._pipeline, "run", return_value=SimpleNamespace(http_response=response)
+            ):
+                with pytest.raises(RuntimeError) as error:
+                    client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=callback)
+        assert error.value is failure
+        callback.assert_called_once()
+        assert response.closed
+
     def test_stream_deserializes_all_known_event_types(self):
         require_capability("KnowledgeBaseRetrievalEvent", "KnowledgeBaseRetrievalStream")
         from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalStream
@@ -166,72 +219,76 @@ class TestKnowledgeBaseRetrievalStream:
         assert response.closed
         assert raw_stream.closed
 
-    def test_client_wraps_generated_stream_and_composes_cls(self):
+    @pytest.mark.parametrize("terminal", ["response.completed", "error"])
+    @pytest.mark.parametrize("use_cls", [False, True])
+    def test_retrieve_stream_yields_ga_payloads_and_preserves_november_options(self, terminal, use_cls):
         require_capability(
             "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.retrieve_stream",
-            "KnowledgeBaseRetrievalStream",
         )
-        from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient, KnowledgeBaseRetrievalStream
-        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
+        from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
+        from azure.search.documents._utils.streaming_base import Stream
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseActivityStartedEvent,
+            KnowledgeBaseAnswerCompletedEvent,
+            KnowledgeBaseResponseCompletedEvent,
+            KnowledgeBaseRetrievalRequest,
+            KnowledgeBaseRetrievalStartedEvent,
+            KnowledgeBaseSearchIndexActivityRecord,
+            KnowledgeBaseSearchIndexReference,
+            KnowledgeBaseStreamErrorEvent,
+        )
 
         response = _Response()
-        raw_stream = _RawStream([_frame("response.completed", {"statusCode": 200, "response": {}})])
-        pipeline_response = SimpleNamespace(http_response=response)
-        generated_kwargs = {}
-
-        def generated_retrieve_stream(_self, _request, **kwargs):
-            generated_kwargs.update(kwargs)
-            return kwargs["cls"](pipeline_response, raw_stream, {"content-type": "text/event-stream"})
-
-        client = KnowledgeBaseRetrievalClient(
-            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        terminal_payload = (
+            {"statusCode": 200, "response": {}}
+            if terminal == "response.completed"
+            else {"error": {"code": "Failed", "message": "retrieval failed"}}
         )
-        with mock.patch(
-            "azure.search.documents.knowledgebases._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            stream = client.retrieve_stream(
-                KnowledgeBaseRetrievalRequest(),
-                query_source_authorization="query-token",
-                query_work_iq_source_authorization="work-iq-token",
-            )
-        assert isinstance(stream, KnowledgeBaseRetrievalStream)
-        assert generated_kwargs["query_source_authorization"] == "query-token"
-        assert generated_kwargs["query_work_iq_source_authorization"] == "work-iq-token"
-        assert KnowledgeBaseRetrievalStream.__module__ == "azure.search.documents.knowledgebases"
-        stream.close()
-
+        response.raw_stream = _RawStream(
+            [
+                _frame("retrieval.started", {"requestId": "request-id", "knowledgeBaseName": KNOWLEDGE_BASE_NAME}),
+                _frame("activity.started", {"id": 1, "type": "searchIndex"}),
+                _frame("activity.completed", {"id": 1, "type": "searchIndex"}),
+                _frame("answer.completed", {"messageIndex": 0, "message": {"role": "assistant", "content": []}}),
+                _frame("references.completed", [{"type": "searchIndex", "id": "doc-1", "activitySource": 1}]),
+                _frame(terminal, terminal_payload),
+                _frame("must.not.be.consumed", {}),
+            ]
+        )
+        pipeline_response = SimpleNamespace(http_response=response)
         observed = {}
 
         def custom_cls(received_pipeline_response, typed_stream, headers):
             observed.update(pipeline_response=received_pipeline_response, stream=typed_stream, headers=headers)
-            return "custom-result"
+            return typed_stream
 
-        response = _Response()
-        raw_stream = _RawStream([])
-        pipeline_response = SimpleNamespace(http_response=response)
-        with mock.patch(
-            "azure.search.documents.knowledgebases._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            result = client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=custom_cls)
-        assert result == "custom-result"
-        assert isinstance(observed["stream"], KnowledgeBaseRetrievalStream)
-        observed["stream"].close()
-
-        response = _Response()
-        raw_stream = _RawStream([])
-        pipeline_response = SimpleNamespace(http_response=response)
-
-        def raising_cls(_pipeline_response, _typed_stream, _headers):
-            raise RuntimeError("custom callback failed")
-
-        with mock.patch(
-            "azure.search.documents.knowledgebases._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            with pytest.raises(RuntimeError, match="custom callback failed"):
-                client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=raising_cls)
+        with KnowledgeBaseRetrievalClient(
+            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        ) as client:
+            with mock.patch.object(client._client._pipeline, "run", return_value=pipeline_response) as run:
+                options = {"cls": custom_cls} if use_cls else {}
+                with client.retrieve_stream(
+                    KnowledgeBaseRetrievalRequest(),
+                    query_source_authorization="query-token",
+                    query_work_iq_source_authorization="work-iq-token",
+                    **options,
+                ) as stream:
+                    assert isinstance(stream, Stream)
+                    events = list(stream)
+        if use_cls:
+            assert observed["pipeline_response"] is pipeline_response
+            assert observed["stream"] is stream
+        assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
+        assert isinstance(events[1], KnowledgeBaseActivityStartedEvent)
+        assert isinstance(events[2], KnowledgeBaseSearchIndexActivityRecord)
+        assert isinstance(events[3], KnowledgeBaseAnswerCompletedEvent)
+        assert isinstance(events[4][0], KnowledgeBaseSearchIndexReference)
+        expected_terminal = (
+            KnowledgeBaseResponseCompletedEvent if terminal == "response.completed" else KnowledgeBaseStreamErrorEvent
+        )
+        assert isinstance(events[5], expected_terminal)
+        assert len(events) == 6
+        request = run.call_args.args[0]
+        assert request.headers["x-ms-query-source-authorization"] == "query-token"
+        assert request.headers["x-ms-query-work-iq-source-authorization"] == "work-iq-token"
         assert response.closed
-        assert raw_stream.closed
-        client.close()

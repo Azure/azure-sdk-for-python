@@ -94,6 +94,12 @@ class TaskProvider(Protocol):
     ) -> list[TaskInfo]:
         """List tasks with filters.
 
+        Without a limit, enumerate all matching records across every page.
+        Providers own continuation cursors, which may be opaque service tokens.
+        An explicit positive limit bounds the total result count, clamped to
+        100, not the number of results per service page. Never return a partial
+        scan as successful complete enumeration when a continuation fails.
+
         :keyword agent_name: Filter by agent name.
         :paramtype agent_name: str
         :keyword session_id: Filter by session ID.
@@ -110,7 +116,7 @@ class TaskProvider(Protocol):
         :paramtype has_error: bool | None
         :keyword lease_expired: Filter by whether the task's lease has expired.
         :paramtype lease_expired: bool | None
-        :keyword limit: Maximum number of records to return.
+        :keyword limit: Total result limit, clamped to 100; None requires complete enumeration.
         :paramtype limit: int | None
         :keyword after: Return records after this pagination cursor.
         :paramtype after: str | None

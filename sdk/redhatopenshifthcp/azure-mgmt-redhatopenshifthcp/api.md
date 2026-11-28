@@ -506,6 +506,10 @@ namespace azure.mgmt.redhatopenshifthcp.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.redhatopenshifthcp.models.ClusterActiveVersion(_Model):
+        version: str
+
+
     class azure.mgmt.redhatopenshifthcp.models.ClusterAutoscalingProfile(_Model):
         max_node_provision_time_seconds: Optional[int]
         max_nodes_total: Optional[int]
@@ -545,6 +549,11 @@ namespace azure.mgmt.redhatopenshifthcp.models
         ENABLED = "Enabled"
 
 
+    class azure.mgmt.redhatopenshifthcp.models.ClusterResourceStatus(_Model):
+        active_versions: Optional[list[ClusterActiveVersion]]
+        conditions: Optional[list[Condition]]
+
+
     class azure.mgmt.redhatopenshifthcp.models.Condition(_Model):
         last_transition_time: datetime
         message: str
@@ -561,6 +570,20 @@ namespace azure.mgmt.redhatopenshifthcp.models
 
     class azure.mgmt.redhatopenshifthcp.models.ConsoleProfile(_Model):
         url: str
+
+
+    class azure.mgmt.redhatopenshifthcp.models.ContainerRegistryProfile(_Model):
+        managed_identity: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                managed_identity: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.redhatopenshifthcp.models.CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -763,7 +786,7 @@ namespace azure.mgmt.redhatopenshifthcp.models
         clients: Optional[list[ExternalAuthClientProfile]]
         issuer: TokenIssuerProfile
         provisioning_state: Optional[Union[str, ExternalAuthProvisioningState]]
-        status: Optional[ResourceStatus]
+        status: Optional[ExternalAuthResourceStatus]
 
         @overload
         def __init__(
@@ -787,6 +810,10 @@ namespace azure.mgmt.redhatopenshifthcp.models
         PROVISIONING = "Provisioning"
         SUCCEEDED = "Succeeded"
         UPDATING = "Updating"
+
+
+    class azure.mgmt.redhatopenshifthcp.models.ExternalAuthResourceStatus(_Model):
+        conditions: Optional[list[Condition]]
 
 
     class azure.mgmt.redhatopenshifthcp.models.GroupClaimProfile(_Model):
@@ -862,7 +889,7 @@ namespace azure.mgmt.redhatopenshifthcp.models
         node_drain_timeout_minutes: Optional[int]
         platform: PlatformProfile
         provisioning_state: Optional[Union[str, ProvisioningState]]
-        status: Optional[ResourceStatus]
+        status: Optional[ClusterResourceStatus]
         version: VersionProfile
 
         @overload
@@ -1000,6 +1027,7 @@ namespace azure.mgmt.redhatopenshifthcp.models
 
     class azure.mgmt.redhatopenshifthcp.models.KmsEncryptionProfile(_Model):
         active_key: KmsKey
+        key_vault_type: Optional[Union[str, KmsKeyVaultType]]
         vault_name: str
         visibility: Union[str, KeyVaultVisibility]
 
@@ -1008,6 +1036,7 @@ namespace azure.mgmt.redhatopenshifthcp.models
                 self, 
                 *, 
                 active_key: KmsKey, 
+                key_vault_type: Optional[Union[str, KmsKeyVaultType]] = ..., 
                 vault_name: str, 
                 visibility: Union[str, KeyVaultVisibility]
             ) -> None: ...
@@ -1030,6 +1059,11 @@ namespace azure.mgmt.redhatopenshifthcp.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.redhatopenshifthcp.models.KmsKeyVaultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        KEY_VAULT = "KeyVault"
+        MANAGED_HSM = "ManagedHSM"
 
 
     class azure.mgmt.redhatopenshifthcp.models.Label(_Model):
@@ -1124,6 +1158,10 @@ namespace azure.mgmt.redhatopenshifthcp.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.redhatopenshifthcp.models.NodePoolActiveVersion(_Model):
+        version: str
+
+
     class azure.mgmt.redhatopenshifthcp.models.NodePoolAutoScaling(_Model):
         max: Optional[int]
         min: Optional[int]
@@ -1170,7 +1208,7 @@ namespace azure.mgmt.redhatopenshifthcp.models
         platform: NodePoolPlatformProfile
         provisioning_state: Optional[Union[str, ProvisioningState]]
         replicas: Optional[int]
-        status: Optional[ResourceStatus]
+        status: Optional[NodePoolResourceStatus]
         taints: Optional[list[Taint]]
         version: Optional[NodePoolVersionProfile]
 
@@ -1190,6 +1228,11 @@ namespace azure.mgmt.redhatopenshifthcp.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.redhatopenshifthcp.models.NodePoolResourceStatus(_Model):
+        active_versions: Optional[list[NodePoolActiveVersion]]
+        conditions: Optional[list[Condition]]
 
 
     class azure.mgmt.redhatopenshifthcp.models.NodePoolVersionProfile(_Model):
@@ -1306,6 +1349,7 @@ namespace azure.mgmt.redhatopenshifthcp.models
 
 
     class azure.mgmt.redhatopenshifthcp.models.PlatformProfile(_Model):
+        container_registry: Optional[ContainerRegistryProfile]
         issuer_url: str
         managed_resource_group: Optional[str]
         network_security_group_id: str
@@ -1318,6 +1362,7 @@ namespace azure.mgmt.redhatopenshifthcp.models
         def __init__(
                 self, 
                 *, 
+                container_registry: Optional[ContainerRegistryProfile] = ..., 
                 managed_resource_group: Optional[str] = ..., 
                 network_security_group_id: str, 
                 operators_authentication: OperatorsAuthenticationProfile, 
@@ -1352,10 +1397,6 @@ namespace azure.mgmt.redhatopenshifthcp.models
         name: Optional[str]
         system_data: Optional[SystemData]
         type: Optional[str]
-
-
-    class azure.mgmt.redhatopenshifthcp.models.ResourceStatus(_Model):
-        conditions: Optional[list[Condition]]
 
 
     class azure.mgmt.redhatopenshifthcp.models.RoleDefinition(_Model):
@@ -2008,6 +2049,11 @@ namespace azure.mgmt.redhatopenshifthcp.types
         visibility: Union[str, Visibility]
 
 
+    class azure.mgmt.redhatopenshifthcp.types.ClusterActiveVersion(TypedDict, total=False):
+        key "version": Required[str]
+        version: str
+
+
     class azure.mgmt.redhatopenshifthcp.types.ClusterAutoscalingProfile(TypedDict, total=False):
         key "maxNodeProvisionTimeSeconds": int
         key "maxNodesTotal": int
@@ -2022,6 +2068,11 @@ namespace azure.mgmt.redhatopenshifthcp.types
     class azure.mgmt.redhatopenshifthcp.types.ClusterImageRegistryProfile(TypedDict, total=False):
         key "state": Union[str, ClusterImageRegistryState]
         state: Union[str, ClusterImageRegistryState]
+
+
+    class azure.mgmt.redhatopenshifthcp.types.ClusterResourceStatus(TypedDict, total=False):
+        activeVersions: list[ClusterActiveVersion]
+        conditions: list[Condition]
 
 
     class azure.mgmt.redhatopenshifthcp.types.Condition(TypedDict, total=False):
@@ -2040,6 +2091,11 @@ namespace azure.mgmt.redhatopenshifthcp.types
     class azure.mgmt.redhatopenshifthcp.types.ConsoleProfile(TypedDict, total=False):
         key "url": Required[str]
         url: str
+
+
+    class azure.mgmt.redhatopenshifthcp.types.ContainerRegistryProfile(TypedDict, total=False):
+        key "managedIdentity": str
+        managedIdentity: str
 
 
     class azure.mgmt.redhatopenshifthcp.types.CustomerManagedEncryptionProfile(TypedDict, total=False):
@@ -2108,12 +2164,16 @@ namespace azure.mgmt.redhatopenshifthcp.types
         key "claim": Required[ExternalAuthClaimProfile]
         key "issuer": Required[TokenIssuerProfile]
         key "provisioningState": Union[str, ExternalAuthProvisioningState]
-        key "status": ForwardRef('ResourceStatus', module='types')
+        key "status": ForwardRef('ExternalAuthResourceStatus', module='types')
         claim: ExternalAuthClaimProfile
         clients: list[ExternalAuthClientProfile]
         issuer: TokenIssuerProfile
         provisioningState: Union[str, ExternalAuthProvisioningState]
-        status: ResourceStatus
+        status: ExternalAuthResourceStatus
+
+
+    class azure.mgmt.redhatopenshifthcp.types.ExternalAuthResourceStatus(TypedDict, total=False):
+        conditions: list[Condition]
 
 
     class azure.mgmt.redhatopenshifthcp.types.GroupClaimProfile(TypedDict, total=False):
@@ -2159,7 +2219,7 @@ namespace azure.mgmt.redhatopenshifthcp.types
         key "nodeDrainTimeoutMinutes": int
         key "platform": Required[PlatformProfile]
         key "provisioningState": Union[str, ProvisioningState]
-        key "status": ForwardRef('ResourceStatus', module='types')
+        key "status": ForwardRef('ClusterResourceStatus', module='types')
         key "version": Required[VersionProfile]
         api: ApiProfile
         autoscaling: ClusterAutoscalingProfile
@@ -2174,7 +2234,7 @@ namespace azure.mgmt.redhatopenshifthcp.types
         nodeDrainTimeoutMinutes: int
         platform: PlatformProfile
         provisioningState: Union[str, ProvisioningState]
-        status: ResourceStatus
+        status: ClusterResourceStatus
         version: VersionProfile
 
 
@@ -2192,9 +2252,11 @@ namespace azure.mgmt.redhatopenshifthcp.types
 
     class azure.mgmt.redhatopenshifthcp.types.KmsEncryptionProfile(TypedDict, total=False):
         key "activeKey": Required[KmsKey]
+        key "keyVaultType": Union[str, KmsKeyVaultType]
         key "vaultName": Required[str]
         key "visibility": Required[Union[str, KeyVaultVisibility]]
         activeKey: KmsKey
+        keyVaultType: Union[str, KmsKeyVaultType]
         vaultName: str
         visibility: Union[str, KeyVaultVisibility]
 
@@ -2254,6 +2316,11 @@ namespace azure.mgmt.redhatopenshifthcp.types
         type: str
 
 
+    class azure.mgmt.redhatopenshifthcp.types.NodePoolActiveVersion(TypedDict, total=False):
+        key "version": Required[str]
+        version: str
+
+
     class azure.mgmt.redhatopenshifthcp.types.NodePoolAutoScaling(TypedDict, total=False):
         key "max": int
         key "min": int
@@ -2281,7 +2348,7 @@ namespace azure.mgmt.redhatopenshifthcp.types
         key "platform": Required[NodePoolPlatformProfile]
         key "provisioningState": Union[str, ProvisioningState]
         key "replicas": int
-        key "status": ForwardRef('ResourceStatus', module='types')
+        key "status": ForwardRef('NodePoolResourceStatus', module='types')
         key "version": ForwardRef('NodePoolVersionProfile', module='types')
         autoRepair: bool
         autoScaling: NodePoolAutoScaling
@@ -2290,9 +2357,14 @@ namespace azure.mgmt.redhatopenshifthcp.types
         platform: NodePoolPlatformProfile
         provisioningState: Union[str, ProvisioningState]
         replicas: int
-        status: ResourceStatus
+        status: NodePoolResourceStatus
         taints: list[Taint]
         version: NodePoolVersionProfile
+
+
+    class azure.mgmt.redhatopenshifthcp.types.NodePoolResourceStatus(TypedDict, total=False):
+        activeVersions: list[NodePoolActiveVersion]
+        conditions: list[Condition]
 
 
     class azure.mgmt.redhatopenshifthcp.types.NodePoolVersionProfile(TypedDict, total=False):
@@ -2319,6 +2391,7 @@ namespace azure.mgmt.redhatopenshifthcp.types
 
 
     class azure.mgmt.redhatopenshifthcp.types.PlatformProfile(TypedDict, total=False):
+        key "containerRegistry": ForwardRef('ContainerRegistryProfile', module='types')
         key "issuerUrl": Required[str]
         key "managedResourceGroup": str
         key "networkSecurityGroupId": Required[str]
@@ -2326,6 +2399,7 @@ namespace azure.mgmt.redhatopenshifthcp.types
         key "outboundType": Union[str, OutboundType]
         key "subnetId": Required[str]
         key "vnetIntegrationSubnetId": Required[str]
+        containerRegistry: ContainerRegistryProfile
         issuerUrl: str
         managedResourceGroup: str
         networkSecurityGroupId: str
@@ -2355,10 +2429,6 @@ namespace azure.mgmt.redhatopenshifthcp.types
         name: str
         systemData: SystemData
         type: str
-
-
-    class azure.mgmt.redhatopenshifthcp.types.ResourceStatus(TypedDict, total=False):
-        conditions: list[Condition]
 
 
     class azure.mgmt.redhatopenshifthcp.types.SystemData(TypedDict, total=False):

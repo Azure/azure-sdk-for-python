@@ -36,7 +36,6 @@ from .. import models as _models, types as _types
 from .._configuration import ContainerRegistryManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
-from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -50,7 +49,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +70,7 @@ def build_registries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +99,7 @@ def build_registries_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +130,7 @@ def build_registries_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +159,7 @@ def build_registries_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}"
     path_format_arguments = {
@@ -183,7 +182,7 @@ def build_registries_list_by_resource_group_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -208,7 +207,7 @@ def build_registries_list_request(subscription_id: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -235,7 +234,7 @@ def build_registries_import_image_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/importImage"
     path_format_arguments = {
@@ -262,7 +261,7 @@ def build_registries_list_usages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,7 +289,7 @@ def build_registries_list_credentials_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -319,7 +318,7 @@ def build_registries_regenerate_credential_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -350,7 +349,7 @@ def build_registries_generate_credentials_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -381,7 +380,7 @@ def build_registries_check_name_availability_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -409,7 +408,7 @@ def build_registries_get_private_link_resource_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -438,7 +437,7 @@ def build_registries_list_private_link_resources_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -460,322 +459,13 @@ def build_registries_list_private_link_resources_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_archives_get_request(
-    resource_group_name: str,
-    registry_name: str,
-    package_type: str,
-    archive_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives/{archiveName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-        "archiveName": _SERIALIZER.url("archive_name", archive_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_archives_create_request(
-    resource_group_name: str,
-    registry_name: str,
-    package_type: str,
-    archive_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives/{archiveName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-        "archiveName": _SERIALIZER.url("archive_name", archive_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_archives_update_request(
-    resource_group_name: str,
-    registry_name: str,
-    package_type: str,
-    archive_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives/{archiveName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-        "archiveName": _SERIALIZER.url("archive_name", archive_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_archives_delete_request(
-    resource_group_name: str,
-    registry_name: str,
-    package_type: str,
-    archive_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives/{archiveName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-        "archiveName": _SERIALIZER.url("archive_name", archive_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_archives_list_request(
-    resource_group_name: str, registry_name: str, package_type: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_archive_versions_get_request(
-    resource_group_name: str,
-    registry_name: str,
-    package_type: str,
-    archive_name: str,
-    archive_version_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives/{archiveName}/versions/{archiveVersionName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-        "archiveName": _SERIALIZER.url("archive_name", archive_name, "str"),
-        "archiveVersionName": _SERIALIZER.url("archive_version_name", archive_version_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_archive_versions_create_request(
-    resource_group_name: str,
-    registry_name: str,
-    package_type: str,
-    archive_name: str,
-    archive_version_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives/{archiveName}/versions/{archiveVersionName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-        "archiveName": _SERIALIZER.url("archive_name", archive_name, "str"),
-        "archiveVersionName": _SERIALIZER.url("archive_version_name", archive_version_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_archive_versions_delete_request(
-    resource_group_name: str,
-    registry_name: str,
-    package_type: str,
-    archive_name: str,
-    archive_version_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives/{archiveName}/versions/{archiveVersionName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-        "archiveName": _SERIALIZER.url("archive_name", archive_name, "str"),
-        "archiveVersionName": _SERIALIZER.url("archive_version_name", archive_version_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_archive_versions_list_request(
-    resource_group_name: str,
-    registry_name: str,
-    package_type: str,
-    archive_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/packages/{packageType}/archives/{archiveName}/versions"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "packageType": _SERIALIZER.url("package_type", package_type, "str"),
-        "archiveName": _SERIALIZER.url("archive_name", archive_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_cache_rules_get_request(
     resource_group_name: str, registry_name: str, cache_rule_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -805,7 +495,7 @@ def build_cache_rules_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -837,7 +527,7 @@ def build_cache_rules_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -867,7 +557,7 @@ def build_cache_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/cacheRules/{cacheRuleName}"
     path_format_arguments = {
@@ -891,7 +581,7 @@ def build_cache_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -919,7 +609,7 @@ def build_credential_sets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -949,7 +639,7 @@ def build_credential_sets_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -981,7 +671,7 @@ def build_credential_sets_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1011,7 +701,7 @@ def build_credential_sets_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/credentialSets/{credentialSetName}"
     path_format_arguments = {
@@ -1035,7 +725,7 @@ def build_credential_sets_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1063,7 +753,7 @@ def build_connected_registries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1093,7 +783,7 @@ def build_connected_registries_create_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1125,7 +815,7 @@ def build_connected_registries_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1155,7 +845,7 @@ def build_connected_registries_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/connectedRegistries/{connectedRegistryName}"
     path_format_arguments = {
@@ -1179,7 +869,7 @@ def build_connected_registries_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1208,7 +898,7 @@ def build_connected_registries_deactivate_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/connectedRegistries/{connectedRegistryName}/deactivate"
     path_format_arguments = {
@@ -1226,35 +916,6 @@ def build_connected_registries_deactivate_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_connected_registries_resync_request(  # pylint: disable=name-too-long
-    resource_group_name: str, registry_name: str, connected_registry_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/connectedRegistries/{connectedRegistryName}/resync"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "connectedRegistryName": _SERIALIZER.url("connected_registry_name", connected_registry_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     registry_name: str,
@@ -1265,7 +926,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1301,7 +962,7 @@ def build_private_endpoint_connections_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1337,7 +998,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -1363,7 +1024,7 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1391,7 +1052,7 @@ def build_replications_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1421,7 +1082,7 @@ def build_replications_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1453,7 +1114,7 @@ def build_replications_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1483,7 +1144,7 @@ def build_replications_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/replications/{replicationName}"
     path_format_arguments = {
@@ -1507,7 +1168,7 @@ def build_replications_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1535,7 +1196,7 @@ def build_scope_maps_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1565,7 +1226,7 @@ def build_scope_maps_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1597,7 +1258,7 @@ def build_scope_maps_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1627,7 +1288,7 @@ def build_scope_maps_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/scopeMaps/{scopeMapName}"
     path_format_arguments = {
@@ -1651,7 +1312,7 @@ def build_scope_maps_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1679,7 +1340,7 @@ def build_tokens_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1709,7 +1370,7 @@ def build_tokens_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1741,7 +1402,7 @@ def build_tokens_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1771,7 +1432,7 @@ def build_tokens_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/tokens/{tokenName}"
     path_format_arguments = {
@@ -1795,347 +1456,11 @@ def build_tokens_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/tokens"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_export_pipelines_get_request(
-    resource_group_name: str, registry_name: str, export_pipeline_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/exportPipelines/{exportPipelineName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "exportPipelineName": _SERIALIZER.url("export_pipeline_name", export_pipeline_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_export_pipelines_create_request(
-    resource_group_name: str, registry_name: str, export_pipeline_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/exportPipelines/{exportPipelineName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "exportPipelineName": _SERIALIZER.url("export_pipeline_name", export_pipeline_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_export_pipelines_delete_request(
-    resource_group_name: str, registry_name: str, export_pipeline_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/exportPipelines/{exportPipelineName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "exportPipelineName": _SERIALIZER.url("export_pipeline_name", export_pipeline_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_export_pipelines_list_request(
-    resource_group_name: str, registry_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/exportPipelines"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_import_pipelines_get_request(
-    resource_group_name: str, registry_name: str, import_pipeline_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/importPipelines/{importPipelineName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "importPipelineName": _SERIALIZER.url("import_pipeline_name", import_pipeline_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_import_pipelines_create_request(
-    resource_group_name: str, registry_name: str, import_pipeline_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/importPipelines/{importPipelineName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "importPipelineName": _SERIALIZER.url("import_pipeline_name", import_pipeline_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_import_pipelines_delete_request(
-    resource_group_name: str, registry_name: str, import_pipeline_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/importPipelines/{importPipelineName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "importPipelineName": _SERIALIZER.url("import_pipeline_name", import_pipeline_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_import_pipelines_list_request(
-    resource_group_name: str, registry_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/importPipelines"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_pipeline_runs_get_request(
-    resource_group_name: str, registry_name: str, pipeline_run_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/pipelineRuns/{pipelineRunName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "pipelineRunName": _SERIALIZER.url("pipeline_run_name", pipeline_run_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_pipeline_runs_create_request(
-    resource_group_name: str, registry_name: str, pipeline_run_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/pipelineRuns/{pipelineRunName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "pipelineRunName": _SERIALIZER.url("pipeline_run_name", pipeline_run_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_pipeline_runs_delete_request(
-    resource_group_name: str, registry_name: str, pipeline_run_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/pipelineRuns/{pipelineRunName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
-        "pipelineRunName": _SERIALIZER.url("pipeline_run_name", pipeline_run_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_pipeline_runs_list_request(
-    resource_group_name: str, registry_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/pipelineRuns"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -2159,7 +1484,7 @@ def build_webhooks_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2189,7 +1514,7 @@ def build_webhooks_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2221,7 +1546,7 @@ def build_webhooks_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2251,7 +1576,7 @@ def build_webhooks_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/webhooks/{webhookName}"
     path_format_arguments = {
@@ -2275,7 +1600,7 @@ def build_webhooks_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2303,7 +1628,7 @@ def build_webhooks_ping_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2332,7 +1657,7 @@ def build_webhooks_list_events_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2361,7 +1686,7 @@ def build_webhooks_get_callback_config_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4464,1511 +3789,6 @@ class RegistriesOperations:  # pylint: disable=docstring-missing-param
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.PrivateLinkResource],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class ArchivesOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
-        :attr:`archives` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def get(
-        self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
-    ) -> _models.Archive:
-        """Gets the properties of the archive.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :return: Archive. The Archive is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.Archive
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Archive] = kwargs.pop("cls", None)
-
-        _request = build_archives_get_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            package_type=package_type,
-            archive_name=archive_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Archive, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _create_initial(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_create_parameters: Union[_models.Archive, _types.Archive, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(archive_create_parameters, (IOBase, bytes)):
-            _content = archive_create_parameters
-        else:
-            _content = json.dumps(archive_create_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_archives_create_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            package_type=package_type,
-            archive_name=archive_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_create_parameters: _models.Archive,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.Archive]:
-        """Creates a archive for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_create_parameters: The parameters for creating a archive. Required.
-        :type archive_create_parameters: ~azure.mgmt.containerregistry.models.Archive
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns Archive. The Archive is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.Archive]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_create_parameters: _types.Archive,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.Archive]:
-        """Creates a archive for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_create_parameters: The parameters for creating a archive. Required.
-        :type archive_create_parameters: ~azure.mgmt.containerregistry.types.Archive
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns Archive. The Archive is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.Archive]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_create_parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.Archive]:
-        """Creates a archive for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_create_parameters: The parameters for creating a archive. Required.
-        :type archive_create_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns Archive. The Archive is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.Archive]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_create_parameters: Union[_models.Archive, _types.Archive, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.Archive]:
-        """Creates a archive for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_create_parameters: The parameters for creating a archive. Is either a Archive
-         type or a IO[bytes] type. Required.
-        :type archive_create_parameters: ~azure.mgmt.containerregistry.models.Archive or
-         ~azure.mgmt.containerregistry.types.Archive or IO[bytes]
-        :return: An instance of LROPoller that returns Archive. The Archive is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.Archive]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Archive] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                package_type=package_type,
-                archive_name=archive_name,
-                archive_create_parameters=archive_create_parameters,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.Archive, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.Archive].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.Archive](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @overload
-    def update(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_update_parameters: _models.ArchiveUpdateParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Archive:
-        """Updates a archive for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_update_parameters: The parameters for updating a archive. Required.
-        :type archive_update_parameters: ~azure.mgmt.containerregistry.models.ArchiveUpdateParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Archive. The Archive is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.Archive
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_update_parameters: _types.ArchiveUpdateParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Archive:
-        """Updates a archive for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_update_parameters: The parameters for updating a archive. Required.
-        :type archive_update_parameters: ~azure.mgmt.containerregistry.types.ArchiveUpdateParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Archive. The Archive is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.Archive
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_update_parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Archive:
-        """Updates a archive for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_update_parameters: The parameters for updating a archive. Required.
-        :type archive_update_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Archive. The Archive is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.Archive
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def update(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_update_parameters: Union[_models.ArchiveUpdateParameters, _types.ArchiveUpdateParameters, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.Archive:
-        """Updates a archive for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_update_parameters: The parameters for updating a archive. Is either a
-         ArchiveUpdateParameters type or a IO[bytes] type. Required.
-        :type archive_update_parameters: ~azure.mgmt.containerregistry.models.ArchiveUpdateParameters
-         or ~azure.mgmt.containerregistry.types.ArchiveUpdateParameters or IO[bytes]
-        :return: Archive. The Archive is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.Archive
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Archive] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(archive_update_parameters, (IOBase, bytes)):
-            _content = archive_update_parameters
-        else:
-            _content = json.dumps(archive_update_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_archives_update_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            package_type=package_type,
-            archive_name=archive_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Archive, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _delete_initial(
-        self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_archives_delete_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            package_type=package_type,
-            archive_name=archive_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_delete(
-        self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Deletes a archive from a container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._delete_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                package_type=package_type,
-                archive_name=archive_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def list(
-        self, resource_group_name: str, registry_name: str, package_type: str, **kwargs: Any
-    ) -> ItemPaged["_models.Archive"]:
-        """Lists all archives for the specified container registry and package type.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :return: An iterator like instance of Archive
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.models.Archive]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.Archive]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_archives_list_request(
-                    resource_group_name=resource_group_name,
-                    registry_name=registry_name,
-                    package_type=package_type,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Archive],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
-        :attr:`archive_versions` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "archive_version_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def get(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_version_name: str,
-        **kwargs: Any
-    ) -> _models.ArchiveVersion:
-        """Gets the properties of the archive version.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_version_name: The name of the archive version resource. Required.
-        :type archive_version_name: str
-        :return: ArchiveVersion. The ArchiveVersion is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.ArchiveVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ArchiveVersion] = kwargs.pop("cls", None)
-
-        _request = build_archive_versions_get_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            package_type=package_type,
-            archive_name=archive_name,
-            archive_version_name=archive_version_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ArchiveVersion, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "archive_version_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _create_initial(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_version_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_archive_versions_create_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            package_type=package_type,
-            archive_name=archive_name,
-            archive_version_name=archive_version_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "archive_version_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_version_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.ArchiveVersion]:
-        """Creates a archive version for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_version_name: The name of the archive version resource. Required.
-        :type archive_version_name: str
-        :return: An instance of LROPoller that returns ArchiveVersion. The ArchiveVersion is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ArchiveVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ArchiveVersion] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                package_type=package_type,
-                archive_name=archive_name,
-                archive_version_name=archive_version_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ArchiveVersion, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.ArchiveVersion].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.ArchiveVersion](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "archive_version_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _delete_initial(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_version_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_archive_versions_delete_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            package_type=package_type,
-            archive_name=archive_name,
-            archive_version_name=archive_version_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "archive_version_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_delete(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        package_type: str,
-        archive_name: str,
-        archive_version_name: str,
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Deletes a archive version from a container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :param archive_version_name: The name of the archive version resource. Required.
-        :type archive_version_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._delete_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                package_type=package_type,
-                archive_name=archive_name,
-                archive_version_name=archive_version_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "package_type",
-                "archive_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def list(
-        self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
-    ) -> ItemPaged["_models.ArchiveVersion"]:
-        """Lists all archive versions for the specified container registry, repository type and archive
-        name.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param package_type: The package type. Required.
-        :type package_type: str
-        :param archive_name: The name of the archive resource. Required.
-        :type archive_name: str
-        :return: An iterator like instance of ArchiveVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.models.ArchiveVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.ArchiveVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_archive_versions_list_request(
-                    resource_group_name=resource_group_name,
-                    registry_name=registry_name,
-                    package_type=package_type,
-                    archive_name=archive_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ArchiveVersion],
                 deserialized.get("value", []),
             )
             if cls:
@@ -8632,95 +6452,6 @@ class ConnectedRegistriesOperations:  # pylint: disable=docstring-missing-param
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "connected_registry_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def resync(
-        self, resource_group_name: str, registry_name: str, connected_registry_name: str, **kwargs: Any
-    ) -> _models.ConnectedRegistry:
-        """Resync the connected registry instance.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param connected_registry_name: The name of the connected registry. Required.
-        :type connected_registry_name: str
-        :return: ConnectedRegistry. The ConnectedRegistry is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.ConnectedRegistry
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ConnectedRegistry] = kwargs.pop("cls", None)
-
-        _request = build_connected_registries_resync_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            connected_registry_name=connected_registry_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ConnectedRegistry, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
@@ -11766,1956 +9497,6 @@ class TokensOperations:  # pylint: disable=docstring-missing-param
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.Token],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
-        :attr:`export_pipelines` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "export_pipeline_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def get(
-        self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
-    ) -> _models.ExportPipeline:
-        """Gets the properties of the export pipeline.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param export_pipeline_name: The name of the export pipeline. Required.
-        :type export_pipeline_name: str
-        :return: ExportPipeline. The ExportPipeline is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.ExportPipeline
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ExportPipeline] = kwargs.pop("cls", None)
-
-        _request = build_export_pipelines_get_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            export_pipeline_name=export_pipeline_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ExportPipeline, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "export_pipeline_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _create_initial(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        export_pipeline_name: str,
-        export_pipeline_create_parameters: Union[_models.ExportPipeline, _types.ExportPipeline, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(export_pipeline_create_parameters, (IOBase, bytes)):
-            _content = export_pipeline_create_parameters
-        else:
-            _content = json.dumps(export_pipeline_create_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_export_pipelines_create_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            export_pipeline_name=export_pipeline_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        export_pipeline_name: str,
-        export_pipeline_create_parameters: _models.ExportPipeline,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ExportPipeline]:
-        """Creates an export pipeline for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param export_pipeline_name: The name of the export pipeline. Required.
-        :type export_pipeline_name: str
-        :param export_pipeline_create_parameters: The parameters for creating an export pipeline.
-         Required.
-        :type export_pipeline_create_parameters: ~azure.mgmt.containerregistry.models.ExportPipeline
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns ExportPipeline. The ExportPipeline is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ExportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        export_pipeline_name: str,
-        export_pipeline_create_parameters: _types.ExportPipeline,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ExportPipeline]:
-        """Creates an export pipeline for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param export_pipeline_name: The name of the export pipeline. Required.
-        :type export_pipeline_name: str
-        :param export_pipeline_create_parameters: The parameters for creating an export pipeline.
-         Required.
-        :type export_pipeline_create_parameters: ~azure.mgmt.containerregistry.types.ExportPipeline
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns ExportPipeline. The ExportPipeline is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ExportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        export_pipeline_name: str,
-        export_pipeline_create_parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ExportPipeline]:
-        """Creates an export pipeline for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param export_pipeline_name: The name of the export pipeline. Required.
-        :type export_pipeline_name: str
-        :param export_pipeline_create_parameters: The parameters for creating an export pipeline.
-         Required.
-        :type export_pipeline_create_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns ExportPipeline. The ExportPipeline is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ExportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "export_pipeline_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        export_pipeline_name: str,
-        export_pipeline_create_parameters: Union[_models.ExportPipeline, _types.ExportPipeline, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.ExportPipeline]:
-        """Creates an export pipeline for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param export_pipeline_name: The name of the export pipeline. Required.
-        :type export_pipeline_name: str
-        :param export_pipeline_create_parameters: The parameters for creating an export pipeline. Is
-         either a ExportPipeline type or a IO[bytes] type. Required.
-        :type export_pipeline_create_parameters: ~azure.mgmt.containerregistry.models.ExportPipeline or
-         ~azure.mgmt.containerregistry.types.ExportPipeline or IO[bytes]
-        :return: An instance of LROPoller that returns ExportPipeline. The ExportPipeline is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ExportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ExportPipeline] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                export_pipeline_name=export_pipeline_name,
-                export_pipeline_create_parameters=export_pipeline_create_parameters,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ExportPipeline, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.ExportPipeline].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.ExportPipeline](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "export_pipeline_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _delete_initial(
-        self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_export_pipelines_delete_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            export_pipeline_name=export_pipeline_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "export_pipeline_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_delete(
-        self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Deletes an export pipeline from a container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param export_pipeline_name: The name of the export pipeline. Required.
-        :type export_pipeline_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._delete_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                export_pipeline_name=export_pipeline_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def list(self, resource_group_name: str, registry_name: str, **kwargs: Any) -> ItemPaged["_models.ExportPipeline"]:
-        """Lists all export pipelines for the specified container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :return: An iterator like instance of ExportPipeline
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.models.ExportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.ExportPipeline]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_export_pipelines_list_request(
-                    resource_group_name=resource_group_name,
-                    registry_name=registry_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ExportPipeline],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
-        :attr:`import_pipelines` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "import_pipeline_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def get(
-        self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
-    ) -> _models.ImportPipeline:
-        """Gets the properties of the import pipeline.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param import_pipeline_name: The name of the import pipeline. Required.
-        :type import_pipeline_name: str
-        :return: ImportPipeline. The ImportPipeline is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.ImportPipeline
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ImportPipeline] = kwargs.pop("cls", None)
-
-        _request = build_import_pipelines_get_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            import_pipeline_name=import_pipeline_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ImportPipeline, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "import_pipeline_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _create_initial(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        import_pipeline_name: str,
-        import_pipeline_create_parameters: Union[_models.ImportPipeline, _types.ImportPipeline, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(import_pipeline_create_parameters, (IOBase, bytes)):
-            _content = import_pipeline_create_parameters
-        else:
-            _content = json.dumps(import_pipeline_create_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_import_pipelines_create_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            import_pipeline_name=import_pipeline_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        import_pipeline_name: str,
-        import_pipeline_create_parameters: _models.ImportPipeline,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ImportPipeline]:
-        """Creates an import pipeline for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param import_pipeline_name: The name of the import pipeline. Required.
-        :type import_pipeline_name: str
-        :param import_pipeline_create_parameters: The parameters for creating an import pipeline.
-         Required.
-        :type import_pipeline_create_parameters: ~azure.mgmt.containerregistry.models.ImportPipeline
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns ImportPipeline. The ImportPipeline is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ImportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        import_pipeline_name: str,
-        import_pipeline_create_parameters: _types.ImportPipeline,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ImportPipeline]:
-        """Creates an import pipeline for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param import_pipeline_name: The name of the import pipeline. Required.
-        :type import_pipeline_name: str
-        :param import_pipeline_create_parameters: The parameters for creating an import pipeline.
-         Required.
-        :type import_pipeline_create_parameters: ~azure.mgmt.containerregistry.types.ImportPipeline
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns ImportPipeline. The ImportPipeline is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ImportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        import_pipeline_name: str,
-        import_pipeline_create_parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ImportPipeline]:
-        """Creates an import pipeline for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param import_pipeline_name: The name of the import pipeline. Required.
-        :type import_pipeline_name: str
-        :param import_pipeline_create_parameters: The parameters for creating an import pipeline.
-         Required.
-        :type import_pipeline_create_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns ImportPipeline. The ImportPipeline is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ImportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "import_pipeline_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        import_pipeline_name: str,
-        import_pipeline_create_parameters: Union[_models.ImportPipeline, _types.ImportPipeline, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.ImportPipeline]:
-        """Creates an import pipeline for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param import_pipeline_name: The name of the import pipeline. Required.
-        :type import_pipeline_name: str
-        :param import_pipeline_create_parameters: The parameters for creating an import pipeline. Is
-         either a ImportPipeline type or a IO[bytes] type. Required.
-        :type import_pipeline_create_parameters: ~azure.mgmt.containerregistry.models.ImportPipeline or
-         ~azure.mgmt.containerregistry.types.ImportPipeline or IO[bytes]
-        :return: An instance of LROPoller that returns ImportPipeline. The ImportPipeline is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.ImportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ImportPipeline] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                import_pipeline_name=import_pipeline_name,
-                import_pipeline_create_parameters=import_pipeline_create_parameters,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ImportPipeline, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.ImportPipeline].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.ImportPipeline](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "import_pipeline_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _delete_initial(
-        self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_import_pipelines_delete_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            import_pipeline_name=import_pipeline_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "import_pipeline_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_delete(
-        self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Deletes an import pipeline from a container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param import_pipeline_name: The name of the import pipeline. Required.
-        :type import_pipeline_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._delete_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                import_pipeline_name=import_pipeline_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def list(self, resource_group_name: str, registry_name: str, **kwargs: Any) -> ItemPaged["_models.ImportPipeline"]:
-        """Lists all import pipelines for the specified container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :return: An iterator like instance of ImportPipeline
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.models.ImportPipeline]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.ImportPipeline]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_import_pipelines_list_request(
-                    resource_group_name=resource_group_name,
-                    registry_name=registry_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ImportPipeline],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerregistry.ContainerRegistryManagementClient`'s
-        :attr:`pipeline_runs` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "pipeline_run_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def get(
-        self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
-    ) -> _models.PipelineRun:
-        """Gets the detailed information for a given pipeline run.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param pipeline_run_name: The name of the pipeline run. Required.
-        :type pipeline_run_name: str
-        :return: PipelineRun. The PipelineRun is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.PipelineRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PipelineRun] = kwargs.pop("cls", None)
-
-        _request = build_pipeline_runs_get_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            pipeline_run_name=pipeline_run_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PipelineRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "pipeline_run_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _create_initial(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        pipeline_run_name: str,
-        pipeline_run_create_parameters: Union[_models.PipelineRun, _types.PipelineRun, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(pipeline_run_create_parameters, (IOBase, bytes)):
-            _content = pipeline_run_create_parameters
-        else:
-            _content = json.dumps(pipeline_run_create_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_pipeline_runs_create_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            pipeline_run_name=pipeline_run_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        pipeline_run_name: str,
-        pipeline_run_create_parameters: _models.PipelineRun,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PipelineRun]:
-        """Creates a pipeline run for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param pipeline_run_name: The name of the pipeline run. Required.
-        :type pipeline_run_name: str
-        :param pipeline_run_create_parameters: The parameters for creating a pipeline run. Required.
-        :type pipeline_run_create_parameters: ~azure.mgmt.containerregistry.models.PipelineRun
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns PipelineRun. The PipelineRun is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.PipelineRun]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        pipeline_run_name: str,
-        pipeline_run_create_parameters: _types.PipelineRun,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PipelineRun]:
-        """Creates a pipeline run for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param pipeline_run_name: The name of the pipeline run. Required.
-        :type pipeline_run_name: str
-        :param pipeline_run_create_parameters: The parameters for creating a pipeline run. Required.
-        :type pipeline_run_create_parameters: ~azure.mgmt.containerregistry.types.PipelineRun
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns PipelineRun. The PipelineRun is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.PipelineRun]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        pipeline_run_name: str,
-        pipeline_run_create_parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PipelineRun]:
-        """Creates a pipeline run for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param pipeline_run_name: The name of the pipeline run. Required.
-        :type pipeline_run_name: str
-        :param pipeline_run_create_parameters: The parameters for creating a pipeline run. Required.
-        :type pipeline_run_create_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns PipelineRun. The PipelineRun is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.PipelineRun]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "pipeline_run_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_create(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        pipeline_run_name: str,
-        pipeline_run_create_parameters: Union[_models.PipelineRun, _types.PipelineRun, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.PipelineRun]:
-        """Creates a pipeline run for a container registry with the specified parameters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param pipeline_run_name: The name of the pipeline run. Required.
-        :type pipeline_run_name: str
-        :param pipeline_run_create_parameters: The parameters for creating a pipeline run. Is either a
-         PipelineRun type or a IO[bytes] type. Required.
-        :type pipeline_run_create_parameters: ~azure.mgmt.containerregistry.models.PipelineRun or
-         ~azure.mgmt.containerregistry.types.PipelineRun or IO[bytes]
-        :return: An instance of LROPoller that returns PipelineRun. The PipelineRun is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerregistry.models.PipelineRun]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PipelineRun] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                pipeline_run_name=pipeline_run_name,
-                pipeline_run_create_parameters=pipeline_run_create_parameters,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.PipelineRun, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.PipelineRun].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.PipelineRun](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "pipeline_run_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def _delete_initial(
-        self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_pipeline_runs_delete_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            pipeline_run_name=pipeline_run_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "registry_name",
-                "pipeline_run_name",
-            ]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def begin_delete(
-        self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Deletes a pipeline run from a container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param pipeline_run_name: The name of the pipeline run. Required.
-        :type pipeline_run_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._delete_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                pipeline_run_name=pipeline_run_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={
-            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
-        },
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def list(self, resource_group_name: str, registry_name: str, **kwargs: Any) -> ItemPaged["_models.PipelineRun"]:
-        """Lists all the pipeline runs for the specified container registry.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :return: An iterator like instance of PipelineRun
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.models.PipelineRun]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PipelineRun]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_pipeline_runs_list_request(
-                    resource_group_name=resource_group_name,
-                    registry_name=registry_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PipelineRun],
                 deserialized.get("value", []),
             )
             if cls:

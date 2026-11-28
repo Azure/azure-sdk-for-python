@@ -55,6 +55,10 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
                     "endpoints": {"str": "str"},
                     "isDefault": bool,
                     "provisioningState": "str",
+                    "toolControls": {
+                        "allowedTools": [{"type": "str", "connectorId": "str", "serverUrl": "str"}],
+                        "defaultAction": "str",
+                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -97,6 +101,10 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
                     "endpoints": {"str": "str"},
                     "isDefault": bool,
                     "provisioningState": "str",
+                    "toolControls": {
+                        "allowedTools": [{"type": "str", "connectorId": "str", "serverUrl": "str"}],
+                        "defaultAction": "str",
+                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",

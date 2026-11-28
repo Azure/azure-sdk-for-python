@@ -8,6 +8,8 @@ import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.pipeline.transport import RequestsTransport
+from rest_client import MockRestClient
 
 
 def _assert_stream_state(response, open):
@@ -45,7 +47,7 @@ def test_iter_raw_on_iterable(client):
         assert raw == b"Hello, world!"
 
 
-def test_iter_with_error(client):
+def test_iter_with_error(client, port):
     request = HttpRequest("GET", "/errors/403")
 
     with client.send_request(request, stream=True) as response:
@@ -58,9 +60,12 @@ def test_iter_with_error(client):
             response.raise_for_status()
     assert response.is_closed
 
+    # Ignore environment proxies so that an unresolvable host fails with a DNS error
+    # instead of an HTTP error returned by a network proxy.
+    no_proxy_client = MockRestClient(port, transport=RequestsTransport(use_env_settings=False))
     request = HttpRequest("GET", "http://doesNotExist")
     with pytest.raises(ServiceRequestError):
-        with client.send_request(request, stream=True) as response:
+        with no_proxy_client.send_request(request, stream=True) as response:
             raise ValueError("Should error before entering")
     assert response.is_closed
 

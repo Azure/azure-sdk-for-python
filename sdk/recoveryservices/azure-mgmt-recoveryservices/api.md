@@ -153,7 +153,7 @@ namespace azure.mgmt.recoveryservices.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01', '2026-08-31-preview', '2026-11-01'])
         async def get(
                 self, 
                 location: str, 
@@ -162,7 +162,7 @@ namespace azure.mgmt.recoveryservices.aio.operations
             ) -> DeletedVault: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'operation_id', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'operation_id', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01', '2026-08-31-preview', '2026-11-01'])
         async def get_operation_status(
                 self, 
                 location: str, 
@@ -172,7 +172,7 @@ namespace azure.mgmt.recoveryservices.aio.operations
             ) -> OperationResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01', '2026-08-31-preview', '2026-11-01'])
         def list_by_subscription_id(
                 self, 
                 location: str, 
@@ -2049,7 +2049,7 @@ namespace azure.mgmt.recoveryservices.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01', '2026-08-31-preview', '2026-11-01'])
         def get(
                 self, 
                 location: str, 
@@ -2058,7 +2058,7 @@ namespace azure.mgmt.recoveryservices.operations
             ) -> DeletedVault: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'operation_id', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'operation_id', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01', '2026-08-31-preview', '2026-11-01'])
         def get_operation_status(
                 self, 
                 location: str, 
@@ -2068,7 +2068,7 @@ namespace azure.mgmt.recoveryservices.operations
             ) -> OperationResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01', '2026-08-31-preview', '2026-11-01'])
         def list_by_subscription_id(
                 self, 
                 location: str, 

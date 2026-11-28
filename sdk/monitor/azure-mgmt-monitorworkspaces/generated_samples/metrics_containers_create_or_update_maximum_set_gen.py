@@ -34,11 +34,16 @@ def main():
         resource_group_name="rgazuremonitorworkspace",
         azure_monitor_workspace_name="myAzureMonitorWorkspace",
         metrics_container_name="default",
-        resource={"properties": {"version": "1.0"}},
+        resource={
+            "properties": {
+                "limits": {"enableAutoScale": True, "maxActiveTimeSeries": 100000, "maxEventsPerMinute": 100000},
+                "version": "2.0",
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-10-03/MetricsContainers_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-03-preview/MetricsContainers_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

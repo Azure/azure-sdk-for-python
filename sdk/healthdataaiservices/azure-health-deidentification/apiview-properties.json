@@ -30,5 +30,6 @@
         "azure.health.deidentification.aio.DeidentificationClient.delete_job": "HealthDataAIServices.DeidServices.deleteJob",
         "azure.health.deidentification.DeidentificationClient.deidentify_text": "HealthDataAIServices.DeidServices.deidentifyText",
         "azure.health.deidentification.aio.DeidentificationClient.deidentify_text": "HealthDataAIServices.DeidServices.deidentifyText"
-    }
+    },
+    "CrossLanguageVersion": "8ab7039f42a1"
 }

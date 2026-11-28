@@ -5,12 +5,14 @@ import copy
 import errno
 import hashlib
 import logging
+import ntpath
 import os
 import re
 import shutil
 import subprocess
 import tempfile
 import time
+import urllib.parse
 import zipfile
 from collections import defaultdict
 from io import BytesIO
@@ -21,11 +23,20 @@ from typing import List, Optional, Sequence, Union
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._common import DefaultOpenEncoding
+from azure.core.exceptions import AzureError, HttpResponseError
 
 from ._http_utils import HttpPipeline
 from .utils import get_base_directory_for_cache
 
 _logger = logging.getLogger(__name__)
+
+
+def _is_reserved_windows_name(name: str) -> bool:
+    # pathlib.PurePath.is_reserved() is deprecated in Python 3.13 and removed in 3.15.
+    is_reserved = getattr(ntpath, "isreserved", None)  # cspell:ignore isreserved
+    if is_reserved is not None:
+        return bool(is_reserved(name))
+    return PureWindowsPath(name).is_reserved()  # pylint: disable=deprecated-method
 
 
 class ArtifactCache:
@@ -178,7 +189,7 @@ class ArtifactCache:
             raise ValueError(error_message)
         # Version selectors are valid CLI arguments, but not Windows filenames.
         cache_component = value.replace("%", "%25").replace("*", "%2A")
-        if PureWindowsPath(cache_component).is_reserved():
+        if _is_reserved_windows_name(cache_component):
             raise ValueError(error_message)
         return cache_component
 
@@ -220,6 +231,47 @@ class ArtifactCache:
                 raise RuntimeError(f"Illegal path traversal detected in zip archive member: {member}")
         zip_file.extractall(destination_path)  # nosec B202
 
+    @staticmethod
+    def _get_organization_name(organization: str) -> str:
+        organization_name = r"[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?"
+        pattern = (
+            rf"https://(?:(?P<legacy>{organization_name})\.visualstudio\.com(?::443)?/?"
+            rf"|dev\.azure\.com(?::443)?/(?P<current>{organization_name})/?)"
+        )
+        match = (
+            re.fullmatch(pattern, organization, flags=re.IGNORECASE | re.ASCII)
+            if isinstance(organization, str)
+            else None
+        )
+        if match is None:
+            raise ValueError("Invalid artifact organization URL. Use an HTTPS Azure DevOps organization URL.")
+        return (match.group("legacy") or match.group("current")).lower()
+
+    @staticmethod
+    def _validate_tool_download_url(uri: object) -> str:
+        if (
+            not isinstance(uri, str)
+            or not uri
+            or any(ord(character) <= 32 or ord(character) == 127 for character in uri)
+            or "\\" in uri
+            or "#" in uri
+        ):
+            raise ValueError("Invalid artifact tool download URL.")
+        try:
+            parsed = urllib.parse.urlsplit(uri)
+            valid = (
+                parsed.scheme == "https"
+                and bool(parsed.hostname)
+                and parsed.username is None
+                and parsed.password is None
+                and parsed.port in (None, 443)
+            )
+        except ValueError as error:
+            raise ValueError("Invalid artifact tool download URL.") from error
+        if not valid:
+            raise ValueError("Invalid artifact tool download URL.")
+        return uri
+
     def _redirect_artifacts_tool_path(self, organization: Optional[str]):
         """Downloads the artifacts tool and redirects `az artifact` command to it.
 
@@ -230,19 +282,9 @@ class ArtifactCache:
         """
         from azure.identity import DefaultAzureCredential
 
-        if not organization:
+        if organization is None:
             organization, _ = self.get_organization_project_by_git()
-
-        organization_pattern = r"https:\/\/([^/]+)\.visualstudio\.com"
-        result = re.findall(pattern=organization_pattern, string=organization)
-        if result:
-            organization_name = result[0]
-        else:
-            organization_pattern = r"https:\/\/dev\.azure\.com\/([^/]+)"
-            result = re.findall(pattern=organization_pattern, string=organization)
-            if not result:
-                raise RuntimeError("Cannot find artifact organization.")
-            organization_name = result[0]
+        organization_name = self._get_organization_name(organization)
 
         if not self._artifacts_tool_path:
             os_name = "Windows" if os.name == "nt" else "Linux"
@@ -259,18 +301,34 @@ class ArtifactCache:
                 f"osName={os_name}&arch=AMD64"
             )
             response = requests_pipeline.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-                url, headers=header
+                url, headers=header, permit_redirects=False
             )
-            if response.status_code == 200:
-                artifacts_tool_path = tempfile.mkdtemp()  # nosec B306
-                artifacts_tool_uri = response.json()["uri"]
-                response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
+            if response.status_code != 200:
+                raise HttpResponseError("Download artifact tool metadata failed.", response=response)
+            metadata = response.json()
+            artifacts_tool_uri = self._validate_tool_download_url(
+                metadata.get("uri") if isinstance(metadata, dict) else None
+            )
+            # Trust only the validated service's release URI, without forwarding credentials or following redirects.
+            response = requests_pipeline.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                artifacts_tool_uri, permit_redirects=False
+            )
+            if response.status_code != 200:
+                raise HttpResponseError("Download artifact tool failed.", response=response)
+            artifacts_tool_path = Path(tempfile.mkdtemp())  # nosec B306
+            installed = False
+            try:
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
                     self._safe_extractall(zip_file, artifacts_tool_path)
+                tool_name = "artifacttool.exe" if os_name == "Windows" else "artifacttool"
+                if not (artifacts_tool_path / tool_name).is_file():
+                    raise RuntimeError(f"Artifact tool archive does not contain {tool_name}.")
                 os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())
                 self._artifacts_tool_path = artifacts_tool_path
-            else:
-                _logger.warning("Download artifact tool failed: %s", response.text)
+                installed = True
+            finally:
+                if not installed:
+                    shutil.rmtree(artifacts_tool_path)
 
     def _download_artifacts(
         self,
@@ -300,7 +358,7 @@ class ArtifactCache:
         while retries <= max_retries:
             try:
                 self._redirect_artifacts_tool_path(organization)
-            except Exception as e:  # pylint: disable=W0718
+            except (AzureError, OSError) as e:
                 _logger.warning("Redirect artifacts tool path failed")
                 _logger.debug("Details: %s", e)
 

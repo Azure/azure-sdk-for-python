@@ -4,23 +4,22 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-
-from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
-from azure.messaging.webpubsubchatservice.models import (
-    ChatMessage,
-    ChatPermission,
-    ChatRole,
-    ChatRoom,
-    ChatRoomMember,
-    HumanChatUser,
-    MessageContent,
-)
-
 from testcase import (
     WebPubSubChatAccessPreparer,
     WebPubSubChatPreparer,
     WebPubSubChatTest,
+)
+
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError
+from azure.messaging.webpubsubchatservice.models import (
+    ChatMessageUpdate,
+    ChatPermission,
+    ChatRoleCreateOrReplace,
+    ChatRoomCreateOrReplace,
+    ChatRoomMemberCreateOrReplace,
+    HumanChatUserCreateOrReplace,
+    MessageContent,
 )
 
 
@@ -39,7 +38,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             for role_name in role_names:
                 role = await client.create_or_replace_role(
                     role_name,
-                    ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                 )
                 assert role.name == role_name
                 assert (await client.get_role(role_name)).permissions == [ChatPermission.USER_CREATE_ROOM]
@@ -66,7 +65,6 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
     @pytest.mark.asyncio
     async def test_async_list_roles_using_connection_string(
         self,
-        wps_chat_endpoint,
         wps_chat_connection_string,
         wps_chat_disable_local_auth,
     ):
@@ -89,7 +87,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         try:
             created = await client.create_or_replace_role(
                 role_name,
-                ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                 match_condition=MatchConditions.IfMissing,
             )
             assert created.name == role_name
@@ -97,7 +95,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             with pytest.raises(HttpResponseError) as error:
                 await client.create_or_replace_role(
                     role_name,
-                    ChatRole(permissions=[ChatPermission.USER_FETCH_ALL_ROOMS]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_FETCH_ALL_ROOMS]),
                     match_condition=MatchConditions.IfMissing,
                 )
             assert error.value.status_code == 412
@@ -114,11 +112,11 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         try:
             created = await client.create_or_replace_role(
                 role_name,
-                ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
             )
             replaced = await client.create_or_replace_role(
                 role_name,
-                ChatRole(
+                ChatRoleCreateOrReplace(
                     permissions=[
                         ChatPermission.USER_CREATE_ROOM,
                         ChatPermission.USER_FETCH_ALL_ROOMS,
@@ -132,7 +130,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             with pytest.raises(HttpResponseError) as error:
                 await client.create_or_replace_role(
                     role_name,
-                    ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+                    ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM]),
                     etag=created.etag,
                     match_condition=MatchConditions.IfNotModified,
                 )
@@ -148,7 +146,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         client = self.create_async_client(wps_chat_endpoint)
         room_id = "python-async-e2e-empty-room"
         try:
-            room = await client.create_or_replace_room(room_id, ChatRoom(title="Async Python E2E Room"))
+            room = await client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Async Python E2E Room"))
             assert room.id == room_id
             fetched_room = await client.get_room(room_id)
             assert fetched_room.id == room_id
@@ -156,7 +154,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
 
             conversation = await client.get_conversation(room.default_conversation)
             assert conversation.id == room.default_conversation
-            assert conversation.parent_room == room_id
+            assert conversation.room_id == room_id
             assert await _collect(client.list_messages(room.default_conversation)) == []
             assert await _collect(client.list_room_members(room_id)) == []
         finally:
@@ -173,23 +171,27 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         user_id = "python-async-e2e-user"
         room_id = "python-async-e2e-member-room"
         try:
-            await client.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
-            await client.create_or_replace_role(room_role, ChatRole(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
+            await client.create_or_replace_role(
+                user_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM])
+            )
+            await client.create_or_replace_role(
+                room_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE])
+            )
 
             user = await client.create_or_replace_user(
                 user_id,
-                HumanChatUser(nickname="Async Python User", role_name=user_role),
+                HumanChatUserCreateOrReplace(nickname="Async Python User", role_name=user_role),
             )
             assert user.id == user_id
             assert user.kind == "Human"
             fetched_user = await client.get_user(user_id)
             assert fetched_user.id == user_id
             assert fetched_user.nickname == "Async Python User"
-            await client.create_or_replace_room(room_id, ChatRoom(title="Async Member Room"))
+            await client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Async Member Room"))
             member = await client.create_or_replace_room_member(
                 room_id,
                 user_id,
-                ChatRoomMember(role_name=room_role),
+                ChatRoomMemberCreateOrReplace(role_name=room_role),
             )
             assert member.user_id == user_id
             assert member.role_name == room_role
@@ -218,10 +220,12 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         updated_text = "Python async E2E updated message"
         binary_content = bytes([0, 1, 2, 254, 255])
         try:
-            await client.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
+            await client.create_or_replace_role(
+                user_role, ChatRoleCreateOrReplace(permissions=[ChatPermission.USER_CREATE_ROOM])
+            )
             await client.create_or_replace_role(
                 room_role,
-                ChatRole(
+                ChatRoleCreateOrReplace(
                     permissions=[
                         ChatPermission.ROOM_PUBLISH_MESSAGE,
                         ChatPermission.ROOM_HISTORY,
@@ -230,10 +234,12 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             )
             await client.create_or_replace_user(
                 user_id,
-                HumanChatUser(nickname="Async Message User", role_name=user_role),
+                HumanChatUserCreateOrReplace(nickname="Async Message User", role_name=user_role),
             )
-            room = await client.create_or_replace_room(room_id, ChatRoom(title="Async Message Room"))
-            await client.create_or_replace_room_member(room_id, user_id, ChatRoomMember(role_name=room_role))
+            room = await client.create_or_replace_room(room_id, ChatRoomCreateOrReplace(title="Async Message Room"))
+            await client.create_or_replace_room_member(
+                room_id, user_id, ChatRoomMemberCreateOrReplace(role_name=room_role)
+            )
 
             await self.seed_chat_message_async(client, user_id, room.default_conversation, message_text)
             messages = await _collect(client.list_messages(room.default_conversation))
@@ -243,13 +249,13 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
             updated = await client.update_message(
                 room.default_conversation,
                 message.id,
-                ChatMessage(created_by=user_id, content=MessageContent(text=updated_text)),
+                ChatMessageUpdate(created_by=user_id, content=MessageContent(text=updated_text)),
             )
             assert updated.content.text == updated_text
             binary_updated = await client.update_message(
                 room.default_conversation,
                 message.id,
-                ChatMessage(
+                ChatMessageUpdate(
                     created_by=user_id,
                     content=MessageContent(binary=binary_content),
                 ),
@@ -277,15 +283,20 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
     ):
         token_client = self.create_async_client(wps_chat_endpoint)
         key_client = None
+        token_user_id = "python-async-e2e-token-access-user"
+        key_user_id = "python-async-e2e-key-access-user"
         try:
-            token_access = await token_client.get_client_access_token(user_id="python-async-e2e-token-access-user")
+            token_access = await token_client.get_client_access_token(user_id=token_user_id)
             await self.assert_client_access_async(token_access, wps_chat_endpoint)
 
             if wps_chat_disable_local_auth.lower() != "true":
                 key_client = self.create_async_key_client(wps_chat_connection_string)
-                key_access = await key_client.get_client_access_token(user_id="python-async-e2e-key-access-user")
+                key_access = await key_client.get_client_access_token(user_id=key_user_id)
                 await self.assert_client_access_async(key_access, wps_chat_endpoint)
         finally:
+            await self.cleanup_async(token_client.delete_user, token_user_id)
+            if key_client:
+                await self.cleanup_async(token_client.delete_user, key_user_id)
             await token_client.close()
             if key_client:
                 await key_client.close()

@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-06-01/RecordSetSRVPut.json
+# x-ms-original-file: 2026-06-01-preview/RecordSetSRVPut.json
 if __name__ == "__main__":
     main()

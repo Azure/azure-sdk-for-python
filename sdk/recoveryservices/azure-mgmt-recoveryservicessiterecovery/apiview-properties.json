@@ -14,6 +14,7 @@
         "azure.mgmt.recoveryservicessiterecovery.models.A2AClusterTestFailoverInput": "Microsoft.RecoveryServices.A2AClusterTestFailoverInput",
         "azure.mgmt.recoveryservicessiterecovery.models.ClusterUnplannedFailoverProviderSpecificInput": "Microsoft.RecoveryServices.ClusterUnplannedFailoverProviderSpecificInput",
         "azure.mgmt.recoveryservicessiterecovery.models.A2AClusterUnplannedFailoverInput": "Microsoft.RecoveryServices.A2AClusterUnplannedFailoverInput",
+        "azure.mgmt.recoveryservicessiterecovery.models.A2AClusterVmManagedDiskInputDetails": "Microsoft.RecoveryServices.A2AClusterVmManagedDiskInputDetails",
         "azure.mgmt.recoveryservicessiterecovery.models.ReplicationProviderSpecificContainerCreationInput": "Microsoft.RecoveryServices.ReplicationProviderSpecificContainerCreationInput",
         "azure.mgmt.recoveryservicessiterecovery.models.A2AContainerCreationInput": "Microsoft.RecoveryServices.A2AContainerCreationInput",
         "azure.mgmt.recoveryservicessiterecovery.models.ReplicationProviderSpecificContainerMappingInput": "Microsoft.RecoveryServices.ReplicationProviderSpecificContainerMappingInput",
@@ -122,6 +123,7 @@
         "azure.mgmt.recoveryservicessiterecovery.models.ClusterUnplannedFailoverInput": "Microsoft.RecoveryServices.ClusterUnplannedFailoverInput",
         "azure.mgmt.recoveryservicessiterecovery.models.ClusterUnplannedFailoverInputProperties": "Microsoft.RecoveryServices.ClusterUnplannedFailoverInputProperties",
         "azure.mgmt.recoveryservicessiterecovery.models.ComputeSizeErrorDetails": "Microsoft.RecoveryServices.ComputeSizeErrorDetails",
+        "azure.mgmt.recoveryservicessiterecovery.models.ConfidentialDiskEncryptionInfo": "Microsoft.RecoveryServices.ConfidentialDiskEncryptionInfo",
         "azure.mgmt.recoveryservicessiterecovery.models.ConfigurationSettings": "Microsoft.RecoveryServices.ConfigurationSettings",
         "azure.mgmt.recoveryservicessiterecovery.models.ConfigureAlertRequest": "Microsoft.RecoveryServices.ConfigureAlertRequest",
         "azure.mgmt.recoveryservicessiterecovery.models.ConfigureAlertRequestProperties": "Microsoft.RecoveryServices.ConfigureAlertRequestProperties",
@@ -476,6 +478,7 @@
         "azure.mgmt.recoveryservicessiterecovery.models.UnplannedFailoverInputProperties": "Microsoft.RecoveryServices.UnplannedFailoverInputProperties",
         "azure.mgmt.recoveryservicessiterecovery.models.UpdateApplianceForReplicationProtectedItemInput": "Microsoft.RecoveryServices.UpdateApplianceForReplicationProtectedItemInput",
         "azure.mgmt.recoveryservicessiterecovery.models.UpdateApplianceForReplicationProtectedItemInputProperties": "Microsoft.RecoveryServices.UpdateApplianceForReplicationProtectedItemInputProperties",
+        "azure.mgmt.recoveryservicessiterecovery.models.UpdateConfidentialDiskEncryptionInfo": "Microsoft.RecoveryServices.UpdateConfidentialDiskEncryptionInfo",
         "azure.mgmt.recoveryservicessiterecovery.models.UpdateDiskInput": "Microsoft.RecoveryServices.UpdateDiskInput",
         "azure.mgmt.recoveryservicessiterecovery.models.UpdateMigrationItemInput": "Microsoft.RecoveryServices.UpdateMigrationItemInput",
         "azure.mgmt.recoveryservicessiterecovery.models.UpdateMigrationItemInputProperties": "Microsoft.RecoveryServices.UpdateMigrationItemInputProperties",
@@ -545,6 +548,9 @@
         "azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocationType": "Microsoft.RecoveryServices.ExtendedLocationType",
         "azure.mgmt.recoveryservicessiterecovery.models.MultiVmGroupCreateOption": "Microsoft.RecoveryServices.MultiVmGroupCreateOption",
         "azure.mgmt.recoveryservicessiterecovery.models.AutoProtectionOfDataDisk": "Microsoft.RecoveryServices.AutoProtectionOfDataDisk",
+        "azure.mgmt.recoveryservicessiterecovery.models.DiskNetworkAccessPolicy": "Microsoft.RecoveryServices.DiskNetworkAccessPolicy",
+        "azure.mgmt.recoveryservicessiterecovery.models.DiskPublicNetworkAccess": "Microsoft.RecoveryServices.DiskPublicNetworkAccess",
+        "azure.mgmt.recoveryservicessiterecovery.models.IPVersion": "Microsoft.RecoveryServices.IPVersion",
         "azure.mgmt.recoveryservicessiterecovery.models.VmEncryptionType": "Microsoft.RecoveryServices.VmEncryptionType",
         "azure.mgmt.recoveryservicessiterecovery.models.ChurnOptionSelected": "Microsoft.RecoveryServices.ChurnOptionSelected",
         "azure.mgmt.recoveryservicessiterecovery.models.LinuxLicenseType": "Microsoft.RecoveryServices.LinuxLicenseType",
@@ -595,6 +601,7 @@
         "azure.mgmt.recoveryservicessiterecovery.models.InMageV2RpRecoveryPointType": "Microsoft.RecoveryServices.InMageV2RpRecoveryPointType",
         "azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanPointType": "Microsoft.RecoveryServices.RecoveryPlanPointType",
         "azure.mgmt.recoveryservicessiterecovery.models.SourceSiteOperations": "Microsoft.RecoveryServices.SourceSiteOperations",
+        "azure.mgmt.recoveryservicessiterecovery.models.RecoveryNetworkConfigAutoSyncPolicy": "Microsoft.RecoveryServices.RecoveryNetworkConfigAutoSyncPolicy",
         "azure.mgmt.recoveryservicessiterecovery.models.HealthErrorCategory": "Microsoft.RecoveryServices.HealthErrorCategory",
         "azure.mgmt.recoveryservicessiterecovery.models.Severity": "Microsoft.RecoveryServices.Severity",
         "azure.mgmt.recoveryservicessiterecovery.operations.MigrationRecoveryPointsOperations.get": "Microsoft.RecoveryServices.MigrationRecoveryPoints.get",
@@ -906,5 +913,5 @@
         "azure.mgmt.recoveryservicessiterecovery.operations.ReplicationVaultHealthOperations.begin_refresh": "Microsoft.RecoveryServices.ReplicationVaultHealthOperationGroup.refresh",
         "azure.mgmt.recoveryservicessiterecovery.aio.operations.ReplicationVaultHealthOperations.begin_refresh": "Microsoft.RecoveryServices.ReplicationVaultHealthOperationGroup.refresh"
     },
-    "CrossLanguageVersion": "9fdc96ec84d9"
+    "CrossLanguageVersion": "a39861c74199"
 }

@@ -26,7 +26,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.private_endpoints.get(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2095,6 +2095,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                     ],
                                     "macAddress": "str",
                                     "migrationPhase": "str",
+                                    "networkAdapterIndex": 0,
                                     "networkSecurityGroup": {
                                         "etag": "str",
                                         "id": "str",
@@ -6552,6 +6553,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     ],
                                                     "macAddress": "str",
                                                     "migrationPhase": "str",
+                                                    "networkAdapterIndex": 0,
                                                     "networkSecurityGroup": ...,
                                                     "nicType": "str",
                                                     "primary": bool,
@@ -7313,7 +7315,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -7327,7 +7329,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
             await self.client.private_endpoints.begin_delete(
                 resource_group_name=resource_group.name,
                 private_endpoint_name="str",
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -7339,7 +7341,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
     async def test_private_endpoints_list(self, resource_group):
         response = self.client.private_endpoints.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -7349,7 +7351,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_private_endpoints_list_by_subscription(self, resource_group):
         response = self.client.private_endpoints.list_by_subscription(
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -86,16 +86,6 @@ class TestNetAppManagementAccountsOperations(AzureMgmtRecordedTestCase):
                             "status": "str",
                         },
                     },
-                    "entraIdConfig": {
-                        "applicationId": "str",
-                        "domain": "str",
-                        "serverNamePrefix": "str",
-                        "entraIdAkvConfig": {
-                            "azureKeyVaultUri": "str",
-                            "certificateName": "str",
-                            "userAssignedIdentity": "str",
-                        },
-                    },
                     "ldapConfiguration": {
                         "bindAuthenticationLevel": "str",
                         "bindDN": "str",
@@ -171,31 +161,13 @@ class TestNetAppManagementAccountsOperations(AzureMgmtRecordedTestCase):
                             "serverRootCACertificate": "str",
                             "site": "str",
                             "smbServerName": "str",
-                            "status": "str",
-                            "statusDetails": "str",
                             "username": "str",
                         }
                     ],
                     "encryption": {
-                        "identity": {"federatedClientId": "str", "principalId": "str", "userAssignedIdentity": "str"},
+                        "identity": {"federatedClientId": "str", "userAssignedIdentity": "str"},
                         "keySource": "str",
-                        "keyVaultProperties": {
-                            "keyName": "str",
-                            "keyVaultUri": "str",
-                            "keyVaultId": "str",
-                            "keyVaultResourceId": "str",
-                            "status": "str",
-                        },
-                    },
-                    "entraIdConfig": {
-                        "applicationId": "str",
-                        "domain": "str",
-                        "entraIdAkvConfig": {
-                            "azureKeyVaultUri": "str",
-                            "certificateName": "str",
-                            "userAssignedIdentity": "str",
-                        },
-                        "serverNamePrefix": "str",
+                        "keyVaultProperties": {"keyName": "str", "keyVaultResourceId": "str", "keyVaultUri": "str"},
                     },
                     "ldapConfiguration": {
                         "bindAuthenticationLevel": "str",

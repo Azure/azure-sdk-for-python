@@ -48,12 +48,14 @@ class TestMonitorWorkspacesMgmtAzureMonitorWorkspacesOperations(AzureMgmtRecorde
                 "name": "str",
                 "properties": {
                     "accountId": "str",
+                    "actions": {"defaultActionGroups": [{"id": "str"}]},
                     "defaultIngestionSettings": {
                         "dataCollectionEndpointResourceId": "str",
                         "dataCollectionRuleImmutableId": "str",
                         "dataCollectionRuleResourceId": "str",
                         "ingestionEndpoints": {"metrics": "str"},
                     },
+                    "endpoints": {"query": "str"},
                     "metrics": {
                         "enableAccessUsingResourcePermissions": bool,
                         "internalId": "str",
@@ -118,12 +120,14 @@ class TestMonitorWorkspacesMgmtAzureMonitorWorkspacesOperations(AzureMgmtRecorde
                 },
                 "properties": {
                     "accountId": "str",
+                    "actions": {"defaultActionGroups": [{"id": "str"}]},
                     "defaultIngestionSettings": {
                         "dataCollectionEndpointResourceId": "str",
                         "dataCollectionRuleImmutableId": "str",
                         "dataCollectionRuleResourceId": "str",
                         "ingestionEndpoints": {"metrics": "str"},
                     },
+                    "endpoints": {"query": "str"},
                     "metrics": {
                         "enableAccessUsingResourcePermissions": bool,
                         "internalId": "str",

@@ -30,17 +30,17 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_clusters.begin_update(
-        resource_group_name="exampleresourcegroup",
-        cluster_name="examplecluster",
+    response = client.clusters.begin_update(
+        resource_group_name="example-resource-group",
+        cluster_name="example-cluster",
         properties={
-            "properties": {"administratorLoginPassword": "examplenewpassword", "vCores": 8},
-            "tags": {"team": "updated-data-platform"},
+            "properties": {"backup": {"retentionDays": 21}, "network": {"publicAccess": "Disabled"}},
+            "tags": {"environment": "production", "team": "data-platform"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/Clusters_Update.json
+# x-ms-original-file: 2026-10-01-preview/Clusters_Update.json
 if __name__ == "__main__":
     main()

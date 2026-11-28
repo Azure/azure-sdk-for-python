@@ -48,6 +48,10 @@ from ...operations._operations import (
     build_arc_settings_list_by_cluster_request,
     build_arc_settings_reconcile_request,
     build_arc_settings_update_request,
+    build_cluster_jobs_create_or_update_request,
+    build_cluster_jobs_delete_request,
+    build_cluster_jobs_get_request,
+    build_cluster_jobs_list_request,
     build_clusters_configure_remote_support_request,
     build_clusters_create_identity_request,
     build_clusters_create_request,
@@ -73,6 +77,49 @@ from ...operations._operations import (
     build_edge_devices_get_request,
     build_edge_devices_list_request,
     build_edge_devices_validate_request,
+    build_edge_machine_deployment_settings_create_or_update_request,
+    build_edge_machine_deployment_settings_delete_request,
+    build_edge_machine_deployment_settings_get_request,
+    build_edge_machine_deployment_settings_list_by_edge_machine_request,
+    build_edge_machine_disk_jobs_create_or_update_request,
+    build_edge_machine_disk_jobs_delete_request,
+    build_edge_machine_disk_jobs_get_request,
+    build_edge_machine_disk_jobs_list_request,
+    build_edge_machine_disk_privileged_jobs_create_or_update_request,
+    build_edge_machine_disk_privileged_jobs_delete_request,
+    build_edge_machine_disk_privileged_jobs_get_request,
+    build_edge_machine_disk_privileged_jobs_list_request,
+    build_edge_machine_disks_create_or_update_request,
+    build_edge_machine_disks_delete_request,
+    build_edge_machine_disks_get_request,
+    build_edge_machine_disks_list_request,
+    build_edge_machine_jobs_create_or_update_request,
+    build_edge_machine_jobs_delete_request,
+    build_edge_machine_jobs_get_request,
+    build_edge_machine_jobs_list_request,
+    build_edge_machine_network_adapter_jobs_create_or_update_request,
+    build_edge_machine_network_adapter_jobs_delete_request,
+    build_edge_machine_network_adapter_jobs_get_request,
+    build_edge_machine_network_adapter_jobs_list_request,
+    build_edge_machine_network_adapters_get_request,
+    build_edge_machine_network_adapters_list_request,
+    build_edge_machine_security_settings_operations_create_or_update_request,
+    build_edge_machine_security_settings_operations_delete_request,
+    build_edge_machine_security_settings_operations_get_request,
+    build_edge_machine_security_settings_operations_list_by_edge_machine_request,
+    build_edge_machine_volumes_create_or_update_request,
+    build_edge_machine_volumes_delete_request,
+    build_edge_machine_volumes_get_request,
+    build_edge_machine_volumes_list_request,
+    build_edge_machines_create_or_update_request,
+    build_edge_machines_delete_request,
+    build_edge_machines_get_request,
+    build_edge_machines_list_by_resource_group_request,
+    build_edge_machines_list_by_subscription_request,
+    build_edge_machines_refresh_applicable_updates_request,
+    build_edge_machines_refresh_security_settings_request,
+    build_edge_machines_update_request,
+    build_edge_machines_validate_request,
     build_extensions_create_request,
     build_extensions_delete_request,
     build_extensions_get_request,
@@ -83,6 +130,9 @@ from ...operations._operations import (
     build_offers_list_by_cluster_request,
     build_offers_list_by_publisher_request,
     build_operations_list_request,
+    build_os_images_get_request,
+    build_os_images_list_by_subscription_location_resource_request,
+    build_ownership_vouchers_validate_request,
     build_security_settings_create_or_update_request,
     build_security_settings_delete_request,
     build_security_settings_get_request,
@@ -115,7 +165,200 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class OsImagesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`os_images` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "location", "os_image_name", "accept"]},
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(self, location: str, os_image_name: str, **kwargs: Any) -> _models.OsImage:
+        """Get a os image.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param os_image_name: The name of the OsImage. Required.
+        :type os_image_name: str
+        :return: OsImage. The OsImage is compatible with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.OsImage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OsImage] = kwargs.pop("cls", None)
+
+        _request = build_os_images_get_request(
+            location=location,
+            os_image_name=os_image_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.OsImage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-10-01"],
+    )
+    def list_by_subscription_location_resource(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.OsImage"]:
+        """List all os images.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of OsImage
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.OsImage]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.OsImage]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_os_images_list_by_subscription_location_resource_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.OsImage],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -225,7 +468,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ArcSettingsOperations:
+class ArcSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1620,7 +1863,7 @@ class ArcSettingsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class OffersOperations:
+class OffersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1948,7 +2191,7 @@ class OffersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ClustersOperations:
+class ClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3996,7 +4239,7 @@ class ClustersOperations:
         )
 
 
-class DeploymentSettingsOperations:
+class DeploymentSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4568,7 +4811,7 @@ class DeploymentSettingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EdgeDeviceJobsOperations:
+class EdgeDeviceJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5135,7 +5378,7 @@ class EdgeDeviceJobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EdgeDevicesOperations:
+class EdgeDevicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5907,7 +6150,7 @@ class EdgeDevicesOperations:
         )
 
 
-class ExtensionsOperations:
+class ExtensionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7052,7 +7295,7 @@ class ExtensionsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SecuritySettingsOperations:
+class SecuritySettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7624,7 +7867,7 @@ class SecuritySettingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SkusOperations:
+class SkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7854,7 +8097,7 @@ class SkusOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class UpdateRunsOperations:
+class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8382,7 +8625,7 @@ class UpdateRunsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class UpdatesOperations:
+class UpdatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9014,7 +9257,7 @@ class UpdatesOperations:
         params_added_on={
             "2026-04-30": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "update_name"]
         },
-        api_versions_list=["2026-04-30"],
+        api_versions_list=["2026-04-30", "2026-10-01"],
     )
     async def _prepare_initial(
         self, resource_group_name: str, cluster_name: str, update_name: str, **kwargs: Any
@@ -9084,7 +9327,7 @@ class UpdatesOperations:
         params_added_on={
             "2026-04-30": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "update_name"]
         },
-        api_versions_list=["2026-04-30"],
+        api_versions_list=["2026-04-30", "2026-10-01"],
     )
     async def begin_prepare(
         self, resource_group_name: str, cluster_name: str, update_name: str, **kwargs: Any
@@ -9148,7 +9391,7 @@ class UpdatesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class UpdateSummariesOperationGroupOperations:
+class UpdateSummariesOperationGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9170,7 +9413,7 @@ class UpdateSummariesOperationGroupOperations:
         params_added_on={
             "2026-04-30": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "content_type"]
         },
-        api_versions_list=["2026-04-30"],
+        api_versions_list=["2026-04-30", "2026-10-01"],
     )
     async def _check_updates_initial(
         self,
@@ -9334,7 +9577,7 @@ class UpdateSummariesOperationGroupOperations:
         params_added_on={
             "2026-04-30": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "content_type"]
         },
-        api_versions_list=["2026-04-30"],
+        api_versions_list=["2026-04-30", "2026-10-01"],
     )
     async def begin_check_updates(
         self,
@@ -9408,7 +9651,7 @@ class UpdateSummariesOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
-        api_versions_list=["2026-04-30"],
+        api_versions_list=["2026-04-30", "2026-10-01"],
     )
     async def _check_health_initial(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
@@ -9475,7 +9718,7 @@ class UpdateSummariesOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
-        api_versions_list=["2026-04-30"],
+        api_versions_list=["2026-04-30", "2026-10-01"],
     )
     async def begin_check_health(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
@@ -9536,7 +9779,7 @@ class UpdateSummariesOperationGroupOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ValidatedSolutionRecipesOperations:
+class ValidatedSolutionRecipesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9724,7 +9967,7837 @@ class ValidatedSolutionRecipesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class UpdateSummariesOperations:
+class EdgeMachinesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machines` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "accept"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(self, resource_group_name: str, edge_machine_name: str, **kwargs: Any) -> _models.EdgeMachine:
+        """Get an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: EdgeMachine. The EdgeMachine is compatible with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachine
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachine] = kwargs.pop("cls", None)
+
+        _request = build_edge_machines_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachine, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        resource: Union[_models.EdgeMachine, _types.EdgeMachine, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machines_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        resource: _models.EdgeMachine,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachine]:
+        """Create or update an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachine
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachine. The EdgeMachine is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        resource: _types.EdgeMachine,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachine]:
+        """Create or update an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachine
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachine. The EdgeMachine is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachine]:
+        """Create or update an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachine. The EdgeMachine is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        resource: Union[_models.EdgeMachine, _types.EdgeMachine, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachine]:
+        """Create or update an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachine type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachine or
+         ~azure.mgmt.azurestackhci.types.EdgeMachine or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachine. The EdgeMachine is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachine] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachine, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachine].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachine](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        properties: Union[_models.EdgeMachinePatch, _types.EdgeMachinePatch, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machines_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        properties: _models.EdgeMachinePatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachine]:
+        """Update an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.azurestackhci.models.EdgeMachinePatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachine. The EdgeMachine is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        properties: _types.EdgeMachinePatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachine]:
+        """Update an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.azurestackhci.types.EdgeMachinePatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachine. The EdgeMachine is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachine]:
+        """Update an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachine. The EdgeMachine is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        properties: Union[_models.EdgeMachinePatch, _types.EdgeMachinePatch, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachine]:
+        """Update an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param properties: The resource properties to be updated. Is either a EdgeMachinePatch type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.azurestackhci.models.EdgeMachinePatch or
+         ~azure.mgmt.azurestackhci.types.EdgeMachinePatch or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachine. The EdgeMachine is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachine] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachine, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachine].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachine](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name"]},
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machines_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name"]},
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete an edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-10-01"],
+    )
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.EdgeMachine"]:
+        """List all edge machines in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of EdgeMachine
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachine]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machines_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachine],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-10-01"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.EdgeMachine"]:
+        """List all edge machines in a subscription.
+
+        :return: An iterator like instance of EdgeMachine
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachine]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machines_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachine],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _validate_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        body: Union[_models.EdgeMachineValidateRequest, _types.EdgeMachineValidateRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machines_validate_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_validate(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        body: _models.EdgeMachineValidateRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineValidateResponse]:
+        """A long-running resource action to validate the edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.azurestackhci.models.EdgeMachineValidateRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineValidateResponse. The
+         EdgeMachineValidateResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineValidateResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_validate(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        body: _types.EdgeMachineValidateRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineValidateResponse]:
+        """A long-running resource action to validate the edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.azurestackhci.types.EdgeMachineValidateRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineValidateResponse. The
+         EdgeMachineValidateResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineValidateResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_validate(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineValidateResponse]:
+        """A long-running resource action to validate the edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineValidateResponse. The
+         EdgeMachineValidateResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineValidateResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_validate(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        body: Union[_models.EdgeMachineValidateRequest, _types.EdgeMachineValidateRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineValidateResponse]:
+        """A long-running resource action to validate the edge machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param body: The content of the action request. Is either a EdgeMachineValidateRequest type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.azurestackhci.models.EdgeMachineValidateRequest or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineValidateRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineValidateResponse. The
+         EdgeMachineValidateResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineValidateResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineValidateResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._validate_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineValidateResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineValidateResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineValidateResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name"]},
+        api_versions_list=["2026-10-01"],
+    )
+    async def _refresh_security_settings_initial(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machines_refresh_security_settings_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name"]},
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_refresh_security_settings(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Trigger an on-demand sync of edge machine security settings from Guest Configuration. Creates
+        the default security settings child resource if it does not already exist.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._refresh_security_settings_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name"]},
+        api_versions_list=["2026-10-01"],
+    )
+    async def _refresh_applicable_updates_initial(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machines_refresh_applicable_updates_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name"]},
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_refresh_applicable_updates(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Trigger an on-demand refresh of applicable updates for the edge machine. Creates or updates the
+        default EdgeMachineUpdate child resource with the latest set of applicable updates.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._refresh_applicable_updates_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class EdgeMachineJobsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_jobs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "jobs_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, jobs_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineJob:
+        """Get a EdgeMachineJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param jobs_name: Name of EdgeMachineJob. Required.
+        :type jobs_name: str
+        :return: EdgeMachineJob. The EdgeMachineJob is compatible with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineJob] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_jobs_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            jobs_name=jobs_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "jobs_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        jobs_name: str,
+        resource: Union[_models.EdgeMachineJob, _types.EdgeMachineJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machine_jobs_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            jobs_name=jobs_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        jobs_name: str,
+        resource: _models.EdgeMachineJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineJob]:
+        """Create a EdgeMachineJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param jobs_name: Name of EdgeMachineJob. Required.
+        :type jobs_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineJob. The EdgeMachineJob is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        jobs_name: str,
+        resource: _types.EdgeMachineJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineJob]:
+        """Create a EdgeMachineJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param jobs_name: Name of EdgeMachineJob. Required.
+        :type jobs_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachineJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineJob. The EdgeMachineJob is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        jobs_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineJob]:
+        """Create a EdgeMachineJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param jobs_name: Name of EdgeMachineJob. Required.
+        :type jobs_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineJob. The EdgeMachineJob is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "jobs_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        jobs_name: str,
+        resource: Union[_models.EdgeMachineJob, _types.EdgeMachineJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineJob]:
+        """Create a EdgeMachineJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param jobs_name: Name of EdgeMachineJob. Required.
+        :type jobs_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachineJob type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineJob or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineJob or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineJob. The EdgeMachineJob is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineJob] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                jobs_name=jobs_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineJob, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineJob].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineJob](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "jobs_name"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, jobs_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_jobs_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            jobs_name=jobs_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "jobs_name"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, jobs_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a EdgeMachineJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param jobs_name: Name of EdgeMachineJob. Required.
+        :type jobs_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                jobs_name=jobs_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "accept"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineJob"]:
+        """List EdgeMachineJob resources by EdgeMachines.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An iterator like instance of EdgeMachineJob
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_jobs_list_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineJob],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class OwnershipVouchersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`ownership_vouchers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def validate(
+        self,
+        resource_group_name: str,
+        location: str,
+        validation_request: _models.ValidateOwnershipVouchersRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ValidateOwnershipVouchersResponse:
+        """Validates ownership vouchers.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param validation_request: Ownership vouchers to be validated. Required.
+        :type validation_request: ~azure.mgmt.azurestackhci.models.ValidateOwnershipVouchersRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ValidateOwnershipVouchersResponse. The ValidateOwnershipVouchersResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.ValidateOwnershipVouchersResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def validate(
+        self,
+        resource_group_name: str,
+        location: str,
+        validation_request: _types.ValidateOwnershipVouchersRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ValidateOwnershipVouchersResponse:
+        """Validates ownership vouchers.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param validation_request: Ownership vouchers to be validated. Required.
+        :type validation_request: ~azure.mgmt.azurestackhci.types.ValidateOwnershipVouchersRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ValidateOwnershipVouchersResponse. The ValidateOwnershipVouchersResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.ValidateOwnershipVouchersResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def validate(
+        self,
+        resource_group_name: str,
+        location: str,
+        validation_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ValidateOwnershipVouchersResponse:
+        """Validates ownership vouchers.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param validation_request: Ownership vouchers to be validated. Required.
+        :type validation_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ValidateOwnershipVouchersResponse. The ValidateOwnershipVouchersResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.ValidateOwnershipVouchersResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def validate(
+        self,
+        resource_group_name: str,
+        location: str,
+        validation_request: Union[
+            _models.ValidateOwnershipVouchersRequest, _types.ValidateOwnershipVouchersRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> _models.ValidateOwnershipVouchersResponse:
+        """Validates ownership vouchers.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param validation_request: Ownership vouchers to be validated. Is either a
+         ValidateOwnershipVouchersRequest type or a IO[bytes] type. Required.
+        :type validation_request: ~azure.mgmt.azurestackhci.models.ValidateOwnershipVouchersRequest or
+         ~azure.mgmt.azurestackhci.types.ValidateOwnershipVouchersRequest or IO[bytes]
+        :return: ValidateOwnershipVouchersResponse. The ValidateOwnershipVouchersResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.ValidateOwnershipVouchersResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ValidateOwnershipVouchersResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(validation_request, (IOBase, bytes)):
+            _content = validation_request
+        else:
+            _content = json.dumps(validation_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ownership_vouchers_validate_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ValidateOwnershipVouchersResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ClusterJobsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`cluster_jobs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "jobs_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, cluster_name: str, jobs_name: str, **kwargs: Any
+    ) -> _models.ClusterJob:
+        """Get a ClusterJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param jobs_name: Name of ClusterJob. Required.
+        :type jobs_name: str
+        :return: ClusterJob. The ClusterJob is compatible with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.ClusterJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ClusterJob] = kwargs.pop("cls", None)
+
+        _request = build_cluster_jobs_get_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            jobs_name=jobs_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ClusterJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "jobs_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        jobs_name: str,
+        resource: Union[_models.ClusterJob, _types.ClusterJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_cluster_jobs_create_or_update_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            jobs_name=jobs_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        jobs_name: str,
+        resource: _models.ClusterJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterJob]:
+        """Create a ClusterJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param jobs_name: Name of ClusterJob. Required.
+        :type jobs_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.ClusterJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ClusterJob. The ClusterJob is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.ClusterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        jobs_name: str,
+        resource: _types.ClusterJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterJob]:
+        """Create a ClusterJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param jobs_name: Name of ClusterJob. Required.
+        :type jobs_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.ClusterJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ClusterJob. The ClusterJob is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.ClusterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        jobs_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterJob]:
+        """Create a ClusterJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param jobs_name: Name of ClusterJob. Required.
+        :type jobs_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ClusterJob. The ClusterJob is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.ClusterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "jobs_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        jobs_name: str,
+        resource: Union[_models.ClusterJob, _types.ClusterJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterJob]:
+        """Create a ClusterJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param jobs_name: Name of ClusterJob. Required.
+        :type jobs_name: str
+        :param resource: Resource create parameters. Is either a ClusterJob type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.ClusterJob or
+         ~azure.mgmt.azurestackhci.types.ClusterJob or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ClusterJob. The ClusterJob is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.ClusterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ClusterJob] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                jobs_name=jobs_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ClusterJob, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ClusterJob].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ClusterJob](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "jobs_name"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, cluster_name: str, jobs_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_cluster_jobs_delete_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            jobs_name=jobs_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "jobs_name"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, cluster_name: str, jobs_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a ClusterJob.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param jobs_name: Name of ClusterJob. Required.
+        :type jobs_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                jobs_name=jobs_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ClusterJob"]:
+        """List ClusterJob resources by Clusters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :return: An iterator like instance of ClusterJob
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.ClusterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ClusterJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_cluster_jobs_list_request(
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ClusterJob],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class EdgeMachineNetworkAdaptersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_network_adapters` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "network_adapter_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, network_adapter_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineNetworkAdapter:
+        """Get a specific network adapter on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param network_adapter_name: The name of the EdgeMachineNetworkAdapter. Required.
+        :type network_adapter_name: str
+        :return: EdgeMachineNetworkAdapter. The EdgeMachineNetworkAdapter is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapter
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineNetworkAdapter] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_network_adapters_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            network_adapter_name=network_adapter_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineNetworkAdapter, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "accept"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineNetworkAdapter"]:
+        """List all network adapters on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An iterator like instance of EdgeMachineNetworkAdapter
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapter]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineNetworkAdapter]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_network_adapters_list_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineNetworkAdapter],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class EdgeMachineNetworkAdapterJobsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_network_adapter_jobs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "network_adapter_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, network_adapter_name: str, job_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineNetworkAdapterJob:
+        """Get a specific network adapter job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param network_adapter_name: The name of the EdgeMachineNetworkAdapter. Required.
+        :type network_adapter_name: str
+        :param job_name: The name of the EdgeMachineNetworkAdapterJob. Required.
+        :type job_name: str
+        :return: EdgeMachineNetworkAdapterJob. The EdgeMachineNetworkAdapterJob is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineNetworkAdapterJob] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_network_adapter_jobs_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            network_adapter_name=network_adapter_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineNetworkAdapterJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "network_adapter_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list(
+        self, resource_group_name: str, edge_machine_name: str, network_adapter_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineNetworkAdapterJob"]:
+        """List all jobs for a network adapter.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param network_adapter_name: The name of the EdgeMachineNetworkAdapter. Required.
+        :type network_adapter_name: str
+        :return: An iterator like instance of EdgeMachineNetworkAdapterJob
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineNetworkAdapterJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_network_adapter_jobs_list_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    network_adapter_name=network_adapter_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineNetworkAdapterJob],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "network_adapter_name",
+                "job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        network_adapter_name: str,
+        job_name: str,
+        resource: Union[_models.EdgeMachineNetworkAdapterJob, _types.EdgeMachineNetworkAdapterJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machine_network_adapter_jobs_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            network_adapter_name=network_adapter_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        network_adapter_name: str,
+        job_name: str,
+        resource: _models.EdgeMachineNetworkAdapterJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineNetworkAdapterJob]:
+        """Create or update a network adapter job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param network_adapter_name: The name of the EdgeMachineNetworkAdapter. Required.
+        :type network_adapter_name: str
+        :param job_name: The name of the EdgeMachineNetworkAdapterJob. Required.
+        :type job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineNetworkAdapterJob. The
+         EdgeMachineNetworkAdapterJob is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        network_adapter_name: str,
+        job_name: str,
+        resource: _types.EdgeMachineNetworkAdapterJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineNetworkAdapterJob]:
+        """Create or update a network adapter job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param network_adapter_name: The name of the EdgeMachineNetworkAdapter. Required.
+        :type network_adapter_name: str
+        :param job_name: The name of the EdgeMachineNetworkAdapterJob. Required.
+        :type job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachineNetworkAdapterJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineNetworkAdapterJob. The
+         EdgeMachineNetworkAdapterJob is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        network_adapter_name: str,
+        job_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineNetworkAdapterJob]:
+        """Create or update a network adapter job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param network_adapter_name: The name of the EdgeMachineNetworkAdapter. Required.
+        :type network_adapter_name: str
+        :param job_name: The name of the EdgeMachineNetworkAdapterJob. Required.
+        :type job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineNetworkAdapterJob. The
+         EdgeMachineNetworkAdapterJob is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "network_adapter_name",
+                "job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        network_adapter_name: str,
+        job_name: str,
+        resource: Union[_models.EdgeMachineNetworkAdapterJob, _types.EdgeMachineNetworkAdapterJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineNetworkAdapterJob]:
+        """Create or update a network adapter job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param network_adapter_name: The name of the EdgeMachineNetworkAdapter. Required.
+        :type network_adapter_name: str
+        :param job_name: The name of the EdgeMachineNetworkAdapterJob. Required.
+        :type job_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachineNetworkAdapterJob type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineNetworkAdapterJob or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineNetworkAdapterJob. The
+         EdgeMachineNetworkAdapterJob is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineNetworkAdapterJob] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                network_adapter_name=network_adapter_name,
+                job_name=job_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineNetworkAdapterJob, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineNetworkAdapterJob].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineNetworkAdapterJob](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "network_adapter_name",
+                "job_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, network_adapter_name: str, job_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_network_adapter_jobs_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            network_adapter_name=network_adapter_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "network_adapter_name",
+                "job_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, network_adapter_name: str, job_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a network adapter job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param network_adapter_name: The name of the EdgeMachineNetworkAdapter. Required.
+        :type network_adapter_name: str
+        :param job_name: The name of the EdgeMachineNetworkAdapterJob. Required.
+        :type job_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                network_adapter_name=network_adapter_name,
+                job_name=job_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class EdgeMachineDisksOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_disks` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineDisk:
+        """Get a specific disk on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :return: EdgeMachineDisk. The EdgeMachineDisk is compatible with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineDisk
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineDisk] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_disks_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineDisk, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "accept"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineDisk"]:
+        """List all disks on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An iterator like instance of EdgeMachineDisk
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineDisk]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineDisk]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_disks_list_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineDisk],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        resource: Union[_models.EdgeMachineDisk, _types.EdgeMachineDisk, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machine_disks_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        resource: _models.EdgeMachineDisk,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDisk]:
+        """Create or update a disk on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineDisk
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDisk. The EdgeMachineDisk is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDisk]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        resource: _types.EdgeMachineDisk,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDisk]:
+        """Create or update a disk on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachineDisk
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDisk. The EdgeMachineDisk is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDisk]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDisk]:
+        """Create or update a disk on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDisk. The EdgeMachineDisk is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDisk]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        resource: Union[_models.EdgeMachineDisk, _types.EdgeMachineDisk, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDisk]:
+        """Create or update a disk on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachineDisk type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineDisk or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineDisk or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDisk. The EdgeMachineDisk is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDisk]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineDisk] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                disk_name=disk_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineDisk, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineDisk].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineDisk](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "disk_name"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_disks_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "disk_name"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a disk from an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                disk_name=disk_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class EdgeMachineVolumesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_volumes` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "volume_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, volume_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineVolume:
+        """Get a specific volume on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param volume_name: The name of the EdgeMachineVolume. Required.
+        :type volume_name: str
+        :return: EdgeMachineVolume. The EdgeMachineVolume is compatible with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineVolume
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineVolume] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_volumes_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineVolume, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "accept"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineVolume"]:
+        """List all volumes on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An iterator like instance of EdgeMachineVolume
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineVolume]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_volumes_list_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineVolume],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        volume_name: str,
+        resource: Union[_models.EdgeMachineVolume, _types.EdgeMachineVolume, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machine_volumes_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        volume_name: str,
+        resource: _models.EdgeMachineVolume,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineVolume]:
+        """Create or update a volume on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param volume_name: The name of the EdgeMachineVolume. Required.
+        :type volume_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineVolume
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineVolume. The EdgeMachineVolume is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        volume_name: str,
+        resource: _types.EdgeMachineVolume,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineVolume]:
+        """Create or update a volume on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param volume_name: The name of the EdgeMachineVolume. Required.
+        :type volume_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachineVolume
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineVolume. The EdgeMachineVolume is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        volume_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineVolume]:
+        """Create or update a volume on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param volume_name: The name of the EdgeMachineVolume. Required.
+        :type volume_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineVolume. The EdgeMachineVolume is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        volume_name: str,
+        resource: Union[_models.EdgeMachineVolume, _types.EdgeMachineVolume, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineVolume]:
+        """Create or update a volume on an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param volume_name: The name of the EdgeMachineVolume. Required.
+        :type volume_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachineVolume type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineVolume or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineVolume or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineVolume. The EdgeMachineVolume is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineVolume]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineVolume] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                volume_name=volume_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineVolume, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineVolume].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineVolume](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "volume_name"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, volume_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_volumes_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            volume_name=volume_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "volume_name"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, volume_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a volume from an Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param volume_name: The name of the EdgeMachineVolume. Required.
+        :type volume_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                volume_name=volume_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class EdgeMachineDiskJobsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_disk_jobs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, job_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineDiskJob:
+        """Get a specific disk job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param job_name: The name of the EdgeMachineDiskJob. Required.
+        :type job_name: str
+        :return: EdgeMachineDiskJob. The EdgeMachineDiskJob is compatible with MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineDiskJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineDiskJob] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_disk_jobs_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineDiskJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineDiskJob"]:
+        """List all jobs for a disk.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :return: An iterator like instance of EdgeMachineDiskJob
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineDiskJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineDiskJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_disk_jobs_list_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    disk_name=disk_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineDiskJob],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        job_name: str,
+        resource: Union[_models.EdgeMachineDiskJob, _types.EdgeMachineDiskJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machine_disk_jobs_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        job_name: str,
+        resource: _models.EdgeMachineDiskJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDiskJob]:
+        """Create or update a disk job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param job_name: The name of the EdgeMachineDiskJob. Required.
+        :type job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineDiskJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDiskJob. The EdgeMachineDiskJob
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDiskJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        job_name: str,
+        resource: _types.EdgeMachineDiskJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDiskJob]:
+        """Create or update a disk job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param job_name: The name of the EdgeMachineDiskJob. Required.
+        :type job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachineDiskJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDiskJob. The EdgeMachineDiskJob
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDiskJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        job_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDiskJob]:
+        """Create or update a disk job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param job_name: The name of the EdgeMachineDiskJob. Required.
+        :type job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDiskJob. The EdgeMachineDiskJob
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDiskJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        job_name: str,
+        resource: Union[_models.EdgeMachineDiskJob, _types.EdgeMachineDiskJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDiskJob]:
+        """Create or update a disk job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param job_name: The name of the EdgeMachineDiskJob. Required.
+        :type job_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachineDiskJob type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineDiskJob or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineDiskJob or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDiskJob. The EdgeMachineDiskJob
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDiskJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineDiskJob] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                disk_name=disk_name,
+                job_name=job_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineDiskJob, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineDiskJob].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineDiskJob](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "job_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, job_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_disk_jobs_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "job_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, job_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a disk job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param job_name: The name of the EdgeMachineDiskJob. Required.
+        :type job_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                disk_name=disk_name,
+                job_name=job_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class EdgeMachineDiskPrivilegedJobsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_disk_privileged_jobs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "privileged_job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, privileged_job_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineDiskPrivilegedJob:
+        """Get a specific privileged job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param privileged_job_name: The name of the EdgeMachineDiskPrivilegedJob. Required.
+        :type privileged_job_name: str
+        :return: EdgeMachineDiskPrivilegedJob. The EdgeMachineDiskPrivilegedJob is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineDiskPrivilegedJob] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_disk_privileged_jobs_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            privileged_job_name=privileged_job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineDiskPrivilegedJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineDiskPrivilegedJob"]:
+        """List all privileged jobs for a disk.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :return: An iterator like instance of EdgeMachineDiskPrivilegedJob
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineDiskPrivilegedJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_disk_privileged_jobs_list_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    disk_name=disk_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineDiskPrivilegedJob],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "privileged_job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        privileged_job_name: str,
+        resource: Union[_models.EdgeMachineDiskPrivilegedJob, _types.EdgeMachineDiskPrivilegedJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machine_disk_privileged_jobs_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            privileged_job_name=privileged_job_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        privileged_job_name: str,
+        resource: _models.EdgeMachineDiskPrivilegedJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDiskPrivilegedJob]:
+        """Create or update a privileged job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param privileged_job_name: The name of the EdgeMachineDiskPrivilegedJob. Required.
+        :type privileged_job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDiskPrivilegedJob. The
+         EdgeMachineDiskPrivilegedJob is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        privileged_job_name: str,
+        resource: _types.EdgeMachineDiskPrivilegedJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDiskPrivilegedJob]:
+        """Create or update a privileged job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param privileged_job_name: The name of the EdgeMachineDiskPrivilegedJob. Required.
+        :type privileged_job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachineDiskPrivilegedJob
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDiskPrivilegedJob. The
+         EdgeMachineDiskPrivilegedJob is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        privileged_job_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDiskPrivilegedJob]:
+        """Create or update a privileged job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param privileged_job_name: The name of the EdgeMachineDiskPrivilegedJob. Required.
+        :type privileged_job_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDiskPrivilegedJob. The
+         EdgeMachineDiskPrivilegedJob is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "privileged_job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        disk_name: str,
+        privileged_job_name: str,
+        resource: Union[_models.EdgeMachineDiskPrivilegedJob, _types.EdgeMachineDiskPrivilegedJob, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDiskPrivilegedJob]:
+        """Create or update a privileged job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param privileged_job_name: The name of the EdgeMachineDiskPrivilegedJob. Required.
+        :type privileged_job_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachineDiskPrivilegedJob type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineDiskPrivilegedJob or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDiskPrivilegedJob. The
+         EdgeMachineDiskPrivilegedJob is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineDiskPrivilegedJob] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                disk_name=disk_name,
+                privileged_job_name=privileged_job_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineDiskPrivilegedJob, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineDiskPrivilegedJob].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineDiskPrivilegedJob](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "privileged_job_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, privileged_job_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_disk_privileged_jobs_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            disk_name=disk_name,
+            privileged_job_name=privileged_job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "disk_name",
+                "privileged_job_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, disk_name: str, privileged_job_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a privileged job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param disk_name: The name of the EdgeMachineDisk. Required.
+        :type disk_name: str
+        :param privileged_job_name: The name of the EdgeMachineDiskPrivilegedJob. Required.
+        :type privileged_job_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                disk_name=disk_name,
+                privileged_job_name=privileged_job_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class EdgeMachineSecuritySettingsOperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_security_settings_operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "security_settings_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, security_settings_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineSecuritySettings:
+        """Get an EdgeMachineSecuritySettings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param security_settings_name: Name of the security settings resource. Required.
+        :type security_settings_name: str
+        :return: EdgeMachineSecuritySettings. The EdgeMachineSecuritySettings is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineSecuritySettings] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_security_settings_operations_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            security_settings_name=security_settings_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineSecuritySettings, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "security_settings_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        security_settings_name: str,
+        resource: Union[_models.EdgeMachineSecuritySettings, _types.EdgeMachineSecuritySettings, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machine_security_settings_operations_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            security_settings_name=security_settings_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        security_settings_name: str,
+        resource: _models.EdgeMachineSecuritySettings,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineSecuritySettings]:
+        """Create or update an EdgeMachineSecuritySettings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param security_settings_name: Name of the security settings resource. Required.
+        :type security_settings_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineSecuritySettings. The
+         EdgeMachineSecuritySettings is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        security_settings_name: str,
+        resource: _types.EdgeMachineSecuritySettings,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineSecuritySettings]:
+        """Create or update an EdgeMachineSecuritySettings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param security_settings_name: Name of the security settings resource. Required.
+        :type security_settings_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachineSecuritySettings
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineSecuritySettings. The
+         EdgeMachineSecuritySettings is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        security_settings_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineSecuritySettings]:
+        """Create or update an EdgeMachineSecuritySettings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param security_settings_name: Name of the security settings resource. Required.
+        :type security_settings_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineSecuritySettings. The
+         EdgeMachineSecuritySettings is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "security_settings_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        security_settings_name: str,
+        resource: Union[_models.EdgeMachineSecuritySettings, _types.EdgeMachineSecuritySettings, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineSecuritySettings]:
+        """Create or update an EdgeMachineSecuritySettings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param security_settings_name: Name of the security settings resource. Required.
+        :type security_settings_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachineSecuritySettings type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineSecuritySettings or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineSecuritySettings. The
+         EdgeMachineSecuritySettings is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineSecuritySettings] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                security_settings_name=security_settings_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineSecuritySettings, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineSecuritySettings].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineSecuritySettings](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "security_settings_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, security_settings_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_security_settings_operations_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            security_settings_name=security_settings_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "security_settings_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, security_settings_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete an EdgeMachineSecuritySettings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param security_settings_name: Name of the security settings resource. Required.
+        :type security_settings_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                security_settings_name=security_settings_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "accept"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list_by_edge_machine(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineSecuritySettings"]:
+        """List EdgeMachineSecuritySettings by EdgeMachine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An iterator like instance of EdgeMachineSecuritySettings
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineSecuritySettings]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_security_settings_operations_list_by_edge_machine_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineSecuritySettings],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class EdgeMachineDeploymentSettingsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.azurestackhci.aio.AzureStackHCIClient`'s
+        :attr:`edge_machine_deployment_settings` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureStackHCIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "deployment_setting_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def get(
+        self, resource_group_name: str, edge_machine_name: str, deployment_setting_name: str, **kwargs: Any
+    ) -> _models.EdgeMachineDeploymentSetting:
+        """Get an Edge Machine Deployment Setting.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param deployment_setting_name: Name of Edge Machine Deployment Setting. Required.
+        :type deployment_setting_name: str
+        :return: EdgeMachineDeploymentSetting. The EdgeMachineDeploymentSetting is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeMachineDeploymentSetting] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_deployment_settings_get_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            deployment_setting_name=deployment_setting_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeMachineDeploymentSetting, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "deployment_setting_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        deployment_setting_name: str,
+        resource: Union[_models.EdgeMachineDeploymentSetting, _types.EdgeMachineDeploymentSetting, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_machine_deployment_settings_create_or_update_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            deployment_setting_name=deployment_setting_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        deployment_setting_name: str,
+        resource: _models.EdgeMachineDeploymentSetting,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDeploymentSetting]:
+        """Create or update an Edge Machine Deployment Setting.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param deployment_setting_name: Name of Edge Machine Deployment Setting. Required.
+        :type deployment_setting_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDeploymentSetting. The
+         EdgeMachineDeploymentSetting is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        deployment_setting_name: str,
+        resource: _types.EdgeMachineDeploymentSetting,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDeploymentSetting]:
+        """Create or update an Edge Machine Deployment Setting.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param deployment_setting_name: Name of Edge Machine Deployment Setting. Required.
+        :type deployment_setting_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.azurestackhci.types.EdgeMachineDeploymentSetting
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDeploymentSetting. The
+         EdgeMachineDeploymentSetting is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        deployment_setting_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDeploymentSetting]:
+        """Create or update an Edge Machine Deployment Setting.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param deployment_setting_name: Name of Edge Machine Deployment Setting. Required.
+        :type deployment_setting_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDeploymentSetting. The
+         EdgeMachineDeploymentSetting is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "deployment_setting_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        edge_machine_name: str,
+        deployment_setting_name: str,
+        resource: Union[_models.EdgeMachineDeploymentSetting, _types.EdgeMachineDeploymentSetting, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeMachineDeploymentSetting]:
+        """Create or update an Edge Machine Deployment Setting.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param deployment_setting_name: Name of Edge Machine Deployment Setting. Required.
+        :type deployment_setting_name: str
+        :param resource: Resource create parameters. Is either a EdgeMachineDeploymentSetting type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting or
+         ~azure.mgmt.azurestackhci.types.EdgeMachineDeploymentSetting or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeMachineDeploymentSetting. The
+         EdgeMachineDeploymentSetting is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeMachineDeploymentSetting] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                deployment_setting_name=deployment_setting_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeMachineDeploymentSetting, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeMachineDeploymentSetting].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeMachineDeploymentSetting](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "deployment_setting_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_machine_name: str, deployment_setting_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_machine_deployment_settings_delete_request(
+            resource_group_name=resource_group_name,
+            edge_machine_name=edge_machine_name,
+            deployment_setting_name=deployment_setting_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_machine_name",
+                "deployment_setting_name",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_machine_name: str, deployment_setting_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete an Edge Machine Deployment Setting.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :param deployment_setting_name: Name of Edge Machine Deployment Setting. Required.
+        :type deployment_setting_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_machine_name=edge_machine_name,
+                deployment_setting_name=deployment_setting_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_machine_name", "accept"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def list_by_edge_machine(
+        self, resource_group_name: str, edge_machine_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeMachineDeploymentSetting"]:
+        """List Edge Machine Deployment Setting resources by Edge Machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_machine_name: Name of Device. Required.
+        :type edge_machine_name: str
+        :return: An iterator like instance of EdgeMachineDeploymentSetting
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeMachineDeploymentSetting]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_machine_deployment_settings_list_by_edge_machine_request(
+                    resource_group_name=resource_group_name,
+                    edge_machine_name=edge_machine_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeMachineDeploymentSetting],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class UpdateSummariesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

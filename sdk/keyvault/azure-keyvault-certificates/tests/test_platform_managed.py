@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-"""Unit tests for PlatformManaged property on CertificatePolicy (2026-03-01-preview)."""
+"""Unit tests for the internal-use PlatformManaged property on CertificatePolicy."""
 
 import pytest
 from azure.keyvault.certificates import CertificatePolicy as PublicCertificatePolicy, PlatformManaged

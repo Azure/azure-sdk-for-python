@@ -34,6 +34,7 @@ def main():
         resource_group_name="rgopenapi",
         scheduler_name="testscheduler",
         properties={
+            "identity": {"type": "None"},
             "properties": {"ipAllowlist": ["10.0.0.0/8"], "sku": {"capacity": 3, "name": "Dedicated"}},
             "tags": {"hello": "world"},
         },
@@ -41,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/Schedulers_Update.json
+# x-ms-original-file: 2026-07-01-preview/Schedulers_Update.json
 if __name__ == "__main__":
     main()

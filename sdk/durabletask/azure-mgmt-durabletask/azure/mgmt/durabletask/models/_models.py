@@ -17,6 +17,255 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    """
+
+
+class Detector(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A diagnostic detector resource belonging to the scheduler.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.durabletask.models.DetectorProperties
+    """
+
+    properties: Optional["_models.DetectorProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DetectorProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DetectorDataset(_Model):
+    """A dataset produced by a detector.
+
+    :ivar table: The tabular data produced by the detector.
+    :vartype table: ~azure.mgmt.durabletask.models.DetectorTable
+    :ivar rendering_properties: The rendering information for the tabular data.
+    :vartype rendering_properties: ~azure.mgmt.durabletask.models.DetectorRenderingProperties
+    """
+
+    table: Optional["_models.DetectorTable"] = rest_field(visibility=["read"])
+    """The tabular data produced by the detector."""
+    rendering_properties: Optional["_models.DetectorRenderingProperties"] = rest_field(
+        name="renderingProperties", visibility=["read"]
+    )
+    """The rendering information for the tabular data."""
+
+
+class DetectorMetadata(_Model):
+    """Metadata that identifies and describes a detector.
+
+    :ivar id: The unique identifier of the detector.
+    :vartype id: str
+    :ivar name: The display name of the detector.
+    :vartype name: str
+    :ivar description: A description of the detector.
+    :vartype description: str
+    :ivar author: The author of the detector when available for the caller.
+    :vartype author: str
+    :ivar category: The category of the detector.
+    :vartype category: str
+    :ivar support_topic_list: The case-submission support topic identifiers for which the detector
+     is enabled.
+    :vartype support_topic_list: list[str]
+    :ivar analysis_types: The analysis identifiers for which the detector is enabled.
+    :vartype analysis_types: list[str]
+    :ivar type: The kind of diagnostic response. Known values are: "Detector", "Analysis", and
+     "CategoryOverview".
+    :vartype type: str or ~azure.mgmt.durabletask.models.DetectorType
+    :ivar score: The match score when the detector is returned from a search.
+    :vartype score: float
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The unique identifier of the detector."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The display name of the detector."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """A description of the detector."""
+    author: Optional[str] = rest_field(visibility=["read"])
+    """The author of the detector when available for the caller."""
+    category: Optional[str] = rest_field(visibility=["read"])
+    """The category of the detector."""
+    support_topic_list: Optional[list[str]] = rest_field(name="supportTopicList", visibility=["read"])
+    """The case-submission support topic identifiers for which the detector is enabled."""
+    analysis_types: Optional[list[str]] = rest_field(name="analysisTypes", visibility=["read"])
+    """The analysis identifiers for which the detector is enabled."""
+    type: Optional[Union[str, "_models.DetectorType"]] = rest_field(visibility=["read"])
+    """The kind of diagnostic response. Known values are: \"Detector\", \"Analysis\", and
+     \"CategoryOverview\"."""
+    score: Optional[float] = rest_field(visibility=["read"])
+    """The match score when the detector is returned from a search."""
+
+
+class DetectorProperties(_Model):
+    """The diagnostic response returned for a detector.
+
+    :ivar provisioning_state: The provisioning state of the detector. Known values are:
+     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.durabletask.models.ProvisioningState
+    :ivar metadata: Metadata that identifies and describes the detector.
+    :vartype metadata: ~azure.mgmt.durabletask.models.DetectorMetadata
+    :ivar dataset: The datasets produced when the detector runs.
+    :vartype dataset: list[~azure.mgmt.durabletask.models.DetectorDataset]
+    :ivar status: The overall result of the detector.
+    :vartype status: ~azure.mgmt.durabletask.models.DetectorStatus
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the detector. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+    metadata: Optional["_models.DetectorMetadata"] = rest_field(visibility=["read"])
+    """Metadata that identifies and describes the detector."""
+    dataset: Optional[list["_models.DetectorDataset"]] = rest_field(visibility=["read"])
+    """The datasets produced when the detector runs."""
+    status: Optional["_models.DetectorStatus"] = rest_field(visibility=["read"])
+    """The overall result of the detector."""
+
+
+class DetectorRenderingProperties(_Model):
+    """The rendering information for a detector dataset.
+
+    :ivar type: The rendering type for the dataset. Known values are: 1, 2, 3, 4, 5, 6, 7, 8, and
+     9.
+    :vartype type: int or ~azure.mgmt.durabletask.models.DetectorRenderingType
+    :ivar title: The optional title of the rendering block.
+    :vartype title: str
+    :ivar description: The optional description of the rendering block.
+    :vartype description: str
+    """
+
+    type: Optional[Union[int, "_models.DetectorRenderingType"]] = rest_field(visibility=["read"])
+    """The rendering type for the dataset. Known values are: 1, 2, 3, 4, 5, 6, 7, 8, and 9."""
+    title: Optional[str] = rest_field(visibility=["read"])
+    """The optional title of the rendering block."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """The optional description of the rendering block."""
+
+
+class DetectorStatus(_Model):
+    """The overall result of a detector.
+
+    :ivar message: The optional message describing the detector result.
+    :vartype message: str
+    :ivar status_id: The status of the detector result. Known values are: 0, 1, 2, 3, and 4.
+    :vartype status_id: int or ~azure.mgmt.durabletask.models.DetectorStatusId
+    """
+
+    message: Optional[str] = rest_field(visibility=["read"])
+    """The optional message describing the detector result."""
+    status_id: Optional[Union[int, "_models.DetectorStatusId"]] = rest_field(name="statusId", visibility=["read"])
+    """The status of the detector result. Known values are: 0, 1, 2, 3, and 4."""
+
+
+class DetectorTable(_Model):
+    """A table included in a detector dataset.
+
+    :ivar table_name: The name of the table.
+    :vartype table_name: str
+    :ivar columns: The column definitions for the table.
+    :vartype columns: list[~azure.mgmt.durabletask.models.DetectorTableColumn]
+    :ivar rows: The rows in the table. Values use the types specified by their columns.
+    :vartype rows: list[list[any]]
+    """
+
+    table_name: Optional[str] = rest_field(name="tableName", visibility=["read"])
+    """The name of the table."""
+    columns: Optional[list["_models.DetectorTableColumn"]] = rest_field(visibility=["read"])
+    """The column definitions for the table."""
+    rows: Optional[list[list[Any]]] = rest_field(visibility=["read"])
+    """The rows in the table. Values use the types specified by their columns."""
+
+
+class DetectorTableColumn(_Model):
+    """A column definition in a detector table.
+
+    :ivar column_name: The name of the column.
+    :vartype column_name: str
+    :ivar data_type: The data type of values in the column.
+    :vartype data_type: str
+    :ivar column_type: The optional semantic classification of the column.
+    :vartype column_type: str
+    """
+
+    column_name: Optional[str] = rest_field(name="columnName", visibility=["read"])
+    """The name of the column."""
+    data_type: Optional[str] = rest_field(name="dataType", visibility=["read"])
+    """The data type of values in the column."""
+    column_type: Optional[str] = rest_field(name="columnType", visibility=["read"])
+    """The optional semantic classification of the column."""
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -61,7 +310,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -89,7 +338,159 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class FailoverInstance(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A failover instance belonging to the scheduler.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.durabletask.models.FailoverInstanceProperties
+    """
+
+    properties: Optional["_models.FailoverInstanceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.FailoverInstanceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FailoverInstanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The failover instance settings for the resource.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.durabletask.models.ProvisioningState
+    :ivar replication_role: The replication role of the parent scheduler. Known values are:
+     "Primary" and "Secondary".
+    :vartype replication_role: str or ~azure.mgmt.durabletask.models.ReplicationRole
+    :ivar failover_state: The current state of the failover operation. Known values are: "None",
+     "InProgress", "Succeeded", and "Failed".
+    :vartype failover_state: str or ~azure.mgmt.durabletask.models.FailoverState
+    :ivar partner_scheduler_resource_id: The resource ID of the partner scheduler in the failover
+     configuration. Required.
+    :vartype partner_scheduler_resource_id: str
+    :ivar partner_scheduler_location: The location of the partner scheduler in the failover
+     configuration.
+    :vartype partner_scheduler_location: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+    replication_role: Optional[Union[str, "_models.ReplicationRole"]] = rest_field(
+        name="replicationRole", visibility=["read"]
+    )
+    """The replication role of the parent scheduler. Known values are: \"Primary\" and \"Secondary\"."""
+    failover_state: Optional[Union[str, "_models.FailoverState"]] = rest_field(
+        name="failoverState", visibility=["read"]
+    )
+    """The current state of the failover operation. Known values are: \"None\", \"InProgress\",
+     \"Succeeded\", and \"Failed\"."""
+    partner_scheduler_resource_id: str = rest_field(
+        name="partnerSchedulerResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the partner scheduler in the failover configuration. Required."""
+    partner_scheduler_location: Optional[str] = rest_field(name="partnerSchedulerLocation", visibility=["read"])
+    """The location of the partner scheduler in the failover configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        partner_scheduler_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.durabletask.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.durabletask.models.UserAssignedIdentity]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -177,7 +578,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OptionalPropertiesUpdateableProperties(_Model):
+class OptionalPropertiesUpdateableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The template for adding optional properties.
 
     :ivar private_endpoint: The private endpoint resource.
@@ -228,35 +629,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -297,7 +670,7 @@ class PrivateEndpointConnection(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -350,7 +723,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionUpdate(_Model):
+class PrivateEndpointConnectionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PATCH model for private endpoint connections.
 
     :ivar properties: The private endpoint connection properties.
@@ -380,7 +753,7 @@ class PrivateEndpointConnectionUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -418,7 +791,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -464,24 +837,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
-    """
-
-
-class RetentionPolicy(ProxyResource):
+class RetentionPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A retention policy resource belonging to the scheduler.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -522,7 +878,7 @@ class RetentionPolicy(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicyDetails(_Model):
+class RetentionPolicyDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a retention policy.
 
     :ivar retention_period_in_days: The retention period in days after which the orchestration will
@@ -565,7 +921,7 @@ class RetentionPolicyDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicyProperties(_Model):
+class RetentionPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The retention policy settings for the resource.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -603,7 +959,7 @@ class RetentionPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -647,7 +1003,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Scheduler(TrackedResource):
+class Scheduler(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Durable Task Scheduler resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -667,12 +1023,18 @@ class Scheduler(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.durabletask.models.SchedulerProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.durabletask.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.SchedulerProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
@@ -681,6 +1043,7 @@ class Scheduler(TrackedResource):
         location: str,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SchedulerProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -694,7 +1057,7 @@ class Scheduler(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerPrivateLinkResource(Resource):
+class SchedulerPrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -735,7 +1098,7 @@ class SchedulerPrivateLinkResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerProperties(_Model):
+class SchedulerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the Scheduler.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -797,7 +1160,7 @@ class SchedulerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerPropertiesUpdate(_Model):
+class SchedulerPropertiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Scheduler resource properties to be updated.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -853,7 +1216,7 @@ class SchedulerPropertiesUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerSku(_Model):
+class SchedulerSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU (Stock Keeping Unit) assigned to this durable task scheduler.
 
     :ivar name: The name of the SKU. Required. Known values are: "Dedicated" and "Consumption".
@@ -897,7 +1260,7 @@ class SchedulerSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerSkuUpdate(_Model):
+class SchedulerSkuUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU (Stock Keeping Unit) properties to be updated.
 
     :ivar name: The name of the SKU. Known values are: "Dedicated" and "Consumption".
@@ -941,13 +1304,15 @@ class SchedulerSkuUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerUpdate(_Model):
+class SchedulerUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The update request model for the Scheduler resource.
 
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.durabletask.models.SchedulerPropertiesUpdate
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.durabletask.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.SchedulerPropertiesUpdate"] = rest_field(
@@ -956,6 +1321,10 @@ class SchedulerUpdate(_Model):
     """The resource-specific properties for this resource."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
@@ -963,6 +1332,7 @@ class SchedulerUpdate(_Model):
         *,
         properties: Optional["_models.SchedulerPropertiesUpdate"] = None,
         tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -976,7 +1346,7 @@ class SchedulerUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1043,7 +1413,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskHub(ProxyResource):
+class TaskHub(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Task Hub resource belonging to the scheduler.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1084,7 +1454,7 @@ class TaskHub(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class TaskHubProperties(_Model):
+class TaskHubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of Task Hub.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1092,6 +1462,9 @@ class TaskHubProperties(_Model):
     :vartype provisioning_state: str or ~azure.mgmt.durabletask.models.ProvisioningState
     :ivar dashboard_url: URL of the durable task scheduler dashboard.
     :vartype dashboard_url: str
+    :ivar capabilities: A set of Task Hub capabilities that can be enabled or disabled for a Task
+     Hub.
+    :vartype capabilities: list[str]
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -1101,3 +1474,274 @@ class TaskHubProperties(_Model):
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
     dashboard_url: Optional[str] = rest_field(name="dashboardUrl", visibility=["read"])
     """URL of the durable task scheduler dashboard."""
+    capabilities: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of Task Hub capabilities that can be enabled or disabled for a Task Hub."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capabilities: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TaskQueue(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Task Queue resource belonging to a Task Hub.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.durabletask.models.TaskQueueProperties
+    """
+
+    properties: Optional["_models.TaskQueueProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.TaskQueueProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TaskQueueProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a Task Queue.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.durabletask.models.ProvisioningState
+    :ivar throughput: The throughput configuration of the Task Queue.
+    :vartype throughput: ~azure.mgmt.durabletask.models.TaskQueueThroughput
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+    throughput: Optional["_models.TaskQueueThroughput"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The throughput configuration of the Task Queue."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        throughput: Optional["_models.TaskQueueThroughput"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TaskQueueThroughput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The throughput configuration of a Task Queue.
+
+    :ivar actions_per_second: The rate of work-item handouts per second.
+    :vartype actions_per_second: int
+    """
+
+    actions_per_second: Optional[int] = rest_field(
+        name="actionsPerSecond", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The rate of work-item handouts per second."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        actions_per_second: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TaskQueueUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The update request model for a Task Queue.
+
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.durabletask.models.TaskQueueProperties
+    """
+
+    properties: Optional["_models.TaskQueueProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.TaskQueueProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TransparentDataEncryption(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A transparent data encryption resource belonging to the scheduler.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.durabletask.models.TransparentDataEncryptionProperties
+    """
+
+    properties: Optional["_models.TransparentDataEncryptionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.TransparentDataEncryptionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TransparentDataEncryptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The transparent data encryption settings for the resource.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.durabletask.models.ProvisioningState
+    :ivar key_source: The key source for the transparent data encryption. Required. Known values
+     are: "MicrosoftManaged" and "CustomerManaged".
+    :vartype key_source: str or ~azure.mgmt.durabletask.models.TransparentDataEncryptionKeySource
+    :ivar key_vault_key_uri: The URI of the key in Key Vault to be used for transparent data
+     encryption.
+    :vartype key_vault_key_uri: str
+    :ivar auto_rotation_enabled: Indicates whether auto-rotation of the customer-managed keys is
+     enabled for transparent data encryption.
+    :vartype auto_rotation_enabled: bool
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+    key_source: Union[str, "_models.TransparentDataEncryptionKeySource"] = rest_field(
+        name="keySource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The key source for the transparent data encryption. Required. Known values are:
+     \"MicrosoftManaged\" and \"CustomerManaged\"."""
+    key_vault_key_uri: Optional[str] = rest_field(
+        name="keyVaultKeyUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the key in Key Vault to be used for transparent data encryption."""
+    auto_rotation_enabled: Optional[bool] = rest_field(
+        name="autoRotationEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether auto-rotation of the customer-managed keys is enabled for transparent data
+     encryption."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_source: Union[str, "_models.TransparentDataEncryptionKeySource"],
+        key_vault_key_uri: Optional[str] = None,
+        auto_rotation_enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UserAssignedIdentity(_Model):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""

@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-04-01-preview/Profile-PUT-NoEndpoints.json
+# x-ms-original-file: 2026-09-01/Profile-PUT-NoEndpoints.json
 if __name__ == "__main__":
     main()

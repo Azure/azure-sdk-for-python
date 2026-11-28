@@ -28,7 +28,13 @@ from typing import (
 )
 
 from azure.core import MatchConditions
-from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceResponseError
+from azure.core.exceptions import (
+    DecodeError,
+    HttpResponseError,
+    IncompleteReadError,
+    ResourceModifiedError,
+    ServiceResponseError,
+)
 from azure.core.tracing.common import with_current_context
 
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -117,6 +123,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         parallel: Optional[int] = None,
         non_empty_ranges: Optional[List[Dict[str, Any]]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
+        disable_etag_lock: bool = False,
         **kwargs: Any,
     ) -> None:
         self.client = client
@@ -147,6 +154,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
         # Parameters for each get operation
         self.validate_content = validate_content
+        self.disable_etag_lock = disable_etag_lock
         self.request_options = kwargs
 
     def _calculate_range(self, chunk_start: int) -> Tuple[int, int]:
@@ -262,10 +270,16 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                     time.sleep(1)
             content_length = response.content_length
 
-            # This makes sure that if_match is set so that we can validate
-            # that subsequent downloads are to an unmodified blob
-            self.request_options["etag"] = response.properties.etag
-            self.request_options["match_condition"] = MatchConditions.IfNotModified
+            if self.disable_etag_lock and len(chunk_data) != chunk_end - chunk_start + 1:
+                raise ResourceModifiedError(
+                    "The blob has been modified during download and the returned data may be incomplete."
+                )
+
+            if not self.disable_etag_lock:
+                # This makes sure that if_match is set so that we can validate
+                # that subsequent downloads are to an unmodified blob
+                self.request_options["etag"] = response.properties.etag
+                self.request_options["match_condition"] = MatchConditions.IfNotModified
 
         return chunk_data, content_length
 
@@ -355,12 +369,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         container: str = None,  # type: ignore [assignment]
         encoding: Optional[str] = None,
         download_cls: Optional[Callable] = None,
+        disable_etag_lock: bool = False,
         **kwargs: Any,
     ) -> None:
         self.name = name
         self.container = container
         self.size = 0
 
+        self._disable_etag_lock = disable_etag_lock
         self._clients = clients
         self._config = config
         self._start_range = start_range
@@ -571,7 +587,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 pass
 
         self._is_structured_message = response.response.headers.get("x-ms-structured-body") is not None
-        if not self._download_complete:
+        if not self._disable_etag_lock and not self._download_complete:
             self._request_options["etag"] = response.properties.etag
             self._request_options["match_condition"] = MatchConditions.IfNotModified
 
@@ -626,6 +642,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
+                disable_etag_lock=self._disable_etag_lock,
                 **self._request_options,
             )
 
@@ -736,6 +753,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
                 progress_hook=self._progress_hook,
+                disable_etag_lock=self._disable_etag_lock,
                 **self._request_options,
             )
             self._first_chunk = False
@@ -868,6 +886,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             encryption_data=self._encryption_data,
             use_location=self._location_mode,
             progress_hook=self._progress_hook,
+            disable_etag_lock=self._disable_etag_lock,
             **self._request_options,
         )
         if parallel:

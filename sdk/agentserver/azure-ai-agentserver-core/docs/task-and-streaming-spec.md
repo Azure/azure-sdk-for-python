@@ -1859,7 +1859,8 @@ Implementation MUST:
   gesture (§23.10).**
 - **Support list-filter parity (§31a)** — `has_error`, `lease_expired`,
   pagination via `after` cursor (plain `task_id` for local; opaque
-  service token for hosted), `limit` (default 20, max 100), `order`
+  service token for hosted), `limit` (default `None` for all
+  matches; explicit positive total cap clamped to 100), `order`
   asc/desc by `created_at`, reject `before`, normalize "done" →
   "completed" in the status filter, `agent_name` + `session_id`
   optional.
@@ -1985,7 +1986,15 @@ backings.
 
 **Pagination**:
 
-- `limit` defaults to 20, max 100 (provider clamps over-cap to 100).
+- The Python provider `list()` defaults to `limit=None`, meaning complete
+  enumeration of every matching task, including all hosted continuation pages.
+  An explicit positive `limit` bounds the **total returned tasks**, clamped to
+  100, not the hosted service page size. Both backings reject nonpositive limits.
+  Hosted requests use at most 100 tasks per page and reduce that page size to
+  the remaining result budget for bounded calls.
+- The raw Task Storage service's `limit` remains a **page-size** parameter
+  (default 20, max 100); its default does not bound Python provider scans.
+  Recovery and response-ownership scans explicitly request `limit=None`.
 - `after` is an opaque cursor string. The local provider uses
   plain `task_id` (no Cosmos continuation-token concept). The
   hosted provider round-trips whatever opaque token the service
@@ -1996,7 +2005,16 @@ backings.
 - `order` accepts `"asc"` or `"desc"`. Default `"desc"`. Sorts by
   `created_at`.
 
-**Response**:
+**Python provider return**:
+
+- A materialized `list[TaskInfo]`, not a page envelope. It contains all matches
+  when `limit=None`, or at most the clamped explicit limit. Listing failures
+  propagate rather than returning an apparently complete partial scan.
+- Hosted continuation is consumed internally. A supplied `after` token is
+  forwarded unchanged; task IDs must not be substituted for service tokens.
+  The Python list return does not expose a hosted next-page token.
+
+**Raw service page response**:
 
 - `Data` — the page of tasks (or DTOs).
 - `LastId` — the opaque continuation cursor to pass back as `after`
@@ -2572,7 +2590,7 @@ streams.use_file_backed_replay(cursor_fn=...)                   # configurator (
 #   resolve_state_subdir("streams"); ttl_seconds defaults to 600 (10 min);
 #   serializer/deserializer default to JSON. Explicit args override.
 
-await streams.get(id)                  # raises NotFound if never registered
+await streams.get(id)                  # registered or retained file replay; never creates absent logs
 await streams.get_or_create(id)        # atomic per id
 await streams.delete(id)               # idempotent; installs tombstone
 ```
@@ -2580,12 +2598,19 @@ await streams.delete(id)               # idempotent; installs tombstone
 Six methods total: three sync configurators + three async
 lifecycle methods.
 
-Atomicity: `get_or_create(id)` MUST be safe under concurrent
-callers. The implementation uses a per-id lock to prevent
-split-brain construction when two coroutines race to create the
-same id. The lock is acquired only on the slow path (first
-access for an id); subsequent `get_or_create` calls return the
-cached instance without taking the lock.
+Atomicity: `get(id)`, `get_or_create(id)`, and `delete(id)` MUST
+share a per-id lock within the registry. Lookup, restoration,
+creation, and deletion are serialized, preventing split-brain
+construction for concurrent callers. This guarantee is in-process,
+not cross-process coordination.
+
+With file-backed replay configured, `get(id)` restores an existing
+log even when the id has not been registered in the current process.
+It MUST NOT create an absent log. A restored stream is subject to the
+same close-clock expiry check as a cached stream. File access and lock
+failures propagate instead of being converted to NotFound.
+`delete(id)` also restores and removes a retained log that has not
+yet been loaded after restart.
 
 Tombstones: `delete(id)` causes the next `get(id)` against that
 id to raise `EventStreamNotFoundError`. The registry uses an
@@ -2596,7 +2621,7 @@ not currently a live stream" condition raises
 `EventStreamNotFoundError`. This covers all three paths
 into the missing-stream state:
 
-- the id was never registered;
+- the id has no registered stream or retained file-backed replay log;
 - the id was registered and then explicitly `delete(id)`d;
 - the id was registered, then transitioned to Closed, then the
   TTL-since-close clock elapsed (§46) and the registry
@@ -2627,6 +2652,9 @@ attempt to use an id that is not currently a live stream raises
 Each `use_*` configurator replaces the registry's stream factory
 **globally for the process**. Subsequent `get_or_create(id)` calls
 use the new factory; existing stream instances are unaffected.
+Cold `get(id)` and `delete(id)` lookups restore existing logs only
+when file-backed replay is configured. Switching to an in-memory
+backing disables disk lookup for unregistered ids.
 Configurators are synchronous and idempotent. The default factory
 (if no configurator is called) produces `BroadcastEventStream`
 instances.
@@ -2817,7 +2845,7 @@ EventStreamError                     # base
   ├── EventStreamClosedError         # emit on closed stream
   └── EventStreamNotFoundError       # any "id is not currently a
                                      #   live stream" condition —
-                                     #   never registered, deleted,
+                                     #   no registered or retained stream, deleted,
                                      #   or close-clock elapsed
 ```
 
@@ -2838,7 +2866,7 @@ exception:
 
 | Path to NotFound | Broadcast (live) | Replay (in-memory) | Replay (file-backed) |
 |---|---|---|---|
-| 1. `get(id)` for an id that was never registered. | ✓ | ✓ | ✓ |
+| 1. `get(id)` for an id with no registered stream or retained replay log. | ✓ | ✓ | ✓ (an existing log is restored, not reported missing) |
 | 2. Explicit `streams.delete(id)` → instance removed + registry tombstones the id. Works in ANY state (Active or Closed). | ✓ | ✓ | ✓ (file removed before tombstone) |
 | 3. Closed stream's close-clock elapses (`now >= close_time + ttl_seconds`) → registry tombstones the id. Requires the backing to have been constructed with `ttl_seconds`. | ✗ (no TTL) | ✓ | ✓ (file removed before tombstone) |
 
@@ -3772,21 +3800,30 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   (`get`, `get_or_create`, `delete`).
 - **C-STR-REG-2.** Default backing MUST be `BroadcastEventStream`
   (live, no buffer).
-- **C-STR-REG-3.** `get_or_create(id)` MUST be atomic under
-  concurrent callers (per-id lock).
+- **C-STR-REG-3.** `get(id)`, `get_or_create(id)`, and `delete(id)`
+  MUST share a per-id lock within the registry so lookup,
+  restoration, creation, and deletion are serialized.
 - **C-STR-REG-4.** `delete(id)` MUST be idempotent and MUST
   install a tombstone (even for ids that were never registered)
   so a subsequent `get(id)` raises `EventStreamNotFoundError`.
+  With file-backed replay configured, it MUST also remove an existing
+  retained log that has not been loaded in the current process.
+  Backing deletion failures MUST propagate before installing the tombstone,
+  leaving cleanup retryable. This also applies to close-clock expiry cleanup.
 - **C-STR-REG-5.** Tombstone MUST be cleared on the next
   `get_or_create(id)` for the same id.
 - **C-STR-REG-6.** `get(id)` MUST raise `EventStreamNotFoundError`
   for ANY id that is not currently a live stream — whether it
-  was never registered, was explicitly `delete(id)`d, or had its
+  has no registered stream or retained log, was explicitly `delete(id)`d, or had its
   close-clock elapse (§46). `get(id)` MUST NOT itself install a
   tombstone (only `delete(id)` and the close-clock auto-tombstone
   do). There is no `EventStreamGoneError` — that error type has
   been removed; every "id is not live" condition surfaces
   uniformly as `EventStreamNotFoundError`.
+- **C-STR-REG-7.** With file-backed replay configured, `get(id)`
+  MUST restore an existing retained log without creating an absent
+  log and MUST apply the close-clock expiry check after restoration.
+  File access and lock failures MUST propagate, not become NotFound.
 
 ### C-STR-TTL (replay TTL)
 
@@ -3834,10 +3871,34 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   (no verbatim id can alias another id's hash).
 - **C-STR-FBR-2.** Constructor MUST rehydrate from an existing
   file (crash-recovery friendly).
+  Cold registry `get()` MUST open the existing log in non-creating mode,
+  including when it disappears after an earlier existence observation.
+  Absence reported by that file open, or by the post-lock check that its
+  descriptor still names the backing path, means a missing stream. A descriptor
+  for a replaced inode MUST be rejected rather than used for replay or writes.
+  Backing-lock acquisition failures MUST propagate, even when they are
+  `FileNotFoundError`.
+  `get_or_create()` retains the creating constructor and rehydrates existing
+  logs. Compaction MUST reopen its replacement log in non-creating mode.
 - **C-STR-FBR-3.** Optional `serializer` / `deserializer` callbacks
   MUST be honored for non-JSON payloads. Default uses JSON.
 - **C-STR-FBR-4.** `delete()` and the close-clock auto-tombstone
   MUST clean up the file before the registry tombstones the id.
+  Cold `delete()` MUST open only an existing log, acquire the same
+  single-writer file lock, and remove the backing resources without
+  rehydrating or deserializing events. Malformed records or failing
+  payload callbacks MUST NOT prevent deletion. An absent log MUST NOT
+  be created. File-access, lock-acquisition, and cleanup failures MUST
+  propagate without installing a successful deletion tombstone; an
+  allocated cleanup owner MUST remain available for exact-owner retries,
+  including Windows lock-file cleanup and cancellation.
+  POSIX inode-lock ownership MUST be retained through removal of the log's
+  directory entry. Windows MUST acquire its sidecar lock before opening the
+  log and retain that ownership while closing and removing the log, releasing
+  the sidecar only afterward. Removal MUST verify the owned backing identity;
+  a replaced backing MUST NOT be unlinked without reacquiring its ownership.
+  Once the owned log has been removed, cleanup retries MUST release only the
+  remaining owned resources, not unlink a subsequently created backing path.
 - **C-STR-FBR-5.** **File format.** Each emitted event is a single
   JSONL line wrapping the payload + arrival time:
 
@@ -3857,12 +3918,22 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   NOT at a terminal-record timestamp. A terminal record MUST be accepted
   even when it carries no `emit_time`; a NON-terminal record missing
   `emit_time` remains malformed and MUST raise.
+  An observed final terminal state and its close-clock anchor MUST be set
+  before recovery-time TTL eviction can compact the log. Compaction MUST
+  preserve that terminal marker, including when 1,000 or more expired events
+  precede surviving events, so a subsequent restart still restores CLOSED.
 - **C-STR-FBR-6.** **Rehydration robustness.** Constructor MUST
   tolerate a trailing partial line (e.g. from a crash mid-write)
   by truncating it. Mid-file malformed JSON lines MUST raise
   (corruption signal, not recoverable). The TERMINAL sentinel, if
   present anywhere mid-file, MUST be ignored unless it is the
   final line.
+  Every exceptional constructor exit after opening the file, including
+  deserializer/cursor callbacks and cancellation, MUST release the exact
+  resources acquired by that constructor. Cleanup errors MUST remain visible
+  with the original failure context. If cleanup fails, the registry MUST
+  retain the exact, stream-ID-bound cleanup owner for retry without exposing
+  it as a usable replay or releasing another stream's resources.
 - **C-STR-FBR-7.** **Concurrency.** Implementations MUST use a
   single-writer lock (POSIX `fcntl` advisory lock preferred,
   `.lock` sentinel-file fallback) to prevent two processes from
@@ -3872,6 +3943,15 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   implementations SHOULD rewrite the file to compact away evicted
   lines (avoids unbounded file growth on long-lived streams with
   short TTLs).
+  Before successful replacement, a preparation failure MAY retain the original
+  valid writer, but MUST be logged and temporary-file cleanup failures MUST
+  propagate. Cancellation MUST propagate after temporary-file cleanup.
+  After successful replacement, reopen/lock/seek/handle-retirement failures
+  MUST propagate and permanently prevent successful writes through the stale
+  inode. Owned handles MUST be retired with retryable cleanup; subscribers
+  MUST observe an explicit failure rather than hang or report normal completion.
+  Deleting a failed replacement MUST reacquire its backing-file ownership,
+  retaining any allocated deletion owner through cleanup failure or cancellation.
 
 ### C-OUT (output persistence) — *removed*
 
@@ -3959,8 +4039,10 @@ outputs that must survive crashes are the handler's responsibility
   AND semantics), `source_type`, `status` (with legacy `"done"` →
   `"completed"` normalization).
 - **C-PRV-10.** `provider.list(...)` MUST support pagination via
-  opaque `after` cursor + `limit` (default 20, max 100, provider
-  clamps over-cap). `before` MUST be rejected as `invalid_request`
+  opaque `after` cursor + `limit` (Python default `None` enumerates all
+  matches; an explicit positive limit caps total results and is clamped
+  to 100). The raw service defaults to a page size of 20, not a total
+  provider result limit. `before` MUST be rejected as `invalid_request`
   (cursor pagination forward-only). `order` accepts `"asc"` or
   `"desc"` by `created_at` (default `"desc"`). Per §31a.
 - **C-PRV-11.** `provider.list(...)` MUST support
@@ -3971,7 +4053,10 @@ outputs that must survive crashes are the handler's responsibility
   (`LastId` / `next_page_token`) MUST be treated as opaque by the
   framework. The local provider mints its own cursor (plain
   `task_id`); the hosted provider round-trips whatever opaque
-  token the service returns (up to 4096 chars).
+  token the service returns (up to 4096 chars) internally when continuing
+  its scan. Python provider `list()` returns `list[TaskInfo]`, not the
+  service page envelope. Missing or repeated continuation cursors MUST
+  raise when further enumeration is needed, not return partial success.
 
 ### C-OBS (observability — minimal)
 

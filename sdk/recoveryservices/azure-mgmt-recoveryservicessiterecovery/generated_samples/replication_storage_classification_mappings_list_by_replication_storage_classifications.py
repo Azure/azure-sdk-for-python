@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-08-01/ReplicationStorageClassificationMappings_ListByReplicationStorageClassifications.json
+# x-ms-original-file: 2026-11-01/ReplicationStorageClassificationMappings_ListByReplicationStorageClassifications.json
 if __name__ == "__main__":
     main()

@@ -27,7 +27,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -455,6 +455,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     ],
                                                                                     "macAddress": "str",
                                                                                     "migrationPhase": "str",
+                                                                                    "networkAdapterIndex": 0,
                                                                                     "networkSecurityGroup": ...,
                                                                                     "nicType": "str",
                                                                                     "primary": bool,
@@ -1071,6 +1072,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                         ],
                                                                                         "macAddress": "str",
                                                                                         "migrationPhase": "str",
+                                                                                        "networkAdapterIndex": 0,
                                                                                         "networkSecurityGroup": {
                                                                                             "etag": "str",
                                                                                             "id": "str",
@@ -2041,6 +2043,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     ],
                                                                     "macAddress": "str",
                                                                     "migrationPhase": "str",
+                                                                    "networkAdapterIndex": 0,
                                                                     "networkSecurityGroup": ...,
                                                                     "nicType": "str",
                                                                     "primary": bool,
@@ -2719,6 +2722,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                         ],
                                                                         "macAddress": "str",
                                                                         "migrationPhase": "str",
+                                                                        "networkAdapterIndex": 0,
                                                                         "networkSecurityGroup": {
                                                                             "etag": "str",
                                                                             "id": "str",
@@ -3452,6 +3456,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "ipConfigurations": [...],
                                                                                     "macAddress": "str",
                                                                                     "migrationPhase": "str",
+                                                                                    "networkAdapterIndex": 0,
                                                                                     "networkSecurityGroup": ...,
                                                                                     "nicType": "str",
                                                                                     "primary": bool,
@@ -3948,6 +3953,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                         "ipConfigurations": [...],
                                                                                         "macAddress": "str",
                                                                                         "migrationPhase": "str",
+                                                                                        "networkAdapterIndex": 0,
                                                                                         "networkSecurityGroup": {
                                                                                             "etag": "str",
                                                                                             "id": "str",
@@ -4712,6 +4718,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "ipConfigurations": [...],
                                                                     "macAddress": "str",
                                                                     "migrationPhase": "str",
+                                                                    "networkAdapterIndex": 0,
                                                                     "networkSecurityGroup": ...,
                                                                     "nicType": "str",
                                                                     "primary": bool,
@@ -5286,6 +5293,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                         "ipConfigurations": [...],
                                                                         "macAddress": "str",
                                                                         "migrationPhase": "str",
+                                                                        "networkAdapterIndex": 0,
                                                                         "networkSecurityGroup": {
                                                                             "etag": "str",
                                                                             "id": "str",
@@ -5859,7 +5867,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                     },
                     "type": "str",
                 },
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5874,7 +5882,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                 resource_group_name=resource_group.name,
                 network_interface_name="str",
                 tap_configuration_name="str",
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5887,7 +5895,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
         response = self.client.network_interface_tap_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

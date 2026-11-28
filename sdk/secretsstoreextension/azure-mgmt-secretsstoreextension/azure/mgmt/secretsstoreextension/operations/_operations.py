@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -32,14 +32,14 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import SecretsStoreExtensionMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -49,7 +49,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +70,7 @@ def build_azure_key_vault_secret_provider_classes_get_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +101,7 @@ def build_azure_key_vault_secret_provider_classes_create_or_update_request(  # p
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -134,7 +134,7 @@ def build_azure_key_vault_secret_provider_classes_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -163,12 +163,9 @@ def build_azure_key_vault_secret_provider_classes_update_request(  # pylint: dis
 def build_azure_key_vault_secret_provider_classes_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, azure_key_vault_secret_provider_class_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SecretSyncController/azureKeyVaultSecretProviderClasses/{azureKeyVaultSecretProviderClassName}"
     path_format_arguments = {
@@ -184,10 +181,7 @@ def build_azure_key_vault_secret_provider_classes_delete_request(  # pylint: dis
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_azure_key_vault_secret_provider_classes_list_by_resource_group_request(  # pylint: disable=name-too-long
@@ -196,7 +190,7 @@ def build_azure_key_vault_secret_provider_classes_list_by_resource_group_request
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -223,7 +217,7 @@ def build_azure_key_vault_secret_provider_classes_list_by_subscription_request( 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -249,7 +243,7 @@ def build_secret_syncs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -278,7 +272,7 @@ def build_secret_syncs_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -309,7 +303,7 @@ def build_secret_syncs_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -336,12 +330,9 @@ def build_secret_syncs_update_request(
 def build_secret_syncs_delete_request(
     resource_group_name: str, secret_sync_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SecretSyncController/secretSyncs/{secretSyncName}"
     path_format_arguments = {
@@ -355,10 +346,7 @@ def build_secret_syncs_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_secret_syncs_list_by_resource_group_request(  # pylint: disable=name-too-long
@@ -367,7 +355,7 @@ def build_secret_syncs_list_by_resource_group_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -394,7 +382,7 @@ def build_secret_syncs_list_by_subscription_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-25-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -414,7 +402,7 @@ def build_secret_syncs_list_by_subscription_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -424,7 +412,7 @@ class Operations:
         :attr:`operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SecretsStoreExtensionMgmtClientConfiguration = (
@@ -434,7 +422,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -480,7 +468,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -493,7 +484,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -509,7 +503,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -517,7 +514,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-long
+class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -527,7 +524,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         :attr:`azure_key_vault_secret_provider_classes` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SecretsStoreExtensionMgmtClientConfiguration = (
@@ -579,6 +576,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -593,11 +591,14 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AzureKeyVaultSecretProviderClass, response.json())
 
@@ -610,7 +611,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         azure_key_vault_secret_provider_class_name: str,
-        resource: Union[_models.AzureKeyVaultSecretProviderClass, JSON, IO[bytes]],
+        resource: Union[_models.AzureKeyVaultSecretProviderClass, _types.AzureKeyVaultSecretProviderClass, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -649,6 +650,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -662,7 +664,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -672,7 +677,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -714,7 +719,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         azure_key_vault_secret_provider_class_name: str,
-        resource: JSON,
+        resource: _types.AzureKeyVaultSecretProviderClass,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -728,7 +733,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
          AzureKeyVaultSecretProviderClass. Required.
         :type azure_key_vault_secret_provider_class_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.secretsstoreextension.types.AzureKeyVaultSecretProviderClass
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -774,7 +779,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         azure_key_vault_secret_provider_class_name: str,
-        resource: Union[_models.AzureKeyVaultSecretProviderClass, JSON, IO[bytes]],
+        resource: Union[_models.AzureKeyVaultSecretProviderClass, _types.AzureKeyVaultSecretProviderClass, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AzureKeyVaultSecretProviderClass]:
         """Creates, or updates, an AzureKeyVaultSecretProviderClass instance.
@@ -785,10 +790,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         :param azure_key_vault_secret_provider_class_name: The name of the
          AzureKeyVaultSecretProviderClass. Required.
         :type azure_key_vault_secret_provider_class_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         AzureKeyVaultSecretProviderClass, JSON, IO[bytes] Required.
+        :param resource: Resource create parameters. Is either a AzureKeyVaultSecretProviderClass type
+         or a IO[bytes] type. Required.
         :type resource: ~azure.mgmt.secretsstoreextension.models.AzureKeyVaultSecretProviderClass or
-         JSON or IO[bytes]
+         ~azure.mgmt.secretsstoreextension.types.AzureKeyVaultSecretProviderClass or IO[bytes]
         :return: An instance of LROPoller that returns AzureKeyVaultSecretProviderClass. The
          AzureKeyVaultSecretProviderClass is compatible with MutableMapping
         :rtype:
@@ -851,7 +856,9 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         azure_key_vault_secret_provider_class_name: str,
-        properties: Union[_models.AzureKeyVaultSecretProviderClassUpdate, JSON, IO[bytes]],
+        properties: Union[
+            _models.AzureKeyVaultSecretProviderClassUpdate, _types.AzureKeyVaultSecretProviderClassUpdate, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -890,6 +897,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -903,7 +911,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -911,7 +922,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -954,7 +965,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         azure_key_vault_secret_provider_class_name: str,
-        properties: JSON,
+        properties: _types.AzureKeyVaultSecretProviderClassUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -968,7 +979,8 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
          AzureKeyVaultSecretProviderClass. Required.
         :type azure_key_vault_secret_provider_class_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties:
+         ~azure.mgmt.secretsstoreextension.types.AzureKeyVaultSecretProviderClassUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1014,7 +1026,9 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         azure_key_vault_secret_provider_class_name: str,
-        properties: Union[_models.AzureKeyVaultSecretProviderClassUpdate, JSON, IO[bytes]],
+        properties: Union[
+            _models.AzureKeyVaultSecretProviderClassUpdate, _types.AzureKeyVaultSecretProviderClassUpdate, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.AzureKeyVaultSecretProviderClass]:
         """Updates an AzureKeyVaultSecretProviderClass instance.
@@ -1025,11 +1039,11 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         :param azure_key_vault_secret_provider_class_name: The name of the
          AzureKeyVaultSecretProviderClass. Required.
         :type azure_key_vault_secret_provider_class_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         AzureKeyVaultSecretProviderClassUpdate, JSON, IO[bytes] Required.
+        :param properties: The resource properties to be updated. Is either a
+         AzureKeyVaultSecretProviderClassUpdate type or a IO[bytes] type. Required.
         :type properties:
-         ~azure.mgmt.secretsstoreextension.models.AzureKeyVaultSecretProviderClassUpdate or JSON or
-         IO[bytes]
+         ~azure.mgmt.secretsstoreextension.models.AzureKeyVaultSecretProviderClassUpdate or
+         ~azure.mgmt.secretsstoreextension.types.AzureKeyVaultSecretProviderClassUpdate or IO[bytes]
         :return: An instance of LROPoller that returns AzureKeyVaultSecretProviderClass. The
          AzureKeyVaultSecretProviderClass is compatible with MutableMapping
         :rtype:
@@ -1117,6 +1131,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1130,7 +1145,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1138,7 +1156,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1208,7 +1226,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> Iterable["_models.AzureKeyVaultSecretProviderClass"]:
+    ) -> ItemPaged["_models.AzureKeyVaultSecretProviderClass"]:
         """Lists the AzureKeyVaultSecretProviderClass instances within a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1260,7 +1278,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1273,7 +1294,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AzureKeyVaultSecretProviderClass], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AzureKeyVaultSecretProviderClass],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1289,7 +1313,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1297,7 +1324,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.AzureKeyVaultSecretProviderClass"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.AzureKeyVaultSecretProviderClass"]:
         """Lists the AzureKeyVaultSecretProviderClass instances within an Azure subscription.
 
         :return: An iterator like instance of AzureKeyVaultSecretProviderClass
@@ -1345,7 +1372,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1358,7 +1388,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AzureKeyVaultSecretProviderClass], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AzureKeyVaultSecretProviderClass],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1374,7 +1407,10 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1382,7 +1418,7 @@ class AzureKeyVaultSecretProviderClassesOperations:  # pylint: disable=name-too-
         return ItemPaged(get_next, extract_data)
 
 
-class SecretSyncsOperations:
+class SecretSyncsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1392,7 +1428,7 @@ class SecretSyncsOperations:
         :attr:`secret_syncs` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SecretsStoreExtensionMgmtClientConfiguration = (
@@ -1440,6 +1476,7 @@ class SecretSyncsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1454,11 +1491,14 @@ class SecretSyncsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SecretSync, response.json())
 
@@ -1471,7 +1511,7 @@ class SecretSyncsOperations:
         self,
         resource_group_name: str,
         secret_sync_name: str,
-        resource: Union[_models.SecretSync, JSON, IO[bytes]],
+        resource: Union[_models.SecretSync, _types.SecretSync, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1510,6 +1550,7 @@ class SecretSyncsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1523,7 +1564,10 @@ class SecretSyncsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1533,7 +1577,7 @@ class SecretSyncsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1573,7 +1617,7 @@ class SecretSyncsOperations:
         self,
         resource_group_name: str,
         secret_sync_name: str,
-        resource: JSON,
+        resource: _types.SecretSync,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1586,7 +1630,7 @@ class SecretSyncsOperations:
         :param secret_sync_name: The name of the SecretSync. Required.
         :type secret_sync_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.secretsstoreextension.types.SecretSync
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1629,7 +1673,7 @@ class SecretSyncsOperations:
         self,
         resource_group_name: str,
         secret_sync_name: str,
-        resource: Union[_models.SecretSync, JSON, IO[bytes]],
+        resource: Union[_models.SecretSync, _types.SecretSync, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SecretSync]:
         """Creates new or updates a SecretSync instance.
@@ -1639,9 +1683,10 @@ class SecretSyncsOperations:
         :type resource_group_name: str
         :param secret_sync_name: The name of the SecretSync. Required.
         :type secret_sync_name: str
-        :param resource: Resource create parameters. Is one of the following types: SecretSync, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.secretsstoreextension.models.SecretSync or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SecretSync type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.secretsstoreextension.models.SecretSync or
+         ~azure.mgmt.secretsstoreextension.types.SecretSync or IO[bytes]
         :return: An instance of LROPoller that returns SecretSync. The SecretSync is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.secretsstoreextension.models.SecretSync]
@@ -1703,7 +1748,7 @@ class SecretSyncsOperations:
         self,
         resource_group_name: str,
         secret_sync_name: str,
-        properties: Union[_models.SecretSyncUpdate, JSON, IO[bytes]],
+        properties: Union[_models.SecretSyncUpdate, _types.SecretSyncUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1742,6 +1787,7 @@ class SecretSyncsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1755,7 +1801,10 @@ class SecretSyncsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1763,7 +1812,7 @@ class SecretSyncsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1803,7 +1852,7 @@ class SecretSyncsOperations:
         self,
         resource_group_name: str,
         secret_sync_name: str,
-        properties: JSON,
+        properties: _types.SecretSyncUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1816,7 +1865,7 @@ class SecretSyncsOperations:
         :param secret_sync_name: The name of the SecretSync. Required.
         :type secret_sync_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.secretsstoreextension.types.SecretSyncUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1859,7 +1908,7 @@ class SecretSyncsOperations:
         self,
         resource_group_name: str,
         secret_sync_name: str,
-        properties: Union[_models.SecretSyncUpdate, JSON, IO[bytes]],
+        properties: Union[_models.SecretSyncUpdate, _types.SecretSyncUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SecretSync]:
         """Updates a SecretSync instance.
@@ -1869,10 +1918,10 @@ class SecretSyncsOperations:
         :type resource_group_name: str
         :param secret_sync_name: The name of the SecretSync. Required.
         :type secret_sync_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         SecretSyncUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.secretsstoreextension.models.SecretSyncUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SecretSyncUpdate type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.secretsstoreextension.models.SecretSyncUpdate or
+         ~azure.mgmt.secretsstoreextension.types.SecretSyncUpdate or IO[bytes]
         :return: An instance of LROPoller that returns SecretSync. The SecretSync is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.secretsstoreextension.models.SecretSync]
@@ -1957,6 +2006,7 @@ class SecretSyncsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1970,7 +2020,10 @@ class SecretSyncsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1978,7 +2031,7 @@ class SecretSyncsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2043,7 +2096,7 @@ class SecretSyncsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.SecretSync"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.SecretSync"]:
         """Lists the SecretSync instances within a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2094,7 +2147,10 @@ class SecretSyncsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2107,7 +2163,10 @@ class SecretSyncsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SecretSync], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SecretSync],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2123,7 +2182,10 @@ class SecretSyncsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2131,7 +2193,7 @@ class SecretSyncsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.SecretSync"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.SecretSync"]:
         """Lists the SecretSync instances within an Azure subscription.
 
         :return: An iterator like instance of SecretSync
@@ -2178,7 +2240,10 @@ class SecretSyncsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2191,7 +2256,10 @@ class SecretSyncsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SecretSync], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SecretSync],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2207,7 +2275,10 @@ class SecretSyncsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

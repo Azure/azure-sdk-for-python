@@ -21,7 +21,7 @@ pip install azure-identity
 ### Prerequisites
 
 - An [Azure subscription](https://azure.microsoft.com/free/python)
-- Python 3.9 or a recent version of Python 3 (this library doesn't support end-of-life versions)
+- Python 3.10 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
 ### Use with AI tools
 
@@ -101,6 +101,21 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 - [Azure Service Fabric](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)
 - [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
 - [Azure Virtual Machines Scale Sets](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
+
+## AKS identity bindings
+
+[`WorkloadIdentityCredential`][workload_id_cred_ref] supports [AKS identity bindings](https://learn.microsoft.com/azure/aks/identity-bindings), which allow multiple clusters to share a federated identity credential for a user-assigned managed identity.
+
+After configuring an identity binding and authorizing the pod's Kubernetes service account, construct `WorkloadIdentityCredential` directly with `enable_azure_proxy=True`:
+
+```python
+from azure.identity import WorkloadIdentityCredential
+
+with WorkloadIdentityCredential(enable_azure_proxy=True) as credential:
+    token = credential.get_token("https://management.azure.com/.default")
+```
+
+AKS supplies the pod's identity, projected-token, proxy, SNI, and CA configuration. Identity binding mode isn't supported through `DefaultAzureCredential`. The asynchronous `WorkloadIdentityCredential` in `azure.identity.aio` supports the same option.
 
 ## Cloud configuration
 
@@ -263,6 +278,13 @@ This project welcomes contributions and suggestions. Most contributions require 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You'll only need to do this once across all repos using our CLA.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information, see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+### Identity development branches
+
+- Target `main` for stable-ready changes and `azure-identity-beta` for preview-only Identity features.
+  Explicitly choose the correct PR target; feature branches should normally start from that target branch.
+- Promote stable-ready features to `main` through reviewed, scoped PRs; do not merge the entire
+  `azure-identity-beta` branch back into `main`.
 
 [auth_code_cred_ref]: https://aka.ms/azsdk/python/identity/authorizationcodecredential
 [az_pipelines_cred_ref]: https://aka.ms/azsdk/python/identity/azurepipelinescredential

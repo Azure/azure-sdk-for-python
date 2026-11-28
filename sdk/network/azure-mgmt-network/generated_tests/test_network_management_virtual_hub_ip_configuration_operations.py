@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -463,6 +463,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                 ],
                                                                 "macAddress": "str",
                                                                 "migrationPhase": "str",
+                                                                "networkAdapterIndex": 0,
                                                                 "networkSecurityGroup": ...,
                                                                 "nicType": "str",
                                                                 "primary": bool,
@@ -1346,6 +1347,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                                     ],
                                                                     "macAddress": "str",
                                                                     "migrationPhase": "str",
+                                                                    "networkAdapterIndex": 0,
                                                                     "networkSecurityGroup": {
                                                                         "etag": "str",
                                                                         "id": "str",
@@ -2642,6 +2644,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                 ],
                                                 "macAddress": "str",
                                                 "migrationPhase": "str",
+                                                "networkAdapterIndex": 0,
                                                 "networkSecurityGroup": ...,
                                                 "nicType": "str",
                                                 "primary": bool,
@@ -3894,6 +3897,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                                     ],
                                                     "macAddress": "str",
                                                     "migrationPhase": "str",
+                                                    "networkAdapterIndex": 0,
                                                     "networkSecurityGroup": {
                                                         "etag": "str",
                                                         "id": "str",
@@ -4779,7 +4783,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                 },
                 "type": "str",
             },
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4792,7 +4796,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4804,7 +4808,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
         response = self.client.virtual_hub_ip_configuration.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

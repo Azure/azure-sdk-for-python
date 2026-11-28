@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-06-01-preview",
+  "apiVersions": {
+    "Microsoft.AIInfraOptimization": "2026-06-01-preview"
+  },
+  "commit": "d474b502597fd35044139639d2cb1495db8e3089",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/aiinfraoptimization/resource-manager/Microsoft.AIInfraOptimization/AIInfraOptimization",
+  "emitterVersion": "0.63.11",
+  "httpClientPythonVersion": "0.40.0"
+}

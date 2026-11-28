@@ -2,20 +2,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# cspell:ignore apng, retriable
+# cspell:ignore apng, retriable, RDONLY, osfhandle
 
+import base64
 import copy
+import json
 import logging
 import os
 import re
-import json
-import base64
-from dataclasses import dataclass, is_dataclass, fields
+import stat
+import sys
+from dataclasses import dataclass, fields, is_dataclass
 from logging import Logger
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import (
     Any,
     AsyncGenerator,
+    BinaryIO,
     Dict,
     Final,
     List,
@@ -31,18 +34,14 @@ from typing import (
     cast,
 )
 
+from jinja2 import TemplateError
+from jinja2.exceptions import SecurityError
 from jinja2.sandbox import SandboxedEnvironment
-from openai import AsyncStream
+from openai import APIConnectionError, APIStatusError, APITimeoutError, AsyncStream, OpenAIError
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
-from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation._legacy.prompty._exceptions import (
-    InvalidInputError,
-    JinjaTemplateError,
-    PromptyException,
-)
-
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidInputError, JinjaTemplateError, PromptyException
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml
 
 logger = logging.getLogger(__name__)
@@ -253,6 +252,14 @@ def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_
             env = SandboxedEnvironment(trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
         template = env.from_string(template_str)
         return template.render(**kwargs)
+    except SecurityError as e:
+        # SecurityError subclasses TemplateError, but a blocked sandbox escape is not a
+        # template authoring mistake - keep it on the generic type so it stays distinct.
+        raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
+    except TemplateError as e:
+        # A template that fails to parse or render is authored input, so surface the
+        # dedicated type callers can catch instead of the generic PromptyException.
+        raise JinjaTemplateError(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
     except Exception as e:  # pylint: disable=broad-except
         raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
 
@@ -358,6 +365,110 @@ def _to_content_str_or_list(chat_str: str, working_dir: Path, image_detail: str)
     return messages
 
 
+def _read_posix_file_from_directory(working_dir: Path, relative_path: Path) -> bytes:
+    if os.open not in os.supports_dir_fd or not all(
+        hasattr(os, flag) for flag in ("O_DIRECTORY", "O_NOFOLLOW", "O_NONBLOCK")
+    ):
+        raise InvalidInputError("Secure local image reads are not supported on this platform.")
+
+    directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    file_flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
+    directory_fds: List[int] = []
+    file_fd: Optional[int] = None
+
+    try:
+        # Anchor every component, including ancestors of the Prompty directory, before reading.
+        current_dir_fd = os.open(working_dir.anchor, directory_flags)
+        directory_fds.append(current_dir_fd)
+
+        for part in working_dir.parts[1:] + relative_path.parts[:-1]:
+            current_dir_fd = os.open(part, directory_flags, dir_fd=current_dir_fd)
+            directory_fds.append(current_dir_fd)
+
+        file_fd = os.open(relative_path.name, file_flags, dir_fd=current_dir_fd)
+        if not stat.S_ISREG(os.fstat(file_fd).st_mode):
+            raise InvalidInputError(f"Cannot find the image path '{relative_path.as_posix()}'")
+
+        with os.fdopen(file_fd, "rb") as file_handle:
+            file_fd = None
+            return file_handle.read()
+    finally:
+        if file_fd is not None:
+            os.close(file_fd)
+        for directory_fd in reversed(directory_fds):
+            os.close(directory_fd)
+
+
+def _get_windows_final_path(file_handle: BinaryIO) -> Path:
+    import ctypes
+    import msvcrt
+
+    get_final_path_name = ctypes.WinDLL("kernel32", use_last_error=True).GetFinalPathNameByHandleW
+    get_final_path_name.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_wchar_p,
+        ctypes.c_uint32,
+        ctypes.c_uint32,
+    ]
+    get_final_path_name.restype = ctypes.c_uint32
+
+    os_handle = msvcrt.get_osfhandle(file_handle.fileno())
+    path_length = get_final_path_name(os_handle, None, 0, 0)
+    if path_length == 0:
+        raise ctypes.WinError(ctypes.get_last_error())
+
+    path_buffer = ctypes.create_unicode_buffer(path_length + 1)
+    written = get_final_path_name(os_handle, path_buffer, len(path_buffer), 0)
+    if written == 0:
+        raise ctypes.WinError(ctypes.get_last_error())
+    if written >= len(path_buffer):
+        raise OSError("The local image path changed while it was being validated.")
+
+    final_path = path_buffer.value
+    if final_path.startswith("\\\\?\\UNC\\"):
+        final_path = "\\\\" + final_path[8:]
+    elif final_path.startswith("\\\\?\\"):
+        final_path = final_path[4:]
+    return Path(final_path)
+
+
+def _read_windows_file_from_directory(working_dir: Path, relative_path: Path) -> bytes:
+    candidate_path = working_dir / relative_path
+    with candidate_path.open("rb") as file_handle:
+        final_path = _get_windows_final_path(file_handle)
+        normalized_working_dir = os.path.normcase(os.path.abspath(working_dir))
+        normalized_final_path = os.path.normcase(os.path.abspath(final_path))
+        try:
+            is_contained = os.path.commonpath([normalized_working_dir, normalized_final_path]) == normalized_working_dir
+        except ValueError:
+            is_contained = False
+        if not is_contained:
+            raise InvalidInputError("Local image paths must resolve within the Prompty directory.")
+        if not stat.S_ISREG(os.fstat(file_handle.fileno()).st_mode):
+            raise InvalidInputError(f"Cannot find the image path '{relative_path.as_posix()}'")
+        return file_handle.read()
+
+
+def _read_contained_local_file(local_file: str, working_dir: Path) -> Tuple[bytes, str]:
+    normalized_path = Path(local_file.replace("\\", os.sep).replace("/", os.sep))
+    if normalized_path.is_absolute() or PureWindowsPath(local_file).drive:
+        raise InvalidInputError("Absolute local image paths are not allowed.")
+    working_dir_resolved = working_dir.resolve(strict=True)
+    path = (working_dir_resolved / normalized_path).resolve(strict=True)
+    try:
+        relative_path = path.relative_to(working_dir_resolved)
+    except ValueError as ex:
+        raise InvalidInputError("Local image paths must resolve within the Prompty directory.") from ex
+    if not relative_path.parts:
+        raise InvalidInputError("Local image references must identify a file.")
+
+    if os.name == "nt":
+        file_contents = _read_windows_file_from_directory(working_dir_resolved, relative_path)
+    else:
+        file_contents = _read_posix_file_from_directory(working_dir_resolved, relative_path)
+    return file_contents, normalized_path.suffix
+
+
 def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str, Any]:
     """This accepts an image URL in markdown format, and parses that into a message containing the image details
     to be sent to AI service. In the case of local file images, they will be loaded and their contents encoded
@@ -371,18 +482,16 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
     :rtype: Mapping[str, Any]"""
 
     def local_to_base64(local_file: str, mime_type: Optional[str]) -> str:
-        path = Path(local_file)
-        if not path.is_absolute():
-            path = working_dir / local_file
-        if not path.exists():
-            # TODO ralphe logging?
-            # logger.warning(f"Cannot find the image path {image_content},
-            #                  it will be regarded as {type(image_str)}.")
-            raise InvalidInputError(f"Cannot find the image path '{path.as_posix()}'")
+        try:
+            file_contents, file_suffix = _read_contained_local_file(local_file, working_dir)
+        except InvalidInputError:
+            raise
+        except (OSError, RuntimeError, ValueError) as ex:
+            raise InvalidInputError(f"Cannot read the local image path '{local_file}'.") from ex
 
-        base64_encoded = base64.b64encode(path.read_bytes()).decode("utf-8")
+        base64_encoded = base64.b64encode(file_contents).decode("utf-8")
         if not mime_type:
-            mime_type = FILE_EXT_TO_MIME.get(path.suffix.lower(), DEFAULT_IMAGE_MIME_TYPE)
+            mime_type = FILE_EXT_TO_MIME.get(file_suffix.lower(), DEFAULT_IMAGE_MIME_TYPE)
         return f"data:{mime_type};base64,{base64_encoded}"
 
     match = re.match(IMAGE_URL_PARSING_PATTERN, image)
@@ -421,29 +530,16 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
         # assume it's a file path
         local_file = (match.group("link") or "").strip()
         try:
-            path = Path(local_file)
-            if not path.is_absolute():
-                path = working_dir / local_file
-            if not path.exists():
-                # The link could not be resolved to an existing local file. This can happen when markdown
-                # image syntax (e.g. ![alt](figures/1.1)) originates from Document Intelligence or similar
-                # services where the paths are relative references that are not actual files on disk.
-                # Treat the original markdown as plain text instead of crashing.
-                logger.debug(
-                    "Image reference '%s' could not be resolved to an existing file. Treating as plain text.",
-                    image,
-                )
-                return {"type": "text", "text": image}
-        except (OSError, ValueError) as e:
-            # Path operations can fail when the filename exceeds OS limits (e.g., Linux 255-char name limit)
-            # or contains invalid characters. Treat as plain text rather than crashing.
+            inlined_uri = local_to_base64(local_file, mime_type)
+        except InvalidInputError as e:
+            # Local references can be unresolvable Document Intelligence output or unsafe paths. Preserve
+            # the original markdown as text instead of failing the evaluation or reading outside the Prompty directory.
             logger.debug(
                 "Image reference '%s' could not be resolved to a valid path (%s). Treating as plain text.",
                 image,
                 e,
             )
             return {"type": "text", "text": image}
-        inlined_uri = local_to_base64(local_file, mime_type)
 
     if not inlined_uri:
         raise InvalidInputError(f"Failed to determine how to inline the following image URL '{image}'")
@@ -504,6 +600,76 @@ def prepare_open_ai_request_params(
     return params
 
 
+_KNOWN_FINISH_REASONS = ("stop", "length", "content_filter", "tool_calls", "function_call")
+
+
+@dataclass(frozen=True)
+class _LLMOutputDiagnosticMetadata:
+    finish_reason: Any
+    output_tokens: Any
+    model: Any
+
+
+class _LLMOutput(dict):
+    diagnostic_metadata: Optional[_LLMOutputDiagnosticMetadata]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.diagnostic_metadata = None
+
+
+def llm_output_diagnostic(cause: str, finish_reason: Any = None, output_tokens: Any = None, model: Any = None) -> str:
+    """Describe why a model response was unusable from its metadata only, never from its content.
+
+    :param cause: A fixed description of the problem. Must not contain model output.
+    :type cause: str
+    :param finish_reason: The completion finish reason. A truncated or filtered response adds a likely reason.
+    :type finish_reason: Any
+    :param output_tokens: The completion token count.
+    :type output_tokens: Any
+    :param model: The model name.
+    :type model: Any
+    :return: The diagnostic text.
+    :rtype: str
+    """
+    if finish_reason == "length":
+        cause += ", possibly because it was truncated at the output token limit"
+    elif finish_reason == "content_filter":
+        cause += ", possibly because it was blocked by the content filter"
+    if finish_reason not in _KNOWN_FINISH_REASONS:
+        finish_reason = "unknown"
+    if not isinstance(output_tokens, int) or isinstance(output_tokens, bool) or output_tokens < 0:
+        output_tokens = "unknown"
+    if not isinstance(model, str) or not model.strip():
+        model = "unknown"
+    return f"Cause: {cause} (finish_reason={finish_reason}, output_tokens={output_tokens}, model={model})."
+
+
+def log_invalid_llm_output(diagnostic: str) -> None:
+    """Log an unusable model response, without its content or the triggering exception.
+
+    :param diagnostic: Text built by ``llm_output_diagnostic``.
+    :type diagnostic: str
+    """
+    try:
+        logger.warning("Model returned invalid output. %s", diagnostic)
+    except Exception:
+        # A broken logging handler must not replace an evaluator or parsing error.
+        try:
+            sys.stderr.write(f"Model returned invalid output. {diagnostic}\n")
+        except (OSError, ValueError):
+            pass
+
+
+def _append_diagnostic_to_exception(exc: Exception, diagnostic: str) -> None:
+    if isinstance(exc, json.JSONDecodeError):
+        message = f"{exc}. {diagnostic}"
+        exc.args = (message,)
+        exc.doc = "".join("\n" if character == "\n" else " " for character in exc.doc)
+    else:
+        exc.args = (f"{exc}. {diagnostic}",)
+
+
 async def format_llm_response(
     response: OpenAIChatResponseType,
     is_first_choice: bool,
@@ -541,21 +707,39 @@ async def format_llm_response(
     :rtype: Union[str, dict, Response]
     """
 
-    def format_choice(item: str) -> Union[str, Mapping[str, Any]]:
+    def format_choice(
+        item: str, finish_reason: str = "", output_tokens: Optional[int] = None, model: str = ""
+    ) -> Union[str, Mapping[str, Any]]:
         # response_format is one of text or json_object.
         # https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format
         if not is_json_format:
             return item
 
-        result_dict = json.loads(item)
+        try:
+            result_dict = json.loads(item)
+        except (ValueError, TypeError, RecursionError) as exc:
+            empty = item is None or (isinstance(item, str) and not item.strip())
+            cause = "the model returned an empty response" if empty else "the model response was not valid JSON"
+            diagnostic = llm_output_diagnostic(cause, finish_reason, output_tokens, model)
+            log_invalid_llm_output(diagnostic)
+            _append_diagnostic_to_exception(exc, diagnostic)
+            raise
         if not outputs:
             return result_dict
 
+        if not isinstance(result_dict, dict):
+            log_invalid_llm_output(
+                llm_output_diagnostic("the model response was not a JSON object", finish_reason, output_tokens, model)
+            )
         # return the keys in outputs
         output_results = {}
         for key in outputs:
             if key not in result_dict:
-                raise InvalidInputError(f"Cannot find '{key}' in response {list(result_dict.keys())}")
+                diagnostic = llm_output_diagnostic(
+                    "the model response was missing a requested output field", finish_reason, output_tokens, model
+                )
+                log_invalid_llm_output(diagnostic)
+                raise InvalidInputError(f"Cannot find '{key}' in response {list(result_dict.keys())}. {diagnostic}")
             output_results[key] = result_dict[key]
         return output_results
 
@@ -569,16 +753,18 @@ async def format_llm_response(
                     return
                 yield chunk.choices[0].delta.content
 
-    to_ret = {
-        "llm_output": None,
-        "input_token_count": 0,
-        "output_token_count": 0,
-        "total_token_count": 0,
-        "finish_reason": "",
-        "model_id": "",
-        "sample_input": "",
-        "sample_output": "",
-    }
+    to_ret = _LLMOutput(
+        {
+            "llm_output": None,
+            "input_token_count": 0,
+            "output_token_count": 0,
+            "total_token_count": 0,
+            "finish_reason": "",
+            "model_id": "",
+            "sample_input": "",
+            "sample_output": "",
+        }
+    )
 
     if not is_first_choice:
         to_ret["llm_output"] = response
@@ -602,6 +788,15 @@ async def format_llm_response(
             response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
         )
         model_id = response.model if response.model else ""
+        # Unlike output_token_count, missing usage stays None so the diagnostic reports it as unknown.
+        reported_output_tokens = response.usage.completion_tokens if response.usage else None
+        to_ret.diagnostic_metadata = _LLMOutputDiagnosticMetadata(finish_reason, reported_output_tokens, model_id)
+        if not response.choices:
+            log_invalid_llm_output(
+                llm_output_diagnostic(
+                    "the model response contained no choices", finish_reason, reported_output_tokens, model_id
+                )
+            )
         sample_output_list = (
             [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}]
             if (response.choices and response.choices[0].message.content and response.choices[0].message.role)
@@ -626,7 +821,7 @@ async def format_llm_response(
         response_content = response.model_dump()["choices"][0]["message"]
     else:
         response_content = getattr(response.choices[0].message, "content", "")
-    result = format_choice(response_content)
+    result = format_choice(response_content, finish_reason, reported_output_tokens, model_id)
     to_ret["llm_output"] = result
     to_ret["input_token_count"] = input_token_count
     to_ret["output_token_count"] = output_token_count

@@ -11,44 +11,12 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
     INTERNAL = "Internal"
     """Actions are for internal-only APIs."""
-
-
-class AllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The allocation strategy for VM size selection."""
-
-    LOWEST_PRICE = "LowestPrice"
-    """Platform prioritizes VM sizes with the lowest hourly cost."""
-    PRIORITIZED = "Prioritized"
-    """Customer specifies a rank for each VM size, platform uses VM sizes in rank order."""
-    CAPACITY_OPTIMIZED = "CapacityOptimized"
-    """Platform prioritizes VM sizes with the highest available capacity first."""
-
-
-class BulkCreateCustomAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The allocation strategy for VM size selection in BulkCreateCustom."""
-
-    LOWEST_PRICE = "LowestPrice"
-    """Platform prioritizes VM sizes with the lowest hourly cost."""
-    PRIORITIZED = "Prioritized"
-    """Customer specifies a rank for each VM size, platform uses VM sizes in rank order."""
-
-
-class BulkCreateCustomDistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The distribution strategy for zone allocation in BulkCreateCustom."""
-
-    BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
-    """Platform attempts to place as many VMs as possible in a single zone, falls back to multiple
-    zones if needed."""
-    PRIORITIZED = "Prioritized"
-    """Platform uses customer-provided zone rankings to allocate VMs."""
-    BEST_EFFORT_BALANCED = "BestEffortBalanced"
-    """Platform attempts to evenly distribute VMs across all available zones with best effort."""
 
 
 class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -103,12 +71,12 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The types of deadlines supported by Bulkactions."""
+    """The deadline behavior for a bulk action."""
 
     INITIATE_AT = "InitiateAt"
-    """Initiate the operation at the given deadline."""
+    """Bulk Actions attempts to start the operation at the specified deadline."""
     COMPLETE_BY = "CompleteBy"
-    """Complete the operation by the given deadline."""
+    """Bulk Actions attempts to complete the operation by the specified deadline."""
 
 
 class DeleteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -218,21 +186,6 @@ class DiskDetachOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ForceDetach the disk."""
 
 
-class DistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The distribution strategy for zone allocation."""
-
-    BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
-    """Platform attempts to place as many VMs as possible in a single zone, falls back to multiple
-    zones if needed."""
-    PRIORITIZED = "Prioritized"
-    """Platform uses customer-provided zone rankings to allocate VMs."""
-    BEST_EFFORT_BALANCED = "BestEffortBalanced"
-    """Platform attempts to evenly distribute VMs across all available zones with best effort."""
-    STRICT_BALANCED = "StrictBalanced"
-    """Platform must evenly distribute VMs across zones, request is rejected if exact balance cannot
-    be achieved."""
-
-
 class DomainNameLabelScopeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Domain name label scope.The concatenation of the hashed domain name label that generated
     according to the policy from domain name label scope and vm index will be the domain name
@@ -259,6 +212,15 @@ class EvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """When evicted, the Spot VM will be deallocated/stopped."""
 
 
+class ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported ExtendedLocation types."""
+
+    EDGE_ZONE = "EdgeZone"
+    """Azure Edge Zones location type."""
+    CUSTOM_LOCATION = "CustomLocation"
+    """Azure Custom Locations type."""
+
+
 class IPVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available from compute Api-Version 2017-03-30 onwards, it represents whether the specific
     ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values are: 'IPv4' and
@@ -272,7 +234,7 @@ class IPVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The language used for scheduled action notifications."""
+    """The language used for recurring bulk action notifications."""
 
     EN_US = "en-us"
     """English (United States)."""
@@ -364,32 +326,32 @@ class Modes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A month in which the scheduled action can run."""
+    """A month in which the recurring bulk action can run."""
 
     JANUARY = "January"
-    """The scheduled action can run in January."""
+    """The recurring bulk action can run in January."""
     FEBRUARY = "February"
-    """The scheduled action can run in February."""
+    """The recurring bulk action can run in February."""
     MARCH = "March"
-    """The scheduled action can run in March."""
+    """The recurring bulk action can run in March."""
     APRIL = "April"
-    """The scheduled action can run in April."""
+    """The recurring bulk action can run in April."""
     MAY = "May"
-    """The scheduled action can run in May."""
+    """The recurring bulk action can run in May."""
     JUNE = "June"
-    """The scheduled action can run in June."""
+    """The recurring bulk action can run in June."""
     JULY = "July"
-    """The scheduled action can run in July."""
+    """The recurring bulk action can run in July."""
     AUGUST = "August"
-    """The scheduled action can run in August."""
+    """The recurring bulk action can run in August."""
     SEPTEMBER = "September"
-    """The scheduled action can run in September."""
+    """The recurring bulk action can run in September."""
     OCTOBER = "October"
-    """The scheduled action can run in October."""
+    """The recurring bulk action can run in October."""
     NOVEMBER = "November"
-    """The scheduled action can run in November."""
+    """The recurring bulk action can run in November."""
     DECEMBER = "December"
-    """The scheduled action can run in December."""
+    """The recurring bulk action can run in December."""
     ALL = "All"
     """Every month."""
 
@@ -432,14 +394,14 @@ class NetworkInterfaceAuxiliarySku(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
 
 class NotificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The delivery method for scheduled action notifications."""
+    """The delivery method for recurring bulk action notifications."""
 
     EMAIL = "Email"
     """Sends notifications by email."""
 
 
 class OccurrenceResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of a scheduled-action resource within an occurrence."""
+    """The provisioning state of a recurring bulk action resource within an occurrence."""
 
     SUCCEEDED = "Succeeded"
     """Resource has been created."""
@@ -460,7 +422,7 @@ class OccurrenceResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEn
 
 
 class OccurrenceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of a scheduled action occurrence."""
+    """The current state of a recurring bulk action occurrence."""
 
     CREATED = "Created"
     """The occurrence has been created."""
@@ -490,25 +452,25 @@ class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Values that define the states of operations in Bulkactions."""
+    """The current state of a bulk action."""
 
     SCHEDULED = "Scheduled"
-    """Operations that have been scheduled."""
+    """The operation has been scheduled."""
     EXECUTING = "Executing"
-    """Operations that are in the process of being executed."""
+    """The operation is in progress."""
     SUCCEEDED = "Succeeded"
-    """Operations that succeeded."""
+    """The operation completed successfully."""
     FAILED = "Failed"
-    """Operations that have failed."""
+    """The operation failed."""
     CANCELLED = "Cancelled"
-    """Operations that have been Cancelled by the user."""
+    """The operation was canceled by the caller."""
     BLOCKED = "Blocked"
-    """Operations that are blocked."""
+    """The operation cannot currently make progress."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -519,36 +481,13 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
-class PartialFulfillmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether the service may launch fewer instances than requested when the full capacity cannot be
-    satisfied.
-    """
-
-    ENABLED = "Enabled"
-    """Partial fulfillment is allowed."""
-    DISABLED = "Disabled"
-    """Partial fulfillment is not allowed."""
-
-
-class PartialFulfillmentReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason the requested capacity could only be partially fulfilled."""
-
-    INSUFFICIENT_CAPACITY = "InsufficientCapacity"
-    """The requested capacity could not be fully satisfied due to insufficient capacity in the region."""
-    INSUFFICIENT_QUOTA = "InsufficientQuota"
-    """The requested capacity could not be fully satisfied due to insufficient quota in the
-    subscription."""
-    NONE = "None"
-    """The requested capacity was successfully satisfied without any partial fulfillment."""
-
-
 class PriorityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The priority type for VM allocation."""
+    """The priority type for virtual machine allocation."""
 
     REGULAR = "Regular"
-    """Regular priority VMs."""
+    """Regular, non-Spot virtual machines."""
     SPOT = "Spot"
-    """Spot priority VMs."""
+    """Azure Spot Virtual Machines."""
 
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -628,22 +567,22 @@ class ResourceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of bulk operation that can be performed on resources using Bulkactions API."""
+    """The type of operation performed by Bulk Actions."""
 
     START = "Start"
-    """Start operations on the resources."""
+    """Starts the specified virtual machines."""
     DEALLOCATE = "Deallocate"
-    """Deallocate operations on the resources."""
+    """Deallocates the specified virtual machines."""
     HIBERNATE = "Hibernate"
-    """Hibernate operations on the resources."""
+    """Hibernates the specified virtual machines."""
     CREATE = "Create"
-    """Create operations on the resources."""
+    """Creates the specified virtual machines."""
     DELETE = "Delete"
-    """Delete operations on the resources."""
+    """Deletes the specified virtual machines."""
 
 
 class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of compute resource targeted by the scheduled action."""
+    """The type of compute resource targeted by the recurring bulk action."""
 
     VIRTUAL_MACHINE = "VirtualMachine"
     """Azure virtual machines."""
@@ -661,7 +600,7 @@ class ScheduledActionsDeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
 
 class ScheduledActionsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the scheduled action."""
+    """The provisioning state of the recurring bulk action."""
 
     SUCCEEDED = "Succeeded"
     """Resource has been created."""
@@ -670,13 +609,13 @@ class ScheduledActionsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnum
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     DELETING = "Deleting"
-    """The scheduled action is being deleted."""
+    """The recurring bulk action is being deleted."""
     UPDATING = "Updating"
-    """The scheduled action is being updated."""
+    """The recurring bulk action is being updated."""
 
 
 class ScheduledActionsResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation to retry when a scheduled action fails."""
+    """The operation to retry when a recurring bulk action fails."""
 
     START = "Start"
     """Starts the resources."""
@@ -691,7 +630,7 @@ class ScheduledActionsResourceOperationType(str, Enum, metaclass=CaseInsensitive
 
 
 class ScheduledActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation performed by the scheduled action."""
+    """The operation performed by the recurring bulk action."""
 
     START = "Start"
     """Starts the targeted resources."""
@@ -769,22 +708,22 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A day of the week on which the scheduled action can run."""
+    """A day of the week on which the recurring bulk action can run."""
 
     MONDAY = "Monday"
-    """The scheduled action can run on Monday."""
+    """The recurring bulk action can run on Monday."""
     TUESDAY = "Tuesday"
-    """The scheduled action can run on Tuesday."""
+    """The recurring bulk action can run on Tuesday."""
     WEDNESDAY = "Wednesday"
-    """The scheduled action can run on Wednesday."""
+    """The recurring bulk action can run on Wednesday."""
     THURSDAY = "Thursday"
-    """The scheduled action can run on Thursday."""
+    """The recurring bulk action can run on Thursday."""
     FRIDAY = "Friday"
-    """The scheduled action can run on Friday."""
+    """The recurring bulk action can run on Friday."""
     SATURDAY = "Saturday"
-    """The scheduled action can run on Saturday."""
+    """The recurring bulk action can run on Saturday."""
     SUNDAY = "Sunday"
-    """The scheduled action can run on Sunday."""
+    """The recurring bulk action can run on Sunday."""
     ALL = "All"
     """Every day of the week."""
 
@@ -835,3 +774,12 @@ class WindowsVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AutomaticByOS VM guest patch mode."""
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
     """AutomaticByPlatform VM guest patch mode."""
+
+
+class ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy used to select an availability zone for the virtual machine."""
+
+    ANY = "Any"
+    """ANY."""
+    AUTO = "Auto"
+    """Bulk Actions automatically selects an availability zone based on the request."""

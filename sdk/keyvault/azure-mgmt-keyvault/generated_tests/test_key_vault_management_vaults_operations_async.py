@@ -56,6 +56,7 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                             }
                         ],
                         "createMode": "str",
+                        "enableCrossTenantAccessProtection": bool,
                         "enablePurgeProtection": bool,
                         "enableRbacAuthorization": bool,
                         "enableSoftDelete": bool,
@@ -84,10 +85,21 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                                 },
                             }
                         ],
+                        "protectionKeysWrappingKey": {
+                            "keyAuthenticationData": {"authType": "ServiceIdentity"},
+                            "keyValue": {"kty": "oct", "url": "str"},
+                        },
                         "provisioningState": "str",
                         "publicNetworkAccess": "str",
                         "softDeleteRetentionInDays": 0,
+                        "tokenBindingParameters": {"minimumTokenBindingStrength": "str", "mode": "str"},
                         "vaultUri": "str",
+                    },
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "tags": {"str": "str"},
                 },
@@ -104,6 +116,12 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vault_name="str",
             parameters={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
                     "accessPolicies": [
                         {
@@ -119,6 +137,7 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                         }
                     ],
                     "createMode": "str",
+                    "enableCrossTenantAccessProtection": bool,
                     "enablePurgeProtection": bool,
                     "enableRbacAuthorization": bool,
                     "enableSoftDelete": bool,
@@ -131,10 +150,15 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                         "ipRules": [{"value": "str"}],
                         "virtualNetworkRules": [{"id": "str", "ignoreMissingVnetServiceEndpoint": bool}],
                     },
+                    "protectionKeysWrappingKey": {
+                        "keyAuthenticationData": {"authType": "ServiceIdentity"},
+                        "keyValue": {"kty": "oct", "url": "str"},
+                    },
                     "publicNetworkAccess": "str",
                     "sku": {"family": "str", "name": "str"},
                     "softDeleteRetentionInDays": 0,
                     "tenantId": "str",
+                    "tokenBindingParameters": {"minimumTokenBindingStrength": "str", "mode": "str"},
                 },
                 "tags": {"str": "str"},
             },

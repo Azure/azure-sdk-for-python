@@ -20,6 +20,7 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
+from azure.ai.ml._azure_environments import _get_default_cloud_name
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023_preview
 from azure.ai.ml._restclient.arm_ml_service.models import DataContainer, DataVersionBase, ListViewType
@@ -45,6 +46,7 @@ from azure.ai.ml._utils._data_utils import (
     read_remote_mltable_metadata_contents,
     validate_mltable_metadata,
 )
+from azure.ai.ml._utils._data_path_resolver import _DataPathResolver
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -69,6 +71,7 @@ from azure.ai.ml.data_transfer import import_data as import_data_func
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
+from azure.ai.ml.entities._data.resolved_data_path import ResolvedDataPath
 from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
@@ -123,12 +126,51 @@ class DataOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._service_client = service_client
         self._registry_service_client = kwargs.pop("registry_service_client", None)
+        self._cloud = kwargs.pop("cloud", None) or _get_default_cloud_name()
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
         self._all_operations: OperationsContainer = kwargs.pop("all_operations")
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
+
+    @monitor_with_activity(ops_logger, "Data.ResolvePath", ActivityType.PUBLICAPI)
+    @experimental
+    def resolve_path(self, path: str, *, follow_mltable: bool = True) -> ResolvedDataPath:
+        """Resolve an AML datastore URI to physical storage locations.
+
+        Supports short or fully qualified datastore URIs in this client's workspace.
+        Azure Blob returns HTTPS; ADLS Gen2 and OneLake return ABFSS. Blob-backed
+        MLTable definitions retain their sources and transformations as a tree.
+        The method does not read table rows, apply transformations, or generate SAS tokens.
+        Returned URIs do not carry the credentials used for resolution. Authenticate separately
+        when reading them. MLTable discovery is limited to Blob-backed definitions of at most
+        1 MiB and eight definition levels, with at most 1024 resolved paths per call.
+        Non-Blob source references and patterns are returned without discovery or expansion.
+        Authenticated discovery only accesses the configured Azure cloud's Blob endpoints;
+        custom endpoints require metadata-only resolution. Missing optional definitions
+        leave the location unchanged.
+
+        :param path: AML datastore path URI. Asset IDs are not accepted; pass a retrieved asset's path.
+        :type path: str
+        :keyword follow_mltable: Discover and follow Blob-backed MLTable definitions. Defaults to True.
+            Set to False for metadata-only resolution without storage access.
+        :paramtype follow_mltable: bool
+        :return: Resolved location, source tree, and preserved MLTable transformations.
+        :rtype: ~azure.ai.ml.entities.ResolvedDataPath
+        :raises ~azure.ai.ml.exceptions.ValidationException: Invalid path, unsupported datastore,
+            cross-workspace reference, malformed definition, or a reference cycle.
+        :raises ~azure.core.exceptions.HttpResponseError: Datastore or storage access fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_resolve_data_path.py
+                :start-after: [START resolve_data_path]
+                :end-before: [END resolve_data_path]
+                :language: python
+                :dedent: 4
+        """
+        return _DataPathResolver(self._datastore_operation, follow_mltable, cloud=self._cloud).resolve(path)
 
     @monitor_with_activity(ops_logger, "Data.List", ActivityType.PUBLICAPI)
     def list(

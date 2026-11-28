@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,7 +38,25 @@ def main():
         protection_container_name="CentralUSCancloud",
         switch_input={
             "properties": {
-                "providerSpecificDetails": {"instanceType": "A2A"},
+                "providerSpecificDetails": {
+                    "instanceType": "A2A",
+                    "recoveryConfidentialDataDiskEncryptionIdentity": "/Subscriptions/42195872-7e70-4f8a-837f-84b28ecbb78b/resourceGroups/priyanprg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/cvm-cdde-uami",
+                    "recoveryContainerId": "/Subscriptions/42195872-7e70-4f8a-837f-84b28ecbb78b/resourceGroups/priyanprg/providers/Microsoft.RecoveryServices/vaults/priyanponeboxvault/replicationFabrics/EUSCanSite/replicationProtectionContainers/euscancloud",
+                    "recoveryResourceGroupId": "/Subscriptions/42195872-7e70-4f8a-837f-84b28ecbb78b/resourceGroups/priyanprg",
+                    "vmManagedDisks": [
+                        {
+                            "confidentialDiskEncryptionInfo": {
+                                "recoveryReplicaConfidentialDiskEncryptionSetId": "/Subscriptions/42195872-7e70-4f8a-837f-84b28ecbb78b/resourceGroups/priyanprg/providers/Microsoft.Compute/diskEncryptionSets/cvm-replica-des",
+                                "recoveryTargetConfidentialDiskEncryptionSetId": "/Subscriptions/42195872-7e70-4f8a-837f-84b28ecbb78b/resourceGroups/priyanprg/providers/Microsoft.Compute/diskEncryptionSets/cvm-target-des",
+                            },
+                            "diskId": "/Subscriptions/42195872-7e70-4f8a-837f-84b28ecbb78b/resourceGroups/priyanprg/providers/Microsoft.Compute/disks/a2aSwapOsVm-osdisk",
+                            "primaryStagingAzureStorageAccountId": "/Subscriptions/42195872-7e70-4f8a-837f-84b28ecbb78b/resourceGroups/priyanprg/providers/Microsoft.Storage/storageAccounts/a2acache",
+                            "recoveryReplicaDiskAccountType": "Premium_LRS",
+                            "recoveryResourceGroupId": "/Subscriptions/42195872-7e70-4f8a-837f-84b28ecbb78b/resourceGroups/priyanprg",
+                            "recoveryTargetDiskAccountType": "Premium_LRS",
+                        }
+                    ],
+                },
                 "replicationProtectedItemName": "a2aSwapOsVm",
             }
         },
@@ -45,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/ReplicationProtectionContainers_SwitchProtection.json
+# x-ms-original-file: 2026-11-01/ReplicationProtectionContainers_SwitchProtection.json
 if __name__ == "__main__":
     main()

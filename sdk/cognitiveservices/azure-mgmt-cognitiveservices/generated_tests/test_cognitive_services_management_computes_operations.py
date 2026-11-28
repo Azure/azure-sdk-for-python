@@ -57,7 +57,6 @@ class TestCognitiveServicesManagementComputesOperations(AzureMgmtRecordedTestCas
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
-                "tags": {"str": "str"},
                 "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result

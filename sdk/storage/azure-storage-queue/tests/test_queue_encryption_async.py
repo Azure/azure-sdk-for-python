@@ -43,7 +43,6 @@ from azure.storage.queue._encryption import (
     _WrappedContentKey,
 )
 
-
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "encryptionqueue"
 # ------------------------------------------------------------------------------
@@ -644,6 +643,69 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         # Assert
         assert content == message.content
+
+    @QueuePreparer()
+    @recorded_by_proxy_async
+    async def test_update_encrypted_message_without_kek_v2(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        kek = KeyWrapper("key1")
+        key_resolver = KeyResolver()
+        key_resolver.put_key(kek)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key.secret,
+            encryption_version="2.0",
+            key_encryption_key=kek,
+        )
+        queue = await self._create_queue(qsc)
+        await queue.clear_messages()
+        sent = await queue.send_message("Update Me")
+        queue.key_encryption_key = None
+        encrypted = (await queue.peek_messages())[0]
+        ciphertext = encrypted.content
+        with pytest.raises(ValueError, match="key-encryption-key"):
+            await queue.update_message(sent, visibility_timeout=10)
+        assert (await queue.peek_messages())[0].content == ciphertext
+        queue.key_resolver_function = key_resolver.resolve_key
+        decrypted = (await queue.peek_messages())[0]
+        assert decrypted.content == "Update Me"
+        message = await queue.receive_message()
+        assert message.id == sent.id
+        assert message.content == "Update Me"
+
+        for candidate in (sent, decrypted, message):
+            with pytest.raises(ValueError, match="key-encryption-key"):
+                await queue.update_message(candidate, visibility_timeout=10)
+            with pytest.raises(ValueError, match="key-encryption-key"):
+                await queue.update_message(candidate, content="Updated")
+            with pytest.raises(ValueError, match="key-encryption-key"):
+                await queue.update_message(candidate, content="")
+
+        message.content = "Mutated"
+        with pytest.raises(ValueError, match="key-encryption-key"):
+            await queue.update_message(message)
+        queue.key_resolver_function = None
+        with pytest.raises(ValueError, match="key-encryption-key"):
+            await queue.update_message(message)
+
+        queue.key_encryption_key = kek
+        updated = await queue.update_message(message, content="Updated", visibility_timeout=0)
+        queue.key_encryption_key = None
+        queue.key_resolver_function = key_resolver.resolve_key
+        with pytest.raises(ValueError, match="key-encryption-key"):
+            await queue.update_message(updated)
+        received = await queue.receive_message()
+        assert received.id == updated.id == sent.id
+        assert received.content == "Updated"
+
+        await queue.clear_messages()
+        await queue.send_message("Plaintext")
+        plaintext = await queue.receive_message()
+        updated = await queue.update_message(plaintext, content="Still plaintext", visibility_timeout=0)
+        await queue.update_message(updated.id, updated.pop_receipt, content="ID-only update")
+        assert (await queue.receive_message()).content == "ID-only update"
 
     @QueuePreparer()
     @recorded_by_proxy_async

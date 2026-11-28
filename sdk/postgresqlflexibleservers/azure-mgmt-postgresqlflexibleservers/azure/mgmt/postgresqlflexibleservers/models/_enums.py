@@ -228,6 +228,15 @@ class FeatureStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Feature is disabled."""
 
 
+class FipsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if FIPS (Federal Information Processing Standards) mode is enabled on the server."""
+
+    ENABLED = "Enabled"
+    """FIPS mode is enabled on the server."""
+    DISABLED = "Disabled"
+    """FIPS mode is disabled on the server."""
+
+
 class GeographicallyRedundantBackup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates if the server is configured to create geographically redundant backups."""
 
@@ -293,6 +302,15 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure automatically creates and manages the identity associated to the lifecycle of the server."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     """Both system-assigned and user-assigned identities are assigned to the server."""
+
+
+class ImmutableBackup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if the server is configured to create immutable backups."""
+
+    ENABLED = "Enabled"
+    """Server is configured to create immutable backups."""
+    DISABLED = "Disabled"
+    """Server is not configured to create immutable backups."""
 
 
 class LocationRestricted(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -539,27 +557,6 @@ class PasswordBasedAuth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Server supports password based authentication."""
     DISABLED = "Disabled"
     """Server does not support password based authentication."""
-
-
-class PostgresMajorVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Major version of PostgreSQL database engine."""
-
-    EIGHTEEN = "18"
-    """PostgreSQL 18."""
-    SEVENTEEN = "17"
-    """PostgreSQL 17."""
-    SIXTEEN = "16"
-    """PostgreSQL 16."""
-    FIFTEEN = "15"
-    """PostgreSQL 15."""
-    FOURTEEN = "14"
-    """PostgreSQL 14."""
-    THIRTEEN = "13"
-    """PostgreSQL 13."""
-    TWELVE = "12"
-    """PostgreSQL 12."""
-    ELEVEN = "11"
-    """PostgreSQL 11."""
 
 
 class PostgreSqlFlexibleServerHighAvailabilityMode(  # pylint: disable=name-too-long

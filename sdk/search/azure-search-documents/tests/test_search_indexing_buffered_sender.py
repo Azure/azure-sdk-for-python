@@ -6,13 +6,14 @@
 
 from __future__ import annotations
 
+from types import MappingProxyType
 from unittest import mock
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceResponseTimeoutError
 
-from azure.search.documents import RequestEntityTooLargeError, SearchIndexingBufferedSender
+from azure.search.documents import RequestEntityTooLargeError, SearchClient, SearchIndexingBufferedSender
 from azure.search.documents.models import IndexingResult
 
 SEARCH_ENDPOINT = "https://my-search-service.search.windows.net"
@@ -50,6 +51,33 @@ def create_indexing_result(document_key=DOCUMENT_KEY, *, succeeded=True, status_
 
 
 class TestSearchIndexingBufferedSenderConstructor:
+    @pytest.mark.parametrize(
+        ("audience", "explicit_scopes", "expected"),
+        [
+            (None, None, ["https://search.azure.com/.default"]),
+            ("https://search.azure.us/", None, ["https://search.azure.us/.default"]),
+            ("https://search.azure.us/", ["https://custom/.default"], ["https://custom/.default"]),
+        ],
+    )
+    def test_constructor_preserves_audience_and_explicit_scope_precedence(self, audience, explicit_scopes, expected):
+        credential = mock.Mock(spec=["get_token"])
+        options = {"audience": audience}
+        if explicit_scopes is not None:
+            options["credential_scopes"] = explicit_scopes
+        sender = SearchIndexingBufferedSender(
+            SEARCH_ENDPOINT, INDEX_NAME, credential, auto_flush=False, api_version=API_VERSION, **options
+        )
+        try:
+            assert isinstance(sender._client, SearchClient)
+            assert sender._client._config.credential_scopes == expected
+            assert sender._client._config.endpoint == SEARCH_ENDPOINT
+            assert sender._client._config.api_version == API_VERSION
+            credential.get_token.assert_not_called()
+            if explicit_scopes is not None:
+                assert explicit_scopes == expected
+        finally:
+            sender._client.close()
+
     def test_constructor_uses_default_buffering_settings(self):
         sender = SearchIndexingBufferedSender(SEARCH_ENDPOINT, INDEX_NAME, CREDENTIAL, window=100)
         try:
@@ -172,6 +200,54 @@ class TestSearchIndexingBufferedSenderQueueing:
 
 
 class TestSearchIndexingBufferedSenderProcessing:
+    @pytest.mark.parametrize("shared_resource", [None, "transport", "pipeline", "both"])
+    @pytest.mark.parametrize("failure", [None, "lookup", "fields"])
+    def test_process_preserves_schema_options_and_client_ownership(self, shared_resource, failure):
+        scopes = ["https://custom/.default"]
+        options = {"audience": "https://search.azure.us/", "credential_scopes": scopes}
+        if shared_resource in ("transport", "both"):
+            options["transport"] = mock.Mock()
+        if shared_resource in ("pipeline", "both"):
+            options["pipeline"] = mock.Mock()
+        sender = create_sender(api_version=API_VERSION, **options)
+        field = mock.Mock(key=True)
+        field.name = "HotelId"
+        with mock.patch("azure.search.documents._patch.SearchIndexClient") as factory, mock.patch.object(
+            sender, "_index_documents_actions", return_value=[]
+        ) as index_actions:
+            schema = factory.return_value
+            if failure == "lookup":
+                schema.get_index.side_effect = RuntimeError("schema unavailable")
+            else:
+                schema.get_index.return_value.fields = None if failure == "fields" else [field]
+            assert sender._process() is False
+        factory.assert_called_once_with(SEARCH_ENDPOINT, CREDENTIAL, api_version=API_VERSION, **options)
+        schema.get_index.assert_called_once_with(INDEX_NAME)
+        index_actions.assert_called_once()
+        if shared_resource is None:
+            schema.close.assert_called_once_with()
+        else:
+            schema.close.assert_not_called()
+        for resource in ("transport", "pipeline"):
+            if resource in options:
+                options[resource].close.assert_not_called()
+        assert scopes == ["https://custom/.default"]
+
+    @pytest.mark.parametrize("raise_error", [False, True])
+    def test_process_requeues_every_action_before_returning_or_raising(self, raise_error):
+        sender = create_sender()
+        sender._index_key = "HotelId"
+        sender.upload_documents([create_hotel_document(str(key)) for key in range(3)])
+        failure = HttpResponseError("indexing request failed")
+        with mock.patch.object(sender, "_index_documents_actions", side_effect=failure):
+            if raise_error:
+                with pytest.raises(HttpResponseError) as error:
+                    sender._process(raise_error=True)
+                assert error.value is failure
+            else:
+                assert sender._process(raise_error=False) is True
+        assert [action.as_dict()["HotelId"] for action in sender.actions] == ["0", "1", "2"]
+
     def test_flush_detects_key_field_and_reports_success_callbacks(self):
         on_progress = mock.Mock()
         on_remove = mock.Mock()
@@ -262,6 +338,15 @@ class TestSearchIndexingBufferedSenderProcessing:
 
 
 class TestSearchIndexingBufferedSenderIndexing:
+    @pytest.mark.parametrize("mapping_type", [dict, MappingProxyType])
+    def test_index_documents_accepts_wire_batch_mappings(self, mapping_type):
+        sender = create_sender()
+        action = {"@search.action": "upload", **create_hotel_document()}
+        expected = [create_indexing_result()]
+        with mock.patch.object(sender._client, "index_documents", return_value=expected) as operation:
+            assert sender.index_documents(mapping_type({"value": [action]})) == expected
+        assert [item.as_dict() for item in operation.call_args.kwargs["batch"].actions] == [action]
+
     def test_context_manager_enters_client_and_closes_on_exit(self):
         sender = create_sender()
 

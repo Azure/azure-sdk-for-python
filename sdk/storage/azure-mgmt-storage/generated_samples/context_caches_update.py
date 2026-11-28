@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,16 +33,29 @@ def main():
 
     response = client.context_caches.begin_update(
         resource_group_name="testrg",
-        context_cache_name="testaccount",
+        context_cache_name="testcontextcache",
         properties={
-            "identity": {"type": "SystemAssigned"},
-            "properties": {"description": "Updated Prompt Service account description"},
-            "tags": {"environment": "production", "team": "context-cache"},
+            "identity": {
+                "type": "SystemAssigned,UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-uami": {}
+                },
+            },
+            "properties": {
+                "description": "Updated context cache",
+                "encryption": {
+                    "customerManagedKeyEncryption": {
+                        "keyEncryptionKeyIdentity": {"identityType": "systemAssignedIdentity"},
+                        "keyEncryptionKeyUrl": "https://mykeyvault.vault.azure.net/keys/newEncryptionKey",
+                    }
+                },
+            },
+            "tags": {"environment": "production", "team": "promptservice"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/StorageContextCacheCRUD/ContextCaches_Update.json
+# x-ms-original-file: 2026-09-01/StorageContextCacheCRUD/ContextCaches_Update.json
 if __name__ == "__main__":
     main()

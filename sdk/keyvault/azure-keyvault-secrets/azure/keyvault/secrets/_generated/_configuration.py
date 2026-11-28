@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class KeyVaultClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class KeyVaultClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for KeyVaultClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -26,14 +27,14 @@ class KeyVaultClientConfiguration:  # pylint: disable=too-many-instance-attribut
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "2025-07-01".
-     Default value is "2025-07-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, vault_base_url: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-07-01")
+        api_version: str = kwargs.pop("api_version", "2026-04-01")
 
         if vault_base_url is None:
             raise ValueError("Parameter 'vault_base_url' must not be None.")

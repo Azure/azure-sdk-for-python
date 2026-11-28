@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,6 +22,7 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import RedisEnterpriseManagementClientConfiguration
 from .operations import (
     AccessPolicyAssignmentOperations,
+    ClustersOperations,
     DatabasesOperations,
     MigrationsOperations,
     Operations,
@@ -40,11 +42,13 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attributes
+class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """REST API for managing Redis Enterprise resources in Azure.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.redisenterprise.aio.operations.Operations
+    :ivar clusters: ClustersOperations operations
+    :vartype clusters: azure.mgmt.redisenterprise.aio.operations.ClustersOperations
     :ivar databases: DatabasesOperations operations
     :vartype databases: azure.mgmt.redisenterprise.aio.operations.DatabasesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -73,7 +77,7 @@ class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attr
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-06-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-10-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -131,6 +135,7 @@ class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attr
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize

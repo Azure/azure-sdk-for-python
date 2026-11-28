@@ -6902,6 +6902,51 @@ class ExternalHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
+class FlexProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the FlexProfile for a virtual machine. When set, Azure may deploy a compatible
+    alternative VM size based on capacity and placement considerations, and the deployed size is
+    returned in hardwareProfile.vmSize. See the properties.flexProfile description for the full
+    usage rules, including how it interacts with hardwareProfile.vmSize.
+
+    :ivar preferred_vm_size: Specifies the preferred VM size, for example Standard_D4s_v5. Azure
+     may deploy a compatible alternative size based on capacity and placement considerations.
+     Supported VM families for FlexProfile may vary by region. The recommended way to get the list
+     of available sizes is using these APIs: `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_, `List all available virtual
+     machine sizes for resizing
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Required.
+    :vartype preferred_vm_size: str
+    """
+
+    preferred_vm_size: str = rest_field(
+        name="preferredVMSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the preferred VM size, for example Standard_D4s_v5. Azure may deploy a compatible
+     alternative size based on capacity and placement considerations. Supported VM families for
+     FlexProfile may vary by region. The recommended way to get the list of available sizes is using
+     these APIs: `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_, `List all available virtual
+     machine sizes for resizing
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        preferred_vm_size: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Gallery(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Shared Image Gallery that you want to create or update.
 
@@ -15462,7 +15507,7 @@ class ResourceSkuZoneDetails(_Model):
     :vartype capabilities: list[~azure.mgmt.compute.models.ResourceSkuCapabilities]
     """
 
-    name: Optional[list[str]] = rest_field(visibility=["read"])
+    name: Optional[list[str]] = rest_field(name="Name", visibility=["read"])
     """The set of zones that the SKU is available in with the specified capabilities."""
     capabilities: Optional[list["_models.ResourceSkuCapabilities"]] = rest_field(visibility=["read"])
     """A list of capabilities that are available for the SKU in the specified list of zones."""
@@ -15841,7 +15886,10 @@ class RestorePointInstanceView(_Model):  # pylint: disable=docstring-keyword-sho
 
     :ivar disk_restore_points: The disk restore points information.
     :vartype disk_restore_points: list[~azure.mgmt.compute.models.DiskRestorePointInstanceView]
-    :ivar statuses: The resource status information.
+    :ivar statuses: The aggregate status information for the restore point. The list may include
+     separate aggregate entries for replication and, in supported API versions, Instant Access, as
+     applicable. For more information about Instant Access, see `Use virtual machine restore points
+     <https://learn.microsoft.com/azure/virtual-machines/virtual-machines-create-restore-points#instant-access>`_.
     :vartype statuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
     """
 
@@ -15852,7 +15900,10 @@ class RestorePointInstanceView(_Model):  # pylint: disable=docstring-keyword-sho
     statuses: Optional[list["_models.InstanceViewStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource status information."""
+    """The aggregate status information for the restore point. The list may include separate aggregate
+     entries for replication and, in supported API versions, Instant Access, as applicable. For more
+     information about Instant Access, see `Use virtual machine restore points
+     <https://learn.microsoft.com/azure/virtual-machines/virtual-machines-create-restore-points#instant-access>`_."""
 
     @overload
     def __init__(
@@ -20536,6 +20587,7 @@ class VirtualMachine(TrackedResource):  # pylint: disable=docstring-keyword-shou
 
     __flattened_items = [
         "hardware_profile",
+        "flex_profile",
         "scheduled_events_policy",
         "storage_profile",
         "additional_capabilities",
@@ -22571,6 +22623,7 @@ class VirtualMachineNetworkInterfaceIPConfiguration(
         "primary",
         "public_ip_address_configuration",
         "private_ip_address_version",
+        "private_ip_address_prefix_length",
         "application_security_groups",
         "application_gateway_backend_address_pools",
         "load_balancer_backend_address_pools",
@@ -22630,6 +22683,10 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.models.IPVersions
+    :ivar private_ip_address_prefix_length: The private IP address prefix length. If specified and
+     the allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype private_ip_address_prefix_length: int
     :ivar application_security_groups: Specifies an array of references to application security
      group.
     :vartype application_security_groups: list[~azure.mgmt.compute.models.SubResource]
@@ -22661,6 +22718,11 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    private_ip_address_prefix_length: Optional[int] = rest_field(
+        name="privateIPAddressPrefixLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     application_security_groups: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationSecurityGroups", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -22686,6 +22748,7 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(
         primary: Optional[bool] = None,
         public_ip_address_configuration: Optional["_models.VirtualMachinePublicIPAddressConfiguration"] = None,
         private_ip_address_version: Optional[Union[str, "_models.IPVersions"]] = None,
+        private_ip_address_prefix_length: Optional[int] = None,
         application_security_groups: Optional[list["_models.SubResource"]] = None,
         application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = None,
         load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = None,
@@ -22753,6 +22816,16 @@ class VirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-sho
 
     :ivar hardware_profile: Specifies the hardware settings for the virtual machine.
     :vartype hardware_profile: ~azure.mgmt.compute.models.HardwareProfile
+    :ivar flex_profile: [Preview Feature] Specifies a FlexProfile for VM size. Azure may deploy a
+     compatible alternative VM size based on capacity and placement considerations, and returns the
+     deployed size in hardwareProfile.vmSize. A request that adds flexProfile must omit
+     hardwareProfile.vmSize. For a virtual machine that uses FlexProfile, a hardwareProfile.vmSize
+     equal to the deployed size is ignored, so a GET response can be sent back unchanged. A PATCH
+     request that omits flexProfile keeps it. A PUT request that omits flexProfile and sets
+     hardwareProfile.vmSize clears it. This property cannot exist along with a non-null
+     properties.availabilitySet, properties.capacityReservation, properties.host,
+     properties.hostGroup, properties.proximityPlacementGroup or properties.virtualMachineScaleSet.
+    :vartype flex_profile: ~azure.mgmt.compute.models.FlexProfile
     :ivar scheduled_events_policy: Specifies Redeploy, Reboot and
      ScheduledEventsAdditionalPublishingTargets Scheduled Event related configurations for the
      virtual machine.
@@ -22868,6 +22941,18 @@ class VirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-sho
         name="hardwareProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the hardware settings for the virtual machine."""
+    flex_profile: Optional["_models.FlexProfile"] = rest_field(
+        name="flexProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """[Preview Feature] Specifies a FlexProfile for VM size. Azure may deploy a compatible
+     alternative VM size based on capacity and placement considerations, and returns the deployed
+     size in hardwareProfile.vmSize. A request that adds flexProfile must omit
+     hardwareProfile.vmSize. For a virtual machine that uses FlexProfile, a hardwareProfile.vmSize
+     equal to the deployed size is ignored, so a GET response can be sent back unchanged. A PATCH
+     request that omits flexProfile keeps it. A PUT request that omits flexProfile and sets
+     hardwareProfile.vmSize clears it. This property cannot exist along with a non-null
+     properties.availabilitySet, properties.capacityReservation, properties.host,
+     properties.hostGroup, properties.proximityPlacementGroup or properties.virtualMachineScaleSet."""
     scheduled_events_policy: Optional["_models.ScheduledEventsPolicy"] = rest_field(
         name="scheduledEventsPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -23022,6 +23107,7 @@ class VirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-sho
         self,
         *,
         hardware_profile: Optional["_models.HardwareProfile"] = None,
+        flex_profile: Optional["_models.FlexProfile"] = None,
         scheduled_events_policy: Optional["_models.ScheduledEventsPolicy"] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
         additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
@@ -24586,6 +24672,7 @@ class VirtualMachineScaleSetIPConfiguration(_Model):  # pylint: disable=docstrin
         "primary",
         "public_ip_address_configuration",
         "private_ip_address_version",
+        "private_ip_address_prefix_length",
         "application_gateway_backend_address_pools",
         "application_security_groups",
         "load_balancer_backend_address_pools",
@@ -24646,6 +24733,10 @@ class VirtualMachineScaleSetIPConfigurationProperties(
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.models.IPVersion
+    :ivar private_ip_address_prefix_length: The private IP address prefix length. If specified and
+     the allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype private_ip_address_prefix_length: int
     :ivar application_gateway_backend_address_pools: Specifies an array of references to backend
      address pools of application gateways. A scale set can reference backend address pools of
      multiple application gateways. Multiple scale sets cannot use the same application gateway.
@@ -24681,6 +24772,11 @@ class VirtualMachineScaleSetIPConfigurationProperties(
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    private_ip_address_prefix_length: Optional[int] = rest_field(
+        name="privateIPAddressPrefixLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationGatewayBackendAddressPools", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -24712,6 +24808,7 @@ class VirtualMachineScaleSetIPConfigurationProperties(
         primary: Optional[bool] = None,
         public_ip_address_configuration: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfiguration"] = None,
         private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        private_ip_address_prefix_length: Optional[int] = None,
         application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = None,
         application_security_groups: Optional[list["_models.SubResource"]] = None,
         load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = None,
@@ -26223,6 +26320,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(
         "primary",
         "public_ip_address_configuration",
         "private_ip_address_version",
+        "private_ip_address_prefix_length",
         "application_gateway_backend_address_pools",
         "application_security_groups",
         "load_balancer_backend_address_pools",
@@ -26283,6 +26381,10 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.models.IPVersion
+    :ivar private_ip_address_prefix_length: The private IP address prefix length. If specified and
+     the allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype private_ip_address_prefix_length: int
     :ivar application_gateway_backend_address_pools: The application gateway backend address pools.
     :vartype application_gateway_backend_address_pools:
      list[~azure.mgmt.compute.models.SubResource]
@@ -26312,6 +26414,11 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    private_ip_address_prefix_length: Optional[int] = rest_field(
+        name="privateIPAddressPrefixLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationGatewayBackendAddressPools", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -26339,6 +26446,7 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(
             "_models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration"
         ] = None,
         private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        private_ip_address_prefix_length: Optional[int] = None,
         application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = None,
         application_security_groups: Optional[list["_models.SubResource"]] = None,
         load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = None,
@@ -28492,6 +28600,7 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=docstring-keyword
 
     __flattened_items = [
         "hardware_profile",
+        "flex_profile",
         "scheduled_events_policy",
         "storage_profile",
         "additional_capabilities",

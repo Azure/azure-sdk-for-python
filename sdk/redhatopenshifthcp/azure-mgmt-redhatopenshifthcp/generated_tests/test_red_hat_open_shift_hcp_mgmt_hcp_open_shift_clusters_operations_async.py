@@ -60,6 +60,7 @@ class TestRedHatOpenShiftHcpMgmtHcpOpenShiftClustersOperationsAsync(AzureMgmtRec
                             },
                             "subnetId": "str",
                             "vnetIntegrationSubnetId": "str",
+                            "containerRegistry": {"managedIdentity": "str"},
                             "managedResourceGroup": "str",
                             "outboundType": "str",
                         },
@@ -84,6 +85,7 @@ class TestRedHatOpenShiftHcpMgmtHcpOpenShiftClustersOperationsAsync(AzureMgmtRec
                                         "activeKey": {"name": "str", "version": "str"},
                                         "vaultName": "str",
                                         "visibility": "str",
+                                        "keyVaultType": "str",
                                     },
                                 },
                             }
@@ -100,6 +102,7 @@ class TestRedHatOpenShiftHcpMgmtHcpOpenShiftClustersOperationsAsync(AzureMgmtRec
                         "nodeDrainTimeoutMinutes": 0,
                         "provisioningState": "str",
                         "status": {
+                            "activeVersions": [{"version": "str"}],
                             "conditions": [
                                 {
                                     "lastTransitionTime": "2020-02-20 00:00:00",
@@ -108,7 +111,7 @@ class TestRedHatOpenShiftHcpMgmtHcpOpenShiftClustersOperationsAsync(AzureMgmtRec
                                     "status": "str",
                                     "type": "str",
                                 }
-                            ]
+                            ],
                         },
                     },
                     "systemData": {
@@ -158,6 +161,7 @@ class TestRedHatOpenShiftHcpMgmtHcpOpenShiftClustersOperationsAsync(AzureMgmtRec
                             },
                             "subnetId": "str",
                             "vnetIntegrationSubnetId": "str",
+                            "containerRegistry": {"managedIdentity": "str"},
                             "managedResourceGroup": "str",
                             "outboundType": "str",
                         },
@@ -182,6 +186,7 @@ class TestRedHatOpenShiftHcpMgmtHcpOpenShiftClustersOperationsAsync(AzureMgmtRec
                                         "activeKey": {"name": "str", "version": "str"},
                                         "vaultName": "str",
                                         "visibility": "str",
+                                        "keyVaultType": "str",
                                     },
                                 },
                             }
@@ -198,6 +203,7 @@ class TestRedHatOpenShiftHcpMgmtHcpOpenShiftClustersOperationsAsync(AzureMgmtRec
                         "nodeDrainTimeoutMinutes": 0,
                         "provisioningState": "str",
                         "status": {
+                            "activeVersions": [{"version": "str"}],
                             "conditions": [
                                 {
                                     "lastTransitionTime": "2020-02-20 00:00:00",
@@ -206,7 +212,7 @@ class TestRedHatOpenShiftHcpMgmtHcpOpenShiftClustersOperationsAsync(AzureMgmtRec
                                     "status": "str",
                                     "type": "str",
                                 }
-                            ]
+                            ],
                         },
                     },
                     "systemData": {

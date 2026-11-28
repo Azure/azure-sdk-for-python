@@ -37,13 +37,13 @@ def main():
         deployment_name="phi-3-arc",
         resource={
             "properties": {
-                "compute": "cpu",
                 "extensionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroupName/providers/Microsoft.Kubernetes/connectedClusters/edge-cluster/providers/Microsoft.KubernetesConfiguration/extensions/inference-operator",
-                "model": {"format": "OpenAI", "name": "phi-3-mini"},
+                "model": {
+                    "assetId": "azureml://registries/azureml/models/Phi-3-mini-128k-instruct-generic-cpu/versions/3"
+                },
                 "nodeSelector": {"agentpool": "cpu"},
                 "replicas": 2,
                 "resources": {"limits": {"cpu": "8", "memory": "16Gi"}, "requests": {"cpu": "8", "memory": "16Gi"}},
-                "runtime": "onnx-genai",
             },
             "sku": {"name": "Arc"},
         },
@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/CreateOrUpdateArcDeployment.json
+# x-ms-original-file: 2026-11-15-preview/CreateOrUpdateArcDeployment.json
 if __name__ == "__main__":
     main()

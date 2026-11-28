@@ -4,6 +4,7 @@ Checks whether a package is approved for release.
 
 .DESCRIPTION
 Invokes the centralized Azure SDK CLI API review release gate and fails unless its structured result approves the package.
+Approval summary headings include the package name and version to distinguish packages in CI logs.
 
 .PARAMETER PackageInfoFiles
 Package-info JSON files containing the package name, version, and optional API hash.
@@ -58,25 +59,25 @@ function Write-BackendStatus([string] $Name, [object] $Status) {
     }
 }
 
-function Write-ApprovalSummary([object] $Response) {
+function Write-ApprovalSummary([object] $Response, [string] $PackageName, [string] $PackageVersion) {
     $result = $Response.result
     $source = if ($result.PSObject.Properties["finalSource"]) { $result.finalSource } else { "unknown" }
     $reason = if ($result.PSObject.Properties["reason"]) { $result.reason } else { "none" }
 
     Write-Host ""
-    Write-Host "Approval results"
+    Write-Host "Approval Results ($PackageName $PackageVersion)"
     Write-Host "----------------"
     if ($result.PSObject.Properties["reviewHub"]) {
-        Write-BackendStatus "API Review Hub" $result.reviewHub
+        Write-BackendStatus "API Review Hub ($PackageName $PackageVersion)" $result.reviewHub
     }
     if ($result.PSObject.Properties["apiView"]) {
         Write-Host ""
-        Write-BackendStatus "APIView" $result.apiView
+        Write-BackendStatus "APIView ($PackageName $PackageVersion)" $result.apiView
     }
 
     $approval = if ($result.isApproved) { "APPROVED" } else { "NOT APPROVED" }
     Write-Host ""
-    Write-Host "Overall"
+    Write-Host "Overall ($PackageName $PackageVersion)"
     Write-Host "  Status: $approval"
     Write-Host "  Source: $source"
     Write-Host "  Reason: $reason"
@@ -105,30 +106,44 @@ function Test-PackageApproval([string] $PackageName, [string] $PackageVersion, [
     $formattedArguments = @($arguments | ForEach-Object { Format-CommandArgument $_ })
     Write-Host "Command: azsdk $($formattedArguments -join ' ')"
 
-    $commandResult = Invoke-AzSdkCliCommand $AzSdkExePath $arguments
+    $commandResult = Invoke-AzSdkCliCommand $AzSdkExePath $arguments -ParseJsonResponse
     $exitCode = $commandResult.ExitCode
-
-    try {
-        $response = $commandResult.Output | ConvertFrom-Json -ErrorAction Stop
-    }
-    catch {
+    $response = $commandResult.ParsedResponse
+    if ($null -eq $response) {
         $capturedOutput = "stdout:`n$($commandResult.Stdout)`nstderr:`n$($commandResult.Stderr)"
-        throw "Package approval check returned malformed JSON for $PackageName $PackageVersion (azsdk exit code $exitCode). Captured output:`n$capturedOutput"
+        if ($exitCode -ne 0) {
+            throw "Package approval check failed for $PackageName $PackageVersion (azsdk exit code $exitCode): $($commandResult.ParseError) Captured output:`n$capturedOutput"
+        }
+        throw "Package approval check returned malformed JSON for $PackageName $PackageVersion (azsdk exit code $exitCode): $($commandResult.ParseError) Captured output:`n$capturedOutput"
     }
 
     if ($response.PSObject.Properties["result"] -and
         $null -ne $response.result -and
         $response.result.PSObject.Properties["isApproved"] -and
         $response.result.isApproved -is [bool]) {
-        Write-ApprovalSummary $response
+        Write-ApprovalSummary $response $PackageName $PackageVersion
     }
 
     if ($exitCode -ne 0) {
-        $failureMessage = if ($response.PSObject.Properties["response_error"] -and
+        if ($response.PSObject.Properties["result"] -and
+            $null -ne $response.result -and
+            $response.result.PSObject.Properties["isApproved"] -and
+            $response.result.isApproved -is [bool] -and
+            -not $response.result.isApproved) {
+            $reason = if ($response.result.PSObject.Properties["reason"] -and
+                -not [string]::IsNullOrWhiteSpace($response.result.reason)) {
+                " (reason: $($response.result.reason))"
+            } else {
+                ""
+            }
+            $failureMessage = "Package $PackageName $PackageVersion is not approved for release$reason (azsdk exit code $exitCode)."
+        }
+        elseif ($response.PSObject.Properties["response_error"] -and
             -not [string]::IsNullOrWhiteSpace($response.response_error)) {
-            $response.response_error
-        } else {
-            "azsdk exited with code $exitCode."
+            $failureMessage = $response.response_error
+        }
+        else {
+            $failureMessage = "azsdk exited with code $exitCode."
         }
         throw "Package approval check failed: $failureMessage"
     }

@@ -25,6 +25,7 @@ from .policies import (
     is_retry,
     StorageRetryPolicy,
 )
+
 from .streams_async import AsyncStructuredMessageDecoder
 from .validation import (
     calculate_content_md5,
@@ -222,7 +223,7 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         retry_total: int = 3,
         retry_to_secondary: bool = False,
         random_jitter_range: int = 3,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Constructs an Exponential retry object. The initial_backoff is used for
@@ -282,7 +283,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
         retry_total: int = 3,
         retry_to_secondary: bool = False,
         random_jitter_range: int = 3,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """
         Constructs a Linear retry object.

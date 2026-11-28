@@ -89,8 +89,9 @@ class MessageDecodePolicy(object):
             if message.message_text in [None, "", b""]:
                 continue
             content = message.message_text
+            message._is_encrypted = False
             if (self.key_encryption_key is not None) or (self.resolver is not None):
-                content = decrypt_queue_message(
+                content, message._is_encrypted = decrypt_queue_message(
                     content,
                     response,
                     self.require_encryption,

@@ -119,5 +119,6 @@ def merge_or_upload_document():
 if __name__ == "__main__":
     upload_document()
     merge_document()
+    merge_or_upload_document()
     get_document()
     delete_document()

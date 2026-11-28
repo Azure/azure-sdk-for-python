@@ -21,7 +21,7 @@ from azure.ai.projects.models import (
 class TestVoiceAgentTelephonyCallJob(TestBase):
     """
     Recorded tests covering the outbound telephony call-job REST API surface exposed through the
-    top-level `project_client.beta.voice_agents.telephony.*` operation group (added in the
+    top-level `project_client.voice_agents.telephony.*` operation group (added in the
     "batch 2" Voice Agents TypeSpec, distinct from the existing `project_client.agents.*`
     telephony binding/call methods).
 
@@ -80,8 +80,8 @@ class TestVoiceAgentTelephonyCallJob(TestBase):
         Action REST API Route                                                  Client Method
         ------+-------------------------------------------------------------+-----------------------------------------------
         POST   /agents/{agent_name}/versions                                  project_client.agents.create_version()
-        GET    /agents/{agent_name}/telephony/call_jobs/{call_job_id}         project_client.beta.voice_agents.telephony.get_call_job()
-        POST   /agents/{agent_name}/telephony/call_jobs/{call_job_id}:cancel  project_client.beta.voice_agents.telephony.cancel_call_job()
+        GET    /agents/{agent_name}/telephony/call_jobs/{call_job_id}         project_client.voice_agents.telephony.get_call_job()
+        POST   /agents/{agent_name}/telephony/call_jobs/{call_job_id}:cancel  project_client.voice_agents.telephony.cancel_call_job()
         DELETE /agents/{agent_name}                                          project_client.agents.delete()
         """
         print("\n")
@@ -105,13 +105,13 @@ class TestVoiceAgentTelephonyCallJob(TestBase):
 
         fake_call_job_id = "nonexistent-call-job-id"
         with pytest.raises(ResourceNotFoundError):
-            project_client.beta.voice_agents.telephony.get_call_job(agent_name=agent_name, call_job_id=fake_call_job_id)
+            project_client.voice_agents.telephony.get_call_job(agent_name=agent_name, call_job_id=fake_call_job_id)
         with pytest.raises(ResourceNotFoundError):
             # cancel_call_job's "etag" is a numeric call-job revision, not an opaque ETag - the
             # service rejects an "If-Match: *" unconditional match for this endpoint, so a
             # well-formed (if make-believe) revision is passed here instead, using the default
             # match_condition (MatchConditions.IfNotModified).
-            project_client.beta.voice_agents.telephony.cancel_call_job(
+            project_client.voice_agents.telephony.cancel_call_job(
                 agent_name=agent_name,
                 call_job_id=fake_call_job_id,
                 etag="0",

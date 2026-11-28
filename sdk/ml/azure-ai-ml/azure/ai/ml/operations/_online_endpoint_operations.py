@@ -356,7 +356,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             key = keys.access_token
         else:
             key = ""
-        headers = EndpointInvokeFields.DEFAULT_HEADER
+        headers = dict(EndpointInvokeFields.DEFAULT_HEADER)
         if key:
             headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"
         if deployment_name:

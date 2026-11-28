@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cspell:ignore tzset
 import base64
 import os
 import sys
+import time
 
 from unittest import mock
 import pytest
@@ -200,6 +202,19 @@ def event_loop():
 
     yield loop
     loop.close()
+
+
+@pytest.fixture()
+def time_zone(request):
+    """Set the process time zone to the parametrized value, restoring the original on teardown"""
+
+    if not hasattr(time, "tzset"):
+        pytest.skip("time.tzset is not available on this platform")
+
+    with mock.patch.dict(os.environ, {"TZ": request.param}):
+        time.tzset()
+        yield request.param
+    time.tzset()
 
 
 @pytest.fixture(scope="session", autouse=True)

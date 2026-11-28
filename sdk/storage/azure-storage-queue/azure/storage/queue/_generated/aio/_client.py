@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class QueuesClient:  # pylint: disable=client-accepts-api-version-keyword
+class QueuesClient:  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """QueuesClient.
 
     :ivar service: ServiceOperations operations

@@ -39,7 +39,7 @@ def main():
                 "computeType": "Default",
                 "hostingMode": "Default",
                 "networkRuleSet": {
-                    "bypass": "AzurePortal",
+                    "bypass": "AzureServices",
                     "ipRules": [{"value": "123.4.5.6"}, {"value": "123.4.6.0/18"}],
                 },
                 "partitionCount": 1,
@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/SearchCreateOrUpdateServiceToAllowAccessFromPublicCustomIPsAndBypass.json
+# x-ms-original-file: 2026-11-01/SearchCreateOrUpdateServiceToAllowAccessFromPublicCustomIPsAndBypass.json
 if __name__ == "__main__":
     main()

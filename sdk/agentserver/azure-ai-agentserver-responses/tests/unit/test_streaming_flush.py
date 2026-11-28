@@ -22,8 +22,8 @@ from azure.ai.agentserver.responses.streaming import ResponseEventStream
 
 
 @pytest.fixture(autouse=True)
-def _default_flush_mode(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("AGENTSERVER_FLUSH_MODE", raising=False)
+def _awaited_flush_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AGENTSERVER_FLUSH_MODE", "async")
 
 
 def _scope(spec: str = "2.4") -> dict[str, Any]:

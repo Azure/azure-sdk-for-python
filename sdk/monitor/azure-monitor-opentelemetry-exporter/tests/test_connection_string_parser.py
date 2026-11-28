@@ -3,6 +3,7 @@
 
 import os
 import unittest
+from unittest import mock
 
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 
@@ -18,6 +19,43 @@ class TestConnectionStringParser(unittest.TestCase):
     def test_validate_connection_String(self):
         parser = ConnectionStringParser(connection_string=self._valid_connection_string)
         self.assertEqual(parser._connection_string, self._valid_connection_string)
+
+    def test_missing_connection_string_requires_opt_in(self):
+        with self.assertRaisesRegex(ValueError, "Instrumentation key cannot be none or empty"):
+            ConnectionStringParser()
+        parser = ConnectionStringParser(_allow_missing=True)
+        self.assertIsNone(parser.instrumentation_key)
+        self.assertIsNone(parser._connection_string)
+        self.assertIsNone(parser.application_id)
+        self.assertEqual(parser.endpoint, "https://dc.services.visualstudio.com")
+
+    def test_allow_missing_preserves_configured_validation(self):
+        for connection_string in (
+            "",
+            "invalid",
+            "IngestionEndpoint=https://example.com/",
+            "InstrumentationKey=",
+            "InstrumentationKey=invalid",
+            "Authorization=aad",
+        ):
+            with self.subTest(connection_string=connection_string):
+                with self.assertRaises(ValueError):
+                    ConnectionStringParser(connection_string, _allow_missing=True)
+                with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": connection_string}):
+                    with self.assertRaises(ValueError):
+                        ConnectionStringParser(_allow_missing=True)
+
+    def test_allow_missing_preserves_environment_configuration(self):
+        for variable, value in (
+            ("APPLICATIONINSIGHTS_CONNECTION_STRING", self._valid_connection_string),
+            ("APPINSIGHTS_INSTRUMENTATIONKEY", self._valid_instrumentation_key),
+        ):
+            with self.subTest(variable=variable), mock.patch.dict(os.environ, {variable: value}):
+                parser = ConnectionStringParser(_allow_missing=True)
+                self.assertEqual(parser.instrumentation_key, self._valid_instrumentation_key)
+        with mock.patch.dict(os.environ, {"APPINSIGHTS_INSTRUMENTATIONKEY": "invalid"}):
+            with self.assertRaisesRegex(ValueError, "Invalid instrumentation key"):
+                ConnectionStringParser(_allow_missing=True)
 
     def test_invalid_key_empty(self):
         self.assertRaises(ValueError, lambda: ConnectionStringParser(connection_string=""))

@@ -22,7 +22,30 @@ class TestCommvaultContentStoreMgmtSaaSOperationGroupOperations(AzureMgmtRecorde
     @recorded_by_proxy
     def test_saa_soperation_group_begin_activate_resource(self, resource_group):
         response = self.client.saa_soperation_group.begin_activate_resource(
-            body={"saaSGuid": "str"},
+            body={
+                "saasGuid": "str",
+                "activateSaaSRequestParam": {
+                    "company": {
+                        "city": "str",
+                        "companyName": "str",
+                        "country": "str",
+                        "jobTitle": "str",
+                        "postalCode": "str",
+                        "state": "str",
+                        "street": "str",
+                        "website": "str",
+                    },
+                    "saasResourceId": "str",
+                    "user": {
+                        "emailAddress": "str",
+                        "firstName": "str",
+                        "lastName": "str",
+                        "phoneNumber": "str",
+                        "upn": "str",
+                    },
+                },
+                "publisherId": "str",
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

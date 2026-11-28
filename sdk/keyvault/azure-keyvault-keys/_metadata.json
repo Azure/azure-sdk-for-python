@@ -1,6 +1,6 @@
 {
-  "apiVersion": "2026-01-01-preview",
+  "apiVersion": "2026-04-01",
   "apiVersions": {
-    "KeyVault": "2026-01-01-preview"
+    "KeyVault": "2026-04-01"
   }
 }

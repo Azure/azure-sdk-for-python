@@ -79,6 +79,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/ReplicationRecoveryPlans_Update.json
+# x-ms-original-file: 2026-11-01/ReplicationRecoveryPlans_Update.json
 if __name__ == "__main__":
     main()

@@ -6,13 +6,9 @@ import errno
 import os
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
-from pathlib import PureWindowsPath
 from threading import Event
 
 import pytest
-
-from azure.ai.ml._utils._artifact_utils import ArtifactCache
-from azure.ai.ml.entities._component._additional_includes import AdditionalIncludes
 from test_utilities.artifact_fixtures import (
     _MODULE,
     _PARAMETERS,
@@ -21,6 +17,8 @@ from test_utilities.artifact_fixtures import (
     download,
 )
 
+from azure.ai.ml._utils._artifact_utils import ArtifactCache, _is_reserved_windows_name
+from azure.ai.ml.entities._component._additional_includes import AdditionalIncludes
 
 pytestmark = [pytest.mark.unittest, pytest.mark.core_sdk_test]
 
@@ -240,10 +238,10 @@ def test_version_selectors_have_safe_distinct_cache_keys(artifact_cache, downloa
     "version, cache_name", [("*", "%2A"), ("1.*", "1.%2A"), ("1.2.*", "1.2.%2A"), ("%2A", "%252A")]
 )
 def test_reserved_filename_check_uses_encoded_cache_component(mocker, version, cache_name):
-    windows_path = mocker.patch(f"{_MODULE}.PureWindowsPath", wraps=PureWindowsPath)
+    reserved_check = mocker.patch(f"{_MODULE}._is_reserved_windows_name", wraps=_is_reserved_windows_name)
 
     assert ArtifactCache._cache_path_component(version, "version") == cache_name
-    windows_path.assert_called_once_with(cache_name)
+    reserved_check.assert_called_once_with(cache_name)
 
 
 def test_cache_preserves_project_spaces_and_unicode(artifact_cache, download):

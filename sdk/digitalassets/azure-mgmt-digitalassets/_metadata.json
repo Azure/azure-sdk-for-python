@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2025-09-01-preview",
+  "apiVersions": {
+    "Microsoft.DigitalAssets": "2025-09-01-preview"
+  },
+  "commit": "d07e7d4bfa81c4f2a7df4e5d81adf8102a0d3195",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/digitalassets/resource-manager/Microsoft.DigitalAssets/DigitalAssets",
+  "emitterVersion": "0.63.12",
+  "httpClientPythonVersion": "0.40.1"
+}

@@ -379,5 +379,15 @@ try:
                 callback=functools.partial(callback, amqp_transport=UamqpTransportAsync),
             )
 
+        @staticmethod
+        async def mgmt_client_setup_async(mgmt_client, *, node: Union[str, bytes], timeout: Optional[float]) -> None:
+            """uAMQP does not expose management-link setup separately from request dispatch.
+
+            :param ~uamqp.AMQPClientAsync mgmt_client: Client used for management requests.
+            :keyword str or bytes node: Management target.
+            :keyword float or None timeout: Timeout in seconds, or None for no timeout.
+            """
+            del mgmt_client, node, timeout
+
 except ImportError:
     pass

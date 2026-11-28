@@ -19,7 +19,12 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import RecommenderMgmtClientConfiguration
-from .operations import Operations, SkuMixPlacementScoresOperations, SpotPlacementScoresOperations
+from .operations import (
+    ComputePlacementScoresOperations,
+    Operations,
+    SkuMixPlacementScoresOperations,
+    SpotPlacementScoresOperations,
+)
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -36,12 +41,15 @@ class RecommenderMgmtClient:  # pylint: disable=docstring-keyword-should-match-k
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.computerecommender.aio.operations.Operations
-    :ivar sku_mix_placement_scores: SkuMixPlacementScoresOperations operations
-    :vartype sku_mix_placement_scores:
-     azure.mgmt.computerecommender.aio.operations.SkuMixPlacementScoresOperations
     :ivar spot_placement_scores: SpotPlacementScoresOperations operations
     :vartype spot_placement_scores:
      azure.mgmt.computerecommender.aio.operations.SpotPlacementScoresOperations
+    :ivar compute_placement_scores: ComputePlacementScoresOperations operations
+    :vartype compute_placement_scores:
+     azure.mgmt.computerecommender.aio.operations.ComputePlacementScoresOperations
+    :ivar sku_mix_placement_scores: SkuMixPlacementScoresOperations operations
+    :vartype sku_mix_placement_scores:
+     azure.mgmt.computerecommender.aio.operations.SkuMixPlacementScoresOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -52,7 +60,7 @@ class RecommenderMgmtClient:  # pylint: disable=docstring-keyword-should-match-k
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-09-05-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-10-05-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -108,10 +116,13 @@ class RecommenderMgmtClient:  # pylint: disable=docstring-keyword-should-match-k
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.sku_mix_placement_scores = SkuMixPlacementScoresOperations(
+        self.spot_placement_scores = SpotPlacementScoresOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.spot_placement_scores = SpotPlacementScoresOperations(
+        self.compute_placement_scores = ComputePlacementScoresOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sku_mix_placement_scores = SkuMixPlacementScoresOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

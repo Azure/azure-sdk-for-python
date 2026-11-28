@@ -38,6 +38,130 @@ class TestCognitiveServicesManagementSubscriptionRaiPolicyOperations(AzureMgmtRe
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "acs": {
+                        "agent_control_specification_version": "str",
+                        "intervention_points": {
+                            "agent_shutdown": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "$snap.summary",
+                                "policy_target_kind": "agent_summary",
+                                "annotations": {"str": {"from": "str"}},
+                            },
+                            "agent_startup": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "$snap.agent_init",
+                                "policy_target_kind": "agent_init",
+                                "annotations": {"str": {"from": "str"}},
+                            },
+                            "input": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "str",
+                                "policy_target_kind": "str",
+                                "annotations": {"str": {"from": "str"}},
+                            },
+                            "output": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "str",
+                                "policy_target_kind": "str",
+                                "annotations": {"str": {"from": "str"}},
+                            },
+                            "post_model_call": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "$snap.response",
+                                "policy_target_kind": "model_response",
+                                "annotations": {"str": {"from": "str"}},
+                            },
+                            "post_tool_call": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "str",
+                                "policy_target_kind": "str",
+                                "annotations": {"str": {"from": "str"}},
+                                "tool_name_from": "str",
+                            },
+                            "pre_model_call": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "$snap.messages",
+                                "policy_target_kind": "messages",
+                                "annotations": {"str": {"from": "str"}},
+                            },
+                            "pre_tool_call": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "str",
+                                "policy_target_kind": "str",
+                                "annotations": {"str": {"from": "str"}},
+                                "tool_name_from": "str",
+                            },
+                        },
+                        "policies": {"str": {"query": "str", "type": "str"}},
+                        "annotators": {"str": {"type": "str"}},
+                        "metadata": {"str": {}},
+                        "tools": {
+                            "str": {
+                                "clearance": "str",
+                                "description": "str",
+                                "id": "str",
+                                "security_labels": ["str"],
+                                "type": "str",
+                            }
+                        },
+                    },
+                    "acsRegos": [{"regoName": "str"}],
                     "basePolicyName": "str",
                     "contentFilters": [
                         {
@@ -50,6 +174,14 @@ class TestCognitiveServicesManagementSubscriptionRaiPolicyOperations(AzureMgmtRe
                         }
                     ],
                     "customBlocklists": [{"blocking": bool, "blocklistName": "str", "source": "str"}],
+                    "customExternalSafetyProviders": [
+                        {
+                            "externalSafetyProviderName": "str",
+                            "source": "str",
+                            "blocking": bool,
+                            "managedIdentityResourceId": "str",
+                        }
+                    ],
                     "egressPolicy": {
                         "defaultAction": "str",
                         "description": "str",
@@ -78,6 +210,7 @@ class TestCognitiveServicesManagementSubscriptionRaiPolicyOperations(AzureMgmtRe
                             }
                         ],
                     },
+                    "format": "str",
                     "mode": "str",
                     "safetyProviders": [{"blocking": bool, "safetyProviderName": "str", "source": "str"}],
                     "type": "str",

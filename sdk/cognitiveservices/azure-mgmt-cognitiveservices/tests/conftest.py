@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
+import re
 import pytest
 from dotenv import load_dotenv
 from devtools_testutils import (
@@ -13,9 +14,14 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
+    remove_batch_sanitizers,
 )
 
 load_dotenv()
+
+SANITIZED_RESOURCE_GROUP = "sanitized-resource-group"
+SANITIZED_ACCOUNT_NAME = "sanitized-cognitive-account"
+SANITIZED_PROJECT_NAME = "sanitized-project"
 
 
 # aovid record sensitive identity information in recordings
@@ -41,7 +47,24 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
         regex=cognitiveservicesmanagement_client_secret, value="00000000-0000-0000-0000-000000000000"
     )
+    resource_group_name = os.environ.get("AZURE_RESOURCE_GROUP")
+    account_name = os.environ.get("AZURE_COGNITIVE_SERVICES_ACCOUNT")
+    project_name = os.environ.get("AZURE_COGNITIVE_SERVICES_PROJECT")
+    if resource_group_name:
+        add_general_regex_sanitizer(regex=re.escape(resource_group_name), value=SANITIZED_RESOURCE_GROUP)
+    if account_name:
+        add_general_regex_sanitizer(regex=re.escape(account_name), value=SANITIZED_ACCOUNT_NAME)
+    if project_name:
+        add_general_regex_sanitizer(regex=re.escape(project_name), value=SANITIZED_PROJECT_NAME)
+
+    # Preserve generated cost-control names; environment-specific names are sanitized above.
+    remove_batch_sanitizers(["AZSDK3493"])
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    add_header_regex_sanitizer(key="etag", value="Sanitized")
+    add_header_regex_sanitizer(key="if-match", value="Sanitized")
+    add_header_regex_sanitizer(key="x-ms-operation-identifier", value="Sanitized")
+    add_header_regex_sanitizer(key="x-ms-correlation-request-id", value="Sanitized")
+    add_header_regex_sanitizer(key="x-ms-routing-request-id", value="Sanitized")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")

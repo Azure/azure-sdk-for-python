@@ -44,7 +44,7 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
     async def test_create_data_source_connection_returns_created_resource(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        data_source_connection_name = "data-source-connection-create"
+        data_source_connection_name = self.get_resource_name("data-source-connection-create")
         client = make_indexer_client(endpoint)
 
         async with client:
@@ -69,7 +69,7 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
     async def test_get_data_source_connection_returns_created_resource(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        data_source_connection_name = "data-source-connection-get"
+        data_source_connection_name = self.get_resource_name("data-source-connection-get")
         client = make_indexer_client(endpoint)
 
         async with client:
@@ -95,8 +95,8 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
     async def test_get_data_source_connections_and_names_return_created_resources(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        first_data_source_connection_name = "data-source-connection-list-first"
-        second_data_source_connection_name = "data-source-connection-list-second"
+        first_data_source_connection_name = self.get_resource_name("data-source-connection-list-first")
+        second_data_source_connection_name = self.get_resource_name("data-source-connection-list-second")
         client = make_indexer_client(endpoint)
 
         async with client:
@@ -132,7 +132,7 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
     async def test_create_or_update_data_source_connection_replaces_existing_resource(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        data_source_connection_name = "data-source-connection-create-or-update"
+        data_source_connection_name = self.get_resource_name("data-source-connection-create-or-update")
         client = make_indexer_client(endpoint)
 
         async with client:
@@ -165,7 +165,7 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
     async def test_create_or_update_data_source_connection_if_unchanged_uses_model_etag(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        data_source_connection_name = "data-source-connection-create-or-update-if-unchanged"
+        data_source_connection_name = self.get_resource_name("data-source-connection-create-or-update-if-unchanged")
         client = make_indexer_client(endpoint)
 
         async with client:
@@ -202,7 +202,7 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
     async def test_delete_data_source_connection_accepts_name(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        data_source_connection_name = "data-source-connection-delete"
+        data_source_connection_name = self.get_resource_name("data-source-connection-delete")
         client = make_indexer_client(endpoint)
 
         async with client:
@@ -225,7 +225,7 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
     async def test_delete_data_source_connection_if_unchanged_uses_model_etag(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        data_source_connection_name = "data-source-connection-delete-if-unchanged"
+        data_source_connection_name = self.get_resource_name("data-source-connection-delete-if-unchanged")
         client = make_indexer_client(endpoint)
 
         async with client:

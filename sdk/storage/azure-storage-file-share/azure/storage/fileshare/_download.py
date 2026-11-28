@@ -198,9 +198,9 @@ class _ChunkIterator:
 class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage."""
 
-    name: str
+    name: Optional[str]
     """The name of the file being downloaded."""
-    path: str
+    path: Optional[str]
     """The full path of the file."""
     share: str
     """The name of the share where the file is."""
@@ -219,8 +219,8 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         end_range: Optional[int] = None,
         validate_content: CV_TYPE_PARSED = None,
         max_concurrency: Optional[int] = None,
-        name: str = None,  # type: ignore [assignment]
-        path: str = None,  # type: ignore [assignment]
+        name: Optional[str] = None,
+        path: Optional[str] = None,
         share: str = None,  # type: ignore [assignment]
         encoding: Optional[str] = None,
         **kwargs: Any,
@@ -265,7 +265,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
 
         self._response = self._initial_request()
         self.properties = self._response.properties
-        self.properties.name = self.name
+        self.properties.name = self.name  # type: ignore[assignment]
         self.properties.path = self.path
         self.properties.share = self.share
 

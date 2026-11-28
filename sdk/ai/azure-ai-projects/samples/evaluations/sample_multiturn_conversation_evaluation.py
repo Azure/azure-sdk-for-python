@@ -36,6 +36,7 @@ import os
 import time
 from pprint import pprint
 from dotenv import load_dotenv
+from azure.core.exceptions import ResourceExistsError
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileID,
@@ -43,7 +44,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
+from azure.ai.projects.models import DatasetVersion, TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -84,29 +85,29 @@ with (
             type="azure_ai_evaluator",
             name="customer_satisfaction",
             evaluator_name="builtin.customer_satisfaction",
-            initialization_parameters={"model": model_deployment_name},
+            initialization_parameters={"deployment_name": model_deployment_name},
             data_mapping={"messages": "{{item.messages}}"},
         ),
         TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="task_completion",
             evaluator_name="builtin.task_completion",
-            initialization_parameters={"model": model_deployment_name},
-            data_mapping={"messages": "{{item.messages}}"},
+            initialization_parameters={"deployment_name": model_deployment_name},
+            data_mapping={"messages": "{{item.messages}}", "tool_definitions": "{{item.tool_definitions}}"},
         ),
         TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="conversation_coherence",
             evaluator_name="builtin.coherence",
-            initialization_parameters={"model": model_deployment_name},
+            initialization_parameters={"deployment_name": model_deployment_name},
             data_mapping={"messages": "{{item.messages}}"},
         ),
         TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="groundedness",
             evaluator_name="builtin.groundedness",
-            initialization_parameters={"model": model_deployment_name},
-            data_mapping={"messages": "{{item.messages}}"},
+            initialization_parameters={"deployment_name": model_deployment_name},
+            data_mapping={"messages": "{{item.messages}}", "tool_definitions": "{{item.tool_definitions}}"},
         ),
     ]
 
@@ -119,21 +120,20 @@ with (
     print(f"Evaluation created (id: {eval_object.id})")
 
     # Upload the conversation dataset
+    dataset: DatasetVersion
     try:
         dataset = project_client.datasets.upload_file(
             name="multiturn-conversation-data",
             version="1",
             file_path=data_file,
         )
-        assert dataset.id is not None, "Dataset upload returned no ID"
-        data_id: str = dataset.id
-        print(f"Dataset uploaded (id: {data_id})")
-    except Exception:
-        # Dataset already exists — use the existing URI
-        account = endpoint.split("/")[2].split(".")[0]
-        project = endpoint.rstrip("/").split("/")[-1]
-        data_id = f"azureai://accounts/{account}/projects/{project}/data/multiturn-conversation-data/versions/1"
-        print(f"Using existing dataset (id: {data_id})")
+        print(f"Dataset uploaded (id: {dataset.id})")
+    except ResourceExistsError:
+        dataset = project_client.datasets.get(name="multiturn-conversation-data", version="1")
+        print(f"Using existing dataset (id: {dataset.id}); it may differ from the local file.")
+    if dataset.id is None:
+        raise RuntimeError("Dataset has no ID")
+    data_id: str = dataset.id
 
     # Create a run with evaluation_level set to "conversation"
     # so evaluators score each conversation as a whole.
@@ -153,7 +153,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
-        if run.status in ("completed", "failed"):
+        if run.status in ("completed", "failed", "cancelled", "canceled"):
             break
         print(f"Waiting for eval run to complete... current status: {run.status}")
         time.sleep(5)
@@ -174,3 +174,7 @@ with (
 
     client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
+    if run.status != "completed":
+        raise RuntimeError(f"Evaluation run {run.status}: {run.error}")
+    if run.result_counts.errored:
+        raise RuntimeError(f"{run.result_counts.errored} evaluation item(s) errored; see output items above")

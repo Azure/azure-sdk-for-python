@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2026-06-01-preview",
+  "apiVersion": "2026-07-01",
   "apiVersions": {
-    "Microsoft.ContainerInstance": "2026-06-01-preview"
+    "Microsoft.ContainerInstance": "2026-07-01"
   },
-  "commit": "f74fe1506285c80ec95fbd84aa670919d6091aab",
+  "commit": "04d4a73cf90f8e1be80ffc0ca7621094d3d0954b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/containerinstance/resource-manager/Microsoft.ContainerInstance/ContainerInstance",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
 }

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -1632,7 +1633,7 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             copied_blob2.append_block("abc")
 
-        blobs_gen = bsc.get_container_client(self.container_name).list_blobs()
+        blobs_gen = bsc.get_container_client(self.container_name).list_blobs(response_format="xml")
         for blob in blobs_gen:
             if blob.name == "copiedblob2":
                 assert blob.is_append_blob_sealed
@@ -1802,6 +1803,88 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
                     timeout=15,
                 )
                 bsc.delete_container(self.source_container_name)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_blob_modified_during_download_etag_lock(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024,
+        )
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+        data = b"abcd" * 1024
+        blob.append_block(data)
+
+        # Act
+        downloader = blob.download_blob()
+        blob.append_block(b"x" * 512)
+
+        # Assert
+        with pytest.raises(ResourceModifiedError):
+            downloader.readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_blob_modified_during_download_disable_etag_lock(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024,
+        )
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+        data = b"abcd" * 1024
+        data2 = b"ab" * 256
+        blob.append_block(data)
+
+        # Act
+        downloader = blob.download_blob(disable_etag_lock=True)
+        blob.append_block(data2)
+        result = downloader.readall()
+
+        assert result == data
+
+        # Act / Assert - chunks()
+        downloader = blob.download_blob(offset=0, length=len(data), disable_etag_lock=True)
+        blob.append_block(data2)
+        assert b"".join(downloader.chunks()) == data
+
+        # Act / Assert - read(size)
+        downloader = blob.download_blob(offset=0, length=len(data), disable_etag_lock=True)
+        blob.append_block(data2)
+        assert downloader.read(2048) + downloader.read() == data
+
+        # Act - caller-provided etag is still enforced on every request
+        props = blob.get_blob_properties()
+        downloader = blob.download_blob(
+            disable_etag_lock=True, etag=props.etag, match_condition=MatchConditions.IfNotModified
+        )
+        blob.append_block(data2)
+
+        with pytest.raises(ResourceModifiedError):
+            downloader.readall()
+
+        # Act - blob replaced with a smaller one mid-download
+        blob.create_append_blob()
+        blob.append_block(data)
+        downloader = blob.download_blob(disable_etag_lock=True)
+        blob.create_append_blob()
+        blob.append_block(data[:1536])
+
+        with pytest.raises(ResourceModifiedError):
+            downloader.readall()
 
 
 # ------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 """This includes enums and classes for exceptions for use in azure-ai-evaluation."""
 
 from enum import Enum
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from azure.core.exceptions import AzureError
 
@@ -129,6 +129,8 @@ class EvaluationException(AzureError):
     :type balance: ~azure.ai.evaluation._exceptions.ErrorBlame
     :param tsg_link: A link to the TSG page for troubleshooting the error.
     :type tsg_link: str
+    :param properties: Optional known evaluator metadata retained for failed-row persistence.
+    :type properties: Optional[Dict[str, Any]]
     """
 
     def __init__(
@@ -140,6 +142,7 @@ class EvaluationException(AzureError):
         category: ErrorCategory = ErrorCategory.UNKNOWN,
         blame: ErrorBlame = ErrorBlame.UNKNOWN,
         tsg_link: Optional[str] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> None:
         self.category = category
@@ -147,6 +150,7 @@ class EvaluationException(AzureError):
         self.blame = blame
         self.internal_message = internal_message
         self.tsg_link = tsg_link
+        self.properties = properties
         super().__init__(message, *args, **kwargs)
 
     def __str__(self):

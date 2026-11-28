@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2022-10-01/listAutoscaleSetting.json
+# x-ms-original-file: 2025-09-01-preview/listAutoscaleSetting.json
 if __name__ == "__main__":
     main()

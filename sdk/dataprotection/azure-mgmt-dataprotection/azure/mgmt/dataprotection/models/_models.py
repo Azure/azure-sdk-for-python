@@ -263,7 +263,8 @@ class BackupDatasourceParameters(_Model):  # pylint: disable=docstring-keyword-s
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AdlsBlobBackupDatasourceParameters, AdlsBlobBackupDatasourceParametersForAutoProtection,
     BlobBackupDatasourceParameters, BlobBackupDatasourceParametersForAutoProtection,
-    GenericBackupDatasourceParameters, KubernetesClusterBackupDatasourceParameters
+    GenericBackupDatasourceParameters, KubernetesClusterBackupDatasourceParameters,
+    PostgreSqlFlexibleServerBackupDatasourceParameters
 
     :ivar object_type: Type of the specific object - used for deserializing. Required. Default
      value is None.
@@ -509,6 +510,9 @@ class AzureBackupDiscreteRecoveryPoint(
      Known values are: "Completed" and "Partial".
     :vartype recovery_point_state: str or
      ~azure.mgmt.dataprotection.models.RecoveryPointCompletionState
+    :ivar immutability_properties: Immutability properties of the recovery point.
+    :vartype immutability_properties:
+     ~azure.mgmt.dataprotection.models.RecoveryPointImmutabilityProperties
     :ivar object_type: Required. Default value is "AzureBackupDiscreteRecoveryPoint".
     :vartype object_type: str
     """
@@ -548,6 +552,10 @@ class AzureBackupDiscreteRecoveryPoint(
     """Specifies recovery point completeness. Partial (i.e., only some of the intended items were
      backed up), or Completed (i.e., ALL intended items were backed up). Known values are:
      \"Completed\" and \"Partial\"."""
+    immutability_properties: Optional["_models.RecoveryPointImmutabilityProperties"] = rest_field(
+        name="immutabilityProperties", visibility=["read"]
+    )
+    """Immutability properties of the recovery point."""
     object_type: Literal["AzureBackupDiscreteRecoveryPoint"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"AzureBackupDiscreteRecoveryPoint\"."""
 
@@ -4325,23 +4333,71 @@ class ImmediateCopyOption(CopyOption, discriminator="ImmediateCopyOption"):
         self.object_type = "ImmediateCopyOption"  # type: ignore
 
 
+class ImmutabilityConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Immutability configuration containing type and duration.
+
+    :ivar type: Type of immutability. Supported values: AsPerPolicy or TimeBased. Known values are:
+     "AsPerPolicy" and "TimeBased".
+    :vartype type: str or ~azure.mgmt.dataprotection.models.ImmutabilityType
+    :ivar duration_in_days: Duration in days for time-based immutability. Required when type is
+     TimeBased. Must be null when type is AsPerPolicy.
+    :vartype duration_in_days: int
+    """
+
+    type: Optional[Union[str, "_models.ImmutabilityType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of immutability. Supported values: AsPerPolicy or TimeBased. Known values are:
+     \"AsPerPolicy\" and \"TimeBased\"."""
+    duration_in_days: Optional[int] = rest_field(
+        name="durationInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Duration in days for time-based immutability. Required when type is TimeBased. Must be null
+     when type is AsPerPolicy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ImmutabilityType"]] = None,
+        duration_in_days: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ImmutabilitySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Immutability Settings at vault level.
 
     :ivar state: Immutability state. Known values are: "Disabled", "Unlocked", and "Locked".
     :vartype state: str or ~azure.mgmt.dataprotection.models.ImmutabilityState
+    :ivar configuration: Immutability configuration containing type and duration.
+    :vartype configuration: ~azure.mgmt.dataprotection.models.ImmutabilityConfiguration
     """
 
     state: Optional[Union[str, "_models.ImmutabilityState"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Immutability state. Known values are: \"Disabled\", \"Unlocked\", and \"Locked\"."""
+    configuration: Optional["_models.ImmutabilityConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Immutability configuration containing type and duration."""
 
     @overload
     def __init__(
         self,
         *,
         state: Optional[Union[str, "_models.ImmutabilityState"]] = None,
+        configuration: Optional["_models.ImmutabilityConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -5409,11 +5465,12 @@ class OperationResource(_Model):  # pylint: disable=docstring-keyword-should-mat
     :vartype end_time: ~datetime.datetime
     :ivar error: Required if status == failed or status == canceled. This is the OData v4 error
      format, used by the RPC and will go into the v2.2 Azure REST API guidelines. The full set of
-     optional properties (e.g. inner errors / details) can be found in the "Error Response" section.
+     optional properties (e.g. inner errors / details) can be found in the ``Error Response``
+     section.
     :vartype error: ~azure.mgmt.dataprotection.models.Error
     :ivar id: It should match what is used to GET the operation result.
     :vartype id: str
-    :ivar name: It must match the last segment of the "id" field, and will typically be a GUID /
+    :ivar name: It must match the last segment of the ``id`` field, and will typically be a GUID /
      system generated value.
     :vartype name: str
     :ivar properties: End time of the operation.
@@ -5431,11 +5488,11 @@ class OperationResource(_Model):  # pylint: disable=docstring-keyword-should-mat
     error: Optional["_models.Error"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required if status == failed or status == canceled. This is the OData v4 error format, used by
      the RPC and will go into the v2.2 Azure REST API guidelines. The full set of optional
-     properties (e.g. inner errors / details) can be found in the \"Error Response\" section."""
+     properties (e.g. inner errors / details) can be found in the ``Error Response`` section."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """It should match what is used to GET the operation result."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """It must match the last segment of the \"id\" field, and will typically be a GUID / system
+    """It must match the last segment of the ``id`` field, and will typically be a GUID / system
      generated value."""
     properties: Optional["_models.OperationExtendedInfo"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -5677,6 +5734,46 @@ class PolicyParameters(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
+class PostgreSqlFlexibleServerBackupDatasourceParameters(
+    BackupDatasourceParameters, discriminator="PostgreSqlFlexibleServerBackupDatasourceParameters"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Parameters to be used during configuration of backup of PostgreSQL Flexible Servers.
+
+    :ivar backup_solution_type: Type of backup taken, Logical/Physical. Known values are:
+     "LogicalBackup" and "PhysicalBackup".
+    :vartype backup_solution_type: str or ~azure.mgmt.dataprotection.models.BackupSolutionType
+    :ivar object_type: Required. Default value is
+     "PostgreSqlFlexibleServerBackupDatasourceParameters".
+    :vartype object_type: str
+    """
+
+    backup_solution_type: Optional[Union[str, "_models.BackupSolutionType"]] = rest_field(
+        name="backupSolutionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of backup taken, Logical/Physical. Known values are: \"LogicalBackup\" and
+     \"PhysicalBackup\"."""
+    object_type: Literal["PostgreSqlFlexibleServerBackupDatasourceParameters"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"PostgreSqlFlexibleServerBackupDatasourceParameters\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        backup_solution_type: Optional[Union[str, "_models.BackupSolutionType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "PostgreSqlFlexibleServerBackupDatasourceParameters"  # type: ignore
+
+
 class ProtectionStatusDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection status details.
 
@@ -5819,6 +5916,43 @@ class RecoveryPointDataStoreDetails(_Model):  # pylint: disable=docstring-keywor
         state: Optional[str] = None,
         type: Optional[str] = None,
         visible: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RecoveryPointImmutabilityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Immutability properties of a recovery point.
+
+    :ivar is_immutable: Whether the recovery point is currently within its immutability window.
+     Required.
+    :vartype is_immutable: bool
+    :ivar expiry_time: UTC time when the recovery point's immutability window expires. Null for
+     AsPerPolicy vaults.
+    :vartype expiry_time: ~datetime.datetime
+    """
+
+    is_immutable: bool = rest_field(name="isImmutable", visibility=["read", "create", "update", "delete", "query"])
+    """Whether the recovery point is currently within its immutability window. Required."""
+    expiry_time: Optional[datetime.datetime] = rest_field(
+        name="expiryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """UTC time when the recovery point's immutability window expires. Null for AsPerPolicy vaults."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_immutable: bool,
+        expiry_time: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -6428,8 +6562,9 @@ class ScheduleBasedBackupCriteria(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule based backup criteria.
 
-    :ivar absolute_criteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
-     "FirstOfWeek" / "FirstOfMonth" and should be part of AbsoluteMarker enum.
+    :ivar absolute_criteria: It contains absolute marker values such as ``AllBackup``,
+     ``FirstOfDay``, ``FirstOfWeek``, and ``FirstOfMonth``. These values should be part of the
+     ``AbsoluteMarker`` enum.
     :vartype absolute_criteria: list[str or ~azure.mgmt.dataprotection.models.AbsoluteMarker]
     :ivar days_of_month: This is day of the month from 1 to 28 other wise last of month.
     :vartype days_of_month: list[~azure.mgmt.dataprotection.models.Day]
@@ -6449,8 +6584,8 @@ class ScheduleBasedBackupCriteria(
     absolute_criteria: Optional[list[Union[str, "_models.AbsoluteMarker"]]] = rest_field(
         name="absoluteCriteria", visibility=["read", "create", "update", "delete", "query"]
     )
-    """it contains absolute values like \"AllBackup\" / \"FirstOfDay\" / \"FirstOfWeek\" /
-     \"FirstOfMonth\" and should be part of AbsoluteMarker enum."""
+    """It contains absolute marker values such as ``AllBackup``, ``FirstOfDay``, ``FirstOfWeek``, and
+     ``FirstOfMonth``. These values should be part of the ``AbsoluteMarker`` enum."""
     days_of_month: Optional[list["_models.Day"]] = rest_field(
         name="daysOfMonth", visibility=["read", "create", "update", "delete", "query"]
     )

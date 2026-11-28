@@ -17,6 +17,7 @@ For guidance on the samples README, visit the [sample guide](https://github.com/
 
 |**File Name**|**Description**|
 |----------------|-------------|
+|[multi_endpoint_routing.py][multi_endpoint_routing] | Route logs, spans, events, and metrics to multiple Application Insights resources (preview) |
 |[logging/basic.py][logging_basic] | Produce logs using basic logging configurations |
 |[logging/correlated_logs.py][correlated_logs] | Produce logs correlated with spans |
 |[logging/custom_event.py][custom_event] | Produce custom events using logs |
@@ -66,6 +67,7 @@ For guidance on the samples README, visit the [sample guide](https://github.com/
 To learn more, see the [Azure Monitor OpenTelemetry Distro documentation][distro_docs] and [OpenTelemetry documentation][otel_docs]
 
 <!-- Links -->
+[multi_endpoint_routing]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry/samples/multi_endpoint_routing.py
 [distro_docs]: https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python
 [otel_docs]: https://opentelemetry.io/docs/
 [correlated_logs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/logging/correlated_logs.py

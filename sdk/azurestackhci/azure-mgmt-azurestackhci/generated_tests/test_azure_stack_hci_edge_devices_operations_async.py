@@ -141,6 +141,7 @@ class TestAzureStackHCIEdgeDevicesOperationsAsync(AzureMgmtRecordedTestCase):
                                         "vlanId": "str",
                                     }
                                 ],
+                                "sdnProperties": {"sdnApiAddress": "str", "sdnDomainName": "str", "sdnStatus": "str"},
                                 "switchDetails": [
                                     {
                                         "extensions": [

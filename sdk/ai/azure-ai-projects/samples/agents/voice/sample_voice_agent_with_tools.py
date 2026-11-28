@@ -6,32 +6,26 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates the richer parts of a voice agent definition:
+    Configure a voice agent with audio settings, speech detection, transcription,
+    a local function tool, and a service-managed end-conversation tool.
+    MCP and toolbox settings are shown as examples, not executed.
 
-    * Input (microphone) audio configuration: audio format, server-side turn
-      detection (VAD), input-audio transcription.
-    * Tools the agent may use during a live session: a client-executed
-      `function` tool and a service-managed `system` control tool (`mcp` and
-      `toolbox` tools are shown as constructed objects for illustration).
-    * Bring-your-own-model (BYOM): set `model_type="self_deployed"` to point
-      the agent at your own Foundry model deployment instead of a
-      service-managed model.
+    Use a managed model, or select "self_deployed" to use your own Foundry
+    model deployment.
 
 USAGE:
     python sample_voice_agent_with_tools.py
 
-    Before running the sample:
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
-    pip install "azure-ai-projects>=2.7.0" python-dotenv
-
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_MODEL - Optional. The realtime model (managed) or the
-       Foundry deployment name (BYOM). Defaults to "gpt-realtime".
-    3) FOUNDRY_VOICE_MODEL_TYPE - Optional. "managed" (default) for a
-       service-hosted model, or "self_deployed" to bring your own deployment.
-    4) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
-       set, defaults to "sample-voice-agent-with-tools".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_MODEL (optional) - Managed model or your deployment
+       name; defaults to "gpt-realtime". The deprecated FOUNDRY_VOICE_MODEL
+       variable is still accepted as a fallback.
+    3) FOUNDRY_VOICE_MODEL_TYPE (optional) - "managed" (default) or "self_deployed".
+    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Agent name;
+       defaults to "sample-voice-agent-with-tools".
 """
 
 import os
@@ -61,10 +55,9 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
-# "managed" runs a service-hosted model; "self_deployed" (BYOM) uses your own
-# Foundry deployment named by `model`. The service derives whether the model is
-# realtime or cascaded; you don't set that here.
+# Keep existing BYOM configurations targeting the caller's deployment.
+model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+# Choose a managed model or your own deployment; the service selects its protocol.
 model_type = os.environ.get("FOUNDRY_VOICE_MODEL_TYPE") or VoiceModelType.MANAGED
 agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-voice-agent-with-tools"
 
@@ -88,7 +81,7 @@ end_call = VoiceAgentEndConversationSystemTool()
 
 # An MCP tool is executed by the service against a remote MCP server you own.
 # It references an external server, so it is constructed here for illustration
-# and not attached below. Provide one of server_url, connector_id, or tunnel_id.
+# and not attached below. Provide server_url; connector and tunnel IDs are not supported.
 _example_mcp_tool = VoiceAgentMcpTool(
     server_label="my-mcp-server",
     server_url="https://example.com/mcp",
@@ -114,7 +107,7 @@ definition = VoiceAgentDefinition(
                 prefix_padding_ms=300,
                 silence_duration_ms=500,
             ),
-            transcription=VoiceAgentInputTranscription(model=VoiceAgentInputTranscriptionModel.WHISPER1),
+            transcription=VoiceAgentInputTranscription(model=VoiceAgentInputTranscriptionModel("whisper-1")),
         ),
         # Output (agent speech) side: the voice the agent speaks with.
         output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
@@ -128,7 +121,7 @@ definition = VoiceAgentDefinition(
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     created_version = None
     try:

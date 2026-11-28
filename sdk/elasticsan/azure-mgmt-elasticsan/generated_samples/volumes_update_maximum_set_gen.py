@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,11 +36,24 @@ def main():
         elastic_san_name="elasticsanname",
         volume_group_name="volumegroupname",
         volume_name="volumename",
-        parameters={"properties": {"managedBy": {"resourceId": "pclpkrpkpmvcsegcubrakcoodrubo"}, "sizeGiB": 7}},
+        parameters={
+            "properties": {
+                "managedBy": [
+                    {
+                        "clientId": "pclpkrpkpmvcsegcubrakcoodrubo",
+                        "resourceIds": [
+                            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.SomeProvider/someResource/myResource"
+                        ],
+                        "version": 1,
+                    }
+                ],
+                "sizeGiB": 7,
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/Volumes_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Volumes_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -113,7 +113,7 @@ def sample_conversation_pii():
         print(f"Display Name: {d.get('display_name')}")
 
     # iterate results (sync pageable)
-    for actions_page in paged_actions: # pylint:disable=too-many-nested-blocks
+    for actions_page in paged_actions:  # pylint:disable=too-many-nested-blocks
         print(
             f"Completed: {actions_page.completed}, "
             f"In Progress: {actions_page.in_progress}, "

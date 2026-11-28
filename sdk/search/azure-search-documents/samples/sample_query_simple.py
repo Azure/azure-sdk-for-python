@@ -7,7 +7,7 @@
 
 """
 DESCRIPTION:
-    Demonstrates how to perform a simple text search.
+    Demonstrates text search and finding documents similar to a document key.
 USAGE:
     python sample_query_simple.py
 
@@ -39,5 +39,23 @@ def simple_query():
     # [END simple_query]
 
 
+def similar_documents():
+    # [START similar_documents]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents import SearchClient
+
+    with SearchClient(service_endpoint, index_name, AzureKeyCredential(key)) as search_client:
+        results = search_client.search(
+            more_like_this="1",
+            search_fields=["HotelName", "Description"],
+            select=["HotelId", "HotelName"],
+            top=5,
+        )
+        for result in results:
+            print(f"Similar hotel: {result['HotelId']}: {result['HotelName']}")
+    # [END similar_documents]
+
+
 if __name__ == "__main__":
     simple_query()
+    similar_documents()

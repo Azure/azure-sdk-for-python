@@ -1,0 +1,15 @@
+{
+    "reportOptionalMemberAccess": "warning",
+    "reportArgumentType": "warning",
+    "reportAttributeAccessIssue": "warning",
+    "reportMissingImports": "warning",
+    "reportGeneralTypeIssues": "warning",
+    "reportReturnType": "warning",
+    "extraPaths": [
+        "../azure-ai-agentserver-core",
+        "../azure-ai-agentserver-invocations"
+    ],
+    "exclude": [
+        "**/samples/**"
+    ]
+}

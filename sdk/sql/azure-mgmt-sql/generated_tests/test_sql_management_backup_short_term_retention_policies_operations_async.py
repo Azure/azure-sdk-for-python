@@ -44,7 +44,12 @@ class TestSqlManagementBackupShortTermRetentionPoliciesOperationsAsync(AzureMgmt
                 parameters={
                     "id": "str",
                     "name": "str",
-                    "properties": {"diffBackupIntervalInHours": 0, "retentionDays": 0},
+                    "properties": {
+                        "diffBackupIntervalInHours": 0,
+                        "immutabilityStatus": "str",
+                        "lockImmutability": bool,
+                        "retentionDays": 0,
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -73,7 +78,12 @@ class TestSqlManagementBackupShortTermRetentionPoliciesOperationsAsync(AzureMgmt
                 parameters={
                     "id": "str",
                     "name": "str",
-                    "properties": {"diffBackupIntervalInHours": 0, "retentionDays": 0},
+                    "properties": {
+                        "diffBackupIntervalInHours": 0,
+                        "immutabilityStatus": "str",
+                        "lockImmutability": bool,
+                        "retentionDays": 0,
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",

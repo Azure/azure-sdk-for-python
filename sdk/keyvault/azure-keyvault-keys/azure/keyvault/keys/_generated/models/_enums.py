@@ -218,11 +218,11 @@ class JsonWebKeyWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """192-bit AES key wrap."""
     A256_KW = "A256KW"
     """256-bit AES key wrap."""
-    A256_KWPAD = "A256KWPAD"
-    """128-bit AES key wrap with padding."""
     A128_KWPAD = "A128KWPAD"
-    """192-bit AES key wrap with padding."""
+    """128-bit AES key wrap with padding."""
     A192_KWPAD = "A192KWPAD"
+    """192-bit AES key wrap with padding."""
+    A256_KWPAD = "A256KWPAD"
     """256-bit AES key wrap with padding."""
     CKM_AES_KEY_WRAP = "CKM_AES_KEY_WRAP"
     """CKM AES key wrap."""
@@ -235,9 +235,9 @@ class KeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CKM_RSA_AES_KEY_WRAP = "CKM_RSA_AES_KEY_WRAP"
     """The CKM_RSA_AES_KEY_WRAP key wrap mechanism."""
-    RSA_AES_KEY_WRAP256 = "RSA_AES_KEY_WRAP_256"
+    RSA_AES_KEY_WRAP_256 = "RSA_AES_KEY_WRAP_256"
     """The RSA_AES_KEY_WRAP_256 key wrap mechanism."""
-    RSA_AES_KEY_WRAP384 = "RSA_AES_KEY_WRAP_384"
+    RSA_AES_KEY_WRAP_384 = "RSA_AES_KEY_WRAP_384"
     """The RSA_AES_KEY_WRAP_384 key wrap mechanism."""
 
 

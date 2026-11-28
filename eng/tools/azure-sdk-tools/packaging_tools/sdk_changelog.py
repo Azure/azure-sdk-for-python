@@ -9,6 +9,7 @@ import re
 import sys
 import time
 
+from packaging.version import Version
 from typing import Any, Optional
 from .package_utils import (
     change_log_generate,
@@ -38,6 +39,85 @@ def is_valid_changelog_content(content: str) -> bool:
 
 def is_arm_sdk(package_name: str) -> bool:
     return package_name.startswith("azure-mgmt-")
+
+
+def update_api_versions_in_changelog(package_path: Path, version: str) -> None:
+    """Put the generated service API versions first in the current release's features."""
+    metadata_path = package_path / "_metadata.json"
+    changelog_path = package_path / "CHANGELOG.md"
+    try:
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        api_versions = metadata.get("apiVersions") if isinstance(metadata, dict) else None
+        if not isinstance(api_versions, dict) or not api_versions:
+            _LOGGER.warning(f"Skip API-version disclosure: {metadata_path} has no valid apiVersions map.")
+            return
+        if any(
+            not isinstance(value, str) or not value.strip() or "\n" in value or "\r" in value
+            for pair in api_versions.items()
+            for value in pair
+        ):
+            _LOGGER.warning(f"Skip API-version disclosure: {metadata_path} has invalid service names or versions.")
+            return
+
+        original = changelog_path.read_text(encoding="utf-8")
+        lines = original.splitlines(keepends=True)
+        releases = [(i, match.group(1)) for i, line in enumerate(lines) if (match := re.match(r"^##\s+(\S+)", line))]
+        if not releases or releases[0][1] != version:
+            _LOGGER.warning(f"Skip API-version disclosure: {changelog_path} has no current release matching {version}.")
+            return
+
+        start = releases[0][0] + 1
+        end = releases[1][0] if len(releases) > 1 else len(lines)
+        release = [line for line in lines[start:end] if not re.match(r"^\s*[-*+]\s+Package API versions:", line)]
+        versions = ", ".join(f"{service}: `{api_versions[service]}`" for service in sorted(api_versions))
+        note = f"- Package API versions: {versions}.\n"
+        features = next((i for i, line in enumerate(release) if line.strip() == "### Features Added"), None)
+        if features is None:
+            insert_at = next((i for i, line in enumerate(release) if re.match(r"^###\s+", line)), len(release))
+            if insert_at and release[insert_at - 1].strip():
+                if not release[insert_at - 1].endswith("\n"):
+                    release[insert_at - 1] += "\n"
+                release.insert(insert_at, "\n")
+                insert_at += 1
+            release[insert_at:insert_at] = ["### Features Added\n", "\n", note, "\n"]
+        else:
+            insert_at = features + 1
+            if not release[features].endswith("\n"):
+                release[features] += "\n"
+            while insert_at < len(release) and not release[insert_at].strip():
+                insert_at += 1
+            release.insert(insert_at, note)
+
+        lines[start:end] = release
+        updated = "".join(lines)
+        if updated != original:
+            changelog_path.write_text(updated, encoding="utf-8")
+    except (OSError, ValueError) as e:
+        _LOGGER.warning(f"Skip API-version disclosure for {package_path.name}: {e}")
+
+
+def has_prior_ga_release(package_name: str) -> bool:
+    """Determine review eligibility from published PyPI history, retaining review when history is unavailable."""
+    from pypi_tools.pypi import PyPIClient
+
+    try:
+        releases = PyPIClient(force_pypi=True).project(package_name)["releases"]
+        for release, files in releases.items():
+            # Yanked files still count as published; empty release entries do not.
+            if not isinstance(files, list):
+                raise ValueError(f"Invalid release file list for {release!r}: expected a list")
+            if not files:
+                continue
+            version = Version(release)
+            if version.base_version != "0.0.0" and not version.is_prerelease:
+                return True
+        return False
+    except Exception as e:
+        _LOGGER.warning(
+            f"Failed to determine prior GA releases for {package_name}: {e}; "
+            "keeping breaking-change reporting enabled."
+        )
+        return True
 
 
 # CHANGELOG.md is embedded into the package long_description (see setup.py template), so an
@@ -264,10 +344,13 @@ def main(
         changelog_generation_start_time = time.time()
         md_output, last_version = get_changelog_content(package_path, package_result, enable_changelog, timeout=timeout)
         _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
+        has_breaking_change = "Breaking Changes" in md_output
+        if has_breaking_change and (package_result or output_json is not None):
+            has_breaking_change = has_prior_ga_release(package_name)
         if package_result:
             package_result["changelog"] = {
                 "content": md_output,
-                "hasBreakingChange": "Breaking Changes" in md_output,
+                "hasBreakingChange": has_breaking_change,
                 "breakingChangeItems": extract_breaking_change(md_output),
             }
             package_result["version"] = last_version
@@ -278,7 +361,7 @@ def main(
         if output_json is not None:
             result = {
                 "changes": md_output,
-                "hasBreakingChange": "Breaking Changes" in md_output,
+                "hasBreakingChange": has_breaking_change,
             }
             output_json = Path(output_json)
             output_json.parent.mkdir(parents=True, exist_ok=True)

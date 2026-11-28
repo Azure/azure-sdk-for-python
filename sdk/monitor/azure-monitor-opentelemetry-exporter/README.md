@@ -139,6 +139,180 @@ All configuration options can be passed through the constructors of exporters th
 * `storage_directory`: Storage directory in which to store retry files. Defaults to `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
 * `credential`: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for [Azure Active Directory (AAD) authentication][aad_for_ai_docs]. Defaults to None. See [samples][exporter_samples] for examples. The credential will be automatically created from the `APPLICATIONINSIGHTS_AUTHENTICATION_STRING` environment variable if not explicitly passed in. See [documentation][aad_env_var_docs] for more.
 
+### Experimental features
+
+Use the `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES` environment variable to opt in to named experimental
+features. Set it before constructing any exporter or calling `configure_azure_monitor()`.
+
+```powershell
+$env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "gen_ai_input_output_limit_increase"
+```
+
+Separate multiple feature names with commas. Names are case-insensitive; surrounding whitespace is
+ignored. Unset or empty values enable no experimental features. Unknown names are ignored with a warning.
+The selection is shared across exporters in the same Python interpreter and cannot be changed after
+the first exporter is constructed. Experimental features may change or be removed in future releases.
+
+### Multi-endpoint routing (preview)
+
+Add `multi_endpoint_routing` to `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES` before
+constructing any exporter to route logs, spans, or metric data points using their
+`microsoft.instrumentation_key` and `microsoft.ingestion_endpoint`
+attributes. Both attributes are required; the endpoint must be HTTPS. Obtain
+destinations from trusted, server-owned configuration, not request headers or baggage.
+Invalid or missing destinations are dropped without falling back to the exporter's
+connection string. With routing enabled, a host connection string is optional.
+If supplied explicitly or through the environment, it is still parsed and validated
+normally. Without host configuration, host retry storage, Statsbeat, and customer
+SDK statistics are not initialized; destination-specific retry storage still works.
+
+```powershell
+$env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "multi_endpoint_routing"
+# To enable another experimental feature as well:
+$env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "multi_endpoint_routing,gen_ai_input_output_limit_increase"
+```
+
+Routing is disabled unless explicitly selected in this list. The selection is
+shared across log, trace, and metric exporters and is fixed at the first exporter
+construction, as described under [Experimental features](#experimental-features).
+Caller-supplied transports and scalar retry settings remain supported. Complete
+custom pipelines and `HTTPPolicy` instances supplied through named, per-call, or
+per-retry policy options are rejected because routing must construct an independent
+policy chain for each destination. `SansIOHTTPPolicy` entries remain supported.
+
+#### Routing attributes
+
+| Attribute | Required | Value |
+| --- | --- | --- |
+| `microsoft.instrumentation_key` | Yes | Destination instrumentation key: a nonempty string, at most 200 characters before trimming. |
+| `microsoft.ingestion_endpoint` | Yes | Absolute HTTPS ingestion endpoint, at most 2048 characters before trimming, without credentials, query, or fragment. |
+| `microsoft.ingestion_auth` | No | `"aad"` selects Microsoft Entra authentication; other or missing values select key-only authentication. |
+| `microsoft.multi_endpoint_cloud_role` | No | Cloud-role name; missing, blank, or non-string values use `unknown_service`. |
+
+Items are grouped by normalized endpoint and authentication mode. Set
+`microsoft.ingestion_auth` to `"aad"` to use the exporter's configured credential;
+the value is trimmed and case-insensitive. Other values use key-only authentication
+and do not receive the exporter's token, even when a credential is configured.
+AAD groups without a credential fail without being sent or stored; other groups
+continue exporting.
+Span events follow their parent span's destination, instrumentation key, and
+authentication mode, not routing attributes on the events themselves.
+Metrics use routing attributes on each data point, not the resource or
+instrumentation scope. Points without valid routing attributes are dropped.
+Cloud-role names come from the item's `microsoft.multi_endpoint_cloud_role` attribute;
+missing, blank, or non-string values use `unknown_service`. Span events inherit their
+parent span's role name. Cloud-role instances remain resource-derived.
+
+Attach these attributes to each log record, each span, and each metric measurement
+(for example, `counter.add(1, attributes=destination)`). Resource attributes, baggage,
+and the current span do not automatically supply routing attributes to other
+records or child spans. Span events are the exception: they inherit the parent
+span's route. For observable metrics, set the attributes on each observation.
+If a metric view filters attributes, retain the routing attributes.
+Exporters in multi-endpoint routing mode drop application telemetry without valid
+routing attributes instead of sending it to the host connection string.
+This does not apply to Live Metrics: when enabled with a host connection string,
+it can still show log and span samples in the host resource without routing
+attributes. Statsbeat and customer SDK
+statistics do not use per-item routing and are not copied to every destination;
+their host-configuration requirements are described above.
+
+#### Route logs, spans, and metrics
+
+See the [multi-endpoint routing sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry/samples/multi_endpoint_routing.py).
+
+Resources may share an ingestion endpoint while using different instrumentation
+keys. They share a transport route within each exporter, but each telemetry item
+retains its own key and cloud-role name. An existing
+`APPLICATIONINSIGHTS_CONNECTION_STRING` is still parsed and validated; it is not
+a fallback for items without routing attributes. When routing is disabled, the
+exporter uses its normal single destination instead.
+
+#### Microsoft Entra authentication
+
+1. Pass a token credential, such as `DefaultAzureCredential`, through `credential`,
+   or configure managed identity using `APPLICATIONINSIGHTS_AUTHENTICATION_STRING`.
+2. Set `microsoft.ingestion_auth` to `"aad"` on telemetry that requires Microsoft
+   Entra authentication, including resources with local authentication disabled.
+3. Assign the identity the **Monitoring Metrics Publisher** role on each destination resource.
+
+The default audience is Azure public cloud. For another cloud, set the audience
+before constructing the exporter, for example:
+
+```powershell
+$env:APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE = "https://monitor.azure.cn/"
+```
+
+All AAD destinations within an exporter share its credential and audience. Use
+separately configured exporters when identities or clouds differ. The host connection
+string's `AadAudience` does not apply to routed telemetry. Custom
+`authentication_policy` is not supported in routing mode.
+
+> **Security:** Use only trusted routing destinations. Custom headers, policies,
+> hooks, transports, or sessions may send credentials to any routed destination,
+> including key-only routes.
+
+#### Retry storage and recovery
+
+Retry storage is separate from the host storage, partitioned by endpoint and
+authentication mode, and shares the configured storage capacity across routed
+partitions. Pending items preserve their original instrumentation keys and are
+retried after a subsequent successful send to the same endpoint/authentication
+group or by a shared background worker. The worker starts when the first
+storage-backed route opens and checks opened routes every `storage_maintenance_period`
+seconds (60 by default). It respects retry backoff, storage toggles, and rate limits,
+and stops when the exporter shuts down. Stored destinations are not discovered at
+startup; their route must be opened by new telemetry before background retries begin.
+For destinations with enabled, available offline storage, retryable failures also
+pause new transmissions to that endpoint/authentication group. New items are stored
+until the retry window expires. The window uses the existing `Retry-After` handling,
+or `storage_min_retry_interval` (60 seconds by default) when no valid delay is available.
+Other destinations continue transmitting. This does not add .NET's exponential
+backoff; export results retain the existing failure semantics.
+Each exporter caches up to 64 endpoint/authentication routes. When storage is
+enabled, those cached routes also receive offline-storage partitions. Different
+keys using the same normalized endpoint and authentication mode share a route.
+Additional destinations still transmit through short-lived clients without
+offline persistence.
+
+With offline storage enabled, the routed storage root admits a new partition only
+while it contains fewer than 64 partition directories. Retained directories,
+including empty directories from previous exporter lifetimes, count toward this
+limit. Existing partitions can reopen at or above the limit, subject to the
+client-cache limit. No partitions or pending batches are evicted to admit another
+destination. New destinations at capacity use the same short-lived,
+non-persisting overflow path; storage admission errors also use this path and log
+an error. Admission is coordinated between exporters in the same process, not
+across processes sharing a directory. Single-endpoint storage behavior is unchanged.
+
+#### Delivery guarantees and limitations
+
+Routing provides best-effort delivery, not a transactional or exactly-once
+delivery guarantee:
+
+* Each destination group is attempted independently. One failed group does not
+  roll back successful groups. Export results describe the aggregate attempt,
+  not individual destination receipts; a failure can coexist with successful
+  delivery or persistence for other groups.
+* After configured HTTP retries, retryable items can be saved for later replay
+  only when offline storage is enabled and available. Non-retryable items are
+  not saved for replay. Storage disabled through configuration, unavailable
+  disk space or permissions, retention expiry, and capacity limits can cause loss.
+* Retried items can arrive more than once if the service accepted an earlier
+  request but its response was lost. Do not rely on global ordering across
+  destinations, batches, or retries.
+* Provider `force_flush()` requests processing of queued logs/spans or metric
+  collection and export. Completion does not confirm that every item was
+  ingested, nor does it drain all offline retry files.
+* Shut down providers before exiting so their processors and exporters can
+  finish pending work and stop background workers. Shutdown does not wait for
+  an unavailable destination to recover or guarantee that retry storage is empty.
+  Abrupt process termination can lose in-memory telemetry.
+
+Treat local retry files as sensitive telemetry and restrict access to their
+storage directory. For restart recovery and the route-cache limit, see
+[Retry storage and recovery](#retry-storage-and-recovery).
+
 ## Examples
 
 ### Logging (experimental)
@@ -630,6 +804,39 @@ For all applications set up with OpenTelemetry SDK and Azure Monitor exporters, 
 ## Troubleshooting
 
 The exporter raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#azure-core-library-exceptions).
+
+### Custom properties truncation
+
+Span, span event, and log record attributes are exported as custom properties. Values are truncated to the following lengths (in characters):
+
+| Attributes | Max length |
+| --- | --- |
+| `gen_ai.input.messages`, `gen_ai.output.messages` | 256 KiB (`256 * 1024`); 4 MiB (`4 * 1024 * 1024`) when the `gen_ai_input_output_limit_increase` [experimental feature](#experimental-features) is enabled |
+| `gen_ai.system_instructions`, `gen_ai.tool.definitions`, `gen_ai.tool.call.arguments`, `gen_ai.tool.call.result`, `gen_ai.evaluation.explanation` | 256 KiB (`256 * 1024`) |
+| All other attributes | 8 KiB (`8 * 1024`) |
+
+When the `gen_ai_input_output_limit_increase` experimental feature is enabled, GenAI messages with multimodal content (for example, base64-encoded images or audio) can produce large telemetry items. If you capture such content, consider increasing the exporter `timeout` and `storage_max_size` settings, reducing the batch processor's `max_export_batch_size`, or bounding attribute size at the source with `OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT`.
+
+### Multi-endpoint routing
+
+If routed telemetry is missing:
+
+* Confirm that `multi_endpoint_routing` was selected before the first exporter
+  was constructed. Changing the environment afterward does not change the
+  selection in that process.
+* Check the attributes on the actual log, span, or metric data point, not just
+  its resource or parent span. Missing or invalid destinations are dropped.
+* For Microsoft Entra destinations, check the `"aad"` marker, exporter
+  credential, audience, and destination role assignment.
+* Check exporter warnings/errors for authentication, storage, and route-capacity
+  failures. Enable DEBUG logging for `azure.monitor.opentelemetry.exporter`
+  to see invalid-routing-attribute diagnostics. Keep exporter diagnostics on a
+  console or separate handler rather than sending them back through the same
+  exporter.
+* If retry files remain after a restart, open their destination route with new
+  telemetry so background replay can resume. A successful provider flush is not
+  proof of ingestion; verify arrival in each destination resource.
+
 
 ## Next steps
 

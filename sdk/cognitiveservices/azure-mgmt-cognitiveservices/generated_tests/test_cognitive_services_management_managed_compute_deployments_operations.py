@@ -48,6 +48,7 @@ class TestCognitiveServicesManagementManagedComputeDeploymentsOperations(AzureMg
                     "capabilities": {"str": "str"},
                     "computeId": "str",
                     "deploymentTemplate": "str",
+                    "gatedModelAccess": {"connectionId": "str"},
                     "priority": "str",
                     "provisioningDetails": {"lastOperationTimestamp": "2020-02-20 00:00:00", "message": "str"},
                     "provisioningState": "str",

@@ -141,3 +141,13 @@ class TestStorageManagementContextCachesOperations(AzureMgmtRecordedTestCase):
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_context_caches_check_name_availability(self, resource_group):
+        response = self.client.context_caches.check_name_availability(
+            body={"name": "str", "type": "Microsoft.Storage/contextCaches"},
+        )
+
+        # please add some check logic here by yourself
+        # ...

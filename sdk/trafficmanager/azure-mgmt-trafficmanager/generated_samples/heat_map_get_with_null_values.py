@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-04-01-preview/HeatMap-GET-With-Null-Values.json
+# x-ms-original-file: 2026-09-01/HeatMap-GET-With-Null-Values.json
 if __name__ == "__main__":
     main()

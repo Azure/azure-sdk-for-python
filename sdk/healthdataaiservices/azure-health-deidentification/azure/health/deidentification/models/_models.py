@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class DeidentificationContent(_Model):
+class DeidentificationContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for de-identification operation.
 
     :ivar input_text: Input text to de-identify. Required.
@@ -73,7 +72,7 @@ class DeidentificationContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationCustomizationOptions(_Model):
+class DeidentificationCustomizationOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customizations options to override default service behaviors for synchronous usage.
 
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
@@ -92,8 +91,7 @@ class DeidentificationCustomizationOptions(_Model):
     redaction_format: Optional[str] = rest_field(
         name="redactionFormat", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Format of the redacted output. Only valid when Operation is Redact.
-     Please refer to
+    """Format of the redacted output. Only valid when Operation is Redact. Please refer to
      `https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format
      <https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format>`_ for
      more details."""
@@ -126,7 +124,7 @@ class DeidentificationCustomizationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationDocumentDetails(_Model):
+class DeidentificationDocumentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a single document in a job.
 
     :ivar id: Id of the document details. Required.
@@ -182,7 +180,7 @@ class DeidentificationDocumentDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationDocumentLocation(_Model):
+class DeidentificationDocumentLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Location of a document.
 
     :ivar location: Location of document in storage. Required.
@@ -214,7 +212,7 @@ class DeidentificationDocumentLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationJob(_Model):
+class DeidentificationJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A job containing a batch of documents to de-identify.
 
     :ivar job_name: The name of a job. Required.
@@ -307,7 +305,7 @@ class DeidentificationJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationJobCustomizationOptions(_Model):
+class DeidentificationJobCustomizationOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customizations options to override default service behaviors for job usage.
 
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
@@ -326,8 +324,7 @@ class DeidentificationJobCustomizationOptions(_Model):
     redaction_format: Optional[str] = rest_field(
         name="redactionFormat", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Format of the redacted output. Only valid when Operation is Redact.
-     Please refer to
+    """Format of the redacted output. Only valid when Operation is Redact. Please refer to
      `https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format
      <https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format>`_ for
      more details."""
@@ -360,7 +357,7 @@ class DeidentificationJobCustomizationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationJobSummary(_Model):
+class DeidentificationJobSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Summary metrics of a job.
 
     :ivar successful_count: Number of documents that have completed. Required.
@@ -408,7 +405,7 @@ class DeidentificationJobSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationResult(_Model):
+class DeidentificationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body for de-identification operation.
 
     :ivar output_text: Output text after de-identification. Not available for "Tag" operation.
@@ -445,7 +442,7 @@ class DeidentificationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PhiEntity(_Model):
+class PhiEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PHI Entity tag in the input.
 
     :ivar category: PHI Category of the entity. Required. Known values are: "Unknown", "Account",
@@ -503,21 +500,21 @@ class PhiEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PhiTaggerResult(_Model):
+class PhiTaggerResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the "Tag" operation.
 
     :ivar entities: List of entities detected in the input. Required.
     :vartype entities: list[~azure.health.deidentification.models.PhiEntity]
     """
 
-    entities: List["_models.PhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    entities: list["_models.PhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of entities detected in the input. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        entities: List["_models.PhiEntity"],
+        entities: list["_models.PhiEntity"],
     ) -> None: ...
 
     @overload
@@ -531,7 +528,7 @@ class PhiTaggerResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SimplePhiEntity(_Model):
+class SimplePhiEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Simple PHI entity with encoding-specific offset and length values.
 
     :ivar category: PHI Category of the entity. Required. Known values are: "Unknown", "Account",
@@ -583,7 +580,7 @@ class SimplePhiEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceStorageLocation(_Model):
+class SourceStorageLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage location.
 
     :ivar location: URL to storage location. Required.
@@ -598,7 +595,7 @@ class SourceStorageLocation(_Model):
     """URL to storage location. Required."""
     prefix: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Prefix to filter path by. Required."""
-    extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of extensions to filter path by."""
 
     @overload
@@ -607,7 +604,7 @@ class SourceStorageLocation(_Model):
         *,
         location: str,
         prefix: str,
-        extensions: Optional[List[str]] = None,
+        extensions: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -621,7 +618,7 @@ class SourceStorageLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StringIndex(_Model):
+class StringIndex(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """String index encoding model.
 
     :ivar utf8: The offset or length of the substring in UTF-8 encoding. Required.
@@ -667,7 +664,7 @@ class StringIndex(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaggedPhiEntities(_Model):
+class TaggedPhiEntities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Grouped PHI entities with shared encoding specification.
 
     :ivar encoding: The encoding type used for all entities in this group. Required. Known values
@@ -682,7 +679,7 @@ class TaggedPhiEntities(_Model):
     )
     """The encoding type used for all entities in this group. Required. Known values are: \"Utf8\",
      \"Utf16\", and \"CodePoint\"."""
-    entities: List["_models.SimplePhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    entities: list["_models.SimplePhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of PHI entities using the specified encoding. Required."""
 
     @overload
@@ -690,7 +687,7 @@ class TaggedPhiEntities(_Model):
         self,
         *,
         encoding: Union[str, "_models.TextEncodingType"],
-        entities: List["_models.SimplePhiEntity"],
+        entities: list["_models.SimplePhiEntity"],
     ) -> None: ...
 
     @overload
@@ -704,7 +701,7 @@ class TaggedPhiEntities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetStorageLocation(_Model):
+class TargetStorageLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage location.
 
     :ivar location: URL to storage location. Required.

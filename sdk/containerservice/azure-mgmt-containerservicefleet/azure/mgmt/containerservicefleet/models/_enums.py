@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -231,6 +231,34 @@ class GateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A scheduled start gate is automatically completed when the scheduled time is reached."""
 
 
+class IdentityBindingLabelSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
+    Exists and DoesNotExist.
+    """
+
+    IN = "In"
+    """The value of the key should be in the given list."""
+    NOT_IN = "NotIn"
+    """The value of the key should not be in the given list."""
+    EXISTS = "Exists"
+    """The value of the key should exist."""
+    DOES_NOT_EXIST = "DoesNotExist"
+    """The value of the key should not exist."""
+
+
+class IdentityBindingProfileProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the identity binding profile resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    APPLYING = "Applying"
+    """The identity binding profile is being applied to the selected fleet members."""
+
+
 class LabelSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A label selector operator is the set of operators that can be used in a selector requirement."""
 
@@ -311,7 +339,7 @@ class NodeImageSelectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"

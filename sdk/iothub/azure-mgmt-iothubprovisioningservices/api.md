@@ -592,6 +592,37 @@ namespace azure.mgmt.iothubprovisioningservices.models
         USER = "User"
 
 
+    class azure.mgmt.iothubprovisioningservices.models.DeviceRegistryNamespaceAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SYSTEM_ASSIGNED = "SystemAssigned"
+        USER_ASSIGNED = "UserAssigned"
+
+
+    class azure.mgmt.iothubprovisioningservices.models.DeviceRegistryNamespaceDescription(_Model):
+        authentication_type: Union[str, DeviceRegistryNamespaceAuthenticationType]
+        data_address: Optional[str]
+        linking_state: Optional[Union[str, LinkingState]]
+        location: Optional[str]
+        namespace_uuid: Optional[str]
+        resource_id: str
+        selected_user_assigned_identity_resource_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authentication_type: Union[str, DeviceRegistryNamespaceAuthenticationType], 
+                data_address: Optional[str] = ..., 
+                linking_state: Optional[Union[str, LinkingState]] = ..., 
+                location: Optional[str] = ..., 
+                namespace_uuid: Optional[str] = ..., 
+                resource_id: str, 
+                selected_user_assigned_identity_resource_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.iothubprovisioningservices.models.ErrorAdditionalInfo(_Model):
         info: Optional[Any]
         type: Optional[str]
@@ -684,6 +715,7 @@ namespace azure.mgmt.iothubprovisioningservices.models
         allocation_policy: Optional[Union[str, AllocationPolicy]]
         authorization_policies: Optional[list[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]]
         device_provisioning_host_name: Optional[str]
+        device_registry_namespaces: Optional[list[DeviceRegistryNamespaceDescription]]
         disable_local_auth: Optional[bool]
         enable_data_residency: Optional[bool]
         id_scope: Optional[str]
@@ -814,6 +846,13 @@ namespace azure.mgmt.iothubprovisioningservices.models
         ALL = "all"
         DEVICE_API = "deviceApi"
         SERVICE_API = "serviceApi"
+
+
+    class azure.mgmt.iothubprovisioningservices.models.LinkingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        IN_PROGRESS = "InProgress"
+        NOT_LINKED = "NotLinked"
+        ORPHANED = "Orphaned"
+        SUCCEEDED = "Succeeded"
 
 
     class azure.mgmt.iothubprovisioningservices.models.ManagedServiceIdentity(_Model):
@@ -1653,6 +1692,23 @@ namespace azure.mgmt.iothubprovisioningservices.types
         type: str
 
 
+    class azure.mgmt.iothubprovisioningservices.types.DeviceRegistryNamespaceDescription(TypedDict, total=False):
+        key "authenticationType": Required[Union[str, DeviceRegistryNamespaceAuthenticationType]]
+        key "dataAddress": str
+        key "linkingState": Union[str, LinkingState]
+        key "location": str
+        key "namespaceUuid": str
+        key "resourceId": Required[str]
+        key "selectedUserAssignedIdentityResourceId": str
+        authenticationType: Union[str, DeviceRegistryNamespaceAuthenticationType]
+        dataAddress: str
+        linkingState: Union[str, LinkingState]
+        location: str
+        namespaceUuid: str
+        resourceId: str
+        selectedUserAssignedIdentityResourceId: str
+
+
     class azure.mgmt.iothubprovisioningservices.types.IotDpsPropertiesDescription(TypedDict, total=False):
         key "allocationPolicy": Union[str, AllocationPolicy]
         key "deviceProvisioningHostName": str
@@ -1667,6 +1723,7 @@ namespace azure.mgmt.iothubprovisioningservices.types
         allocationPolicy: Union[str, AllocationPolicy]
         authorizationPolicies: list[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]
         deviceProvisioningHostName: str
+        deviceRegistryNamespaces: list[DeviceRegistryNamespaceDescription]
         disableLocalAuth: bool
         enableDataResidency: bool
         idScope: str

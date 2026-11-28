@@ -19,7 +19,7 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from .models._patch import _AGENT_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ def _resolve_openai_default_headers(agent_name: Optional[str], kwargs: dict) -> 
     """
     default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
     if agent_name is not None and not _has_header_case_insensitive(default_headers, _FOUNDRY_FEATURES_HEADER_NAME):
-        default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _BETA_OPERATION_FEATURE_HEADERS["agents"]
+        default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
     return default_headers
 
 
@@ -159,6 +159,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     :ivar beta: BetaOperations operations
     :vartype beta: azure.ai.projects.operations.BetaOperations
+    :ivar voice_agents: VoiceAgentsOperations operations
+    :vartype voice_agents: azure.ai.projects.operations.VoiceAgentsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
@@ -510,4 +512,7 @@ def patch_sdk():
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
+
+    :return: None
+    :rtype: None
     """

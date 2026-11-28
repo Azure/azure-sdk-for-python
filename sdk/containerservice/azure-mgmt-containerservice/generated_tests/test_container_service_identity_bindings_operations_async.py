@@ -42,6 +42,7 @@ class TestContainerServiceIdentityBindingsOperationsAsync(AzureMgmtRecordedTestC
                 parameters={
                     "eTag": "str",
                     "id": "str",
+                    "managedBy": "str",
                     "name": "str",
                     "properties": {
                         "managedIdentity": {

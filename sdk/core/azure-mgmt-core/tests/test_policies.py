@@ -121,7 +121,7 @@ def test_register_rp_policy():
     policies = [
         ARMAutoResourceProviderRegistrationPolicy(),
     ]
-    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+    with Pipeline(RequestsTransport(use_env_settings=False), policies=policies) as pipeline:
         response = pipeline.run(request)
 
     assert json.loads(response.http_response.text())["success"]
@@ -174,7 +174,7 @@ def test_register_failed_policy():
     policies = [
         ARMAutoResourceProviderRegistrationPolicy(),
     ]
-    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+    with Pipeline(RequestsTransport(use_env_settings=False), policies=policies) as pipeline:
         response = pipeline.run(request)
 
     assert response.http_response.status_code == 409

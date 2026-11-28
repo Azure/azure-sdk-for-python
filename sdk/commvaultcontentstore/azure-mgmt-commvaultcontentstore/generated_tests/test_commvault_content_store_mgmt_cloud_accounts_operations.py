@@ -66,9 +66,20 @@ class TestCommvaultContentStoreMgmtCloudAccountsOperations(AzureMgmtRecordedTest
                         "phoneNumber": "str",
                         "upn": "str",
                     },
-                    "backupAdminOnCcaCreate": {"displayName": "str", "entityType": "str", "id": "str"},
-                    "multiPersonAuthorizationOnCcaCreate": {"displayName": "str", "entityType": "str", "id": "str"},
+                    "company": {
+                        "city": "str",
+                        "companyName": "str",
+                        "country": "str",
+                        "jobTitle": "str",
+                        "postalCode": "str",
+                        "state": "str",
+                        "street": "str",
+                        "website": "str",
+                    },
                     "provisioningState": "str",
+                    "roleAssignmentsOnCcaCreate": [
+                        {"entities": [{"displayName": "str", "entityType": "str", "id": "str"}], "roleName": "str"}
+                    ],
                     "ssoUrl": "str",
                 },
                 "systemData": {
@@ -96,23 +107,30 @@ class TestCommvaultContentStoreMgmtCloudAccountsOperations(AzureMgmtRecordedTest
             properties={
                 "identity": {
                     "type": "str",
-                    "principalId": "str",
-                    "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "properties": {
+                    "company": {
+                        "city": "str",
+                        "companyName": "str",
+                        "country": "str",
+                        "jobTitle": "str",
+                        "postalCode": "str",
+                        "state": "str",
+                        "street": "str",
+                        "website": "str",
+                    },
                     "marketplace": {
                         "offerDetails": {
                             "offerId": "str",
-                            "publisherId": "str",
                             "planId": "str",
                             "planName": "str",
+                            "publisherId": "str",
                             "termId": "str",
                             "termUnit": "str",
                         },
                         "saasResourceId": "str",
                         "subscriptionId": "str",
-                        "subscriptionStatus": "str",
                     },
                     "user": {
                         "emailAddress": "str",

@@ -37,7 +37,6 @@ from .._configuration import SearchManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
-from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -47,30 +46,11 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_offerings_fetch_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Search/fetchOfferings"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -95,7 +75,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +111,7 @@ def build_private_endpoint_connections_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -168,7 +148,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -199,7 +179,7 @@ def build_private_endpoint_connections_list_by_service_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,7 +211,7 @@ def build_shared_private_link_resources_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +247,7 @@ def build_shared_private_link_resources_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -304,7 +284,7 @@ def build_shared_private_link_resources_delete_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/sharedPrivateLinkResources/{sharedPrivateLinkResourceName}"
     path_format_arguments = {
@@ -332,7 +312,7 @@ def build_shared_private_link_resources_list_by_service_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -360,7 +340,7 @@ def build_network_security_perimeter_configurations_get_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -389,7 +369,7 @@ def build_network_security_perimeter_configurations_list_by_service_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -416,7 +396,7 @@ def build_network_security_perimeter_configurations_reconcile_request(  # pylint
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/networkSecurityPerimeterConfigurations/{nspConfigName}/reconcile"
     path_format_arguments = {
@@ -441,7 +421,7 @@ def build_services_check_name_availability_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -469,7 +449,7 @@ def build_services_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -498,7 +478,7 @@ def build_services_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -529,7 +509,7 @@ def build_services_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -559,7 +539,7 @@ def build_services_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"
     path_format_arguments = {
@@ -584,7 +564,7 @@ def build_services_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -613,7 +593,7 @@ def build_services_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -639,7 +619,7 @@ def build_services_upgrade_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -667,7 +647,7 @@ def build_usages_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -694,7 +674,7 @@ def build_admin_keys_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -726,7 +706,7 @@ def build_admin_keys_regenerate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -755,7 +735,7 @@ def build_query_keys_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -784,7 +764,7 @@ def build_query_keys_list_by_search_service_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -812,7 +792,7 @@ def build_query_keys_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/deleteQueryKey/{key}"
     path_format_arguments = {
@@ -838,7 +818,7 @@ def build_private_link_resources_list_supported_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -866,7 +846,7 @@ def build_search_management_usage_by_subscription_sku_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -886,92 +866,6 @@ def build_search_management_usage_by_subscription_sku_request(  # pylint: disabl
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class OfferingsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.search.SearchManagementClient`'s
-        :attr:`offerings` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SearchManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={"2026-09-01-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-09-01-preview"],
-    )
-    def fetch(self, **kwargs: Any) -> _models.OfferingsResult:
-        """Fetches the features and SKUs offered by the Azure AI Search service in each region, along with
-        the recommended default region for creating new services.
-
-        :return: OfferingsResult. The OfferingsResult is compatible with MutableMapping
-        :rtype: ~azure.mgmt.search.models.OfferingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OfferingsResult] = kwargs.pop("cls", None)
-
-        _request = build_offerings_fetch_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.CloudError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.OfferingsResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class Operations:  # pylint: disable=docstring-missing-param

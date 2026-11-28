@@ -3,6 +3,8 @@ https://github.com/Azure/azure-digital-twins/blob/private-preview/Documentation/
 https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitations
 https://github.com/Azure/azure-rest-api-specs-pr
 http://localhost:8000/samples/pyodide_integration
+# Host-only management review service; not running in the documentation link-check job.
+http://127.0.0.1:8765/review
 https://pypi.org/project/azure-mynewpackage/
 https://aka.ms/azsdk/python/migrate/my-new-package
 https://github.com/Azure/azure-sdk-for-python/compare/main..

@@ -140,6 +140,144 @@ def print_retrieval_summary(result):
     print(f"Response messages: {len(result.response or [])}")
 
 
+def wait_for_knowledge_source_active(index_client, knowledge_source_name):
+    import time
+
+    for attempt in range(36):
+        status = index_client.get_knowledge_source_status(knowledge_source_name)
+        if status.synchronization_status == "active":
+            return
+        if attempt < 35:
+            time.sleep(5)
+    raise RuntimeError(f"Knowledge source did not become active: {status.synchronization_status}")
+
+
+async def wait_for_knowledge_source_active_async(index_client, knowledge_source_name):
+    import asyncio
+
+    for attempt in range(36):
+        status = await index_client.get_knowledge_source_status(knowledge_source_name)
+        if status.synchronization_status == "active":
+            return
+        if attempt < 35:
+            await asyncio.sleep(5)
+    raise RuntimeError(f"Knowledge source did not become active: {status.synchronization_status}")
+
+
+def wait_for_indexer(indexer_client, indexer_name):
+    import time
+
+    for attempt in range(60):
+        status = indexer_client.get_indexer_status(indexer_name)
+        result = status.last_result
+        if result is not None and result.status == "success":
+            if result.failed_item_count:
+                raise RuntimeError(f"Indexer completed with {result.failed_item_count} failed documents.")
+            return
+        if result is not None and result.status in {"persistentFailure", "transientFailure"}:
+            raise RuntimeError(f"Indexer failed: {result.error_message}")
+        if attempt < 59:
+            time.sleep(5)
+    raise TimeoutError(f"Indexer '{indexer_name}' did not complete within five minutes.")
+
+
+async def wait_for_indexer_async(indexer_client, indexer_name):
+    import asyncio
+
+    for attempt in range(60):
+        status = await indexer_client.get_indexer_status(indexer_name)
+        result = status.last_result
+        if result is not None and result.status == "success":
+            if result.failed_item_count:
+                raise RuntimeError(f"Indexer completed with {result.failed_item_count} failed documents.")
+            return
+        if result is not None and result.status in {"persistentFailure", "transientFailure"}:
+            raise RuntimeError(f"Indexer failed: {result.error_message}")
+        if attempt < 59:
+            await asyncio.sleep(5)
+    raise TimeoutError(f"Indexer '{indexer_name}' did not complete within five minutes.")
+
+
+def cleanup_indexer_resources(indexer_client, index_client, *, indexer_name, data_source_name, index_name):
+    from azure.core.exceptions import ResourceNotFoundError
+
+    for delete, name in (
+        (indexer_client.delete_indexer, indexer_name),
+        (indexer_client.delete_data_source_connection, data_source_name),
+        (index_client.delete_index, index_name),
+    ):
+        try:
+            delete(name)
+        except ResourceNotFoundError:
+            pass
+
+
+async def cleanup_indexer_resources_async(indexer_client, index_client, *, indexer_name, data_source_name, index_name):
+    from azure.core.exceptions import ResourceNotFoundError
+
+    for delete, name in (
+        (indexer_client.delete_indexer, indexer_name),
+        (indexer_client.delete_data_source_connection, data_source_name),
+        (index_client.delete_index, index_name),
+    ):
+        try:
+            await delete(name)
+        except ResourceNotFoundError:
+            pass
+
+
+def setup_search_index_knowledge_source(knowledge_source_name, index_name, service_endpoint, key):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters
+
+    with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as index_client:
+        index_client.create_or_update_knowledge_source(
+            SearchIndexKnowledgeSource(
+                name=knowledge_source_name,
+                search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
+            )
+        )
+
+
+async def setup_search_index_knowledge_source_async(knowledge_source_name, index_name, service_endpoint, key):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes.aio import SearchIndexClient
+    from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters
+
+    async with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as index_client:
+        await index_client.create_or_update_knowledge_source(
+            SearchIndexKnowledgeSource(
+                name=knowledge_source_name,
+                search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
+            )
+        )
+
+
+def cleanup_knowledge_resources(service_endpoint, key, *, knowledge_base_name, knowledge_source_name):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+
+    with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as index_client:
+        cleanup_resources(
+            index_client,
+            knowledge_base_name=knowledge_base_name,
+            knowledge_source_name=knowledge_source_name,
+        )
+
+
+async def cleanup_knowledge_resources_async(service_endpoint, key, *, knowledge_base_name, knowledge_source_name):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes.aio import SearchIndexClient
+
+    async with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as index_client:
+        await cleanup_resources_async(
+            index_client,
+            knowledge_base_name=knowledge_base_name,
+            knowledge_source_name=knowledge_source_name,
+        )
+
+
 def cleanup_resources(index_client, *, knowledge_base_name=None, knowledge_source_name=None, index_name=None):
     from azure.core.exceptions import ResourceNotFoundError
 

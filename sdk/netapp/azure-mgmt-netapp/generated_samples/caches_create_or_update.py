@@ -43,7 +43,7 @@ def main():
                 "encryptionKeySource": "Microsoft.NetApp",
                 "filePath": "cache-west-us2-01",
                 "ldap": "Enabled",
-                "ldapServerType": "OpenLDAP",
+                "ldapServerType": "OpenLdap",
                 "originClusterInformation": {
                     "peerAddresses": ["192.0.2.10", "192.0.2.11"],
                     "peerClusterName": "cluster1",
@@ -58,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-15-preview/Caches_CreateOrUpdate.json
+# x-ms-original-file: 2026-09-01/Caches_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.virtual_networks.get(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -756,6 +756,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                         ],
                                                         "macAddress": "str",
                                                         "migrationPhase": "str",
+                                                        "networkAdapterIndex": 0,
                                                         "networkSecurityGroup": ...,
                                                         "nicType": "str",
                                                         "primary": bool,
@@ -2102,6 +2103,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                                                             ],
                                                             "macAddress": "str",
                                                             "migrationPhase": "str",
+                                                            "networkAdapterIndex": 0,
                                                             "networkSecurityGroup": {
                                                                 "etag": "str",
                                                                 "id": "str",
@@ -3130,7 +3132,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3144,7 +3146,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -3157,7 +3159,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
             await self.client.virtual_networks.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_network_name="str",
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3169,7 +3171,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
     async def test_virtual_networks_list(self, resource_group):
         response = self.client.virtual_networks.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -3179,7 +3181,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_virtual_networks_list_all(self, resource_group):
         response = self.client.virtual_networks.list_all(
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -3192,7 +3194,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             ip_address="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -3204,7 +3206,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.virtual_networks.list_usage(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -3217,7 +3219,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
             await self.client.virtual_networks.begin_list_ddos_protection_status(
                 resource_group_name=resource_group.name,
                 virtual_network_name="str",
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
         result = [r async for r in response]
@@ -3236,7 +3238,7 @@ class TestNetworkManagementVirtualNetworksOperationsAsync(AzureMgmtRecordedTestC
                         {"sourceIpConfiguration": {"id": "str"}, "targetIpConfiguration": {"id": "str"}}
                     ]
                 },
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

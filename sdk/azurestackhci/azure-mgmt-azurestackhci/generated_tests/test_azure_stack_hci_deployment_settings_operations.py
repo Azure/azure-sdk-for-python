@@ -193,11 +193,21 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
                             "status": "str",
                             "steps": [
                                 {
+                                    "additionalData": [{"key": "str", "value": "str"}],
                                     "description": "str",
                                     "endTimeUtc": "str",
+                                    "error": {
+                                        "additionalInfo": [{"info": {}, "type": "str"}],
+                                        "code": "str",
+                                        "details": [...],
+                                        "message": "str",
+                                        "target": "str",
+                                    },
                                     "exception": ["str"],
                                     "fullStepIndex": "str",
                                     "name": "str",
+                                    "percentComplete": 0,
+                                    "recommendedSteps": ["str"],
                                     "startTimeUtc": "str",
                                     "status": "str",
                                     "steps": [...],
@@ -208,11 +218,21 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
                             "status": "str",
                             "steps": [
                                 {
+                                    "additionalData": [{"key": "str", "value": "str"}],
                                     "description": "str",
                                     "endTimeUtc": "str",
+                                    "error": {
+                                        "additionalInfo": [{"info": {}, "type": "str"}],
+                                        "code": "str",
+                                        "details": [...],
+                                        "message": "str",
+                                        "target": "str",
+                                    },
                                     "exception": ["str"],
                                     "fullStepIndex": "str",
                                     "name": "str",
+                                    "percentComplete": 0,
+                                    "recommendedSteps": ["str"],
                                     "startTimeUtc": "str",
                                     "status": "str",
                                     "steps": [...],

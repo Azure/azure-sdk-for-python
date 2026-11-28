@@ -3,11 +3,14 @@ from unittest.mock import Mock, patch
 
 import pytest
 
+from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info
+from azure.ai.ml._restclient.arm_ml_service.models import DatastoreType
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix
+from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
+from azure.ai.ml.entities import AzureBlobDatastore, AzureDataLakeGen2Datastore
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.exceptions import ErrorTarget
+from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations import DataOperations, DatastoreOperations, EnvironmentOperations, ModelOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 
@@ -279,3 +282,77 @@ class TestStorageUtils:
                 sas_uri="mocksasuri",
                 show_progress=False,
             )
+
+    @pytest.mark.parametrize(
+        "storage_type,client_class_name",
+        [
+            (DatastoreType.AZURE_BLOB, "BlobStorageClient"),
+            (DatastoreType.AZURE_DATA_LAKE_GEN2, "Gen2StorageClient"),
+        ],
+    )
+    @pytest.mark.parametrize(
+        "storage_account",
+        ["account:443/path", "account.name#fragment", "account.name/path?query", "ab", "a" * 25, None],
+    )
+    def test_get_storage_client_rejects_invalid_storage_account(
+        self, storage_type: DatastoreType, client_class_name: str, storage_account: str
+    ) -> None:
+        with patch(f"azure.ai.ml._utils._storage_utils.{client_class_name}") as client_class, patch(
+            "azure.ai.ml._utils._storage_utils._get_storage_endpoint_from_metadata", return_value="core.windows.net"
+        ):
+            with pytest.raises(ValidationException, match="Invalid storage account name"):
+                get_storage_client(
+                    credential=Mock(),
+                    storage_account=storage_account,
+                    storage_type=storage_type,
+                    container_name="container",
+                )
+        client_class.assert_not_called()
+
+    @pytest.mark.parametrize(
+        "storage_type,client_class_name,url_template",
+        [
+            (DatastoreType.AZURE_BLOB, "BlobStorageClient", "https://{}.blob.core.windows.net"),
+            (DatastoreType.AZURE_DATA_LAKE_GEN2, "Gen2StorageClient", "https://{}.dfs.core.windows.net"),
+        ],
+    )
+    @pytest.mark.parametrize("storage_account", ["abc", "MyStorageAccount1", "a" * 24])
+    def test_get_storage_client_accepts_valid_storage_account(
+        self, storage_type: DatastoreType, client_class_name: str, url_template: str, storage_account: str
+    ) -> None:
+        with patch(f"azure.ai.ml._utils._storage_utils.{client_class_name}") as client_class, patch(
+            "azure.ai.ml._utils._storage_utils._get_storage_endpoint_from_metadata", return_value="core.windows.net"
+        ):
+            get_storage_client(
+                credential=Mock(),
+                storage_account=storage_account,
+                storage_type=storage_type,
+                container_name="container",
+            )
+        assert client_class.call_args.kwargs["account_url"] == url_template.format(storage_account)
+
+    @pytest.mark.parametrize(
+        "datastore_class,container_kwargs,url_template",
+        [
+            (AzureBlobDatastore, {"container_name": "container"}, "https://{}.blob.core.windows.net"),
+            (AzureDataLakeGen2Datastore, {"filesystem": "container"}, "https://{}.dfs.core.windows.net"),
+        ],
+    )
+    def test_get_datastore_info_validates_storage_account(
+        self, datastore_class: type, container_kwargs: dict, url_template: str
+    ) -> None:
+        operations = Mock()
+        with patch(
+            "azure.ai.ml._artifacts._artifact_utilities._get_storage_endpoint_from_metadata",
+            return_value="core.windows.net",
+        ):
+            operations.get.return_value = datastore_class(
+                name="datastore", account_name="mystorageacct", **container_kwargs
+            )
+            assert get_datastore_info(operations, "datastore")["account_url"] == url_template.format("mystorageacct")
+
+            operations.get.return_value = datastore_class(
+                name="datastore", account_name="account.name/path", **container_kwargs
+            )
+            with pytest.raises(ValidationException, match="Invalid storage account name"):
+                get_datastore_info(operations, "datastore")

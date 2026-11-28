@@ -20,6 +20,7 @@ from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 from .._blob_service_client_helpers import _parse_url
+from ._session_async import _configure_session
 from .._deserialize import service_properties_deserialize, service_stats_deserialize
 from .._encryption import StorageEncryptionMixin
 from .._generated.aio import AzureBlobStorage
@@ -83,18 +84,28 @@ class BlobServiceClient(  # type: ignore [misc]
         Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
         algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
     :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
     :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: Whether to authenticate eligible requests with a short-lived,
+        per-container session credential instead of the bearer token. Requires a TokenCredential.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.blob.aio.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -125,6 +136,7 @@ class BlobServiceClient(  # type: ignore [misc]
         parsed_url, sas_token = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
         super(BlobServiceClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
@@ -195,13 +207,13 @@ class BlobServiceClient(  # type: ignore [misc]
             Defaults to 4*1024*1024, or 4MB.
         :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will
             be uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-            the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+            the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
         :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
             algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
         :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
         :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
         :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-            the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+            the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
         :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
             or 4MB.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
@@ -620,6 +632,16 @@ class BlobServiceClient(  # type: ignore [misc]
 
         The container and any blobs contained within it are later deleted during garbage collection.
         If the container is not found, a ResourceNotFoundError will be raised.
+
+        When a container is deleted, a container with the same name can't be created
+        for at least 30 seconds.  The container might not be available for more than
+        30 seconds if the service is still processing the request.  While the container
+        is being deleted, attempts to create a container of the same name fail with
+        status code 409 (Conflict).  The service indicates that the container is being
+        deleted.  Operations on blobs within the container, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the container and its blobs
+        fail with status code 404 (Not Found).
 
         :param container:
             The container to delete. This can either be the name of the container,

@@ -63,12 +63,30 @@ Three boolean flags on the request select the resilience shape:
   delivered as SSE events on the original connection. Independent of the
   resilience shape; see the **Streaming sub-contract**.
 
-### Server option
+### Server options
 
 - **`resilient_background`** *(server option, default `False`)* — whether the
   framework engages full crash-recovery for `background=true, store=true`
   requests. When `True`, the supporting providers MUST be present (see
   **Composition rules**); the server fails loud at startup otherwise.
+- **`steerable_conversations`** *(server option, default `False`)* — whether
+  stored conversation turns use the persistent queue/cancel steering runtime.
+
+The Responses host MUST request protocol-scoped `TaskManager` access when
+either option is `True`. It MUST NOT read or mutate Core's process-wide
+`set_resilient_tasks_enabled` switch: that switch remains the opt-in for direct
+Core tasks and Invocations, and MUST NOT force Responses onto its task runtime
+when both Responses options are `False`. Access is scoped so enabling one
+protocol does not activate another protocol in the same process.
+
+The four option combinations are:
+
+- both `False`: no Responses task runtime; stored work executes non-durably;
+- resilience only: crash-reinvoke stored background handlers, without steering;
+- steering only: persistent queue/cancel; crash-fail the interrupted response
+  without re-running its handler, while persisted queued inputs MAY promote as
+  new steered turns after recovery;
+- both `True`: full crash recovery plus steering.
 
 ### Termination paths
 
@@ -84,19 +102,20 @@ per path.
   contract, and respond to waiting clients in this lifetime.
 - **Path C — crash, or a graceful shutdown whose Path-B action did not run**
   (SIGKILL, OOM, power loss, a hang during the shutdown loop). On the next
-  process lifetime the framework scans persisted state and applies the row's
-  restart contract. Path C is the complete fallback for Path B.
+  process lifetime an enabled task runtime scans persisted state and applies
+  the row's restart contract. Without a task runtime there is no Path-C cleanup.
 
 A single termination event is handled by exactly one path.
 
 ### Resilient record
 
-Every accepted `store=true` request is registered with the underlying
-resilient-task primitive at acceptance time. The registration carries the
-response id, the row's Path-C disposition (`re-invoke` for Row 1,
-`mark-failed` for Rows 2 and 3), and (for re-invocation rows) the handler
-reference. `store=false` requests have no resilient record; Path C does not
-apply.
+When the Responses task runtime is active, every accepted `store=true` request
+is registered with the underlying task primitive at acceptance time. The
+registration carries the response id, the row's Path-C disposition
+(`re-invoke` for Row 1, `mark-failed` for Rows 2 and 3), and (for
+re-invocation rows) the handler reference. When both server options are
+`False`, no such record is created and stored work runs non-durably.
+`store=false` requests never have a task record; Path C does not apply.
 
 ### Recovered entry
 
@@ -150,7 +169,14 @@ per-row contract.
 | 11  | `true`  | `true`       | `True`               | all phases checkpoint + complete; final `response.output` reflects every phase | handler at a checkpoint boundary calls `await context.exit_for_recovery()`; recovery resumes from the last checkpointed snapshot | SIGKILL at a checkpoint boundary; recovery resumes from the last checkpointed snapshot |
 
 Read every cell as a MUST for the framework. Path A is identical across Rows
-1–4 because no framework intervention is needed.
+1–4 because no framework intervention is needed. Rows 2 and 3 Path C cells
+apply only when the Responses task runtime is active: Row 2 therefore requires
+`steerable_conversations=True`, while Row 3 requires either
+`resilient_background=True` or `steerable_conversations=True`. If both server
+options are `False`, ordinary stored work is non-durable and has no Path-C
+action. Path B still best-effort persists the failed response during graceful
+shutdown even without a task runtime. The request matrix and its
+`resilient_background` column remain otherwise unchanged.
 
 ---
 
@@ -184,7 +210,10 @@ with `context.is_recovery == True`.
 
 ### Row 2 — Marked failed (`store=true, background=true, resilient_background=False`)
 
-A stored, observable response without crash recovery.
+A stored, observable response without handler crash recovery. This row's
+manager-backed Path B/C contract applies when
+`steerable_conversations=True`. With both server options `False`, the response
+runs non-durably and there is no next-lifetime action.
 
 **Path A.** Handler completes within grace. Standard.
 
@@ -206,8 +235,10 @@ from the persisted task input.
 A stored response observable over the original (foreground) HTTP connection.
 `resilient_background` is a free axis — foreground responses do not benefit from
 resilient handler recovery because the client connection is gone. Path A/B/C
-have the same shape as Row 2; all failure markers use `code=server_error` with
-the path-specific cause in `message`.
+have the same shape as Row 2 when either server option has requested the task
+runtime; all failure markers use `code=server_error` with the path-specific
+cause in `message`. When both options are `False`, the response is non-durable
+and no restart action runs.
 
 ### Row 4 — Best-effort (`store=false`, any `background`, any `resilient_background`)
 
@@ -333,6 +364,13 @@ absent; it MUST NOT silently downgrade to a weaker row.
 | `resilient_background=True` | `ResponseStore` supporting resilient task records; a resilient stream provider for streamed resilient responses | Startup error naming the missing provider |
 | `store=true` requests accepted (any row) | `ResponseStore` | Startup error |
 | `stream=true` requests accepted (any row) | A streaming-capable transport configuration | Startup error |
+
+`steerable_conversations=True` alone requests the normal persistent task
+backend for queue/cancel behavior, but MUST NOT broaden the
+`resilient_background=True` provider guard or select file-backed SSE replay.
+SSE replay remains file-backed only for `resilient_background=True` and
+in-memory otherwise. Likewise, checkpoint writes and shutdown preservation
+remain gated by `resilient_background && store && background`.
 
 The same "fail loud, never silently downgrade" rule applies at **request
 time**. When `resilient_background` is in effect and the resilient task cannot

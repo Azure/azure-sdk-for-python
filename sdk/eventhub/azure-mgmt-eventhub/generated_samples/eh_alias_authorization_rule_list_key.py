@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/disasterRecoveryConfigs/EHAliasAuthorizationRuleListKey.json
+# x-ms-original-file: 2026-07-01-preview/disasterRecoveryConfigs/EHAliasAuthorizationRuleListKey.json
 if __name__ == "__main__":
     main()

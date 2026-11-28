@@ -26,7 +26,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
         response = await self.client.web_application_firewall_policies.get(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -534,6 +534,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     ],
                                                                                                     "macAddress": "str",
                                                                                                     "migrationPhase": "str",
+                                                                                                    "networkAdapterIndex": 0,
                                                                                                     "networkSecurityGroup": ...,
                                                                                                     "nicType": "str",
                                                                                                     "primary": bool,
@@ -1151,6 +1152,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         ],
                                                                                                         "macAddress": "str",
                                                                                                         "migrationPhase": "str",
+                                                                                                        "networkAdapterIndex": 0,
                                                                                                         "networkSecurityGroup": {
                                                                                                             "etag": "str",
                                                                                                             "id": "str",
@@ -2053,6 +2055,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "ipConfigurations": [...],
                                                                                     "macAddress": "str",
                                                                                     "migrationPhase": "str",
+                                                                                    "networkAdapterIndex": 0,
                                                                                     "networkSecurityGroup": ...,
                                                                                     "nicType": "str",
                                                                                     "primary": bool,
@@ -2873,6 +2876,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "ipConfigurations": [...],
                                                                                         "macAddress": "str",
                                                                                         "migrationPhase": "str",
+                                                                                        "networkAdapterIndex": 0,
                                                                                         "networkSecurityGroup": {
                                                                                             "etag": "str",
                                                                                             "id": "str",
@@ -3956,6 +3960,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         ],
                                                                                                                         "macAddress": "str",
                                                                                                                         "migrationPhase": "str",
+                                                                                                                        "networkAdapterIndex": 0,
                                                                                                                         "networkSecurityGroup": ...,
                                                                                                                         "nicType": "str",
                                                                                                                         "primary": bool,
@@ -4464,6 +4469,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             ],
                                                                                                                             "macAddress": "str",
                                                                                                                             "migrationPhase": "str",
+                                                                                                                            "networkAdapterIndex": 0,
                                                                                                                             "networkSecurityGroup": {
                                                                                                                                 "etag": "str",
                                                                                                                                 "id": "str",
@@ -5329,6 +5335,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         ],
                                                                                                         "macAddress": "str",
                                                                                                         "migrationPhase": "str",
+                                                                                                        "networkAdapterIndex": 0,
                                                                                                         "networkSecurityGroup": ...,
                                                                                                         "nicType": "str",
                                                                                                         "primary": bool,
@@ -5833,6 +5840,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             ],
                                                                                                             "macAddress": "str",
                                                                                                             "migrationPhase": "str",
+                                                                                                            "networkAdapterIndex": 0,
                                                                                                             "networkSecurityGroup": {
                                                                                                                 "etag": "str",
                                                                                                                 "id": "str",
@@ -6366,6 +6374,8 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                 ],
                                 "customErrorConfigurations": [{"customErrorPageUrl": "str", "statusCode": "str"}],
                                 "defaultPredefinedSslPolicy": "str",
+                                "deploymentTier": "str",
+                                "enableConfidentialCompute": bool,
                                 "enableFips": bool,
                                 "enableHttp2": bool,
                                 "entraJWTValidationConfigs": [
@@ -8835,6 +8845,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                 ],
                                                                 "macAddress": "str",
                                                                 "migrationPhase": "str",
+                                                                "networkAdapterIndex": 0,
                                                                 "networkSecurityGroup": {
                                                                     "etag": "str",
                                                                     "id": "str",
@@ -14048,6 +14059,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 ],
                                                                                 "macAddress": "str",
                                                                                 "migrationPhase": "str",
+                                                                                "networkAdapterIndex": 0,
                                                                                 "networkSecurityGroup": ...,
                                                                                 "nicType": "str",
                                                                                 "primary": bool,
@@ -15306,7 +15318,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -15319,7 +15331,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
             await self.client.web_application_firewall_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 policy_name="str",
-                api_version="2026-01-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -15331,7 +15343,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     async def test_web_application_firewall_policies_list(self, resource_group):
         response = self.client.web_application_firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -15341,7 +15353,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_web_application_firewall_policies_list_all(self, resource_group):
         response = self.client.web_application_firewall_policies.list_all(
-            api_version="2026-01-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

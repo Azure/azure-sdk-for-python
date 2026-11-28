@@ -52,7 +52,12 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
                         "gpuProfile": {
                             "driver": "str",
                             "driverType": "str",
-                            "nvidia": {"driverMode": "str", "managementMode": "str", "migStrategy": "str"},
+                            "nvidia": {
+                                "driverMode": "str",
+                                "managementMode": "str",
+                                "migProfiles": ["str"],
+                                "migStrategy": "str",
+                            },
                         },
                         "ultraSsdEnabled": bool,
                         "vmSize": "str",
@@ -134,6 +139,7 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
                         "ipAddresses": [{"family": "str", "ip": "str"}],
                         "nodePublicIPPrefixID": "str",
                         "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
+                        "podIPAllocationMode": "str",
                         "podSubnetID": "str",
                         "vnetSubnetID": "str",
                     },

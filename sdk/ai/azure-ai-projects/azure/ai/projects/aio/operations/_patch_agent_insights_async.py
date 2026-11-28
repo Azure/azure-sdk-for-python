@@ -12,35 +12,40 @@ from typing import Any, IO, Optional, Union, cast, overload
 from collections.abc import MutableMapping
 
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ._operations import (
-    BetaAgentInsightMonitorsOperations as BetaAgentInsightMonitorsOperationsGenerated,
+    AgentInsightMonitorsOperations as AgentInsightMonitorsOperationsGenerated,
+    _Unset,
 )
 from ... import models as _models
 from ..._utils.model_base import _deserialize
+from ..._utils.polling import AsyncAIProjectsLROBasePolling
 from ...models import AsyncAgentInsightRunLROPoller
 
 JSON = MutableMapping[str, Any]
 
 
-class _AsyncAgentInsightPolling(AsyncLROBasePolling):
-    def status(self) -> str:
-        status = super().status()
-        # Azure Core uses the single-L spelling for terminal cancellation.
-        return "canceled" if status.lower() == "cancelled" else status
-
-
-class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
-    """Custom async operations for beta Agent Insights monitors."""
+class AgentInsightMonitorsOperations(AgentInsightMonitorsOperationsGenerated):
+    """Custom async operations for Agent Insights monitors."""
 
     @overload
     async def begin_create_run(
         self,
         monitor_id: str,
-        run: _models.AgentInsightRunCreate,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        lookback_hours: Optional[float] = None,
+        **kwargs: Any,
+    ) -> AsyncAgentInsightRunLROPoller: ...
+
+    @overload
+    async def begin_create_run(
+        self,
+        monitor_id: str,
+        body: JSON,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -51,18 +56,7 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
     async def begin_create_run(
         self,
         monitor_id: str,
-        run: JSON,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> AsyncAgentInsightRunLROPoller: ...
-
-    @overload
-    async def begin_create_run(
-        self,
-        monitor_id: str,
-        run: IO[bytes],
+        body: IO[bytes],
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -73,21 +67,23 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
     async def begin_create_run(
         self,
         monitor_id: str,
-        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         operation_id: Optional[str] = None,
+        lookback_hours: Optional[float] = None,
         **kwargs: Any,
     ) -> AsyncAgentInsightRunLROPoller:
         """Start an Agent Insights run for a monitor.
 
         :param monitor_id: The identifier of the monitor. Required.
         :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window. Is
-         one of the following types: AgentInsightRunCreate, JSON, IO[bytes] Required.
-        :type run: ~azure.ai.projects.models.AgentInsightRunCreate or JSON or IO[bytes]
+        :param body: Run inputs as JSON or IO[bytes]. Omit to use ``lookback_hours``.
+        :type body: JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the run unconditionally. Default value is None.
         :paramtype operation_id: str
+        :keyword lookback_hours: Hours of trace history to analyze, up to 2,160. Defaults to 168.
+        :paramtype lookback_hours: float
         :return: A poller that returns AgentInsightRunResult and exposes the run ID in ``details``.
         :rtype: ~azure.ai.projects.models.AsyncAgentInsightRunLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -104,8 +100,9 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         if continuation_token is None:
             raw_result = await self._create_run_initial(
                 monitor_id=monitor_id,
-                run=run,
+                body=body,
                 operation_id=operation_id,
+                lookback_hours=lookback_hours,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=headers,
@@ -135,7 +132,7 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                _AsyncAgentInsightPolling(
+                AsyncAIProjectsLROBasePolling(
                     lro_delay,
                     path_format_arguments=path_format_arguments,
                     headers=headers,
