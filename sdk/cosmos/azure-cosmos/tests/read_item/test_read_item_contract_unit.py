@@ -21,6 +21,7 @@ from common.typed_requests import wire_headers, settings_options, legacy_setting
 import asyncio
 import inspect
 import json
+from functools import partial
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -186,6 +187,120 @@ def test_retired_metrics_are_rejected_by_presence_before_metadata_rust(point_rea
     assert point_read.events == []
 
 
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("name,internal,value", [
+    ("retry_total", "retry_total", 0),
+    ("unknown_setting", "unknown_setting", False),
+    ("body", "body", {"id": "ignored"}),
+    ("populate_query_metrics", "populateQueryMetrics", True),
+    ("max_item_count", "maxItemCount", 1),
+    ("indexing_directive", "indexingDirective", 1),
+])
+@pytest.mark.parametrize("empty", [None, False, "supplied"])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_unsupported_read_arguments_fail_before_dispatch_rust(
+    point_read, name, internal, value, empty, source
+):
+    value = value if empty == "supplied" else empty
+    key = name if source == "keyword" else internal
+    options = {key: value}
+    kwargs = options if source == "keyword" else {source: options}
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=key):
+        point_read.call("item", "pk", response_hook=hook, **kwargs)
+    assert options == {key: value}
+    assert point_read.events == []
+    assert point_read.native_calls == 0
+    hook.assert_not_called()
+    point_read.cc.ReadItem.assert_not_called()
+    point_read.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("name,internal,value", [
+    ("connection_timeout", "connection_timeout", 5),
+    ("retry_write", "retry_write", 1),
+    ("initial_headers", "initialHeaders", {"Accept": "custom"}),
+    ("initial_headers", "initialHeaders", {"Cache-Control": "custom"}),
+    ("initial_headers", "initialHeaders", {"uSeR-aGeNt": "custom"}),
+    ("initial_headers", "initialHeaders", {"x-ms-version": "custom"}),
+])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_unsupported_read_settings_raise_type_error_rust(point_read, name, internal, value, source):
+    kwargs = {name: value} if source == "keyword" else {source: {internal: value}}
+    with pytest.raises(TypeError, match=name):
+        point_read.call("item", "pk", **kwargs)
+    assert point_read.events == []
+    assert point_read.native_calls == 0
+    point_read.cc.ReadItem.assert_not_called()
+    point_read.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("header", ["x-ms-documentdb-populatequerymetrics", "X-MS-MAX-ITEM-COUNT"])
+@pytest.mark.parametrize("source", ["initial_headers", "request_options", "feed_options", "nested_headers"])
+def test_inapplicable_read_header_aliases_fail_before_dispatch_rust(point_read, header, source):
+    options = {header: "true"}
+    kwargs = (
+        {"request_options": {"initialHeaders": options}} if source == "nested_headers" else {source: options}
+    )
+    with pytest.raises(TypeError, match=f"(?i){header}"):
+        point_read.call("item", "pk", **kwargs)
+    assert options == {header: "true"}
+    assert point_read.events == []
+    assert point_read.native_calls == 0
+    point_read.cc.ReadItem.assert_not_called()
+    point_read.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("source", ["request_options", "feed_options"])
+def test_read_validation_preserves_supported_settings_rust(point_read, source):
+    options = {
+        "partitionKey": "overridden", "priorityLevel": "Low", "throughputBucket": 7,
+        "maxIntegratedCacheStaleness": 1000, "sessionToken": "0:-1#1",
+        "availabilityStrategy": {"threshold_ms": 100}, "timeout": 5,
+        "if-none-match": '"previous"', "x-ms-custom": "value",
+    }
+    original = dict(options)
+    hook = MagicMock()
+    result = point_read.call(
+        "item", "pk", response_hook=hook, connection_timeout=None, retry_write=None, **{source: options}
+    )
+    assert result["id"] == "item"
+    assert options == original
+    assert point_read.native_calls == 1
+    settings = point_read.prepared.settings
+    assert settings.priority == "Low"
+    assert settings.throughput_bucket == 7
+    assert settings.session_token == "0:-1#1"
+    assert legacy_partition_key_from_request(point_read.prepared) == '["pk"]'
+    assert wire_headers(point_read.prepared)["if-none-match"] == '"previous"'
+    assert wire_headers(point_read.prepared)["x-ms-custom"] == "value"
+    assert point_read.events[-1] == ("read", 5)
+    hook.assert_called_once()
+    point_read.cc.ReadItem.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+def test_read_validation_ignores_unselected_feed_options_rust(point_read):
+    ignored = {"populateQueryMetrics": True}
+    assert point_read.call("item", "pk", request_options=None, feed_options=ignored)["id"] == "item"
+    assert ignored == {"populateQueryMetrics": True}
+    assert point_read.native_calls == 1
+    point_read.cc.ReadItem.assert_not_called()
+
+
 def test_only_item_and_partition_key_are_positional_rust(point_read):
     """Only ``item`` and ``partition_key`` may be passed positionally.
 
@@ -223,13 +338,34 @@ def test_invalid_conditions_fail_before_metadata_rust(point_read, kwargs, error)
     assert point_read.events == []
 
 
-@pytest.mark.parametrize("condition,kind,value", [
-    (MatchConditions.IfModified, "IfNoneMatch", '"v1"'),
-    (MatchConditions.IfNotModified, "IfMatch", '"v1"'),
-    (MatchConditions.IfMissing, "IfNoneMatch", "*"),
-    (MatchConditions.IfPresent, "IfMatch", "*"),
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("condition", [MatchConditions.IfPresent, MatchConditions.IfMissing])
+@pytest.mark.parametrize("etag", ['"v1"', "", False, 0])
+def test_etag_with_existence_condition_fails_before_dispatch_rust(point_read, condition, etag):
+    options = {"initialHeaders": {"x-customer": "kept"}}
+    hook = MagicMock()
+    with pytest.raises(TypeError, match="etag cannot be combined with IfPresent or IfMissing"):
+        point_read.call(
+            "item", "pk", etag=etag, match_condition=condition,
+            request_options=options, response_hook=hook,
+        )
+    assert options == {"initialHeaders": {"x-customer": "kept"}}
+    assert point_read.events == []
+    assert point_read.native_calls == 0
+    hook.assert_not_called()
+    point_read.cc.ReadItem.assert_not_called()
+    point_read.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize("condition,etag,kind,value", [
+    (MatchConditions.IfModified, '"v1"', "IfNoneMatch", '"v1"'),
+    (MatchConditions.IfNotModified, '"v1"', "IfMatch", '"v1"'),
+    (MatchConditions.IfMissing, None, "IfNoneMatch", "*"),
+    (MatchConditions.IfPresent, None, "IfMatch", "*"),
 ])
-def test_conditions_and_options_are_isolated_rust(point_read, condition, kind, value):
+def test_conditions_and_options_are_isolated_rust(point_read, condition, etag, kind, value):
     """Each match condition maps to the right header, and the caller's dict is left alone.
 
     ``IfModified``/``IfMissing`` become ``If-None-Match``;
@@ -239,7 +375,7 @@ def test_conditions_and_options_are_isolated_rust(point_read, condition, kind, v
     many calls and a mutation would leak a condition into later reads.
     """
     supplied = {"initialHeaders": {"x-customer": "kept"}}
-    result = point_read.call("item", "pk", etag='"v1"', match_condition=condition, request_options=supplied)
+    result = point_read.call("item", "pk", etag=etag, match_condition=condition, request_options=supplied)
     assert supplied == {"initialHeaders": {"x-customer": "kept"}}
     assert result["id"] == "item"
     if point_read.rust:
@@ -311,6 +447,57 @@ def test_invalid_hook_fails_before_metadata_rust(point_read, hook):
     with pytest.raises(TypeError, match="response_hook"):
         point_read.call("item", "pk", response_hook=hook)
     assert point_read.events == []
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("kind", ["function", "callable", "partial", "partial-callable", "async-generator"])
+def test_async_hook_fails_before_read_dispatch_rust(point_read, kind):
+    async def hook(_headers, _body):
+        pytest.fail("An asynchronous response hook must not run")
+
+    class AsyncHook:
+        async def __call__(self, _headers, _body):
+            pytest.fail("An asynchronous response hook must not run")
+
+    async def generator_hook(_headers, body):
+        pytest.fail("An asynchronous generator hook must not run")
+        yield body
+
+    hooks = {
+        "function": hook,
+        "callable": AsyncHook(),
+        "partial": partial(hook),
+        "partial-callable": partial(AsyncHook()),
+        "async-generator": generator_hook,
+    }
+    with pytest.raises(TypeError, match="read_item response_hook must be synchronous"):
+        point_read.call("item", "pk", response_hook=hooks[kind])
+    assert point_read.events == []
+    assert point_read.native_calls == 0
+    point_read.cc.ReadItem.assert_not_called()
+    point_read.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "point_read", [(False, True), (True, True)], ids=["sync-rust", "async-rust"], indirect=True
+)
+@pytest.mark.parametrize("callable_object", [False, True])
+def test_sync_partial_hook_still_runs_once_on_read_rust(point_read, callable_object):
+    calls = []
+
+    def hook(headers, body):
+        calls.append((headers["etag"], body["id"]))
+
+    class Hook:
+        def __call__(self, headers, body):
+            hook(headers, body)
+
+    result = point_read.call("item", "pk", response_hook=partial(Hook() if callable_object else hook))
+    assert result["id"] == "item"
+    assert calls == [('"current"', "item")]
+    assert point_read.native_calls == 1
 
 
 def test_feed_options_reaches_read_without_mutating_customer_settings_rust(point_read):

@@ -17,7 +17,7 @@ from config.diagnostics import fault_rule_hit_count, fault_rule_hit_count_async
 from azure.cosmos import PartitionKey
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceNotFoundError
 from azure.cosmos.http_constants import SubStatusCodes
-from common.test_client_timeout_defaults_unit import case as case, clock as clock
+from common.test_client_timeout_defaults_unit import client_setup as case, clock as clock
 
 
 def _complete(value):
@@ -52,8 +52,8 @@ def test_read_and_create_share_budget_and_next_call_starts_fresh_rust(case, cloc
         calls.append(("create", kwargs["timeout_seconds"]))
         return _response(201)
 
-    case.install("read_container", side_effect=read)
-    case.install("create_container", side_effect=create)
+    case.add_fake_request("read_container", side_effect=read)
+    case.add_fake_request("create_container", side_effect=create)
     hook = MagicMock()
     assert _invoke(case, response_hook=hook, **options).id == "orders"
     assert calls == [("read", budget)] + ([] if existing else [("create", budget - 0.75)])
@@ -78,8 +78,8 @@ def test_expiry_prevents_later_requests_and_success_hook_rust(case, clock, phase
         clock[0] += 1
         return _response(201)
 
-    case.install("read_container", side_effect=read)
-    case.install("create_container", side_effect=create)
+    case.add_fake_request("read_container", side_effect=read)
+    case.add_fake_request("create_container", side_effect=create)
     hook = MagicMock()
     with pytest.raises(CosmosClientTimeoutError):
         _invoke(case, response_hook=hook)
@@ -90,8 +90,8 @@ def test_expiry_prevents_later_requests_and_success_hook_rust(case, clock, phase
 
 @pytest.mark.parametrize("existing", [False, True])
 def test_customer_hook_timeout_is_not_reclassified_or_replayed_rust(case, clock, existing):
-    read = case.install("read_container", result=_response(200 if existing else 404))
-    create = case.install("create_container", result=_response(201))
+    read = case.add_fake_request("read_container", result=_response(200 if existing else 404))
+    create = case.add_fake_request("create_container", result=_response(201))
     failure = TimeoutError("customer callback")
 
     def hook(*_args):
@@ -121,8 +121,8 @@ def test_conflict_reread_uses_remaining_budget_rust(case, clock, expires):
         clock[0] += 1 if expires else 0.25
         return _response(409)
 
-    case.install("read_container", side_effect=read)
-    case.install("create_container", side_effect=create)
+    case.add_fake_request("read_container", side_effect=read)
+    case.add_fake_request("create_container", side_effect=create)
     hook = MagicMock()
     if expires:
         with pytest.raises(CosmosClientTimeoutError):
@@ -162,8 +162,8 @@ def test_conflict_reread_waits_for_container_creation_rust(case, clock, monkeypa
             b'{"message":"Collection is not yet available for read. Please retry in some time."}', None,
         )
 
-    case.install("read_container", side_effect=read)
-    create = case.install("create_container", result=_response(409))
+    case.add_fake_request("read_container", side_effect=read)
+    create = case.add_fake_request("create_container", result=_response(409))
     hook = MagicMock()
     if outcome == "ready":
         proxy, properties = _invoke(case, response_hook=hook, return_properties=True, timeout=budget)
@@ -191,8 +191,8 @@ def test_conflict_reread_waits_for_container_creation_rust(case, clock, monkeypa
 @pytest.mark.parametrize("case", [True], indirect=True, ids=["async"])
 def test_cancellation_stops_container_creation_wait_rust(case, monkeypatch):
     transient = (404, SubStatusCodes.CONTAINER_CREATE_IN_PROGRESS, {}, b'{"message":"creating"}', None)
-    read = case.install("read_container", side_effect=[_response(404), transient])
-    create = case.install("create_container", result=_response(409))
+    read = case.add_fake_request("read_container", side_effect=[_response(404), transient])
+    create = case.add_fake_request("create_container", result=_response(409))
     hook = MagicMock()
 
     async def cancel(_delay):
@@ -324,8 +324,8 @@ def test_gsi_source_read_shares_get_or_create_budget_rust(case, clock, expire_so
         calls.append(("create", kwargs["timeout_seconds"]))
         return _response(201)
 
-    case.install("read_container", side_effect=read)
-    case.install("create_container", side_effect=create)
+    case.add_fake_request("read_container", side_effect=read)
+    case.add_fake_request("create_container", side_effect=create)
     hook = MagicMock()
     options = {"global_secondary_index": {"sourceCollectionId": "source"}, "response_hook": hook}
     if expire_source_read:

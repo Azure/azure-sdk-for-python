@@ -25,7 +25,7 @@ from azure.cosmos._availability_strategy_config import CrossRegionHedgingStrateg
 from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue, _Undefined
-from common.test_connection_free_items_unit import Backend, AsyncBackend
+from common.test_connection_free_items_unit import FakeSender, AsyncFakeSender
 
 
 def finish(result):
@@ -35,7 +35,7 @@ def finish(result):
 @pytest.fixture(name="api", params=[False, True], ids=["sync", "async"])
 def api_case(request):
     asynchronous = request.param
-    backend = AsyncBackend() if asynchronous else Backend()
+    backend = AsyncFakeSender() if asynchronous else FakeSender()
     connection = MagicMock()
     connection._backend = backend
     context = CosmosClientContext(backend)

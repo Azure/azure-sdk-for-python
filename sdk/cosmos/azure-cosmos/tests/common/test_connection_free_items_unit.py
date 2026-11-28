@@ -3,12 +3,38 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Offline checks of item helpers with fake backends and response state.
+"""Unit tests for item operations, using a fake sender instead of a real service.
 
-Exercise prepared requests, selected option/error paths, hooks, and tracing
-of specified Python preparation functions. The fake backend is the dispatch
-boundary: these tests do not inspect transmitted bytes, native metadata
-resolution, or every possible legacy call path.
+An item operation is one of create_item, read_item, replace_item, upsert_item,
+delete_item and patch_item. Before sending, the SDK turns the call's arguments
+into a prepared request: an object that holds the operation name, the
+container, the partition key, the body and the request settings.
+
+These tests replace the part of the SDK that sends requests with a fake sender.
+The fake sender records each prepared request instead of sending it, so a test
+can check what would have been sent. Nothing here contacts a Cosmos DB account.
+
+Terms used in this file:
+
+- item helper: the SDK object (``ItemHelper``, or ``AsyncItemHelper`` for the
+  async client) that prepares and sends item operations.
+- client defaults: settings given once on ``CosmosClient``, such as
+  ``priority``, ``throughput_bucket`` and ``no_response_on_write``. Every item
+  operation uses them unless the call gives its own value.
+- container details: the container's internal id and partition key
+  definition. Item operations must not look these up before sending.
+- hedging: the ``availability_strategy`` option. When it is on, a request that
+  is slow in one region may also be sent to another region after waiting
+  ``threshold_ms`` milliseconds.
+- last response headers: the headers of the most recent reply. The client
+  keeps them so a caller can read values such as the request charge after a
+  call.
+- connection: the client's internal connection object (``client_connection``).
+  Item operations get what they need from the client, so they must work even
+  when a container object has no connection.
+- client context: the object (``CosmosClientContext``) that the client creates
+  once. It holds the sender, the client defaults and the last response
+  headers. Database and container objects share it.
 """
 from common.typed_requests import key_from_legacy_header, legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options, legacy_settings
@@ -18,13 +44,13 @@ import json
 import sys
 from copy import deepcopy
 from dataclasses import FrozenInstanceError
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 from azure.core import MatchConditions
 
-from azure.cosmos import CosmosClient, CosmosDict, DatabaseProxy
-from azure.cosmos.aio import CosmosClient as AsyncCosmosClient, DatabaseProxy as AsyncDatabaseProxy
+from azure.cosmos import CosmosClient, CosmosDict
+from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
@@ -34,22 +60,25 @@ from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
-from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults, ClientLastResponseHeaders
+from azure.cosmos._helpers._client_context import (
+    CosmosClientContext, ClientOperationDefaults, ClientLastResponseHeaders,
+)
 from azure.cosmos._helpers import _item_arguments, _request_item
 from azure.cosmos._helpers._item_operations import ItemHelper, build_item_request, normalize_item_arguments
 from common.request_preparation import call_item_helper
 from azure.cosmos._helpers._paths import parse_paths
 from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
-from azure.cosmos.aio._helpers._item_operations import build_item_request as async_execute_item_builder
+from azure.cosmos.aio._helpers._item_operations import build_item_request as async_build_item_request
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 
 
-def response(body=None, status=200, headers=None):
-    """Build a reply in the shape the backend returns, with sensible parts filled in.
+def fake_reply(body=None, status=200, headers=None):
+    """Build a reply that gives only the parts a test cares about.
 
-    Keeps each test to naming only the part it cares about -- a status, a tag, a
-    body -- rather than restating the whole shape every time.
+    A reply has a status code, a sub-status, headers, a body and diagnostics. The
+    body is given as a Python value and turned into JSON bytes. The status code
+    defaults to 200.
     """
     return BackendResponse(
         status_code=status, sub_status=0, headers=headers or {},
@@ -57,38 +86,35 @@ def response(body=None, status=200, headers=None):
     )
 
 
-class Backend(CosmosBackend):
-    """A stand-in backend that records what it was asked to do instead of sending it.
+class FakeSender(CosmosBackend):
+    """Fake sender that records requests instead of sending them.
 
-    It implements the real backend interface, so anything above it runs
-    unchanged. Every request and every container information lookup is appended
-    to one list in the order it happened, which lets a test say not just what
-    was sent but how many times and in what sequence -- the basis for most
-    claims in this file.
+    It has the same methods as the SDK's sender (``CosmosBackend``), so the code
+    that calls it runs unchanged. Every prepared request and every container
+    details lookup is added to one list, ``events``, in the order it happened. A
+    test can then check what was sent, how many times, and in what order.
 
-    It is shared beyond this file; the request protocol and item dependency
-    suites import it rather than writing their own.
+    Other test files import this class and ``invoke``.
     """
 
     name = "rust"
 
     def __init__(self):
-        """Start with an empty record, ordinary container information, and a successful reply.
+        """Start with an empty ``events`` list, normal container details, and a successful reply.
 
-        A test that wants a failure replaces the container information with an
-        error, which both lookups then raise, so one attribute covers failures
-        on either side.
+        To make a call fail, set ``metadata`` to an exception.
+        ``get_container_metadata`` then raises it, and ``execute`` records the
+        request first and then raises it.
         """
         self.events = []
         self.metadata = ContainerMetadata("rid", ("/pk",), "Hash")
-        self.reply = response({"id": "x"}, headers={"x-ms-request-charge": 2.5})
+        self.reply = fake_reply({"id": "x"}, headers={"x-ms-request-charge": 2.5})
 
     def get_container_metadata(self, link):
-        """Record that container information was asked for, then answer or fail.
+        """Record a container details lookup, then return the details or raise.
 
-        The record is what lets tests prove item operations never ask. It is
-        written down as a plain marker, so a count of it in the list is a count
-        of lookups.
+        The lookup is recorded as the string ``"metadata"``, so a test can count
+        lookups with ``events.count("metadata")``.
         """
         self.events.append("metadata")
         if isinstance(self.metadata, Exception):
@@ -96,10 +122,10 @@ class Backend(CosmosBackend):
         return self.metadata
 
     def execute(self, prepared, *, deadline=None):
-        """Record the prepared request itself and return the arranged reply.
+        """Record the whole prepared request and return the planned reply.
 
-        The whole request is kept, not a summary, so tests can inspect its
-        headers, its settings, and its partition key afterwards.
+        The full request is kept, so a test can check its headers, settings and
+        partition key.
         """
         self.events.append(prepared)
         if isinstance(self.metadata, Exception):
@@ -107,32 +133,29 @@ class Backend(CosmosBackend):
         return self.reply
 
     def run_operation(self, **kwargs):
-        """Fail loudly if anything falls back to the older general-purpose entry point.
+        """Fail the test if this method is used.
 
-        That route exists for the legacy path. An item operation reaching it
-        would still work, which is the problem -- it would quietly bypass
-        everything this file checks, and the tests would keep passing.
+        Item operations must call ``execute`` directly, not this more general method.
         """
-        raise AssertionError("Migration fallback entrypoint must not be used")
+        raise AssertionError("Item operations must call execute, not run_operation")
 
 
-class AsyncBackend(AsyncCosmosBackend, Backend):
-    """The same stand-in with awaitable entry points, recording into the same list.
+class AsyncFakeSender(AsyncCosmosBackend, FakeSender):
+    """Async version of ``FakeSender``.
 
-    It reuses the sync behavior rather than repeating it, so both clients are
-    measured by identical bookkeeping and a test written once means the same
-    thing on each.
+    It reuses the sync methods and records into the same ``events`` list, so a
+    test written once checks both clients the same way.
     """
 
     name = "rust"
 
     async def get_container_metadata(self, link):
-        """Await-able container information lookup, recorded like the sync one."""
-        return Backend.get_container_metadata(self, link)
+        """Async version of the sync container details lookup."""
+        return FakeSender.get_container_metadata(self, link)
 
     async def execute(self, prepared, *, deadline=None):
-        """Await-able request, recorded like the sync one."""
-        return Backend.execute(self, prepared, deadline=deadline)
+        """Async version of the sync ``execute``."""
+        return FakeSender.execute(self, prepared, deadline=deadline)
 
 
 @pytest.fixture(
@@ -147,19 +170,30 @@ class AsyncBackend(AsyncCosmosBackend, Backend):
     ids=["create", "delete", "read", "upsert-replace", "patch"],
 )
 def explicit_item_merger(request):
+    """One of the five functions that copy an item method's keyword arguments into the request options.
+
+    upsert and replace share one function.
+    """
     return request.param
 
 
-def test_explicit_item_merge_preserves_none_and_overrides_with_falsey_values_rust(merge_item_kwargs):
+def test_keyword_merge_skips_none_and_keeps_false_and_zero_rust(merge_item_kwargs):
+    """A keyword set to None leaves the earlier value alone. False, 0 and "" replace it.
+
+    None means "not given", so the value already in the options stays. False, 0
+    and the empty string are real choices and must be copied, even though they
+    look empty. ``retry_write`` is checked only for write operations, because
+    ``read_item`` does not take it.
+    """
     hook = object()
-    kwargs = {
+    options = {
         "post_trigger_include": "keep",
         "session_token": "old",
         "priority": "Low",
         "availability_strategy": True,
         "response_hook": hook,
     }
-    explicit = {
+    call_keywords = {
         "post_trigger_include": None,
         "session_token": "",
         "priority": None,
@@ -176,35 +210,48 @@ def test_explicit_item_merge_preserves_none_and_overrides_with_falsey_values_rus
         "throughput_bucket": 0,
     }
     if merge_item_kwargs is not _item_arguments.merge_read_item_explicit_kwargs:
-        kwargs[Constants.Kwargs.RETRY_WRITE] = 3
-        explicit["retry_write"] = 0
+        options[Constants.Kwargs.RETRY_WRITE] = 3
+        call_keywords["retry_write"] = 0
         expected[Constants.Kwargs.RETRY_WRITE] = 0
-    merge_item_kwargs(kwargs, **explicit)
-    assert kwargs == expected
+    merge_item_kwargs(options, **call_keywords)
+    assert options == expected
 
 
-def test_explicit_item_merge_normalizes_hedging_without_changing_input_rust(merge_item_kwargs):
-    strategy = {"threshold_ms": 25}
+def test_keyword_merge_converts_hedging_dict_without_changing_it_rust(merge_item_kwargs):
+    """A hedging dict becomes a hedging setting, and the caller's dict is not changed.
+
+    The options get an object whose ``threshold_ms`` is 25, while the dict the
+    caller passed still equals ``{"threshold_ms": 25}``. The response hook is
+    copied as it is.
+    """
+    caller_strategy = {"threshold_ms": 25}
     hook = object()
-    kwargs = {}
-    merge_item_kwargs(kwargs, availability_strategy=strategy, response_hook=hook)
-    assert kwargs["availability_strategy"].threshold_ms == 25
-    assert strategy == {"threshold_ms": 25}
-    assert kwargs["response_hook"] is hook
+    options = {}
+    merge_item_kwargs(options, availability_strategy=caller_strategy, response_hook=hook)
+    assert options["availability_strategy"].threshold_ms == 25
+    assert caller_strategy == {"threshold_ms": 25}
+    assert options["response_hook"] is hook
 
 
-def test_explicit_item_merge_preserves_assignment_order_on_hedging_error_rust(merge_item_kwargs):
+def test_keyword_merge_stops_at_invalid_hedging_value_rust(merge_item_kwargs):
+    """An invalid hedging value raises ValueError and stops the copy at that point.
+
+    Keywords are copied one at a time in a fixed order. ``priority`` and
+    ``throughput_bucket`` come before ``availability_strategy``, so they are
+    copied. ``response_hook`` comes after it, so the earlier hook stays. The
+    earlier ``availability_strategy`` value also stays.
+    """
     hook = object()
-    kwargs = {"availability_strategy": False, "response_hook": hook}
+    options = {"availability_strategy": False, "response_hook": hook}
     with pytest.raises(ValueError, match="threshold_ms must be positive"):
         merge_item_kwargs(
-            kwargs,
+            options,
             priority="High",
             throughput_bucket=0,
             availability_strategy={"threshold_ms": 0},
             response_hook=object(),
         )
-    assert kwargs == {
+    assert options == {
         "availability_strategy": False,
         "response_hook": hook,
         "priority": "High",
@@ -220,16 +267,26 @@ def test_explicit_item_merge_preserves_assignment_order_on_hedging_error_rust(me
     ({"availability_strategy": {}}, 500),
     ({"availability_strategy": {"threshold_ms": 20}}, 20),
 ])
-def test_read_hedging_true_retains_client_threshold_rust(
+def test_read_item_hedging_true_uses_client_threshold_rust(
     monkeypatch, async_mode, client_options, expected_threshold,
 ):
-    backend = AsyncBackend() if async_mode else Backend()
+    """``availability_strategy=True`` on read_item uses the client's hedging wait time.
+
+    If the client was given a ``threshold_ms``, True uses it. Otherwise True uses
+    the default of 500 milliseconds. False turns hedging off for that read. A dict
+    uses its own ``threshold_ms``. None, or leaving the keyword out, adds no
+    hedging setting to the request.
+
+    The test also changes the client's dict after the client is created. The
+    client keeps the value it had at creation, so the change has no effect.
+    """
+    sender = AsyncFakeSender() if async_mode else FakeSender()
     client_options = deepcopy(client_options)
     client = (AsyncCosmosClient if async_mode else CosmosClient)(
         "https://example.documents.azure.com", "key", _backend="rust", **client_options,
     )
-    monkeypatch.setattr(client._adapter, "execute", backend.execute)
-    monkeypatch.setattr(client._adapter, "get_container_metadata", backend.get_container_metadata)
+    monkeypatch.setattr(client._adapter, "execute", sender.execute)
+    monkeypatch.setattr(client._adapter, "get_container_metadata", sender.get_container_metadata)
     strategy = client_options.get("availability_strategy")
     if isinstance(strategy, dict):
         strategy["threshold_ms"] = 900
@@ -243,7 +300,7 @@ def test_read_hedging_true_retains_client_threshold_rust(
         result = orders.read_item("order-42", "customer-17", availability_strategy=requested)
         if async_mode:
             asyncio.run(result)
-        hedging = backend.events[-1].settings.hedging
+        hedging = sender.events[-1].settings.hedging
         if enabled is None:
             assert hedging is None
         else:
@@ -251,21 +308,19 @@ def test_read_hedging_true_retains_client_threshold_rust(
     result = orders.read_item("order-42", "customer-17")
     if async_mode:
         asyncio.run(result)
-    assert backend.events[-1].settings.hedging is None
+    assert sender.events[-1].settings.hedging is None
     result = client.close()
     if async_mode:
         asyncio.run(result)
 
 
 def invoke(helper, op, **kwargs):
-    """Call any item operation with the minimum arguments that operation requires.
+    """Call one item operation with the smallest set of arguments it needs.
 
-    The six operations differ in what they need: writes take a body, the others
-    take an item id, three take a partition key, and patch takes a list of
-    changes. Gathering that here lets a test loop over all six and vary only
-    what it is actually studying.
-
-    The result is awaited when needed, so one test body serves both clients.
+    create, upsert and replace get an item body. read, replace, delete and patch
+    get an item id. read, delete and patch get a partition key. patch also gets
+    one change. Any extra keyword arguments are added on top. An async result is
+    awaited, so one test body works for both clients.
     """
     arguments = {"container_link": "dbs/d/colls/c"}
     if op in ("create_item", "upsert_item", "replace_item"):
@@ -290,66 +345,70 @@ def invoke(helper, op, **kwargs):
     ({"initial_headers": {"x-ms-cosmos-priority-level": "High",
                          "x-ms-cosmos-throughput-bucket": "7"}}, "High", "7"),
 ])
-def test_independent_items_inherit_client_defaults_rust(async_mode, op, kwargs, priority, bucket):
-    """Check priority and bucket selection for all six sync and async item helpers.
+def test_item_operations_use_client_priority_and_throughput_bucket_rust(async_mode, op, kwargs, priority, bucket):
+    """Item operations use the client's priority and throughput bucket unless the call gives its own.
 
-    Omitted values use client defaults; explicit High and bucket 5 override them.
-    Priority None and bucket zero also use defaults. Matching explicit headers
-    retain their values instead of receiving competing defaults.
+    The client defaults here are priority "Low" and throughput bucket 3. A call
+    that gives "High" and 5 uses those values. A call that gives None and 0 counts
+    as not given, so the defaults apply. A call that sets the same two values as
+    headers in ``initial_headers`` keeps the header values, and no default is
+    added.
 
-    The fake backend captures prepared requests. This test does not establish
-    service-backend throttling or latency behavior.
+    All six item operations are checked on both clients.
     """
-    backend = AsyncBackend() if async_mode else Backend()
+    sender = AsyncFakeSender() if async_mode else FakeSender()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(
-        backend, ClientOperationDefaults(priority="Low", throughput_bucket=3)
+        sender, ClientOperationDefaults(priority="Low", throughput_bucket=3)
     )
     invoke(helper, op, **kwargs)
-    request = backend.events[-1]
+    request = sender.events[-1]
     headers = wire_headers(request)
-    initial = headers.get("initialHeaders", headers)
-    assert headers.get("x-ms-cosmos-priority-level", initial.get("x-ms-cosmos-priority-level")) == priority
-    assert headers.get("x-ms-cosmos-throughput-bucket", initial.get("x-ms-cosmos-throughput-bucket")) == str(bucket)
+    caller_headers = headers.get("initialHeaders", headers)
+    priority_header = "x-ms-cosmos-priority-level"
+    bucket_header = "x-ms-cosmos-throughput-bucket"
+    assert headers.get(priority_header, caller_headers.get(priority_header)) == priority
+    assert headers.get(bucket_header, caller_headers.get(bucket_header)) == str(bucket)
 
 
 @pytest.mark.parametrize("op", [
     "create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item",
 ])
-def test_execute_item_builder_maps_arguments_and_returns_only_request_rust(monkeypatch, op):
-    """The one shared builder hands each operation exactly the arguments it takes, and
-    returns the request untouched.
+def test_request_builder_gets_exact_arguments_for_each_operation_rust(monkeypatch, op):
+    """The shared request builder gives each operation exactly the arguments it needs.
 
-    Both clients use the same builder, which is checked first -- two copies
-    would drift, and the drift would be one client sending a field the other
-    does not.
+    The sync and async item helpers use the same builder function, which is
+    checked first. The builder picks the request function for the operation and
+    calls it. The test replaces that function with a mock and checks the exact
+    arguments:
 
-    For each operation the full argument list is pinned. Writes get the prepared
-    body and are told not to extract the partition key because this test
-    supplies it explicitly; create additionally gets its indexing instruction; patch
-    gets its changes as prepared bytes. Operations that name an item get the id.
+    - Every operation gets the container, partition key and options.
+    - create, upsert and replace get the item body. They are told not to read the
+      partition key from the body, because the call already gives it.
+    - create also gets its indexing setting.
+    - Writes and patch get the client's ``no_response_on_write`` default.
+    - Operations that name an existing item get its id.
+    - patch gets its list of changes as JSON bytes.
 
-    Passing an argument an operation does not take would fail loudly, but
-    omitting one would not -- it would simply be left unset, and a customer's
-    indexing instruction or response preference would go missing on that
-    operation alone.
+    The builder returns the mock's request unchanged. The full list is checked
+    because a missing argument would not cause an error. The request function
+    would silently use its default value instead.
     """
-    assert async_execute_item_builder is build_item_request
+    assert async_build_item_request is build_item_request
     body = {"id": "order-42", "customerId": "customer-17", "total": 125.50}
     arguments = {
         "container_link": "dbs/Contoso/colls/Orders",
-        "body": body,
-        "no_response": True,
-        "enable_automatic_id_generation": True,
         "request_options": {"partitionKey": "customer-17"},
     }
+    if op != "read_item":
+        arguments.update(body=body, no_response=True, enable_automatic_id_generation=True)
     if op not in ("create_item", "upsert_item"):
         arguments["item_id"] = "order-42"
     if op == "patch_item":
         arguments["patch_operations"] = [{"op": "replace", "path": "/total", "value": 150}]
     args, options = normalize_item_arguments(op, arguments)
-    prepared = PreparedRequest(op, args["container_link"], b"", key_from_legacy_header('["customer-17"]'))
-    builder = MagicMock(return_value=prepared)
-    monkeypatch.setattr(_request_item, f"build_{op}_request", builder)
+    fake_request = PreparedRequest(op, args["container_link"], b"", key_from_legacy_header('["customer-17"]'))
+    fake_request_function = MagicMock(return_value=fake_request)
+    monkeypatch.setattr(_request_item, f"build_{op}_request", fake_request_function)
 
     result = build_item_request(op, args, options, ClientOperationDefaults(False))
 
@@ -373,87 +432,107 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request_rust(monke
         expected["item_self_link"] = None
     if op == "patch_item":
         expected.update(body_bytes=args["body_bytes"])
-    builder.assert_called_once_with(**expected)
-    assert result is prepared
+    fake_request_function.assert_called_once_with(**expected)
+    assert result is fake_request
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("op", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"])
-def test_standalone_item_execution_rust(async_mode, op):
-    """Each listed operation dispatches once to a fake backend on sync and async.
+def test_each_item_operation_sends_one_request_and_updates_headers_rust(async_mode, op):
+    """Each item operation sends one request and handles the reply the same way on both clients.
 
-    Check the operation tag, partition-key representation, lack of a Python-
-    stamped container-id header, response state, hook, and write-body settings.
-    Native key extraction and service execution are outside this test.
+    For each operation the test checks:
+
+    - Exactly one request is sent, with the right operation name.
+    - read, delete and patch carry the partition key given by the call. create,
+      upsert and replace carry none, because the key is read from the item body
+      later.
+    - No container id header (``x-ms-cosmos-intended-collection-rid``) is added.
+    - The response hook is called once and the last response headers are updated.
+    - delete returns None and passes None as the body to the hook. The others
+      return a ``CosmosDict`` whose headers match the last response headers.
+    - Writes and patch ask for no response body, because the client default
+      ``no_response_on_write`` is True here.
     """
-    backend = AsyncBackend() if async_mode else Backend()
-    state = ClientLastResponseHeaders()
+    sender = AsyncFakeSender() if async_mode else FakeSender()
+    last_headers = ClientLastResponseHeaders()
     hook = MagicMock()
-    helper = (AsyncItemHelper if async_mode else ItemHelper)(backend, ClientOperationDefaults(True), state)
+    helper = (AsyncItemHelper if async_mode else ItemHelper)(sender, ClientOperationDefaults(True), last_headers)
     result = invoke(helper, op, response_hook=hook)
-    assert len(backend.events) == 1
-    request = backend.events[0]
+    assert len(sender.events) == 1
+    request = sender.events[0]
     assert request.op == op
-    assert legacy_partition_key_from_request(request) == (None if op in ("create_item", "upsert_item", "replace_item") else '["p"]')
+    expected_key = None if op in ("create_item", "upsert_item", "replace_item") else '["p"]'
+    assert legacy_partition_key_from_request(request) == expected_key
     assert "x-ms-cosmos-intended-collection-rid" not in wire_headers(request)
     hook.assert_called_once()
-    assert state.last_response_headers["x-ms-request-charge"] == "2.5"
+    assert last_headers.last_response_headers["x-ms-request-charge"] == "2.5"
     if op == "delete_item":
         assert result is None
         assert hook.call_args.args[1] is None
     else:
         assert isinstance(result, CosmosDict)
-        assert result.get_response_headers() == state.last_response_headers
+        assert result.get_response_headers() == last_headers.last_response_headers
     if op in ("create_item", "upsert_item", "replace_item", "patch_item"):
         assert settings_options(request)["responsePayloadOnWriteDisabled"] is True
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-@pytest.mark.parametrize("metadata", [
+@pytest.mark.parametrize("error", [
     BindingProtocolError("missing metadata"), BindingProtocolError("invalid rid"),
     BindingProtocolError("invalid partition key"),
     CosmosResourceNotFoundError(status_code=404, message="missing"), AttributeError("lookup failed"),
 ])
-def test_native_preparation_failure_propagates_without_a_python_metadata_call_rust(async_mode, metadata):
-    """Propagate a fake backend's preparation error without invoking the success hook.
+def test_error_while_sending_reaches_caller_unchanged_rust(async_mode, error):
+    """An error raised while sending reaches the caller unchanged.
 
-    Check the exact exception object and a single dispatch, with no Python
-    metadata lookup. Native container resolution is not executed by this test.
+    The fake sender raises one of several errors after recording the request. The
+    caller gets the very same exception object, and the response hook is not
+    called. Exactly one request is recorded, and there is no container details
+    lookup.
     """
-    backend = AsyncBackend() if async_mode else Backend()
-    backend.metadata = metadata
-    helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
+    sender = AsyncFakeSender() if async_mode else FakeSender()
+    sender.metadata = error
+    helper = (AsyncItemHelper if async_mode else ItemHelper)(sender)
     hook = MagicMock()
-    with pytest.raises(type(metadata)) as raised:
+    with pytest.raises(type(error)) as raised:
         invoke(helper, "create_item", response_hook=hook)
-    assert raised.value is metadata
+    assert raised.value is error
     hook.assert_not_called()
-    assert len(backend.events) == 1
-    assert backend.events[0].op == "create_item"
+    assert len(sender.events) == 1
+    assert sender.events[0].op == "create_item"
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_options_defaults_errors_and_hooks_rust(async_mode):
-    """Check no-response override, the patch filter, listed patch rejections, and synthetic 404/304 hooks.
+def test_item_call_options_and_404_and_304_replies_rust(async_mode):
+    """Per-call options are applied, unsupported patch options are refused, and 404 and 304 replies are handled.
 
-    A patch filter_predicate is sent in the patch body as ``condition``.
-    The unsupported condition here is If-None-Match, not every access condition.
-    Rejected calls leave the fake backend's event list empty.
+    - ``no_response=False`` on create overrides the client default and asks for
+      the response body.
+    - ``filter_predicate`` on patch is sent in the patch body as ``condition``.
+    - patch refuses ``retry_write``, headers the SDK always sets itself (such as
+      User-Agent), and an If-None-Match condition. Each raises
+      NotImplementedError.
+    - A timeout below 1 second raises ValueError.
+    - None of the refused calls sends anything.
+    - A 404 reply raises ``CosmosResourceNotFoundError``, does not call the
+      response hook, and still updates the last response headers.
+    - A 304 reply on read returns an empty dict and calls the response hook.
     """
-    backend = AsyncBackend() if async_mode else Backend()
+    sender = AsyncFakeSender() if async_mode else FakeSender()
     helper_type = AsyncItemHelper if async_mode else ItemHelper
-    state = ClientLastResponseHeaders()
-    helper = helper_type(backend, ClientOperationDefaults(True), state)
+    last_headers = ClientLastResponseHeaders()
+    helper = helper_type(sender, ClientOperationDefaults(True), last_headers)
     invoke(helper, "create_item", no_response=False)
-    assert settings_options(backend.events[-1])["responsePayloadOnWriteDisabled"] is False
-    backend.events.clear()
+    assert settings_options(sender.events[-1])["responsePayloadOnWriteDisabled"] is False
+    sender.events.clear()
     invoke(helper, "patch_item", filter_predicate="FROM c WHERE c.x = 1")
-    (patch,) = backend.events
-    assert json.loads(patch.body_bytes) == {
+    (patch_request,) = sender.events
+    assert json.loads(patch_request.body_bytes) == {
         "operations": [{"op": "add", "path": "/a", "value": 1}],
         "condition": "FROM c WHERE c.x = 1",
     }
-    backend.events.clear()
+    sender.events.clear()
     for kwargs in ({"retry_write": 1},
                    {"initial_headers": {"User-Agent": "caller"}},
                    {"access_condition": {"type": "IfNoneMatch", "condition": '"e"'}}):
@@ -461,69 +540,58 @@ def test_options_defaults_errors_and_hooks_rust(async_mode):
             invoke(helper, "patch_item", **kwargs)
     with pytest.raises(ValueError, match="timeout"):
         invoke(helper, "patch_item", timeout=0.5)
-    assert not backend.events
-    backend.reply = response({"message": "gone"}, 404, {"etag": "error"})
+    assert not sender.events
+    sender.reply = fake_reply({"message": "gone"}, 404, {"etag": "error"})
     hook = MagicMock()
     with pytest.raises(CosmosResourceNotFoundError):
-        invoke(helper_type(backend, response_state=state), "read_item", response_hook=hook)
+        invoke(helper_type(sender, response_state=last_headers), "read_item", response_hook=hook)
     hook.assert_not_called()
-    assert state.last_response_headers["etag"] == "error"
-    backend.reply = response(status=304, headers={"etag": "current"})
-    result = invoke(helper_type(backend), "read_item", response_hook=hook)
+    assert last_headers.last_response_headers["etag"] == "error"
+    sender.reply = fake_reply(status=304, headers={"etag": "current"})
+    result = invoke(helper_type(sender), "read_item", response_hook=hook)
     assert result == {}
     hook.assert_called_once()
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("key", [NonePartitionKeyValue, NullPartitionKeyValue])
-def test_public_item_sentinels_do_not_read_connection_rust(async_mode, key):
-    """The two special partition key values work on a container with no connection at all.
+def test_special_partition_key_values_work_without_connection_rust(async_mode, key):
+    """read_item works with the two special partition key values on a container that has no connection.
 
-    One means the item has no partition key; the other means its key is
-    explicitly null. They are different on the wire and must stay different, and
-    neither is a value the driver can infer.
-
-    Historically these were interpreted by consulting the connection for how the
-    container was defined. Here there is no connection, and the read still
-    succeeds in a single request.
+    ``NonePartitionKeyValue`` means the item has no partition key value.
+    ``NullPartitionKeyValue`` means the value is JSON null. Both reads succeed and
+    send exactly one request.
     """
-    backend = AsyncBackend() if async_mode else Backend()
-    context = CosmosClientContext(backend)
+    sender = AsyncFakeSender() if async_mode else FakeSender()
+    context = CosmosClientContext(sender)
     proxy_type = AsyncContainerProxy if async_mode else ContainerProxy
     proxy = proxy_type(None, "dbs/d", "c", _client_context=context)
     result = proxy.read_item("x", partition_key=key)
     if async_mode:
         result = asyncio.run(result)
     assert result["id"] == "x"
-    assert len(backend.events) == 1
+    assert len(sender.events) == 1
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("op", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"])
-def test_all_public_point_methods_work_with_no_connection_rust(async_mode, op):
-    """Watch every function called during an item operation and prove none of them belongs
-    to the legacy code.
+def test_item_operations_do_not_use_connection_code_rust(async_mode, op):
+    """All six item operations run without calling any connection-based request code.
 
-    This is the central test of the file. All six operations run on both clients
-    with Python recording each call as it happens, and the legacy request
-    builders, the legacy connection, and the legacy item helpers must never
-    appear. Exactly one request goes out and the result comes back.
+    The container has no connection. While each operation runs, Python's profiler
+    hook (``sys.setprofile``) records every function call. The test fails if any
+    call lands in the client connection modules, the connection-based item helper
+    modules, or the ``build_*`` functions in ``_item_arguments``.
 
-    A recorder is used rather than reasoning about the code because the
-    dependency it guards against is easy to reintroduce by accident -- one
-    attribute read for a default or a container id is enough, and nothing about
-    it looks wrong in review. It would only fail for customers whose container
-    has no connection behind it.
-
-    The container is even given properties of its own, so an implementation
-    inclined to reach for a container id has one available. The request still
-    carries no container id header.
+    Exactly one request is sent and the result comes back. The request has no
+    container id header, even though the container object was given an id in its
+    properties.
     """
-    backend = AsyncBackend() if async_mode else Backend()
+    sender = AsyncFakeSender() if async_mode else FakeSender()
     proxy_type = AsyncContainerProxy if async_mode else ContainerProxy
     proxy = proxy_type(
-        None, "dbs/d", "c", properties={"_rid": "python-properties"},
-        _client_context=CosmosClientContext(backend),
+        None, "dbs/d", "c", properties={"_rid": "rid-from-container-properties"},
+        _client_context=CosmosClientContext(sender),
     )
     arguments = {}
     if op in ("create_item", "upsert_item", "replace_item"):
@@ -534,10 +602,10 @@ def test_all_public_point_methods_work_with_no_connection_rust(async_mode, op):
         arguments["partition_key"] = "p"
     if op == "patch_item":
         arguments["patch_operations"] = [{"op": "add", "path": "/a", "value": 1}]
-    legacy_calls = []
+    connection_code_calls = []
     previous_profile = sys.getprofile()
 
-    def record_legacy_calls(frame, event, arg):
+    def record_connection_code_calls(frame, event, arg):
         if event == "call":
             module = frame.f_globals.get("__name__", "")
             if module in (
@@ -548,79 +616,68 @@ def test_all_public_point_methods_work_with_no_connection_rust(async_mode, op):
                 "azure.cosmos.aio._helpers._legacy_item_operations",
             ) or (module == "azure.cosmos._helpers._item_arguments"
                   and frame.f_code.co_name.startswith("build_")):
-                legacy_calls.append((module, frame.f_code.co_name))
+                connection_code_calls.append((module, frame.f_code.co_name))
 
-    sys.setprofile(record_legacy_calls)
+    sys.setprofile(record_connection_code_calls)
     try:
         result = getattr(proxy, op)(**arguments)
         if async_mode:
             result = asyncio.run(result)
     finally:
         sys.setprofile(previous_profile)
-    assert legacy_calls == []
-    assert len(backend.events) == 1
-    assert backend.events[0].op == op
-    assert "x-ms-cosmos-intended-collection-rid" not in backend.events[0].headers
+    assert connection_code_calls == []
+    assert len(sender.events) == 1
+    assert sender.events[0].op == op
+    assert "x-ms-cosmos-intended-collection-rid" not in sender.events[0].headers
     assert result is None if op == "delete_item" else result["id"] == "x"
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_no_python_metadata_calls_and_preparation_error_preserves_headers_rust(async_mode):
-    """Repeated writes never fetch container information, and a failure before sending
-    leaves the published headers alone.
+def test_writes_skip_container_lookup_and_failed_send_keeps_last_headers_rust(async_mode):
+    """Writes never look up container details, and a failed send keeps the last response headers.
 
-    Two writes produce two requests and no lookups. Then the driver is made to
-    fail while resolving the container, and the headers the client publishes are
-    still the identical object from the last successful call.
-
-    Clearing them would misrepresent what happened. A customer reading the
-    charge or the tracking id after a failure would find nothing, or values
-    belonging to a request that was never sent, and would report the wrong call
-    to support.
+    Two writes send two requests and no container details lookup. Then the fake
+    sender raises a 404 error without a reply. The last response headers are
+    still the same object as after the second write. A caller who reads them
+    after the failure therefore sees the headers of the last call that got a
+    reply.
     """
-    backend = AsyncBackend() if async_mode else Backend()
-    state = ClientLastResponseHeaders()
-    helper = (AsyncItemHelper if async_mode else ItemHelper)(backend, response_state=state)
+    sender = AsyncFakeSender() if async_mode else FakeSender()
+    last_headers = ClientLastResponseHeaders()
+    helper = (AsyncItemHelper if async_mode else ItemHelper)(sender, response_state=last_headers)
     invoke(helper, "create_item")
     invoke(helper, "upsert_item")
-    assert backend.events.count("metadata") == 0
-    assert len(backend.events) == 2
-    previous = state.last_response_headers
-    backend.metadata = CosmosResourceNotFoundError(status_code=404, message="missing")
+    assert sender.events.count("metadata") == 0
+    assert len(sender.events) == 2
+    headers_before_failure = last_headers.last_response_headers
+    sender.metadata = CosmosResourceNotFoundError(status_code=404, message="missing")
     with pytest.raises(CosmosResourceNotFoundError):
         invoke(helper, "read_item")
-    assert state.last_response_headers is previous
+    assert last_headers.last_response_headers is headers_before_failure
 
 
-@pytest.mark.parametrize("helper_type,backend_type", [(ItemHelper, Backend), (AsyncItemHelper, AsyncBackend)])
-def test_rust_helper_rejects_old_connection_argument_rust(helper_type, backend_type):
-    """Passing a connection where the defaults belong is refused by name.
+@pytest.mark.parametrize("helper_type,sender_type", [(ItemHelper, FakeSender), (AsyncItemHelper, AsyncFakeSender)])
+def test_item_helper_rejects_connection_as_defaults_rust(helper_type, sender_type):
+    """The item helper's second argument must be ``ClientOperationDefaults``.
 
-    That position used to take a connection. Code written against the older
-    shape must fail immediately rather than have the object accepted and read
-    for attributes it does not have -- which would produce a confusing failure
-    somewhere inside the first call, or worse, defaults quietly read as absent.
-
-    The message names the type that is expected, which is the whole fix.
+    Passing any other object, such as a client connection, raises TypeError with
+    a message that names the expected type. The mistake is caught at once,
+    instead of failing later with a less clear error.
     """
     with pytest.raises(TypeError, match="ClientOperationDefaults"):
-        helper_type(backend_type(), object())
+        helper_type(sender_type(), object())
 
 
-@pytest.mark.parametrize("helper_type,backend_type", [(ItemHelper, Backend), (AsyncItemHelper, AsyncBackend)])
-def test_rust_helper_rejects_invalid_response_state_rust(helper_type, backend_type):
-    """The place where response headers get published must be the real one.
+@pytest.mark.parametrize("helper_type,sender_type", [(ItemHelper, FakeSender), (AsyncItemHelper, AsyncFakeSender)])
+def test_item_helper_rejects_wrong_response_headers_object_rust(helper_type, sender_type):
+    """The item helper only accepts a ``ClientLastResponseHeaders`` object for ``response_state``.
 
-    Anything else is refused at construction. This object is shared by the
-    client and everything under it, and it is how a customer reads the charge
-    and tracking id after a call.
-
-    A stand-in accepted here would swallow every update, so headers would go
-    nowhere and the customer would see whatever was there before -- values from
-    an older call, indistinguishable from fresh ones.
+    ``response_state`` is where the item helper stores the last response headers.
+    Any other object raises TypeError when the helper is created, instead of
+    failing later during a call.
     """
     with pytest.raises(TypeError, match="response_state must be ClientLastResponseHeaders"):
-        helper_type(backend_type(), response_state=object())
+        helper_type(sender_type(), response_state=object())
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
@@ -631,15 +688,20 @@ def test_rust_helper_rejects_invalid_response_state_rust(helper_type, backend_ty
     (MatchConditions.IfPresent, None, "If-Match", "*"),
     (MatchConditions.IfMissing, None, "If-None-Match", "*"),
 ])
-def test_rust_owned_condition_options_reach_wire_rust(async_mode, op, condition, etag, header, value):
-    """Check typed condition settings on requests captured by the fake backend.
+def test_match_condition_sets_if_match_or_if_none_match_rust(async_mode, op, condition, etag, header, value):
+    """``match_condition`` and ``etag`` set the right If-Match or If-None-Match value.
 
-    Despite the test name, no HTTP header rendering or transmission is observed.
+    IfNotModified sets If-Match to the etag. IfModified sets If-None-Match to the
+    etag. IfPresent sets If-Match to ``"*"``. IfMissing sets If-None-Match to
+    ``"*"``. This is checked for read, delete, upsert and replace on both clients.
+
+    The test checks the values in the prepared request's settings, not the HTTP
+    headers that are finally sent.
     """
-    backend = AsyncBackend() if async_mode else Backend()
-    helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
+    sender = AsyncFakeSender() if async_mode else FakeSender()
+    helper = (AsyncItemHelper if async_mode else ItemHelper)(sender)
     invoke(helper, op, match_condition=condition, etag=etag)
-    assert getattr(backend.events[-1].settings.item, header.lower().replace("-", "_")) == value
+    assert getattr(sender.events[-1].settings.item, header.lower().replace("-", "_")) == value
 
 
 @pytest.mark.parametrize("kwargs,error,message", [
@@ -648,42 +710,36 @@ def test_rust_owned_condition_options_reach_wire_rust(async_mode, op, condition,
     ({"match_condition": MatchConditions.IfNotModified}, ValueError, "'match_condition' specified without 'etag'."),
     ({"match_condition": "invalid"}, TypeError, "Invalid match condition: invalid"),
 ])
-def test_condition_validation_precedes_metadata_rust(kwargs, error, message):
-    """Half-specified conditions are refused before anything is sent, with exact messages.
+def test_incomplete_match_condition_raises_before_sending_rust(kwargs, error, message):
+    """An incomplete or unknown match condition raises an error before anything is sent.
 
-    A version tag without a condition, either condition needing a tag without
-    one, and an unrecognized condition are all caught. Nothing reaches the
-    backend.
+    Each of these raises an error with an exact message, on both clients:
 
-    The danger in letting these through is that a condition the code cannot make
-    sense of tends to become no condition at all, and the write then happens
-    unconditionally -- the precise outcome the customer was guarding against.
+    - an etag without ``match_condition``
+    - IfModified or IfNotModified without an etag
+    - a value that is not a ``MatchConditions`` member
 
-    Messages are compared exactly, since they are what a customer reads to find
-    which half they forgot.
+    The fake sender records nothing.
     """
-    for helper_type, backend_type in ((ItemHelper, Backend), (AsyncItemHelper, AsyncBackend)):
-        backend = backend_type()
+    for helper_type, sender_type in ((ItemHelper, FakeSender), (AsyncItemHelper, AsyncFakeSender)):
+        sender = sender_type()
         with pytest.raises(error) as caught:
-            invoke(helper_type(backend), "read_item", **kwargs)
+            invoke(helper_type(sender), "read_item", **kwargs)
         assert str(caught.value) == message
-        assert backend.events == []
+        assert sender.events == []
 
 
-def test_rust_option_prep_owns_copies_without_pipeline_bookkeeping_rust():
-    """Preparing options copies the caller's input, resolves conflicts in favor of the
-    direct argument, and adds no internal bookkeeping.
+def test_item_option_preparation_copies_input_and_direct_arguments_win_rust():
+    """Preparing item options copies the caller's input, and direct arguments win over ``request_options``.
 
-    The caller passes the same thing two ways -- a priority in the options and
-    another as an argument, an access condition in the options and header forms
-    directly -- and the direct arguments win. Their original object is compared
-    afterwards and is unchanged, and the prepared options are a separate object.
+    The caller gives a priority and an access condition in ``request_options``,
+    and also as direct arguments (``priority``, ``if_match``, ``if_none_match``).
+    The direct values win. When both ``if_match`` and ``if_none_match`` are given,
+    ``if_none_match`` is used.
 
-    The last two checks are about what is not there. The legacy pipeline wrote
-    a start time into the options and carried a second bag of arguments for the
-    wire. Neither appears here. Both were bookkeeping for a transport this path
-    does not use, and leaving them would put values in the request that nothing
-    reads but everything has to keep working around.
+    The caller's dicts are not changed, and the options are a new dict. The
+    options have no start time entry, there is no ``wire_kwargs`` entry, and
+    ``timeout`` stays with the call keywords.
     """
     arguments = {
         "container_link": "dbs/d/colls/c",
@@ -717,33 +773,24 @@ def test_rust_option_prep_owns_copies_without_pipeline_bookkeeping_rust():
     ("/ a / b /", ["a", "b"]),
     ("/", []),
 ])
-def test_shared_path_tokenization_rust(path, expected):
-    """Splitting a partition key path handles quoting and spacing the way the service
-    does.
+def test_partition_key_path_split_handles_quotes_and_spaces_rust(path, expected):
+    """``parse_paths`` splits a partition key path into its parts, handling quotes and spaces.
 
-    Six cases: a plain path, a segment quoted with double or single quotes so it
-    can contain a slash, an escaped quote inside a quoted segment, surrounding
-    spaces, and the root path which has no segments at all.
-
-    Quoting is the reason this is not a simple split. A field genuinely
-    containing a slash is written in quotes, and splitting naively would turn
-    one field into two -- so the value would be looked for in a place that does
-    not exist, and items would land in the wrong partition.
+    A part in double or single quotes may contain a slash and stays one part. An
+    escaped quote inside a quoted part is kept as written. Spaces around a part
+    are removed. The root path ``"/"`` has no parts. A plain split on ``"/"``
+    would get the quoted cases wrong.
     """
     assert parse_paths([path]) == expected
 
 
 @pytest.mark.parametrize("path", ["no-leading-slash", '/"unterminated', '/"a"b'])
-def test_shared_path_tokenization_rejects_invalid_paths_rust(path):
-    """A path that cannot be read is refused, with the position of the problem.
+def test_partition_key_path_split_rejects_invalid_paths_rust(path):
+    """``parse_paths`` rejects a path it cannot read, and the message gives the position.
 
-    Three cases: no leading slash, a quote that is never closed, and text
-    immediately after a closing quote. Each is ambiguous rather than merely
-    unusual, so guessing would mean choosing a partition key path the customer
-    did not write.
-
-    The message gives the index, which is the only practical way to find the
-    mistake in a long path.
+    The invalid paths are: no leading slash, a quote that is never closed, and
+    text right after a closing quote. Each raises ValueError with "Invalid path
+    character at index".
     """
     with pytest.raises(ValueError, match="Invalid path character at index"):
         parse_paths([path])
@@ -751,56 +798,49 @@ def test_shared_path_tokenization_rejects_invalid_paths_rust(path):
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("compact_utf8", [False, True])
-def test_public_context_and_compatibility_bridge_rust(monkeypatch, async_mode, compact_utf8):
-    """The client builds one context, shares it all the way down, and keeps the legacy
-    headers view working without letting defaults leak back.
+def test_client_shares_one_context_and_keeps_connection_headers_in_sync_rust(
+    monkeypatch, async_mode, compact_utf8,
+):
+    """The client creates one client context, shares it, and keeps the connection's headers in sync.
 
-    One context is created, holding the backend and the client's defaults, and
-    the same object reaches the database and the container -- so a setting given
-    once at the client applies everywhere, rather than being rebuilt and
-    possibly differing.
-
-    The connection's policy object is replaced with one that fails if its
-    response preference is read, and a create still succeeds using the client's
-    own default. That is the leak this guards against: reading defaults from the
-    connection would work on clients that have one and quietly differ on those
-    that do not.
-
-    The legacy headers attribute still works in both directions -- reading it
-    gives the same object the new context publishes to, and assigning to it is
-    seen by the context -- so existing code that inspects headers after a call
-    keeps working.
-
-    Finally the defaults refuse to be modified, since they are shared by
-    containers belonging to this client. An edit would affect all of them.
+    - Exactly one client context is created. It holds the fake sender and the
+      client options ``no_response_on_write`` and
+      ``enable_compact_utf8_item_writes``.
+    - The database and container objects use that same context.
+    - create_item takes ``no_response_on_write`` from the context. The test makes
+      reading it from the connection fail.
+    - The connection's ``last_response_headers`` is the same object as the
+      context's. Setting it on the connection is seen by the context.
+    - The client defaults cannot be changed after the client is created.
     """
-    backend = AsyncBackend() if async_mode else Backend()
-    module = "azure.cosmos.aio._cosmos_client" if async_mode else "azure.cosmos.cosmos_client"
-    monkeypatch.setattr(module + (".make_async_backend" if async_mode else ".make_backend"), lambda *a, **kw: backend)
+    sender = AsyncFakeSender() if async_mode else FakeSender()
+    client_module = "azure.cosmos.aio._cosmos_client" if async_mode else "azure.cosmos.cosmos_client"
+    factory_name = ".make_async_backend" if async_mode else ".make_backend"
+    monkeypatch.setattr(client_module + factory_name, lambda *a, **kw: sender)
     created_contexts = []
 
-    def create_context(*args, **kwargs):
+    def record_context(*args, **kwargs):
         context = CosmosClientContext(*args, **kwargs)
         created_contexts.append(context)
         return context
 
-    monkeypatch.setattr(module + ".CosmosClientContext", create_context)
-    # Bypass transport initialization only; exercise the real connection's header property.
+    monkeypatch.setattr(client_module + ".CosmosClientContext", record_context)
+    # Replace only the connection's setup. Its last_response_headers property stays real.
     connection_type = __import__(
         "azure.cosmos.aio._cosmos_client_connection_async" if async_mode else
         "azure.cosmos._cosmos_client_connection", fromlist=["CosmosClientConnection"]
     ).CosmosClientConnection
 
-    def initialize(connection, **kwargs):
+    def fake_connection_init(connection, **kwargs):
         assert len(created_contexts) == 1
-        assert created_contexts[0].adapter is backend
+        assert created_contexts[0].adapter is sender
         assert created_contexts[0].defaults.no_response_on_write is True
         assert created_contexts[0].defaults.enable_compact_utf8_item_writes is compact_utf8
         assert kwargs["enable_compact_utf8_item_writes"] is compact_utf8
         assert kwargs["_response_state"] is created_contexts[0].response_state
         connection._response_state = kwargs["_response_state"]
 
-    monkeypatch.setattr(connection_type, "__init__", initialize)
+    monkeypatch.setattr(connection_type, "__init__", fake_connection_init)
     client = (AsyncCosmosClient if async_mode else CosmosClient)(
         "https://example.documents.azure.com", "key", no_response_on_write=True,
         enable_compact_utf8_item_writes=compact_utf8,
@@ -809,128 +849,59 @@ def test_public_context_and_compatibility_bridge_rust(monkeypatch, async_mode, c
     container = database.get_container_client("c")
     assert container._client_context is database._client_context is client._client_context
     connection = client.client_connection
+    # Point the connection at a different sender, so a create that used the
+    # connection would not reach the fake sender.
     connection._backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
 
-    class ForbiddenPolicy:
+    class PolicyThatMustNotBeRead:
         @property
         def ResponsePayloadOnWriteDisabled(self):
-            raise AssertionError("Rust must not copy defaults from the connection")
+            raise AssertionError("Item operations must not read defaults from the connection")
 
-    connection.connection_policy = ForbiddenPolicy()
-    hook = MagicMock(side_effect=lambda h, b: backend.events.append("hook"))
+    connection.connection_policy = PolicyThatMustNotBeRead()
+    hook = MagicMock(side_effect=lambda h, b: sender.events.append("hook"))
     result = container.create_item({"id": "x", "pk": "p"}, response_hook=hook)
     if async_mode:
         result = asyncio.run(result)
     assert result["id"] == "x"
-    assert settings_options(backend.events[-2])["responsePayloadOnWriteDisabled"] is True
-    assert backend.events[-1] == "hook"
+    assert settings_options(sender.events[-2])["responsePayloadOnWriteDisabled"] is True
+    assert sender.events[-1] == "hook"
     assert connection.last_response_headers is client._client_context.response_state.last_response_headers
-    connection.last_response_headers = {"legacy": "headers"}
-    assert client._client_context.response_state.last_response_headers == {"legacy": "headers"}
+    connection.last_response_headers = {"set-on": "connection"}
+    assert client._client_context.response_state.last_response_headers == {"set-on": "connection"}
     with pytest.raises(FrozenInstanceError):
         client._client_context.defaults.no_response_on_write = False
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-@pytest.mark.parametrize("via_database", [False, True])
-def test_direct_proxy_compatibility_is_explicit_core_python_only_rust(async_mode, via_database):
-    """A container built directly from a connection keeps working on the legacy path, and
-    refuses to use a Rust backend it was never given a context for.
-
-    Building a container straight from a connection is not supported but people
-    do it, so it still works: the legacy call is made and the item comes back,
-    whether the container was made directly or through a database.
-
-    Then the same connection is given a Rust backend, and the read refuses with
-    a message saying the context has to come from the client. Nothing is sent
-    either way.
-
-    Refusing is better than improvising a context. One invented here would carry
-    default settings rather than the customer's -- no priority, the wrong
-    response preference -- and would publish headers somewhere the client never
-    reads, so the call would appear to work while quietly ignoring the client's
-    configuration.
-    """
-    connection = MagicMock()
-    connection._backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
-    connection._container_properties_cache = {
-        "dbs/d/colls/c": {"_rid": "legacy-rid", "partitionKey": {"paths": ["/pk"], "kind": "Hash"}}
-    }
-    call = AsyncMock(return_value={"id": "x"}) if async_mode else MagicMock(return_value={"id": "x"})
-    connection.ReadItem = call
-    if via_database:
-        database = (AsyncDatabaseProxy if async_mode else DatabaseProxy)(connection, "d")
-        container = database.get_container_client("c")
-    else:
-        container = (AsyncContainerProxy if async_mode else ContainerProxy)(connection, "dbs/d", "c")
-    assert container._client_context is None
-    result = container.read_item("x", partition_key=NonePartitionKeyValue)
-    if async_mode:
-        result = asyncio.run(result)
-    assert result["id"] == "x"
-    call.assert_called_once()
-    backend = AsyncBackend() if async_mode else Backend()
-    connection._backend = backend
-    call.reset_mock()
-    with pytest.raises(RuntimeError, match="context supplied by CosmosClient"):
-        result = container.read_item("x", partition_key=NonePartitionKeyValue)
-        if async_mode:
-            asyncio.run(result)
-    assert backend.events == []
-    call.assert_not_called()
-
-
-@pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("with_context", [False, True])
-def test_read_many_never_recovers_backend_from_connection_rust(async_mode, with_context):
-    """Read-many uses only its client-owned context, including response publication."""
+def test_read_items_uses_only_client_context_rust(async_mode, with_context):
+    """read_items uses the client context and never touches the connection.
+
+    With a client context, read_items sends one request through the context's
+    sender, returns the items, and its response headers match the last response
+    headers. The connection, which points at a different sender, is never used.
+    Without a client context, read_items raises NotImplementedError and sends
+    nothing.
+    """
     from read_items._helpers import make_proxy, page
 
-    proxy, backend = make_proxy(async_mode, [page([{"id": "x", "pk": "p"}], 2)])
+    proxy, sender = make_proxy(async_mode, [page([{"id": "x", "pk": "p"}], 2)])
     connection = MagicMock()
     connection._backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
     proxy.client_connection = connection
     if not with_context:
         proxy._client_context = None
-        with pytest.raises(NotImplementedError, match="client-owned Rust context"):
+        with pytest.raises(NotImplementedError, match="requires a client-owned"):
             result = proxy.read_items([("x", "p")])
             if async_mode:
                 asyncio.run(result)
-        assert backend.calls == []
+        assert sender.calls == []
         return
     result = proxy.read_items([("x", "p")])
     if async_mode:
         result = asyncio.run(result)
     assert result == [{"id": "x", "pk": "p"}]
     assert result.get_response_headers() == proxy._client_context.response_state.last_response_headers
-    assert backend.calls[-1].op == "read_items"
+    assert sender.calls[-1].op == "read_items"
     assert connection.mock_calls == []
-
-
-@pytest.mark.parametrize("async_mode", [False, True])
-@pytest.mark.parametrize("op,method", [("create_item", "CreateItem"), ("read_item", "ReadItem"),
-                                     ("delete_item", "DeleteItem"), ("upsert_item", "UpsertItem"),
-                                     ("replace_item", "ReplaceItem"), ("patch_item", "PatchItem")])
-def test_explicit_parity_adapter_keeps_core_python_call_rust(async_mode, op, method):
-    """A container told explicitly to use the legacy backend still makes the old call,
-    container id and all.
-
-    All six operations on both clients go to the matching legacy method, return
-    its result, and carry the container id taken from the connection's own
-    store.
-
-    This is the deliberate opposite of the rest of the file. The legacy path is
-    kept whole rather than partly modernized, so customers who need it get the
-    behavior they had, and the choice between the two paths stays a single
-    visible decision rather than a mixture that differs per operation.
-    """
-    connection = MagicMock()
-    connection._container_properties_cache = {"dbs/d/colls/c": {"_rid": "legacy-rid"}}
-    call = AsyncMock(return_value={"legacy": True}) if async_mode else MagicMock(return_value={"legacy": True})
-    setattr(connection, method, call)
-    context = CosmosClientContext(ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND)
-    proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(connection, "dbs/d", "c", _client_context=context)
-    helper = proxy._get_item_helper()
-    result = invoke(helper, op, **({"filter_predicate": "FROM c"} if op == "patch_item" else {}))
-    assert result == {"legacy": True}
-    assert call.call_args.kwargs["options"][Constants.ContainerRID] == "legacy-rid"

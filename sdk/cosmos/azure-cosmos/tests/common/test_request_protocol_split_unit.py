@@ -40,7 +40,7 @@ from azure.cosmos._helpers._document import serialize_document
 from common.typed_requests import legacy_preparation as prepare_request_headers
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
 from azure.cosmos._backend.request_settings import RequestSettings
-from common.test_connection_free_items_unit import Backend, AsyncBackend, invoke
+from common.test_connection_free_items_unit import FakeSender, AsyncFakeSender, invoke
 from azure.cosmos._helpers._item_operations import ItemHelper
 from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 
@@ -65,27 +65,30 @@ def test_every_point_operation_has_only_headers_and_explicit_options_rust(async_
     metadata lookup happens, and the caller's options object is unchanged
     afterwards so it can be reused for the next call.
     """
-    backend = AsyncBackend() if async_mode else Backend()
+    backend = AsyncFakeSender() if async_mode else FakeSender()
     options = {
         "partitionKey": "p",
         "initialHeaders": {"x-customer": "value"},
     }
-    if op != "create_item":
+    if op not in ("create_item", "read_item"):
         options["disableAutomaticIdGeneration"] = True
     before = deepcopy(options)
+    response_options = {} if op == "read_item" else {"no_response": False}
     invoke((AsyncItemHelper if async_mode else ItemHelper)(backend), op,
-           request_options=options, no_response=False,
+           request_options=options, **response_options,
            excluded_locations=["West US"],
            availability_strategy=False)
     request = backend.events[-1]
     assert wire_headers(request) == {
         "x-customer": "value",
     }
-    assert settings_options(request) == {
-        "responsePayloadOnWriteDisabled": False,
+    expected_settings = {
         "excludedLocations": ["West US"],
         "availabilityStrategy": "disabled",
     }
+    if op != "read_item":
+        expected_settings["responsePayloadOnWriteDisabled"] = False
+    assert settings_options(request) == expected_settings
     assert legacy_partition_key_from_request(request) == '["p"]'
     assert backend.events.count("metadata") == 0
     assert options == before

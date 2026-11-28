@@ -2522,6 +2522,8 @@ versions.
 
 The normal functional group does not also run the SDK fault-injection,
 cancellation or Toxiproxy groups. They have their own selections.
+The **Python Unit Tests** group excludes telemetry tests; those run in
+**Telemetry Unit Tests** instead.
 
 #### What runs twice, and what runs once?
 
@@ -2553,10 +2555,40 @@ Steps named **Publish ... Results** upload results already produced by
 the tests. They do not run the tests again. Rust test output is saved in
 separate logs.
 
+#### Where Linux and macOS run extra checks
+
+Alpha Bank might run its customer app on Linux or macOS rather than Windows.
+The Windows jobs above cannot establish that the SDK works on those systems.
+
+The separate live-test pipeline, `sdk/cosmos/tests.yml`, runs SDK tests
+against real Cosmos DB accounts. Two of its existing jobs also run the
+extra Rust, offline Python and telemetry checks:
+
+| Operating system | Python version | Job entry in `fixed-account-platform-matrix.json` |
+|---|---|---|
+| Linux | 3.10 | `ubuntu2404_310_coverage_query` |
+| macOS | 3.11 | `macos311_search_query` |
+
+These entries set `CosmosRunSupplementalTests` to `true`. That setting tells
+the pipeline to add checks after the job's live-account tests. Each selected
+job runs both Rust unit-test groups, the offline Python tests and the telemetry
+tests once. The Python groups reuse the separate test package prepared earlier.
+
+The Windows and Linux/macOS jobs call the same files for these checks:
+`rust-native-tests.yml`, `rust-offline-tests.yml` and `telemetry-tests.yml`.
+That keeps their test instructions together rather than maintaining a
+separate copy for each operating system.
+
+These are extra steps in existing jobs, not new jobs. Other live-test jobs
+do not run these extra steps, and this is not a five-Python-version test
+matrix for Linux and macOS. This addition also does not run the Windows
+table's **Native Cancellation Tests** or **Network Fault Tests - Toxiproxy**.
+The selected jobs publish the results and logs for the checks they run.
+
 **This describes what the pipeline is configured to run, not proof that
-every test has passed.** Existing skips still apply. The expanded
-five-version test coverage still needs confirmation from a complete
-pipeline run.
+every test has passed.** Existing skips still apply. The expanded Windows
+coverage and the selected Linux/macOS checks still need confirmation from
+completed pipeline runs.
 
 ### A saved pipeline output is not a published release
 
@@ -3190,15 +3222,19 @@ named `templates` is not automatically Central-owned.
 
 The [test-job explanation](#how-the-pipeline-organizes-and-runs-the-sdk-tests)
 describes which jobs run these checks and how often.
+The Rust, offline Python and telemetry templates are shared by the Windows
+Standard jobs and the selected Linux/macOS jobs described there.
 
 | File | Current responsibility | Owner or reviewer |
 |---|---|---|
 | `sdk/cosmos/ci.yml` | Select the customer-package checks and add the SDK-owned test steps to the shared pipeline. | Cosmos-specific configuration with Central review |
-| `sdk/cosmos/tests.yml` | Reuse `prepare-test-probes.yml` to build a separate probe wheel for live-account tests, then pass that wheel to the shared test runner. | Cosmos SDK team |
+| `sdk/cosmos/tests.yml` | Build a separate test package for live-account tests; add Rust, offline Python and telemetry checks to the two selected Linux/macOS jobs. | Cosmos SDK team |
 | `sdk/cosmos/templates/prepare-test-probes.yml` | Build and verify the probe wheel under the agent temporary directory, outside publish artifacts; retain packaged native sidecars from the downloaded customer wheel. | Cosmos SDK team |
 | `sdk/cosmos/templates/emulator-probe-tests.yml` | Keep customer-package results and run separate functional and SDK fault-injection groups for each configured installation check. | Cosmos SDK team |
-| `sdk/cosmos/templates/rust-tests.yml` | Run Rust unit tests, Python unit tests and cancellation tests once in each Standard job; save their results. | Cosmos SDK team |
-| `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the separate test package once in each Standard job; require their results. | Cosmos SDK team |
+| `sdk/cosmos/templates/rust-tests.yml` | Reuse the shared Rust and offline Python steps in Windows Standard jobs, then run native cancellation tests. | Cosmos SDK team |
+| `sdk/cosmos/templates/rust-native-tests.yml` | Run Clippy, then Rust unit tests with default features and with test probes enabled; save the logs. | Cosmos SDK team |
+| `sdk/cosmos/templates/rust-offline-tests.yml` | Run Python tests that do not need a database, using the separate test package; publish their results. | Cosmos SDK team |
+| `sdk/cosmos/templates/telemetry-tests.yml` | Run telemetry checks against the separate test package; publish their results. | Cosmos SDK team |
 | `sdk/cosmos/templates/toxiproxy-tests.yml` | Install the network-fault tool, run its tests once in each Standard job, and require their results. | Cosmos SDK team |
 
 <a id="only-microsoft-employees-can-build-the-package-today"></a>

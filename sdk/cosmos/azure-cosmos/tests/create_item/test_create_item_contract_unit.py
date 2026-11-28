@@ -28,7 +28,7 @@ import pytest
 
 from common.typed_requests import legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options, legacy_settings
-from common.test_connection_free_items_unit import Backend, AsyncBackend, invoke
+from common.test_connection_free_items_unit import FakeSender, AsyncFakeSender, invoke
 from read_item.test_read_item_contract_unit import point_read
 
 from azure.cosmos import CosmosDict
@@ -817,7 +817,7 @@ def test_compact_utf8_applies_to_all_singleton_write_bodies_rust(async_mode, com
     value inside its request body. Each prepared body must parse as JSON.
     This test does not send requests to the service backend.
     """
-    backend = AsyncBackend() if async_mode else Backend()
+    backend = AsyncFakeSender() if async_mode else FakeSender()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(
         backend, ClientOperationDefaults(enable_compact_utf8_item_writes=compact)
     )

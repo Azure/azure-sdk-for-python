@@ -7,6 +7,8 @@ from __future__ import annotations
 import time
 from typing import Any, Mapping, Optional
 
+from azure.core import MatchConditions
+
 from ._request_settings import (
     COMMON_OPTIONS, OPTION_HEADER_NAMES, build_customer_headers,
     get_match_headers, is_supported_operation_timeout, reject_unsupported_feed_options,
@@ -29,37 +31,58 @@ _CREATE_ITEM_KWARGS = frozenset({
 _CREATE_ITEM_UNSUPPORTED_HEADERS = frozenset({
     "if-match", "if-none-match",
 }) | frozenset(header for option, header in OPTION_HEADER_NAMES.items() if option not in _CREATE_ITEM_OPTIONS)
+_READ_ITEM_OPTIONS = frozenset({
+    "partitionKey", "accessCondition", "sessionToken", "initialHeaders",
+    "priorityLevel", "throughputBucket", "excludedLocations", "timeout",
+    "contentType", "utf8DecodingMode", "consistencyLevel", "correlatedActivityId",
+    "retry_write", "availabilityStrategy", "maxIntegratedCacheStaleness",
+})
+_READ_ITEM_KWARGS = frozenset({
+    "container_link", "item_id", "_item_self_link", "_item_operation_deadline",
+    "request_options", "feed_options", "timeout", "connection_timeout", "response_hook",
+    "if_match", "if_none_match", "etag", "match_condition",
+    "tracing_options", "tracing_attributes", "logger", "logging_enable",
+}) | frozenset(name for name, option in COMMON_OPTIONS.items() if option in _READ_ITEM_OPTIONS)
+_READ_ITEM_UNSUPPORTED_HEADERS = frozenset(
+    header for option, header in OPTION_HEADER_NAMES.items() if option not in _READ_ITEM_OPTIONS
+)
+_ITEM_ARGUMENT_RULES = {
+    "create_item": (_CREATE_ITEM_OPTIONS, _CREATE_ITEM_KWARGS, _CREATE_ITEM_UNSUPPORTED_HEADERS),
+    "read_item": (_READ_ITEM_OPTIONS, _READ_ITEM_KWARGS, _READ_ITEM_UNSUPPORTED_HEADERS),
+}
 
 
-def validate_create_item_arguments(arguments: Mapping[str, Any]) -> None:
-    """Check create's option names before shared normalization consumes them.
+def validate_item_arguments(operation: str, arguments: Mapping[str, Any]) -> None:
+    """Check create/read option names before shared normalization consumes them.
 
     Value checks still apply to accepted names: retry_write permits only None,
     for example. Only the selected option mapping is used, preserving
     request_options precedence over feed_options.
 
-    :param Mapping[str, Any] arguments: Create arguments, including request option mappings.
+    :param str operation: Operation whose supported argument rules apply.
+    :param Mapping[str, Any] arguments: Item arguments, including request option mappings.
     :return: None. Unsupported arguments raise TypeError before request preparation.
     :rtype: None
     """
-    reject_unsupported_feed_options("create_item", arguments.keys() - _CREATE_ITEM_KWARGS, {})
+    allowed_options, allowed_kwargs, unsupported_headers = _ITEM_ARGUMENT_RULES[operation]
+    reject_unsupported_feed_options(operation, arguments.keys() - allowed_kwargs, {})
     options = dict(arguments.get("request_options", arguments.get("feed_options")) or {})
     unsupported = set()
     for name in options:
         if not isinstance(name, str):
-            raise TypeError("create_item() request option names must be strings.")
-        if name in _CREATE_ITEM_OPTIONS:
+            raise TypeError(f"{operation}() request option names must be strings.")
+        if name in allowed_options:
             continue
-        if name.lower() not in _CREATE_ITEM_UNSUPPORTED_HEADERS and (
-            name.lower().startswith("x-ms-") or name.lower() == "prefer"
+        if name.lower() not in unsupported_headers and (
+            name.lower().startswith("x-ms-") or name.lower() in ("prefer", "if-match", "if-none-match")
         ):
             continue
         unsupported.add(name)
-    reject_unsupported_feed_options("create_item", unsupported, {})
+    reject_unsupported_feed_options(operation, unsupported, {})
     for headers in (arguments.get("initial_headers"), options.get("initialHeaders")):
         for name in build_customer_headers(headers):
-            if name in _CREATE_ITEM_UNSUPPORTED_HEADERS:
-                raise TypeError(f"create_item() does not support initial_headers option '{name}'.")
+            if name in unsupported_headers:
+                raise TypeError(f"{operation}() does not support initial_headers option '{name}'.")
 
 
 def prepare_item_deadline(
@@ -143,19 +166,23 @@ def prepare_read_item_kwargs(
 
     :param dict[str, Any] kwargs: Working read keywords updated with conditions, options, and deadline.
     :param Any partition_key: Public partition key stored in the read options.
-    :keyword callable or None response_hook: Callback checked for callability.
+    :keyword callable or None response_hook: Callback to validate as synchronous before dispatch.
     :return: The monotonic read deadline, or None without a timeout.
     :rtype: float or None
     """
     if "populate_query_metrics" in kwargs:
         raise TypeError("read_item() does not accept 'populate_query_metrics'.")
+    if kwargs.get("etag") is not None and kwargs.get("match_condition") in (
+        MatchConditions.IfPresent, MatchConditions.IfMissing,
+    ):
+        raise TypeError("read_item() etag cannot be combined with IfPresent or IfMissing.")
     if response_hook is not None and not callable(response_hook):
         raise TypeError("read_item response_hook must be callable.")
+    validate_response_hook_is_synchronous(response_hook, "read_item")
     if "request_options" not in kwargs:
         kwargs["request_options"] = kwargs.get("feed_options")
     options = dict(kwargs.get("request_options") or {})
     if_match, if_none_match = get_match_headers(kwargs)
-    # Wildcard conditions ignore an accompanying ETag; never leak it to transport.
     kwargs.pop("etag", None)
     if if_match:
         options["accessCondition"] = {"type": "IfMatch", "condition": if_match}

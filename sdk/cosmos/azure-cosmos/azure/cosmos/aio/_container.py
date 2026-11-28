@@ -427,7 +427,7 @@ class ContainerProxy:
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: Called once on success with independent header and CosmosDict body
             snapshots, including an empty CosmosDict for HTTP 304. Hook exceptions propagate.
-            A non-callable value is rejected before metadata lookup or reading.
+            Must be synchronous or None; invalid hooks raise TypeError before metadata lookup or reading.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,

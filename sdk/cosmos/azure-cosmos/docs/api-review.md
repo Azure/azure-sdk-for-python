@@ -3133,6 +3133,8 @@ Apply the [database-read header-override restriction](#database-read-unsupported
 Header names are checked case-insensitively; ordinary custom headers remain
 supported.
 
+<a id="create-item-other-changes"></a>
+
 **Other V5 changes that affect `create_item`**
 
 | Feature or option | V5 support |
@@ -3187,7 +3189,7 @@ async def create_item(
 
 **Why the customer calls this API**
 
-The customer wants to display `order-42` from the existing `sales/orders`
+Alpha Bank wants to display `order-42` from the existing `sales/orders`
 container, partitioned by `/customerId`, and knows its partition-key value:
 
 ```python
@@ -3195,57 +3197,56 @@ order = orders.read_item("order-42", partition_key="customer-17")
 ```
 
 The ID and partition key identify one item; no query is required. Customers
-with a cached copy can also request it conditionally using its saved ETag.
+with a cached copy can also request it conditionally using its saved ETag,
+the item's version marker.
 
 **Why these API changes need review**
 
 The proposed contract aligns optional-argument rules across synchronous and
-asynchronous clients, removes query-metrics input from a non-query operation,
+asynchronous clients, rejects options that do not apply to a point read,
 and applies the callback, timeout, option-map, and custom-header changes
 introduced for `create_item`.
 
 **Proposed API changes; approval is not recorded**
 
-The following changes are implemented for review; approval is not recorded.
 Shared explanations are linked rather than repeated. Existing behavior and
 fixes that restore it are not additional contract decisions.
 
 **1. Require keyword arguments for all options**
 
-**Why:** Apply the same [calling-convention rationale](#create-item-keyword-options)
-as `create_item`. Legacy synchronous reads accepted positional query-metrics
-and post-trigger arguments; asynchronous reads already required named options.
+Apply the [calling-convention change](#create-item-keyword-options):
+only `item` and `partition_key` may be positional. Legacy synchronous reads
+also accepted positional query-metrics and post-trigger arguments;
+asynchronous reads already required named options.
 
-**V5 contract:** Only `item` and `partition_key` may be positional. Name every
-supported option; removal of metrics and trigger inputs is covered below.
+**2. Reject query-only and write-only options; keep ETag conditions**
 
-**2. Reject `populate_query_metrics`; keep ETag conditions for reads**
+Apply the [inapplicable-option rejection rule](#create-item-inapplicable-options)
+to options that do not apply to a read. For example, `populate_query_metrics`,
+`max_item_count`, and `indexing_directive` raise `TypeError` before any request,
+including when set to `None` or `False`. This includes the selected
+`request_options` or `feed_options` dictionary and corresponding header forms.
+Remove these inputs rather than setting them to false.
 
-**Why:** A point read retrieves an item by its identity rather than executing
-a query. The [query-metrics rationale](#create-item-inapplicable-options)
-therefore applies here too. Unlike create, a read can use the customer's saved
-version to avoid returning an unchanged item, so ETag conditions remain useful.
-
-**V5 contract:** Supplying `populate_query_metrics` raises `TypeError`,
-including `None` or `False`, on both clients. Remove the argument rather than
-setting it to false. `etag` and `match_condition` remain supported; their
-appearance as named parameters is not a newly introduced conditional-read
+Unlike create, a read can use the customer's saved version to avoid returning
+an unchanged item. `etag` and `match_condition` therefore remain supported;
+their appearance as named parameters does not introduce a new conditional-read
 capability.
 
 **3. Apply the same callback, timeout, request-option, and header rules as `create_item`**
 
-The linked `create_item` decisions explain the business reasons. This table
-states their effect on a read without repeating those explanations.
+Apply these existing contracts on both clients:
 
-| Rule explained under `create_item` | Effect on `read_item` |
-|---|---|
-| [Give `response_hook` separate copies of headers and item data](#create-item-callback-snapshots) | Hook edits no longer affect the returned item or SDK response state. The body argument changes from the decoded dictionary to an independent `CosmosDict`, including copies of nested properties. Transform the returned item explicitly instead of editing the callback's copy. |
-| [Require `response_hook` to be callable or `None`](#create-item-callback-validation) | Reject non-callables before requests; invoke every supplied callable, including false-valued callable objects. Use `None`, not `False`, to disable the hook. Success-only invocation and propagation of callback failures without replaying the read are preserved, not new decisions. |
-| [Include container lookup in the operation timeout](#create-item-operation-timeout) | A supported `timeout` covers required metadata lookup and the item read together, rather than allowing setup outside that budget. Expiry raises `CosmosClientTimeoutError`. Duration limits and separate transport scopes follow the timeout decision. |
-| [Do not modify the customer's reusable request options](#create-item-option-mappings) | Do not modify `request_options` or `feed_options`; accept explicit `None` as an empty option selection. Option precedence and the required partition-key argument overriding a nested key already existed and are not new changes. |
-| [Reject SDK-controlled header overrides](#create-item-custom-headers) | `initial_headers` rejects overrides of `Accept`, `Cache-Control`, `User-Agent`, and `x-ms-version`. Remove those overrides; ordinary custom headers remain supported. |
+- [Independent response-hook copies](#create-item-callback-snapshots), with
+  the read result as the body argument.
+- [Synchronous `response_hook` or `None`](#create-item-callback-validation),
+  including when the read itself is awaited.
+- [One operation-timeout budget](#create-item-operation-timeout), covering
+  required container lookup and the item read together.
+- [Reusable request-option ownership](#create-item-option-mappings).
+- [SDK-controlled header restrictions](#create-item-custom-headers).
 
-**For HTTP 304, the hook receives an empty `CosmosDict` instead of `None`**
+**4. For HTTP 304, give the hook an empty `CosmosDict` instead of `None`**
 
 When a conditional read receives HTTP 304 ("not modified"), legacy already
 returned an empty `CosmosDict` with response headers. That method result is
@@ -3254,27 +3255,30 @@ the empty response; V5 passes an empty `CosmosDict`. A hook checking
 `result is None` must be updated. The customer should continue using its cached
 item rather than expecting item properties in the empty result.
 
-Existing condition validation and wildcard conditions are not new decisions.
-Conditions remain service-enforced: a stale If-Match on a read does not
-guarantee HTTP 412. A real service 412 remains
-`CosmosAccessConditionFailedError`.
-
 **Other V5 changes that affect `read_item`**
 
-The shared exclusions described under `create_item` also apply to reads:
-raw request hooks,
-raw response hooks,
-per-call transport controls,
-older partitionless containers,
-and the complete original success-header map.
-Their rationale and migration implications are not repeated here.
-
-Two call-specific consequences need separate attention:
-
-| Customer expectation | V5 behavior and what the customer must account for |
+| Feature or option | Applicable contract |
 |---|---|
-| Supply trigger options with a read | Trigger inputs and trigger-header overrides are rejected, not silently ignored. Remove them; accepting such an argument in legacy does not establish that the service executed a trigger on a read. See the trigger decision. |
-| Start further regional reads while earlier attempts remain slow | Read hedging supports one alternate, not progressively adding third and later attempts. `threshold_steps_ms` is rejected. Customers relying on progressive hedging must reassess their latency strategy; ordinary retries do not provide the same scheduling promise. See the read-hedging decision. |
+| Unknown keywords, per-call retry-policy controls, `retry_write`, and transport or timeout overrides | Apply the corresponding [create-item restrictions](#create-item-other-changes). |
+| Pre- and post-triggers | See the [trigger exclusion](#triggers). |
+| `raw_request_hook` and `raw_response_hook` | See the [raw-hook removal](#raw-pipeline-hooks-are-removed-from-both-backends). |
+| Read hedging | Use the [threshold-only read contract](#hedging-uses-one-threshold-not-progressive-threshold-steps), not create's write-hedging exclusion. |
+| Older partitionless/system-key containers | See the [container compatibility exclusion](#containerproxyis_system_key). |
+| Complete original service response headers | See the [response-header contract](#rust-success-responses-expose-modeled-metadata-not-a-generic-raw-header-map). |
+| Unsupported settings | Apply the [explicit-error, no-fallback contract](#unsupported-settings-no-longer-silently-change-the-selected-backend). |
+
+<a id="regional-outage-exception-compatibility"></a>
+
+**Regional-outage exception compatibility remains open**
+
+When all configured regions fail, Alpha Bank's customer app must handle the
+failed read. The compared legacy scenarios raise `ServiceRequestError`,
+whereas the Rust-backed SDK raises `ServiceResponseError`. An app catching
+only `ServiceRequestError` does not catch that Rust result.
+
+This affects both synchronous and asynchronous clients, and also applies to
+upserts during an all-regions outage. Approval of this exception-type change
+is not recorded.
 
 **Method signature for sync and async clients**
 
@@ -3302,19 +3306,14 @@ async def read_item(
     ...
 ```
 
-**Remaining migration gaps and verification**
+**Related migration requirements**
 
-This entry requests review of public contract changes; it does not record
-approval or declare migration complete. Preserving ordinary consistency
-levels remains an open compatibility requirement,
-not an approved substitution of weaker read semantics. Missing throttle-retry
-totals remain tracked in gap 29.
-
-Customer usage and migration status belong in
-migration status.
-Executed comparisons, network-fault evidence, and pending service scenarios
-belong in live verification,
-not in the contract decision.
+Read consistency and throttle-retry totals remain tracked in
+[gap 8](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-8) and
+[gap 29](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-29), not as approved API
+changes. See [migration status](V5/api-review/RUST_MIGRATION_STATUS.md#containerproxyread_item)
+for the remaining gaps and [live verification](V5/api-review/LIVE_VERIFICATION.md#containerproxyread_item)
+for comparison evidence.
 
 <a id="18---reading-known-items"></a>
 <a id="containerproxyread_items"></a>

@@ -19,7 +19,7 @@ from azure.cosmos.aio import _cosmos_client_connection_async as async_connection
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.documents import DatabaseAccount
-from common.test_connection_free_items_unit import Backend, AsyncBackend
+from common.test_connection_free_items_unit import FakeSender, AsyncFakeSender
 
 
 def make_client(monkeypatch, async_mode, backend_name="rust", consistency=None):
@@ -45,7 +45,7 @@ def make_client(monkeypatch, async_mode, backend_name="rust", consistency=None):
         MagicMock(return_value=pipeline),
     )
     if backend_name == "rust":
-        backend = AsyncBackend() if async_mode else Backend()
+        backend = AsyncFakeSender() if async_mode else FakeSender()
         backend.name = "rust"
     else:
         backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND

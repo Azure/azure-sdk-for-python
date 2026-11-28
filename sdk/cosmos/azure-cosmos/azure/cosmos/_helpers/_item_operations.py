@@ -49,7 +49,7 @@ from ._item_prep import (
     prepare_replace_item_kwargs,
     serialize_patch_body,
     apply_patch_item_options,
-    validate_create_item_arguments,
+    validate_item_arguments,
 )
 from ._document import build_create_document, serialize_document
 from ._resource_validation import validate_resource
@@ -74,8 +74,8 @@ def normalize_item_arguments(
     :return: Normalized request values and internal request options.
     :rtype: tuple[dict, dict]
     """
-    if op == "create_item":
-        validate_create_item_arguments(arguments)
+    if op in ("create_item", "read_item"):
+        validate_item_arguments(op, arguments)
     kwargs = dict(arguments)
     if (
         op in ("read_item", "replace_item", "patch_item", "delete_item")
@@ -147,7 +147,7 @@ def validate_rust_item_options(
     :return: None.
     :rtype: None
     """
-    error_type = TypeError if operation == "create_item" else NotImplementedError
+    error_type = TypeError if operation in ("create_item", "read_item") else NotImplementedError
     for key in ("connection_timeout", "retry_write"):
         if args["kwargs"].get(key) is not None or options.get(key) is not None:
             raise error_type(f"The Rust item backend does not support per-call {key}")
@@ -163,8 +163,8 @@ def validate_rust_item_options(
     if not is_supported_operation_timeout(timeout):
         raise ValueError("Item timeout must be None or a finite number of seconds >= 1 and < 2**64.")
     if overrides_driver_owned_header(options):
-        if operation == "create_item":
-            raise TypeError("create_item() cannot override driver-owned initial_headers.")
+        if operation in ("create_item", "read_item"):
+            raise TypeError(f"{operation}() cannot override driver-owned initial_headers.")
         raise NotImplementedError("The Rust item backend cannot override driver-owned initial headers")
 
 

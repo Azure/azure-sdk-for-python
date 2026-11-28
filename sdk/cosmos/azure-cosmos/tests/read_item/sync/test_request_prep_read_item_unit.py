@@ -33,6 +33,7 @@ from azure.cosmos._helpers._item_arguments import (
     build_read_item_request_options,
     merge_read_item_explicit_kwargs,
 )
+from azure.cosmos._helpers._request_settings import compose_item_options
 from common.request_preparation import (
     prepare_read_item_request,
 )
@@ -128,7 +129,7 @@ def test_cache_staleness_zero_is_silent_no_op_rust():
 def test_etag_if_modified_translates_to_if_none_match_rust():
     """``etag=<v>`` + ``IfModified`` (the cache-validation case) becomes
     ``If-None-Match: <v>``."""
-    options = build_read_item_request_options({
+    options = compose_item_options({
         "request_options": {"partitionKey": "a"},
         "etag": "abc",
         "match_condition": MatchConditions.IfModified,
@@ -154,7 +155,7 @@ def test_etag_if_modified_translates_to_if_none_match_rust():
 def test_etag_if_not_modified_translates_to_if_match_rust():
     """``etag=<v>`` + ``IfNotModified`` (a rare precondition on a read)
     becomes ``If-Match: <v>``."""
-    options = build_read_item_request_options({
+    options = compose_item_options({
         "request_options": {"partitionKey": "a"},
         "etag": "abc",
         "match_condition": MatchConditions.IfNotModified,
@@ -210,7 +211,7 @@ def test_initial_headers_are_flattened_into_outer_headers_rust():
 
 
 def test_post_trigger_include_is_rejected_rust():
-    with pytest.raises(TypeError, match="triggers are excluded"):
+    with pytest.raises(TypeError, match="post_trigger_include"):
         prepare_read_item_request(
             container_link="dbs/d/colls/c",
             item_id="x",

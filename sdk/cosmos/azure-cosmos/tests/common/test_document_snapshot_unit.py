@@ -34,7 +34,7 @@ from azure.cosmos._helpers._item_operations import (
     normalize_item_arguments,
 )
 from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
-from common.test_connection_free_items_unit import AsyncBackend, Backend
+from common.test_connection_free_items_unit import AsyncFakeSender, FakeSender
 
 from common.request_preparation import call_item_helper
 
@@ -210,7 +210,7 @@ def test_snapshot_once_before_execute_and_async_yield_rust(
     reached the sender must carry none of the later values, including a change added to
     the list of changes rather than to the body.
     """
-    backend = AsyncBackend() if async_mode else Backend()
+    backend = AsyncFakeSender() if async_mode else FakeSender()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
     body = {"id": "before", "nested": {"pk": "before"}}
     call = arguments(operation, body)
@@ -276,7 +276,7 @@ def test_wrapper_does_not_deepcopy_documents_or_call_core_python_rust(operation,
         _legacy_item_operations, "_prepare_legacy_create_item_body", forbidden
     )
     body = NoDeepcopy(id="item", value=NoDeepcopy(nested=[1, 2, 3]))
-    backend = Backend()
+    backend = FakeSender()
     call_item_helper(ItemHelper(backend), operation, **arguments(operation, body))
     assert len(backend.events) == 1
     forbidden.assert_not_called()
@@ -456,7 +456,7 @@ def test_invalid_json_fails_before_backend_dispatch_rust(operation, async_mode, 
     """
     body = {"id": "item"}
     body["value"] = body if circular else object()
-    backend = AsyncBackend() if async_mode else Backend()
+    backend = AsyncFakeSender() if async_mode else FakeSender()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
     with pytest.raises(ValueError if circular else TypeError):
         result = call_item_helper(helper, operation, **arguments(operation, body))

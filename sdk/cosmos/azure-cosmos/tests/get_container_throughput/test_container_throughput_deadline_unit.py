@@ -12,7 +12,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-from common.test_client_timeout_defaults_unit import case as case, clock as clock
+from common.test_client_timeout_defaults_unit import client_setup as case, clock as clock
 
 
 PROPERTIES = {
@@ -58,9 +58,9 @@ def test_shared_budget_and_independent_next_call_rust(case, clock, operation, wa
             return response(body)
         return dispatch
 
-    case.install("read_container", side_effect=phase("metadata", PROPERTIES))
-    case.install("get_throughput", side_effect=phase("lookup", {"Offers": [OFFER]}))
-    case.install("replace_throughput", side_effect=phase("write", OFFER))
+    case.add_fake_request("read_container", side_effect=phase("metadata", PROPERTIES))
+    case.add_fake_request("get_throughput", side_effect=phase("lookup", {"Offers": [OFFER]}))
+    case.add_fake_request("replace_throughput", side_effect=phase("write", OFFER))
     container = case.client.get_database_client("sales").get_container_client("orders")
     if warm:
         complete(container.read())
@@ -91,9 +91,9 @@ def test_failure_skips_later_phases_and_callback_rust(case, clock, operation, ph
             return response(body, 403 if failure == "service" and name == phase else 200)
         return run
 
-    case.install("read_container", side_effect=dispatch("metadata", PROPERTIES))
-    case.install("get_throughput", side_effect=dispatch("lookup", {"Offers": [OFFER]}))
-    case.install("replace_throughput", side_effect=dispatch("write", OFFER))
+    case.add_fake_request("read_container", side_effect=dispatch("metadata", PROPERTIES))
+    case.add_fake_request("get_throughput", side_effect=dispatch("lookup", {"Offers": [OFFER]}))
+    case.add_fake_request("replace_throughput", side_effect=dispatch("write", OFFER))
     container = case.client.get_database_client("sales").get_container_client("orders")
     with pytest.raises(CosmosClientTimeoutError if failure == "expiry" else CosmosHttpResponseError) as caught:
         complete(invoke(container, operation, response_hook=hook))
@@ -127,9 +127,9 @@ def test_recovery_uses_remaining_budget_rust(case, clock, operation, expire):
         calls.append(("write", kwargs["timeout_seconds"]))
         return response(OFFER)
 
-    case.install("read_container", side_effect=metadata)
-    case.install("get_throughput", side_effect=lookup)
-    case.install("replace_throughput", side_effect=write)
+    case.add_fake_request("read_container", side_effect=metadata)
+    case.add_fake_request("get_throughput", side_effect=lookup)
+    case.add_fake_request("replace_throughput", side_effect=write)
     if expire:
         with pytest.raises(CosmosClientTimeoutError):
             complete(invoke(container, operation, response_hook=hook))
@@ -153,18 +153,18 @@ def test_driver_initialization_cannot_start_request_after_expiry_rust(case, cloc
         clock[0] += 1.25
         return "driver"
 
-    case.acquisition.side_effect = setup
-    lookup = case.install("get_throughput", result=response({"Offers": [OFFER]}))
-    write = case.install("replace_throughput", result=response(OFFER))
+    case.open_handle.side_effect = setup
+    lookup = case.add_fake_request("get_throughput", result=response({"Offers": [OFFER]}))
+    write = case.add_fake_request("replace_throughput", result=response(OFFER))
     with pytest.raises(CosmosClientTimeoutError):
         complete(invoke(container, operation))
-    case.acquisition.assert_called_once()
+    case.open_handle.assert_called_once()
     lookup.assert_not_called()
     write.assert_not_called()
 
 
 def test_internal_metadata_budget_can_be_less_than_public_minimum_rust(case, clock):
-    read = case.install("read_container", result=response(PROPERTIES))
+    read = case.add_fake_request("read_container", result=response(PROPERTIES))
     container = case.client.get_database_client("sales").get_container_client("orders")
     complete(container._get_properties(_item_operation_deadline=clock[0] + 0.5))
     assert read.call_args.kwargs["timeout_seconds"] == 0.5
@@ -181,7 +181,7 @@ def test_sync_cache_lock_wait_consumes_budget_rust(case, clock, operation):
 
     release = MagicMock()
     container.container_cache_lock = SimpleNamespace(acquire=acquire, release=release)
-    metadata = case.install("read_container", result=response(PROPERTIES))
+    metadata = case.add_fake_request("read_container", result=response(PROPERTIES))
     with pytest.raises(CosmosClientTimeoutError):
         complete(invoke(container, operation))
     metadata.assert_not_called()
@@ -227,9 +227,9 @@ def test_async_cancellation_awaits_cleanup_rust(case, operation, phase, expire):
         async def write(*args, **kwargs):
             return await pending()
 
-        case.install("read_container", side_effect=metadata)
-        case.install("get_throughput", side_effect=lookup)
-        write_call = case.install("replace_throughput", side_effect=write)
+        case.add_fake_request("read_container", side_effect=metadata)
+        case.add_fake_request("get_throughput", side_effect=lookup)
+        write_call = case.add_fake_request("replace_throughput", side_effect=write)
         if phase == "lock":
             await container.container_cache_lock.acquire()
             entered.set()

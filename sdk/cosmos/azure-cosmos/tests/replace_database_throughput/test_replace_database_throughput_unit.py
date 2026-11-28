@@ -11,7 +11,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-from common.test_client_timeout_defaults_unit import case as case, clock as clock
+from common.test_client_timeout_defaults_unit import client_setup as case, clock as clock
 
 
 def _complete(value):
@@ -48,9 +48,9 @@ def test_replacement_shares_budget_and_next_call_resets_rust(case, clock, option
             return _response(body)
         return dispatch
 
-    case.install("read_database", side_effect=phase("metadata", {"id": "sales", "_self": "dbs/rid/"}))
-    case.install("get_throughput", side_effect=phase("lookup", {"Offers": [_offer()]}))
-    case.install("replace_throughput", side_effect=phase("write", _offer(2000)))
+    case.add_fake_request("read_database", side_effect=phase("metadata", {"id": "sales", "_self": "dbs/rid/"}))
+    case.add_fake_request("get_throughput", side_effect=phase("lookup", {"Offers": [_offer()]}))
+    case.add_fake_request("replace_throughput", side_effect=phase("write", _offer(2000)))
     database = case.client.get_database_client("sales")
     if warm:
         database._properties = {"id": "sales", "_self": "dbs/rid/"}
@@ -78,9 +78,9 @@ def test_expired_replacement_skips_later_phases_and_callback_rust(case, clock, p
             return _response(body)
         return run
 
-    case.install("read_database", side_effect=dispatch("metadata", {"id": "sales", "_self": "dbs/rid/"}))
-    case.install("get_throughput", side_effect=dispatch("lookup", {"Offers": [_offer()]}))
-    case.install("replace_throughput", side_effect=dispatch("write", _offer(2000)))
+    case.add_fake_request("read_database", side_effect=dispatch("metadata", {"id": "sales", "_self": "dbs/rid/"}))
+    case.add_fake_request("get_throughput", side_effect=dispatch("lookup", {"Offers": [_offer()]}))
+    case.add_fake_request("replace_throughput", side_effect=dispatch("write", _offer(2000)))
     with pytest.raises(CosmosClientTimeoutError):
         _complete(case.client.get_database_client("sales").replace_throughput(2000, response_hook=hook))
     assert calls == ["metadata", "lookup", "write"][:["metadata", "lookup", "write"].index(phase) + 1]
@@ -97,12 +97,12 @@ def test_driver_setup_uses_remaining_budget_before_lookup_rust(case, clock):
 
     database = case.client.get_database_client("sales")
     database._properties = {"_self": "dbs/rid/"}
-    case.acquisition.side_effect = setup
-    lookup = case.install("get_throughput", result=_response({"Offers": [_offer()]}))
-    write = case.install("replace_throughput", result=_response(_offer(2000)))
+    case.open_handle.side_effect = setup
+    lookup = case.add_fake_request("get_throughput", result=_response({"Offers": [_offer()]}))
+    write = case.add_fake_request("replace_throughput", result=_response(_offer(2000)))
     with pytest.raises(CosmosClientTimeoutError):
         _complete(database.replace_throughput(2000))
-    case.acquisition.assert_called_once()
+    case.open_handle.assert_called_once()
     lookup.assert_not_called()
     write.assert_not_called()
 
@@ -110,14 +110,14 @@ def test_driver_setup_uses_remaining_budget_before_lookup_rust(case, clock):
 @pytest.mark.parametrize("phase", ["metadata", "lookup", "write"])
 def test_service_failure_keeps_error_headers_and_skips_later_phases_rust(case, phase):
     hook = MagicMock()
-    metadata = case.install(
+    metadata = case.add_fake_request(
         "read_database",
         result=_response({"id": "sales", "_self": "dbs/rid/"}, 403 if phase == "metadata" else 200),
     )
-    lookup = case.install(
+    lookup = case.add_fake_request(
         "get_throughput", result=_response({"Offers": [_offer()]}, 403 if phase == "lookup" else 200),
     )
-    write = case.install("replace_throughput", result=_response({"message": "denied"}, 403))
+    write = case.add_fake_request("replace_throughput", result=_response({"message": "denied"}, 403))
     with pytest.raises(CosmosHttpResponseError) as caught:
         _complete(case.client.get_database_client("sales").replace_throughput(2000, response_hook=hook))
     assert caught.value.status_code == 403
@@ -131,8 +131,8 @@ def test_service_failure_keeps_error_headers_and_skips_later_phases_rust(case, p
 def test_callback_timeout_is_not_reclassified_or_replayed_rust(case):
     failure = TimeoutError("customer callback")
     hook = MagicMock(side_effect=failure)
-    case.install("get_throughput", result=_response({"Offers": [_offer()]}))
-    write = case.install("replace_throughput", result=_response(_offer(2000)))
+    case.add_fake_request("get_throughput", result=_response({"Offers": [_offer()]}))
+    write = case.add_fake_request("replace_throughput", result=_response(_offer(2000)))
     database = case.client.get_database_client("sales")
     database._properties = {"_self": "dbs/rid/"}
     with pytest.raises(TimeoutError) as caught:
@@ -158,15 +158,15 @@ def test_async_pending_phase_cancels_and_awaits_cleanup_rust(case, phase, expire
             finally:
                 cleaned.set()
 
-        metadata = case.install(
+        metadata = case.add_fake_request(
             "read_database", side_effect=pending if phase == "metadata" else None,
             result=_response({"id": "sales", "_self": "dbs/rid/"}),
         )
-        lookup = case.install(
+        lookup = case.add_fake_request(
             "get_throughput", side_effect=pending if phase == "lookup" else None,
             result=_response({"Offers": [_offer()]}),
         )
-        write = case.install(
+        write = case.add_fake_request(
             "replace_throughput", side_effect=pending if phase == "write" else None,
             result=_response(_offer(2000)),
         )

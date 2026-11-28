@@ -1,26 +1,30 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Unit coverage for building a client from a connection string (no network).
+"""Unit tests for creating a client from a connection string.
 
-A connection string is one line of text holding the account address and the
-account key, copied from the portal. Everything here is about reading that line
-safely, and two concerns dominate.
+A connection string is one line of text that holds the account address and
+the account key, for example
+``AccountEndpoint=https://...;AccountKey=...``. A caller passes it to
+``CosmosClient.from_connection_string``.
 
-The first is that it contains a secret. If the SDK ever repeated the string back
-in an error message, the account key would land in log files and bug reports,
-where it outlives the mistake that produced it. So errors name the setting that
-was wrong and never the value.
+These tests check three rules:
 
-The second is that a mistake must cost nothing. Every bad input is refused
-before the client is constructed, which is checked here by watching that the
-constructor is never called. Failing later would mean a half-built client
-holding connections nobody will close.
+- Error messages name the setting that is wrong, never its value, because
+  the value may be the account key.
+- Every bad input is refused before the client is created.
+- The connection string is the only source of the key. A separate
+  credential is refused.
 
-The factory is also deliberately narrow: it takes the string and nothing that
-could contradict it, so there is never a question of which key won.
+Terms used in this file:
 
-Every test runs against both the sync and async clients, since both offer the
-same factory and customers move between them.
+- setting: one ``name=value`` part of the connection string. Settings are
+  separated by semicolons.
+- factory: the ``from_connection_string`` method.
+- constructor: the client's ``__init__`` method. Most tests replace it with
+  a mock, so they can check what the factory passes to it.
+
+Every test runs against both the sync and async client. No test contacts a
+Cosmos DB account.
 """
 
 import inspect
@@ -41,30 +45,26 @@ CONNECTION_STRING = f"AccountEndpoint={ENDPOINT};AccountKey=test-key=="
 
 @pytest.fixture(params=[CosmosClient, AsyncCosmosClient], ids=["sync", "aio"])
 def client_type(request):
-    """Run every test against both the sync and async clients.
+    """Run each test with the sync client and then the async client.
 
-    Both offer this factory and both must read a connection string the same way.
-    Customers copy the same line between the two, so a difference in what either
-    accepts would be a surprise at the worst moment.
+    Both have a factory, and both must read a connection string the same way.
     """
     return request.param
 
 
 @pytest.mark.parametrize("suffix", ["", ";", ";;"])
-@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
-def test_connection_string_passes_endpoint_key_and_options_rust(client_type, suffix, level):
-    """Forward the parsed endpoint, key and supplied options to the constructor.
+@pytest.mark.parametrize("consistency_level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_factory_passes_address_key_and_options_to_constructor_rust(client_type, suffix, consistency_level):
+    """The factory passes the address, the key and every other option to the constructor.
 
-    Trailing semicolons are accepted, and equals signs within the synthetic key
-    are preserved. Both factories return a non-awaitable instance of their class.
-
-    The constructor is mocked, so this checks factory forwarding and return
-    shape, not client initialization or network behavior.
+    Trailing semicolons are allowed. An ``=`` inside the key is kept, because each
+    setting is split at its first ``=``. Both factories return a client of their
+    own class, not something that must be awaited.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         client = client_type.from_connection_string(
             CONNECTION_STRING + suffix,
-            consistency_level=level,
+            consistency_level=consistency_level,
             preferred_locations=["West US"],
             _backend="rust",
         )
@@ -74,17 +74,16 @@ def test_connection_string_passes_endpoint_key_and_options_rust(client_type, suf
     constructor.assert_called_once_with(
         url=ENDPOINT,
         credential="test-key==",
-        consistency_level=level,
+        consistency_level=consistency_level,
         preferred_locations=["West US"],
         _backend="rust",
     )
 
 
-def test_connection_string_uses_default_consistency_rust(client_type):
-    """Forward consistency_level=None when the factory call omits it.
+def test_factory_passes_no_consistency_level_when_none_given_rust(client_type):
+    """When the call does not give ``consistency_level``, the factory passes ``None``.
 
-    Both constructors also default to None. This checks the factory's explicit
-    forwarding, not a difference in consistency behavior or service enforcement.
+    The constructor receives ``consistency_level=None``.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         client_type.from_connection_string(CONNECTION_STRING)
@@ -94,7 +93,7 @@ def test_connection_string_uses_default_consistency_rust(client_type):
 
 
 @pytest.mark.parametrize(
-    "conn_str, message",
+    "connection_string, message",
     [
         ("AccountKey=test-key", "missing setting 'AccountEndpoint'"),
         (f"AccountEndpoint={ENDPOINT}", "missing setting 'AccountKey'"),
@@ -117,51 +116,39 @@ def test_connection_string_uses_default_consistency_rust(client_type):
         ("not-a-connection-string", None),
     ],
 )
-def test_connection_string_rejects_invalid_settings_before_construction_rust(
-    client_type, conn_str, message
+def test_missing_or_empty_settings_are_refused_rust(
+    client_type, connection_string, message
 ):
-    """A string that parses but is missing or empties a required setting is refused, and
-    no client is built.
+    """A connection string without a usable address or key is refused, and no client is created.
 
-    Seven cases are covered: the address missing, the key missing, each of them
-    present but empty, each present but only whitespace, and a string that is
-    not in the expected format at all.
-
-    Whitespace-only matters most. It comes from copying a line that wrapped, and
-    a check that only asks whether the setting is present would accept it and
-    fail much later as a confusing authentication error.
-
-    Each message names the setting at fault, which is the only thing a customer
-    needs to fix it, and never the value.
+    Seven cases are tried: the address missing, the key missing, each one empty,
+    each one only spaces, and a string that is not in ``name=value`` form at all.
+    Each message names the setting that is wrong, never its value.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         with pytest.raises(ValueError, match=message):
-            client_type.from_connection_string(conn_str)
+            client_type.from_connection_string(connection_string)
     constructor.assert_not_called()
 
 
-@pytest.mark.parametrize("conn_str", [None, 42, b"AccountKey=private-key", {}, []])
-def test_connection_string_rejects_non_strings_before_construction_rust(
-    client_type, conn_str
+@pytest.mark.parametrize("connection_string", [None, 42, b"AccountKey=private-key", {}, []])
+def test_value_that_is_not_text_is_refused_rust(
+    client_type, connection_string
 ):
-    """Anything that is not text is refused with a message that says so and nothing else.
+    """A connection string that is not a ``str`` is refused with an exact message.
 
-    Five types are covered, including raw bytes carrying what looks like a real
-    setting. Bytes are the interesting one: they would be easy to accept by
-    decoding them, but the message must still not describe what was passed,
-    because that value may be a key read from a file.
-
-    The message is matched exactly, start to end, so it cannot grow to include
-    the value later.
+    The message is "Connection string must be a string." Five types are tried,
+    including bytes that look like a real setting. The whole message is matched,
+    so it cannot start to include the value later.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         with pytest.raises(TypeError, match="^Connection string must be a string\\.$"):
-            client_type.from_connection_string(conn_str)
+            client_type.from_connection_string(connection_string)
     constructor.assert_not_called()
 
 
 @pytest.mark.parametrize(
-    "conn_str",
+    "connection_string",
     [
         "",
         ";;;",
@@ -170,58 +157,44 @@ def test_connection_string_rejects_non_strings_before_construction_rust(
         f"AccountEndpoint={ENDPOINT};;AccountKey=private-key",
     ],
 )
-def test_connection_string_malformed_errors_do_not_echo_values_rust(client_type, conn_str):
-    """Reject malformed strings with a fixed message before constructing a client.
+def test_badly_formed_strings_get_a_fixed_message_rust(client_type, connection_string):
+    """A string whose parts are not in ``name=value`` form is refused with a fixed message.
 
-    Inputs include synthetic key-like placeholders, not real secrets. Exact
-    message comparison checks that errors do not echo the supplied values,
-    which could contain credentials in a customer app.
+    No client is created. The test strings contain fake key-like text, and the
+    exact match checks that none of it appears in the message.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         with pytest.raises(ValueError) as caught:
-            client_type.from_connection_string(conn_str)
+            client_type.from_connection_string(connection_string)
     assert str(caught.value) == (
         "Connection string settings must use 'name=value' format, separated by semicolons."
     )
     constructor.assert_not_called()
 
 
-def test_connection_string_preserves_duplicate_and_extra_settings_rust(client_type):
-    """When a setting appears twice the later one wins, and settings that mean nothing
-    here are ignored rather than refused.
+def test_repeated_setting_uses_last_value_and_unknown_settings_are_ignored_rust(client_type):
+    """When a setting appears twice, the later value is used.
 
-    The string starts with one address and key and then repeats both with
-    different values; the later pair is used. That matches how these strings get
-    edited -- someone appends a corrected value rather than replacing the old
-    one.
-
-    Settings this SDK does not use, including one with an empty name, are passed
-    over. Connection strings are shared between tools and languages, so refusing
-    anything unfamiliar would reject strings that are perfectly valid elsewhere.
+    Settings the SDK does not use, including one with an empty name, are ignored
+    instead of refused, so a string with extra settings still works.
     """
-    conn_str = (
+    connection_string = (
         "AccountEndpoint=https://first.invalid;AccountKey=first-key;"
         f"{CONNECTION_STRING};UnusedSetting=ignored;=also-ignored"
     )
     with patch.object(client_type, "__init__", return_value=None) as constructor:
-        client_type.from_connection_string(conn_str)
+        client_type.from_connection_string(connection_string)
     constructor.assert_called_once_with(
         url=ENDPOINT, credential="test-key==", consistency_level=None
     )
 
 
 @pytest.mark.parametrize("name", ["AccountEndpoint", "AccountKey"])
-def test_connection_string_validates_last_duplicate_value_rust(client_type, name):
-    """Checking happens after duplicates are resolved, so an empty repeat of a good
-    setting is still caught.
+def test_repeated_setting_is_checked_after_last_value_is_chosen_rust(client_type, name):
+    """A good setting followed by a repeat that is only spaces is refused.
 
-    A valid string has the address, then separately the key, repeated at the end
-    with only whitespace. Since the later value wins, that is the value that
-    will be used, and it is empty -- so it must be refused even though an
-    earlier good one exists.
-
-    Validating before resolving duplicates would see the good value, pass, and
-    then hand the empty one to the client.
+    The later value is the one that would be used, so the check must look at it,
+    not at the earlier good value.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         with pytest.raises(ValueError, match=f"setting '{name}' must not be empty"):
@@ -229,19 +202,11 @@ def test_connection_string_validates_last_duplicate_value_rust(client_type, name
     constructor.assert_not_called()
 
 
-def test_shared_parser_preserves_values_and_setting_names_rust():
-    """The parser hands back values exactly as written, including surrounding spaces, and
-    setting names are matched exactly as spelled.
+def test_parser_keeps_values_unchanged_and_names_case_sensitive_rust():
+    """The parser returns each value exactly as written, including spaces around it.
 
-    Trimming values would be a quiet change of meaning: the parser's job is to
-    split the line, and deciding that a space is insignificant belongs to
-    whoever checks the setting. That check is what refuses whitespace-only
-    values elsewhere in this file.
-
-    Names are case-sensitive, shown by a lowercase spelling of the address
-    setting being reported as missing rather than accepted. Connection strings
-    are written by other tools with a fixed spelling, so accepting variants here
-    would make this SDK the odd one out and hide a genuine typo.
+    Setting names must match exactly: ``accountendpoint`` in lowercase is reported
+    as a missing ``AccountEndpoint``.
     """
     settings = parse_connection_string(
         "AccountEndpoint= https://example.invalid/ ;AccountKey= test-key== ;Extra=value"
@@ -257,17 +222,12 @@ def test_shared_parser_preserves_values_and_setting_names_rust():
         )
 
 
-def test_both_factories_use_the_neutral_parser_rust(client_type):
-    """Both clients read connection strings with the same parser, and it lives outside
-    either of them.
+def test_both_clients_use_the_same_parser_rust(client_type):
+    """Both factories use the same ``parse_connection_string`` function.
 
-    This is checked directly, by looking at what each factory actually refers
-    to, rather than trusting that the two behave alike today. Two copies would
-    drift, and the drift would appear as a string that works on the sync client
-    and fails on the async one.
-
-    The parser's home is checked too: it belongs to a module of its own, so
-    neither client owns it and neither is tempted to adjust it for itself.
+    It comes from its own module, ``azure.cosmos._connection_string``. Two copies
+    of the parser could drift apart, so that a string works with one client and
+    fails with the other.
     """
     assert (
         client_type.from_connection_string.__func__.__globals__[
@@ -281,43 +241,28 @@ def test_both_factories_use_the_neutral_parser_rust(client_type):
 @pytest.mark.parametrize(
     "credential", ["replacement-key", None, "", {"masterKey": "replacement"}, object()]
 )
-@pytest.mark.parametrize("conn_str", [CONNECTION_STRING, f"AccountEndpoint={ENDPOINT}"])
-def test_connection_string_rejects_credential_keyword_rust(
-    client_type, credential, conn_str
+@pytest.mark.parametrize("connection_string", [CONNECTION_STRING, f"AccountEndpoint={ENDPOINT}"])
+def test_credential_keyword_is_refused_rust(
+    client_type, credential, connection_string
 ):
-    """Passing a credential alongside a connection string is refused, whatever the
-    credential is and whether or not the string carries a key.
+    """Passing ``credential`` together with a connection string is refused, whatever the credential is.
 
-    Five credential values and both kinds of string are covered, including the
-    case where the string has no key of its own -- so this is refused even when
-    the credential is the only one available. That is deliberate: the rule is
-    easy to state and never depends on what the string happened to contain.
-
-    Two sources of credentials would otherwise raise a question with no good
-    answer. Whichever the SDK picked, some customers would be authenticating
-    with the one they thought they had overridden, and would only find out from
-    a permissions error.
-
-    The message points at the client's own constructor, which is where a caller
-    who wants to supply a credential should go.
+    It is refused even when the string has no key of its own. The message tells
+    the caller to use ``CosmosClient(url, credential=...)`` instead.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         with pytest.raises(
             TypeError, match="does not accept 'credential'.*CosmosClient"
         ):
-            client_type.from_connection_string(conn_str, credential=credential)
+            client_type.from_connection_string(connection_string, credential=credential)
     constructor.assert_not_called()
 
 
-def test_connection_string_rejects_old_positional_credential_rust(client_type):
-    """A credential passed by position, as an older version allowed, is refused rather
-    than silently absorbed.
+def test_credential_passed_by_position_is_refused_rust(client_type):
+    """A credential passed as a second positional argument is refused with ``TypeError``.
 
-    The factory once took a second positional argument. Code written against
-    that version must fail loudly here instead of having the value swallowed by
-    the catch-all arguments and quietly ignored -- which would leave it
-    authenticating with the key from the string while the author believed
-    otherwise.
+    Earlier versions of the factory accepted one there. Code written for those
+    versions must fail clearly instead of having the value ignored.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         with pytest.raises(TypeError):
@@ -325,17 +270,11 @@ def test_connection_string_rejects_old_positional_credential_rust(client_type):
     constructor.assert_not_called()
 
 
-def test_connection_string_signature_has_no_credential_rust(client_type):
-    """The factory's own signature is checked, so the rules above cannot be undone by
-    adding the argument back.
+def test_factory_signature_has_no_credential_rust(client_type):
+    """The factory's signature has no ``credential`` parameter.
 
-    Three things are pinned: there is no credential argument at all, the
-    consistency level must be named rather than passed by position, and the
-    catch-all arguments are typed as accepting anything.
-
-    The last one exists because everything not named here is forwarded to the
-    constructor untouched. Typing it narrowly would make callers fight the type
-    checker over arguments that are perfectly valid.
+    ``consistency_level`` can only be given by name. The other keywords are typed
+    as ``Any``, because the factory passes them to the constructor unchanged.
     """
     parameters = inspect.signature(client_type.from_connection_string).parameters
     assert "credential" not in parameters
@@ -343,13 +282,8 @@ def test_connection_string_signature_has_no_credential_rust(client_type):
     assert parameters["kwargs"].annotation is Any
 
 
-def test_connection_string_preserves_subclass_factory_rust(client_type):
-    """A subclass gets back its own type, not the base client.
-
-    Customers subclass the client to add logging or defaults, and the factory
-    must build whatever class it was called on. Naming the base class directly
-    would hand them an object missing everything they added -- and it would work
-    well enough to be confusing, failing only where their additions were used.
+def test_subclass_factory_returns_subclass_rust(client_type):
+    """Calling the factory on a subclass of the client returns an object of that subclass.
     """
     class CustomClient(client_type):
         pass
@@ -363,9 +297,16 @@ def test_connection_string_preserves_subclass_factory_rust(client_type):
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-def test_connection_string_samples_use_default_backend_and_close_client_rust(
+def test_connection_string_samples_run_and_close_client_rust(
     asynchronous, monkeypatch, capsys,
 ):
+    """Each connection string sample (sync and async) runs and closes its client.
+
+    The factory_mock is replaced with a mock client, so no account is needed. The test
+    checks that the sample passes ``consistency_level="Session"``, reads
+    ``order-42`` from the ``orders`` container in the ``sales`` database, closes
+    the client with its ``with`` block, and prints the order id.
+    """
     monkeypatch.setenv("AZURE_COSMOS_CONNECTION_STRING", CONNECTION_STRING)
     client = MagicMock()
     client.__enter__.return_value = client
@@ -379,10 +320,10 @@ def test_connection_string_samples_use_default_backend_and_close_client_rust(
     suffix = "_async" if asynchronous else ""
     sample = Path(__file__).resolve().parents[2] / "samples" / f"client_from_connection_string{suffix}.py"
 
-    with patch.object(client_class, "from_connection_string", return_value=client) as factory:
+    with patch.object(client_class, "from_connection_string", return_value=client) as factory_mock:
         runpy.run_path(str(sample), run_name="__main__")
 
-    factory.assert_called_once_with(CONNECTION_STRING, consistency_level="Session")
+    factory_mock.assert_called_once_with(CONNECTION_STRING, consistency_level="Session")
     client.get_database_client.assert_called_once_with("sales")
     client.get_database_client.return_value.get_container_client.assert_called_once_with("orders")
     if asynchronous:

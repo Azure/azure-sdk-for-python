@@ -10,7 +10,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-from common.test_client_timeout_defaults_unit import case as case, clock as clock
+from common.test_client_timeout_defaults_unit import client_setup as case, clock as clock
 
 
 def _complete(value):
@@ -48,8 +48,8 @@ def test_read_shares_budget_and_next_call_resets_rust(case, clock, options, budg
         calls.append(("offers", kwargs["timeout_seconds"]))
         return _response(_offer())
 
-    case.install("read_database", side_effect=metadata)
-    case.install("get_throughput", side_effect=offers)
+    case.add_fake_request("read_database", side_effect=metadata)
+    case.add_fake_request("get_throughput", side_effect=offers)
     database = case.client.get_database_client("sales")
     if warm:
         _complete(database.read())
@@ -78,8 +78,8 @@ def test_expired_read_skips_callback_and_does_not_replay_rust(case, clock, phase
         clock[0] += 1
         return _response(_offer())
 
-    case.install("read_database", side_effect=metadata)
-    dispatch = case.install("get_throughput", side_effect=offers)
+    case.add_fake_request("read_database", side_effect=metadata)
+    dispatch = case.add_fake_request("get_throughput", side_effect=offers)
     with pytest.raises(CosmosClientTimeoutError):
         _complete(case.client.get_database_client("sales").get_throughput(response_hook=hook))
     assert dispatch.call_count == (phase == "offers")
@@ -89,11 +89,11 @@ def test_expired_read_skips_callback_and_does_not_replay_rust(case, clock, phase
 @pytest.mark.parametrize("phase", ["metadata", "offers"])
 def test_read_service_failure_keeps_error_and_skips_callback_rust(case, phase):
     hook = MagicMock()
-    case.install(
+    case.add_fake_request(
         "read_database",
         result=_response({"id": "sales", "_self": "dbs/rid/"}, 403 if phase == "metadata" else 200),
     )
-    dispatch = case.install("get_throughput", result=_response({"message": "denied"}, 403))
+    dispatch = case.add_fake_request("get_throughput", result=_response({"message": "denied"}, 403))
     with pytest.raises(CosmosHttpResponseError) as caught:
         _complete(case.client.get_database_client("sales").get_throughput(response_hook=hook))
     assert caught.value.status_code == 403
@@ -105,7 +105,7 @@ def test_read_service_failure_keeps_error_and_skips_callback_rust(case, phase):
 def test_read_callback_timeout_is_not_reclassified_rust(case):
     failure = TimeoutError("customer callback")
     hook = MagicMock(side_effect=failure)
-    case.install("get_throughput", result=_response(_offer()))
+    case.add_fake_request("get_throughput", result=_response(_offer()))
     database = case.client.get_database_client("sales")
     database._properties = {"_self": "dbs/rid/"}
     with pytest.raises(TimeoutError) as caught:
@@ -129,12 +129,12 @@ def test_async_cancellation_stops_current_phase_and_skips_callback_rust(case, ph
             finally:
                 cancelled.set()
 
-        case.install(
+        case.add_fake_request(
             "read_database",
             side_effect=pending if phase == "metadata" else None,
             result=_response({"id": "sales", "_self": "dbs/rid/"}),
         )
-        dispatch = case.install(
+        dispatch = case.add_fake_request(
             "get_throughput",
             side_effect=pending if phase == "offers" else None,
             result=_response(_offer()),
@@ -164,12 +164,12 @@ def test_async_deadline_cancels_pending_phase_and_awaits_cleanup_rust(case, phas
             finally:
                 cancelled.set()
 
-        case.install(
+        case.add_fake_request(
             "read_database",
             side_effect=pending if phase == "metadata" else None,
             result=_response({"id": "sales", "_self": "dbs/rid/"}),
         )
-        dispatch = case.install(
+        dispatch = case.add_fake_request(
             "get_throughput",
             side_effect=pending if phase == "offers" else None,
             result=_response(_offer()),

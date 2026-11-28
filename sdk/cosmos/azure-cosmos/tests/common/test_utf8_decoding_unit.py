@@ -55,11 +55,11 @@ def test_utf8_decoding_keyword_overrides_nested_option_without_becoming_header_r
     ],
 )
 def test_utf8_decoding_reaches_point_request_rust(asynchronous, operation):
-    from common.test_connection_free_items_unit import AsyncBackend, Backend, invoke
+    from common.test_connection_free_items_unit import AsyncFakeSender, FakeSender, invoke
     from azure.cosmos._helpers._item_operations import ItemHelper
     from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 
-    backend = AsyncBackend() if asynchronous else Backend()
+    backend = AsyncFakeSender() if asynchronous else FakeSender()
     helper = (AsyncItemHelper if asynchronous else ItemHelper)(backend)
     invoke(helper, operation, utf8_decoding_mode="Lossy")
     assert backend.events[-1].settings.utf8_decoding_mode == "Lossy"
@@ -70,11 +70,11 @@ def test_utf8_decoding_reaches_point_request_rust(asynchronous, operation):
 )
 def test_utf8_decoding_reaches_retained_feed_request_rust(operation):
     from types import SimpleNamespace
-    from common.test_connection_free_items_unit import Backend
+    from common.test_connection_free_items_unit import FakeSender
     from azure.cosmos._helpers._feed_paging import FeedConfig
     from azure.cosmos._helpers._client_context import CosmosClientContext
 
-    backend = Backend()
+    backend = FakeSender()
     proxy = SimpleNamespace(
         _client_context=CosmosClientContext(backend), container_link="dbs/db/colls/c"
     )

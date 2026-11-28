@@ -3,21 +3,50 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Turning client construction options into settings, without any account access.
+"""Unit tests for the connection settings given when a client is created.
 
-There are two ways to ask for the same thing: a grouped policy object handed to the
-client, and individual keywords. Both must end up meaning the same thing, and where
-both are given the keyword wins. On top of that the settings have to reach two places
-at once -- the Rust configuration and the older path's policy object -- and those two
-must agree.
+A caller can give these settings in two ways: as fields on a connection
+policy, or as keywords on ``CosmosClient``. Both ways must give the same
+result. When both give the same setting, the keyword wins.
 
-Three recurring hazards are covered throughout. Zero is a real answer and must not be
-mistaken for absent. The caller's own policy object must come back unchanged, since
-they may reuse it for another client. And a setting the Rust path cannot honor must be
-refused at construction rather than quietly ignored.
+These tests check three rules:
 
-The real client classes are used; only the older connection object is stood in for, so
-nothing opens a socket.
+- Zero is a real value. It must not be treated as "not set".
+- The caller's connection policy is never changed, because they may use it
+  for another client.
+- A setting the client cannot apply is refused with ``TypeError`` when the
+  client is created, instead of being ignored.
+
+Terms used in this file:
+
+- connection policy: a ``ConnectionPolicy`` object that groups settings such
+  as preferred regions and retry limits.
+- compiled module: the part of the SDK that sends most requests to the service.
+- compiled-module settings: the settings the client passes to the compiled
+  module (``client._adapter._client_config``). It is ``None`` when the caller
+  set nothing.
+- connection object: the client's internal ``CosmosClientConnection``. Most
+  tests replace it with a mock.
+- built policy: the copy of the connection policy that the client makes and
+  passes to its connection object.
+- sender choice: the private ``_backend`` argument, or the ``COSMOS_BACKEND``
+  environment variable, picks the code that sends requests. These tests choose
+  ``"rust"``, the compiled module. The argument wins over the variable.
+- throttled: the service replied 429 (too many requests) and the SDK waits
+  before retrying.
+- throttled retry count: how many times the SDK retries a throttled request
+  (``retry_throttle_total``, or ``RetryOptions.MaxRetryAttemptCount``).
+- throttled wait limit: how many seconds the SDK normally spends waiting to
+  retry throttled requests (``throttle_retry_wait_threshold_seconds``, or
+  ``RetryOptions.MaxWaitTimeInSeconds``).
+- hedging: the ``availability_strategy`` option. When it is on, a request that
+  is slow in one region may also be sent to another region.
+- pipeline: the chain of steps (from ``azure-core``) that the connection
+  object uses to send each HTTP request.
+- transport: the last pipeline step, which actually sends the HTTP request.
+
+Every test runs against both the sync and async client. No test contacts a
+Cosmos DB account.
 """
 import asyncio
 from copy import copy, deepcopy
@@ -36,28 +65,25 @@ from azure.cosmos.documents import ConnectionPolicy
 
 @pytest.fixture(params=[sync_client, async_client], ids=["sync", "async"])
 def client_module(request):
-    """Run every test below against both the synchronous and asynchronous client.
+    """Run each test with the sync client module and then the async one.
 
-    The two have separate construction code that reads the same options. Testing only
-    one would let the other drift, and the difference would show up as a client that
-    honors a setting in one program and ignores it in another.
+    The two clients have separate code that reads the same options.
     """
     return request.param
 
 
 @pytest.fixture
 def construct_client(client_module, monkeypatch):
-    """Build real clients and hand back both the client and the older policy it produced.
+    """Return a function that creates a real client and returns it with its built policy.
 
-    Returning both is the point of this fixture: nearly every test needs to check that
-    the Rust configuration and the older path's policy say the same thing, and having
-    them side by side is what makes that possible in one assertion.
+    Most tests compare the compiled-module settings with the built policy, so the
+    function returns both. The connection object is replaced with a mock, and the
+    account address and key are fake. ``_backend`` is ``"rust"`` unless the test
+    passes its own. ``COSMOS_BACKEND`` is removed first so the outside environment
+    cannot change the result.
 
-    The backend selector is cleared first. The address and key are not real;
-    nothing connects or initializes a native runtime.
-
-    Every client built is closed at the end, awaiting the close where the asynchronous
-    client needs it. Left open, the native side holds resources for the rest of the run.
+    Every client is closed at the end of the test, so it does not hold resources
+    for the rest of the run.
     """
     monkeypatch.delenv("COSMOS_BACKEND", raising=False)
     connection = MagicMock()
@@ -84,11 +110,10 @@ def construct_client(client_module, monkeypatch):
 
 
 def configured_policy():
-    """A policy where every setting differs from the stock one.
+    """Return a connection policy where every setting differs from its default.
 
-    That is deliberate. Code here treats a setting equal to the stock value as "the
-    caller did not ask", so a policy that happened to match the defaults would pass
-    tests that a real one would fail.
+    The SDK treats a value equal to the default as "not set". If this policy used
+    default values, a test could pass even when a setting was lost.
     """
     policy = ConnectionPolicy()
     policy.PreferredLocations = ["West US", "East US"]
@@ -97,43 +122,37 @@ def configured_policy():
     return policy
 
 
-def test_grouped_settings_match_direct_keywords_rust(construct_client):
-    """Asking with a policy object and asking with keywords produce the same client.
+def test_policy_and_keywords_give_same_settings_rust(construct_client):
+    """A connection policy and the matching keywords give the same settings.
 
-    Two clients are built, one each way, with the same four settings. Their Rust
-    configurations are compared to each other and to a written-out expected value, so
-    the two agreeing on something wrong would still fail.
-
-    Then the older path's policy is checked to carry the same four. A setting that
-    reached one path and not the other would behave differently depending on which
-    backend happened to run.
+    Two clients are created, one each way, with the same four settings: preferred
+    regions, excluded regions, throttled retry count and throttled wait limit. The
+    compiled-module settings of both clients must equal each other and a
+    written-out expected value. The built policy must also hold all four values.
     """
     policy = configured_policy()
-    grouped, legacy = construct_client(connection_policy=policy)
-    direct, _ = construct_client(
+    policy_client, built_policy = construct_client(connection_policy=policy)
+    keyword_client, _ = construct_client(
         preferred_locations=["West US", "East US"], excluded_locations=["Central US"],
         retry_throttle_total=3, throttle_retry_wait_threshold_seconds=12,
     )
-    assert grouped._adapter._client_config == direct._adapter._client_config == PreparedClientConfig(
+    assert policy_client._adapter._client_config == keyword_client._adapter._client_config == PreparedClientConfig(
         preferred_locations=("West US", "East US"), excluded_locations=("Central US",),
         throttling_max_retry_count=3, throttling_max_retry_wait_time_seconds=12,
     )
-    assert legacy.PreferredLocations == policy.PreferredLocations
-    assert legacy.ExcludedLocations == policy.ExcludedLocations
-    assert legacy.RetryOptions.MaxRetryAttemptCount == 3
-    assert legacy.RetryOptions.MaxWaitTimeInSeconds == 12
+    assert built_policy.PreferredLocations == policy.PreferredLocations
+    assert built_policy.ExcludedLocations == policy.ExcludedLocations
+    assert built_policy.RetryOptions.MaxRetryAttemptCount == 3
+    assert built_policy.RetryOptions.MaxWaitTimeInSeconds == 12
 
 
 @pytest.mark.parametrize("policy", [None, ConnectionPolicy()])
-def test_default_policy_does_not_pin_rust_settings_rust(construct_client, policy):
-    """A caller who chose nothing pins nothing, whether they passed no policy or a stock one.
+def test_default_policy_sets_nothing_rust(construct_client, policy):
+    """No policy and a default policy both leave the compiled-module settings as ``None``.
 
-    The public clients build a policy for every client whether or not one was asked for,
-    so a stock policy cannot be read as a request. If it were, every client would arrive
-    with a full set of settings fixed in place, and the native side could never apply its
-    own defaults or adjust them later.
-
-    Both forms must give no configuration at all, not an empty one.
+    The client creates a policy even when the caller gives none, so a default
+    policy must not count as a request. Otherwise every client would pass every
+    setting, and the compiled module could not use its own defaults.
     """
     client, _ = construct_client(connection_policy=policy)
     assert client._adapter._client_config is None
@@ -147,9 +166,18 @@ def test_default_policy_does_not_pin_rust_settings_rust(construct_client, policy
     ("multiple_write_locations", "UseMultipleWriteLocations"),
 ])
 @pytest.mark.parametrize("value", [True, False, None, "unused"])
-def test_rust_routing_switches_fail_before_startup_rust(
+def test_routing_options_are_refused_before_client_starts_rust(
     client_module, monkeypatch, from_connection_string, selection, grouped, option, attribute, value,
 ):
+    """``enable_endpoint_discovery`` and ``multiple_write_locations`` are refused.
+
+    They are refused whether given as keywords or as policy fields. The compiled
+    module picks regions from the account's settings, so these options cannot be
+    applied. Any value is refused, even ``None``. The error must come before the
+    connection object or the sender is created, and the caller's policy must not
+    change. The sender choice is given both ways: as the argument and as the
+    environment variable.
+    """
     policy = ConnectionPolicy()
     if grouped:
         setattr(policy, attribute, value)
@@ -158,17 +186,17 @@ def test_rust_routing_switches_fail_before_startup_rust(
     else:
         kwargs = {option: value}
         rejected_name = option
-    original = dict(vars(policy))
+    policy_before = dict(vars(policy))
     if selection == "environment":
         monkeypatch.setenv("COSMOS_BACKEND", "rust")
     else:
         monkeypatch.setenv("COSMOS_BACKEND", "core-python")
         kwargs["_backend"] = "rust"
     connection = MagicMock()
-    factory = MagicMock()
+    sender_factory = MagicMock()
     monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
     factory_name = "make_async_backend" if client_module is async_client else "make_backend"
-    monkeypatch.setattr(client_module, factory_name, factory)
+    monkeypatch.setattr(client_module, factory_name, sender_factory)
     with pytest.raises(TypeError, match=rejected_name + " is not supported by Rust-backed clients"):
         if from_connection_string:
             client_module.CosmosClient.from_connection_string(
@@ -177,15 +205,22 @@ def test_rust_routing_switches_fail_before_startup_rust(
         else:
             client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
     connection.assert_not_called()
-    factory.assert_not_called()
-    assert vars(policy) == original
+    sender_factory.assert_not_called()
+    assert vars(policy) == policy_before
 
 
 @pytest.mark.parametrize("attribute,default", [
     ("EnableEndpointDiscovery", True), ("UseMultipleWriteLocations", False),
 ])
 @pytest.mark.parametrize("duplicate", [copy, deepcopy])
-def test_copied_explicit_default_routing_policy_is_rejected_rust(construct_client, attribute, default, duplicate):
+def test_routing_field_set_to_default_is_refused_even_in_copy_rust(
+    construct_client, attribute, default, duplicate,
+):
+    """Setting a routing field on a policy is refused even when the value equals the default.
+
+    The SDK checks whether the field was set, not its value. A copy made with
+    ``copy`` or ``deepcopy`` keeps the field, so the copy is refused too.
+    """
     policy = ConnectionPolicy()
     setattr(policy, attribute, default)
     with pytest.raises(TypeError, match=attribute):
@@ -196,47 +231,32 @@ def test_copied_explicit_default_routing_policy_is_rejected_rust(construct_clien
     ("EnableEndpointDiscovery", True), ("EnableEndpointDiscovery", False),
     ("UseMultipleWriteLocations", False), ("UseMultipleWriteLocations", True),
 ])
-def test_subclass_routing_switch_is_rejected_rust(construct_client, attribute, value):
+def test_routing_field_set_by_policy_subclass_is_refused_rust(construct_client, attribute, value):
+    """A routing field set as a class attribute on a ``ConnectionPolicy`` subclass is refused too.
+    """
     policy = type("RoutingPolicy", (ConnectionPolicy,), {attribute: value})()
     with pytest.raises(TypeError, match=attribute):
         construct_client(connection_policy=policy)
 
 
-@pytest.mark.parametrize("backend", ["core-python", "rust"])
-def test_untouched_routing_policy_can_be_reused_rust(construct_client, backend):
+def test_built_policy_can_create_another_client_rust(construct_client):
+    """A built policy can be given to a second client.
+
+    Creating the first client must not add routing fields to the built policy
+    or change the caller's policy. The second client gets the same regions.
+    """
     policy = configured_policy()
-    original = dict(vars(policy))
-    _, prepared_policy = construct_client(_backend=backend, connection_policy=policy)
-    # A generated legacy retry policy cannot be reused as a Rust retry control.
-    prepared_policy.ConnectionRetryConfiguration = None
-    client, _ = construct_client(connection_policy=prepared_policy)
+    policy_before = dict(vars(policy))
+    _, built_policy = construct_client(connection_policy=policy)
+    # The built policy holds a connection retry object, which the async client
+    # refuses. Clear it so the same steps work for both clients.
+    built_policy.ConnectionRetryConfiguration = None
+    client, _ = construct_client(connection_policy=built_policy)
     assert client._adapter._client_config.preferred_locations == ("West US", "East US")
     assert client._adapter._client_config.excluded_locations == ("Central US",)
-    assert vars(policy) == original
-    assert "EnableEndpointDiscovery" not in vars(prepared_policy)
-    assert "UseMultipleWriteLocations" not in vars(prepared_policy)
-
-
-@pytest.mark.parametrize("from_connection_string", [False, True])
-@pytest.mark.parametrize("grouped", [False, True])
-@pytest.mark.parametrize("discovery,multi_write", [(True, False), (False, True), (None, None)])
-def test_core_python_routing_switches_remain_available_rust(
-    construct_client, monkeypatch, from_connection_string, grouped, discovery, multi_write,
-):
-    monkeypatch.setenv("COSMOS_BACKEND", "rust")
-    if grouped:
-        policy = ConnectionPolicy()
-        policy.EnableEndpointDiscovery = discovery
-        policy.UseMultipleWriteLocations = multi_write
-        options = {"connection_policy": policy}
-    else:
-        options = {"enable_endpoint_discovery": discovery, "multiple_write_locations": multi_write}
-    client, prepared = construct_client(
-        _backend="core-python", from_connection_string=from_connection_string, **options,
-    )
-    assert client._adapter.name == "core-python"
-    assert prepared.EnableEndpointDiscovery is discovery
-    assert prepared.UseMultipleWriteLocations is multi_write
+    assert vars(policy) == policy_before
+    assert "EnableEndpointDiscovery" not in vars(built_policy)
+    assert "UseMultipleWriteLocations" not in vars(built_policy)
 
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
@@ -255,26 +275,35 @@ def test_core_python_routing_switches_remain_available_rust(
         (True, "500"),
     ],
 )
-def test_rust_fixed_throttle_interval_fails_before_startup_rust(
+def test_fixed_throttled_retry_wait_is_refused_rust(
     client_module, monkeypatch, from_connection_string, selection, grouped, value
 ):
+    """A fixed wait between throttled retries is refused.
+
+    It can be given as the ``retry_fixed_interval`` keyword or as the policy field
+    ``RetryOptions.FixedRetryIntervalInMilliseconds``. The compiled module has no
+    setting for a fixed wait, so it cannot be applied. The keyword is refused with
+    any value, even ``None``; the policy field is refused when it is not ``None``.
+    The error must come before the connection object or the sender is created, and
+    the caller's retry options must not change.
+    """
     policy = configured_policy()
     if grouped:
         policy.RetryOptions = RetryOptions(fixed_retry_interval_in_milliseconds=value)
         kwargs = {"connection_policy": policy}
     else:
         kwargs = {"retry_fixed_interval": value}
-    original = dict(vars(policy.RetryOptions))
+    retry_options_before = dict(vars(policy.RetryOptions))
     if selection == "environment":
         monkeypatch.setenv("COSMOS_BACKEND", "rust")
     else:
         monkeypatch.setenv("COSMOS_BACKEND", "core-python")
         kwargs["_backend"] = "rust"
     connection = MagicMock()
-    factory = MagicMock()
+    sender_factory = MagicMock()
     monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
     factory_name = "make_async_backend" if client_module is async_client else "make_backend"
-    monkeypatch.setattr(client_module, factory_name, factory)
+    monkeypatch.setattr(client_module, factory_name, sender_factory)
     with pytest.raises(TypeError, match="Fixed throttle retry intervals are not supported by Rust-backed clients"):
         if from_connection_string:
             client_module.CosmosClient.from_connection_string(
@@ -282,41 +311,9 @@ def test_rust_fixed_throttle_interval_fails_before_startup_rust(
             )
         else:
             client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
-    factory.assert_not_called()
+    sender_factory.assert_not_called()
     connection.assert_not_called()
-    assert vars(policy.RetryOptions) == original
-
-
-@pytest.mark.parametrize("from_connection_string", [False, True])
-@pytest.mark.parametrize("grouped", [False, True])
-@pytest.mark.parametrize("milliseconds", [250, 500])
-def test_core_python_fixed_throttle_interval_still_selects_requested_delay_rust(
-    construct_client, monkeypatch, from_connection_string, grouped, milliseconds
-):
-    from azure.cosmos import exceptions
-    from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
-
-    monkeypatch.setenv("COSMOS_BACKEND", "rust")
-    policy = configured_policy()
-    if grouped:
-        policy.RetryOptions = RetryOptions(fixed_retry_interval_in_milliseconds=milliseconds)
-        kwargs = {"connection_policy": policy}
-    else:
-        kwargs = {"retry_fixed_interval": milliseconds}
-    original = dict(vars(policy.RetryOptions))
-    client, prepared = construct_client(_backend="core-python", from_connection_string=from_connection_string, **kwargs)
-    assert client._adapter.name == "core-python"
-    options = prepared.RetryOptions
-    assert options.FixedRetryIntervalInMilliseconds == milliseconds
-    retry = ResourceThrottleRetryPolicy(
-        options.MaxRetryAttemptCount, options.FixedRetryIntervalInMilliseconds, options.MaxWaitTimeInSeconds
-    )
-    error = exceptions.CosmosHttpResponseError(status_code=429)
-    for service_delay in (100, 200):
-        error.headers = {"x-ms-retry-after-ms": str(service_delay)}
-        assert retry.ShouldRetry(error)
-        assert retry.retry_after_in_milliseconds == milliseconds
-    assert vars(policy.RetryOptions) == original
+    assert vars(policy.RetryOptions) == retry_options_before
 
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
@@ -326,9 +323,19 @@ def test_core_python_fixed_throttle_interval_still_selects_requested_delay_rust(
     "retry_total", "retry_backoff_max", "retry_status", "retry_on_status_codes", "retry_write",
 ])
 @pytest.mark.parametrize("value", [None, 0, 2, False, "2", MagicMock()])
-def test_rust_connection_retry_controls_fail_before_policy_or_backend_creation_rust(
+def test_connection_retry_keywords_are_refused_rust(
     client_module, monkeypatch, from_connection_string, selection, keyword, value
 ):
+    """These retry keywords are refused with any value, even ``None``.
+
+    They are: connection and read retry counts, a custom retry policy, retry delay
+    settings, the general retry count and wait (``retry_total`` and
+    ``retry_backoff_max``), the status codes to retry, and ``retry_write``. The
+    compiled module chooses its own retries and has no matching setting for any of
+    them. Instead of ``retry_total`` and ``retry_backoff_max``, use the throttled
+    retry count and throttled wait limit keywords. The error must come before the
+    built policy, the sender or the connection object is created.
+    """
     kwargs = {keyword: value}
     if selection == "environment":
         monkeypatch.setenv("COSMOS_BACKEND", "rust")
@@ -336,12 +343,12 @@ def test_rust_connection_retry_controls_fail_before_policy_or_backend_creation_r
         monkeypatch.setenv("COSMOS_BACKEND", "core-python")
         kwargs["_backend"] = "rust"
     connection = MagicMock()
-    factory = MagicMock()
+    sender_factory = MagicMock()
     build_policy = MagicMock()
     monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
     monkeypatch.setattr(client_module, "_build_connection_policy", build_policy)
     factory_name = "make_async_backend" if client_module is async_client else "make_backend"
-    monkeypatch.setattr(client_module, factory_name, factory)
+    monkeypatch.setattr(client_module, factory_name, sender_factory)
     with pytest.raises(TypeError, match=keyword + " is not supported by Rust-backed clients; omit this keyword"):
         if from_connection_string:
             client_module.CosmosClient.from_connection_string(
@@ -350,58 +357,23 @@ def test_rust_connection_retry_controls_fail_before_policy_or_backend_creation_r
         else:
             client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
     build_policy.assert_not_called()
-    factory.assert_not_called()
+    sender_factory.assert_not_called()
     connection.assert_not_called()
-
-
-@pytest.mark.parametrize("from_connection_string", [False, True])
-@pytest.mark.parametrize("connect,read", [(0, 0), (2, 4), (None, None)])
-def test_core_python_connection_retry_counts_remain_available_rust(
-    construct_client, monkeypatch, from_connection_string, connect, read
-):
-    monkeypatch.setenv("COSMOS_BACKEND", "rust")
-    client, prepared = construct_client(
-        _backend="core-python",
-        from_connection_string=from_connection_string,
-        retry_connect=connect,
-        retry_read=read,
-    )
-    assert client._adapter.name == "core-python"
-    settings = prepared.ConnectionRetryConfiguration.configure_retries({})
-    assert settings["connect"] == (3 if connect is None else connect)
-    assert settings["read"] == (3 if read is None else read)
-
-
-@pytest.mark.parametrize("from_connection_string", [False, True])
-def test_core_python_custom_retry_policy_is_preserved_rust(
-    client_module, construct_client, monkeypatch, from_connection_string
-):
-    monkeypatch.setenv("COSMOS_BACKEND", "rust")
-    custom_policy = MagicMock()
-    if client_module is sync_client:
-        with pytest.warns(DeprecationWarning, match="connection_retry_policy"):
-            client, prepared = construct_client(
-                _backend="core-python",
-                from_connection_string=from_connection_string,
-                connection_retry_policy=custom_policy,
-            )
-    else:
-        policy = ConnectionPolicy()
-        policy.ConnectionRetryConfiguration = custom_policy
-        client, prepared = construct_client(
-            _backend="core-python", from_connection_string=from_connection_string, connection_policy=policy
-        )
-        assert policy.ConnectionRetryConfiguration is custom_policy
-    assert client._adapter.name == "core-python"
-    assert prepared.ConnectionRetryConfiguration is custom_policy
 
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("selection", ["keyword", "environment"])
 @pytest.mark.parametrize("value", [None, 0, 2])
-def test_rust_hedging_execution_control_fails_before_startup_rust(
+def test_hedging_concurrency_options_are_refused_rust(
     client_module, monkeypatch, from_connection_string, selection, value,
 ):
+    """The options that control how hedged requests run are refused with any value, even ``None``.
+
+    The sync client's option is ``availability_strategy_executor`` and the async
+    client's is ``availability_strategy_max_concurrency``. The compiled module runs
+    hedged requests itself. The error must come before the sender, the connection
+    object or the built policy is created.
+    """
     keyword = (
         "availability_strategy_max_concurrency" if client_module is async_client
         else "availability_strategy_executor"
@@ -411,10 +383,10 @@ def test_rust_hedging_execution_control_fails_before_startup_rust(
     if selection == "keyword":
         kwargs["_backend"] = "rust"
     factory_name = "make_async_backend" if client_module is async_client else "make_backend"
-    factory = MagicMock()
+    sender_factory = MagicMock()
     connection = MagicMock()
     build_policy = MagicMock()
-    monkeypatch.setattr(client_module, factory_name, factory)
+    monkeypatch.setattr(client_module, factory_name, sender_factory)
     monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
     monkeypatch.setattr(client_module, "_build_connection_policy", build_policy)
     with pytest.raises(TypeError, match=keyword + " is not supported by Rust-backed clients"):
@@ -424,7 +396,7 @@ def test_rust_hedging_execution_control_fails_before_startup_rust(
             )
         else:
             client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
-    factory.assert_not_called()
+    sender_factory.assert_not_called()
     connection.assert_not_called()
     build_policy.assert_not_called()
 
@@ -432,19 +404,27 @@ def test_rust_hedging_execution_control_fails_before_startup_rust(
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("selection", ["keyword", "environment"])
 @pytest.mark.parametrize("custom_policy", [0, False, 4, MagicMock()])
-def test_async_rust_grouped_retry_policy_fails_before_startup_rust(
+def test_async_client_refuses_policy_connection_retry_rust(
     monkeypatch, from_connection_string, selection, custom_policy,
 ):
+    """The async client refuses a policy whose ``ConnectionRetryConfiguration`` is not ``None``.
+
+    Even ``0`` and ``False`` are refused. The compiled module chooses its own
+    retries, so a retry setting on the policy cannot be applied. The error must
+    come before the sender, the connection object or the built policy is created,
+    and the caller's policy must keep its value. The sync client does not read this
+    field from the caller's policy, so only the async client is tested.
+    """
     policy = ConnectionPolicy()
     policy.ConnectionRetryConfiguration = custom_policy
     kwargs = {"connection_policy": policy}
     monkeypatch.setenv("COSMOS_BACKEND", "rust" if selection == "environment" else "core-python")
     if selection == "keyword":
         kwargs["_backend"] = "rust"
-    factory = MagicMock()
+    sender_factory = MagicMock()
     connection = MagicMock()
     build_policy = MagicMock()
-    monkeypatch.setattr(async_client, "make_async_backend", factory)
+    monkeypatch.setattr(async_client, "make_async_backend", sender_factory)
     monkeypatch.setattr(async_client, "CosmosClientConnection", connection)
     monkeypatch.setattr(async_client, "_build_connection_policy", build_policy)
     with pytest.raises(TypeError, match=r"connection_policy\.ConnectionRetryConfiguration"):
@@ -454,72 +434,46 @@ def test_async_rust_grouped_retry_policy_fails_before_startup_rust(
             )
         else:
             async_client.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
-    factory.assert_not_called()
+    sender_factory.assert_not_called()
     connection.assert_not_called()
     build_policy.assert_not_called()
     assert policy.ConnectionRetryConfiguration is custom_policy
 
 
-@pytest.mark.parametrize("from_connection_string", [False, True])
-def test_core_python_retry_delays_and_hedging_controls_remain_available_rust(
-    client_module, construct_client, monkeypatch, from_connection_string,
-):
-    monkeypatch.setenv("COSMOS_BACKEND", "rust")
-    keyword = (
-        "availability_strategy_max_concurrency" if client_module is async_client
-        else "availability_strategy_executor"
-    )
-    value = 2 if client_module is async_client else MagicMock()
-    client, prepared = construct_client(
-        _backend="core-python", from_connection_string=from_connection_string,
-        retry_mode="exponential", retry_backoff_factor=3, **{keyword: value},
-    )
-    assert client._adapter.name == "core-python"
-    retry = prepared.ConnectionRetryConfiguration
-    settings = retry.configure_retries({})
-    settings["history"] = [MagicMock(), MagicMock(), MagicMock()]
-    assert retry.get_backoff_time(settings) == 12
-    assert client_module.CosmosClientConnection.call_args.kwargs[keyword] is value
+def test_connection_string_keeps_policy_settings_rust(construct_client):
+    """Creating a client with ``from_connection_string`` keeps the policy's settings.
 
-
-def test_connection_string_factory_preserves_grouped_settings_rust(construct_client):
-    """Building from a connection string keeps the policy just as the direct constructor does.
-
-    There are two ways to make a client and they take different routes to the same
-    place. The second is easy to forget when options are added, and a setting silently
-    dropped there would only show up for the customers who use it.
+    It must behave just as the constructor does. The compiled-module settings must
+    have the policy's regions, and the built policy must have its throttled retry
+    count.
     """
-    client, legacy = construct_client(
+    client, built_policy = construct_client(
         from_connection_string=True, connection_policy=configured_policy()
     )
     assert client._adapter._client_config.preferred_locations == ("West US", "East US")
-    assert legacy.RetryOptions.MaxRetryAttemptCount == 3
+    assert built_policy.RetryOptions.MaxRetryAttemptCount == 3
 
 
-@pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("seconds", [0, 2.5, 10.0, None])
-def test_throttle_wait_threshold_reaches_both_policies_rust(
-    construct_client,
-    backend,
-    from_connection_string,
-    seconds,
-):
-    client, legacy = construct_client(
-        _backend=backend,
+def test_throttled_wait_limit_reaches_both_settings_rust(construct_client, from_connection_string, seconds):
+    """The throttled wait limit keyword reaches the compiled-module settings and the built policy.
+
+    ``0`` stays ``0``. ``None`` means not set, so the policy's value of 12 is
+    used. The throttled retry count keyword (5) is checked too.
+    """
+    client, built_policy = construct_client(
         from_connection_string=from_connection_string,
         connection_policy=configured_policy(),
         retry_throttle_total=5,
         throttle_retry_wait_threshold_seconds=seconds,
     )
     expected = 12 if seconds is None else seconds
-    if backend == "rust":
-        assert client._adapter._client_config.throttling_max_retry_count == 5
-        assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == expected
-    assert legacy.RetryOptions.MaxWaitTimeInSeconds == expected
+    assert client._adapter._client_config.throttling_max_retry_count == 5
+    assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == expected
+    assert built_policy.RetryOptions.MaxWaitTimeInSeconds == expected
 
 
-@pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize(
     "options",
@@ -532,18 +486,24 @@ def test_throttle_wait_threshold_reaches_both_policies_rust(
         {"options": {"retry_throttle_backoff_max": None}},
     ],
 )
-def test_old_throttle_wait_name_fails_before_startup_rust(
+def test_old_throttled_wait_keyword_name_is_refused_rust(
     client_module,
     monkeypatch,
-    backend,
     from_connection_string,
     options,
 ):
+    """The old keyword ``retry_throttle_backoff_max`` is refused, and the message gives the new name.
+
+    The new name is ``throttle_retry_wait_threshold_seconds``. The old one is
+    refused with any value, even ``None``, and also when it is inside
+    ``request_options``, ``feed_options`` or ``options``. The error must come
+    before the sender or the connection object is created.
+    """
     connection = MagicMock()
-    factory = MagicMock()
+    sender_factory = MagicMock()
     monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
     factory_name = "make_async_backend" if client_module is async_client else "make_backend"
-    monkeypatch.setattr(client_module, factory_name, factory)
+    monkeypatch.setattr(client_module, factory_name, sender_factory)
     with pytest.raises(
         TypeError,
         match="retry_throttle_backoff_max has been renamed; use throttle_retry_wait_threshold_seconds",
@@ -551,133 +511,91 @@ def test_old_throttle_wait_name_fails_before_startup_rust(
         if from_connection_string:
             client_module.CosmosClient.from_connection_string(
                 "AccountEndpoint=https://policy.invalid;AccountKey=ZmFrZQ==;",
-                _backend=backend,
+                _backend="rust",
                 **options,
             )
         else:
             client_module.CosmosClient(
                 "https://policy.invalid",
                 "ZmFrZQ==",
-                _backend=backend,
+                _backend="rust",
                 **options,
             )
-    factory.assert_not_called()
+    sender_factory.assert_not_called()
     connection.assert_not_called()
 
 
-def test_policy_zero_retry_limits_are_not_replaced_by_defaults_rust(construct_client):
-    """Preserve zero throttling retry limits instead of substituting defaults.
+def test_policy_zero_retry_limits_are_kept_rust(construct_client):
+    """A policy with a throttled retry count and wait limit of ``0`` keeps both zeros.
 
-    Check the prepared Rust settings and retained Python policy. These assertions
-    do not establish that other driver retry mechanisms are disabled.
+    Neither the compiled-module settings nor the built policy may replace them
+    with defaults.
     """
     policy = ConnectionPolicy()
     policy.RetryOptions = RetryOptions(max_retry_attempt_count=0, max_wait_time_in_seconds=0)
-    client, legacy = construct_client(connection_policy=policy)
+    client, built_policy = construct_client(connection_policy=policy)
     assert client._adapter._client_config.throttling_max_retry_count == 0
     assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == 0
-    assert legacy.RetryOptions.MaxRetryAttemptCount == 0
-    assert legacy.RetryOptions.MaxWaitTimeInSeconds == 0
+    assert built_policy.RetryOptions.MaxRetryAttemptCount == 0
+    assert built_policy.RetryOptions.MaxWaitTimeInSeconds == 0
 
 
-@pytest.mark.parametrize("backend,overrides,count,wait", [
-    ("core-python", {"retry_total": 7, "retry_backoff_max": 20}, 7, 20),
-    ("core-python", {"retry_total": 0, "retry_backoff_max": 0}, 0, 0),
-    ("core-python", {"retry_total": 7, "retry_backoff_max": 20,
-                     "retry_throttle_total": 0, "throttle_retry_wait_threshold_seconds": 0}, 0, 0),
-    ("core-python", {"retry_total": 7, "retry_throttle_total": None,
-                     "retry_backoff_max": 20, "throttle_retry_wait_threshold_seconds": None}, 7, 20),
-    ("rust", {"retry_throttle_total": 0, "throttle_retry_wait_threshold_seconds": 0}, 0, 0),
-    ("rust", {"retry_throttle_total": 7, "throttle_retry_wait_threshold_seconds": 20}, 7, 20),
-    ("rust", {"retry_throttle_total": None, "throttle_retry_wait_threshold_seconds": None}, 3, 12),
-    ("core-python", {"retry_throttle_total": None, "throttle_retry_wait_threshold_seconds": None}, 3, 12),
+@pytest.mark.parametrize("overrides,count,wait", [
+    ({"retry_throttle_total": 0, "throttle_retry_wait_threshold_seconds": 0}, 0, 0),
+    ({"retry_throttle_total": 7, "throttle_retry_wait_threshold_seconds": 20}, 7, 20),
+    ({"retry_throttle_total": None, "throttle_retry_wait_threshold_seconds": None}, 3, 12),
 ])
-def test_retry_precedence_includes_zero_rust(construct_client, backend, overrides, count, wait):
-    """The specific retry keyword beats the general one, the general one beats the policy,
-    and passing nothing means the keyword was not used.
+def test_retry_keywords_win_over_policy_including_zero_rust(construct_client, overrides, count, wait):
+    """The throttled retry count and wait limit keywords win over the policy, even when they are ``0``.
 
-    The general keywords alone win over the policy. Zero through the general keywords
-    is honored. The specific keywords win over the general ones, including when they
-    are zero. Passing the specific ones as nothing steps down to the general ones rather
-    than being treated as a choice of nothing. Passing both as nothing falls all the way
-    back to the policy.
-
-    That last distinction is the delicate one, and it is why the value meaning "absent"
-    has to be separate from zero. Rust clients reject the general keywords, so the Rust
-    cases use only the specific keywords and the policy.
+    Zero must not be treated as "not set". ``None`` means not set, so the
+    policy's values (3 and 12) are used.
     """
-    client, legacy = construct_client(
-        _backend=backend, connection_policy=configured_policy(), **overrides
-    )
-    if backend == "rust":
-        assert client._adapter._client_config.throttling_max_retry_count == count
-        assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == wait
-    assert legacy.RetryOptions.MaxRetryAttemptCount == count
-    assert legacy.RetryOptions.MaxWaitTimeInSeconds == wait
+    client, built_policy = construct_client(connection_policy=configured_policy(), **overrides)
+    assert client._adapter._client_config.throttling_max_retry_count == count
+    assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == wait
+    assert built_policy.RetryOptions.MaxRetryAttemptCount == count
+    assert built_policy.RetryOptions.MaxWaitTimeInSeconds == wait
 
 
-@pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("locations", [[], ["North Europe"]])
-def test_region_keywords_override_policy_including_empty_rust(construct_client, backend, locations):
-    """An empty list of regions is a real instruction and must not fall back to the policy.
+def test_region_keywords_win_over_policy_even_when_empty_rust(construct_client, locations):
+    """Region keywords win over the policy, even when the keyword is an empty list.
 
-    The policy names regions; the keywords ask for an empty list. Empty means "no
-    preference, use the account's own order", which is a different request from "I did
-    not say". Treating it as unsaid would leave the client pinned to regions the caller
-    just cleared, sending their requests somewhere they had specifically stopped asking
-    for.
-
-    Both an empty list and a real one are run, on both backends.
+    An empty list means the caller wants no regions in that list. That is
+    different from "not set", so it must not fall back to the policy's regions.
+    Both an empty list and a one-region list are tried.
     """
-    client, legacy = construct_client(
-        _backend=backend, connection_policy=configured_policy(),
-        preferred_locations=locations, excluded_locations=[],
+    client, built_policy = construct_client(
+        connection_policy=configured_policy(), preferred_locations=locations, excluded_locations=[],
     )
-    assert legacy.PreferredLocations == locations
-    assert legacy.ExcludedLocations == []
-    if backend == "rust":
-        assert client._adapter._client_config.preferred_locations == tuple(locations)
-        assert client._adapter._client_config.excluded_locations == ()
+    assert built_policy.PreferredLocations == locations
+    assert built_policy.ExcludedLocations == []
+    assert client._adapter._client_config.preferred_locations == tuple(locations)
+    assert client._adapter._client_config.excluded_locations == ()
 
 
-def test_core_python_policy_timeouts_still_resolve_with_keyword_and_alias_precedence_rust(construct_client):
-    """The older millisecond name for the connection timeout still wins, and the caller's
-    policy is left alone.
-
-    Two keywords mean the same timeout. The older one is counted in thousandths, the
-    newer in whole seconds, and both are passed here with different values. The older one
-    wins, so two thousand of the smaller units becomes two seconds and the three passed
-    in the newer form is not used. Keeping that order is what stops an old program
-    changing behavior when it is run against a newer client.
-
-    The read timeout, given only as a keyword, beats the one in the policy. The caller's
-    policy object is then checked to still hold its original numbers, since they may hand
-    the same policy to another client and expect it unchanged.
-    """
-    policy = configured_policy()
-    policy.RequestTimeout = 4
-    _, legacy = construct_client(
-        _backend="core-python", connection_policy=policy,
-        request_timeout=2000, connection_timeout=3,
-    )
-    assert legacy.RequestTimeout == 2
-    assert policy.RequestTimeout == 4
-@pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize(
     "option",
     ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport"],
 )
 @pytest.mark.parametrize("value", [None, True, False, {}, "alpha-bank-ca.pem"])
-def test_removed_network_options_fail_before_startup_rust(
-    client_module, monkeypatch, backend, from_connection_string, option, value,
+def test_removed_network_options_are_refused_rust(
+    client_module, monkeypatch, from_connection_string, option, value,
 ):
+    """Proxy, secure connection (TLS) and transport options are no longer accepted.
+
+    They are refused with any value, even ``None``, and the error says the option
+    has been removed. The error must come before the sender or the connection
+    object is created.
+    """
     connection = MagicMock()
-    backend_factory = MagicMock()
+    sender_factory = MagicMock()
     monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
     factory_name = "make_async_backend" if client_module is async_client else "make_backend"
-    monkeypatch.setattr(client_module, factory_name, backend_factory)
-    kwargs = {"_backend": backend, option: value}
+    monkeypatch.setattr(client_module, factory_name, sender_factory)
+    kwargs = {"_backend": "rust", option: value}
     with pytest.raises(TypeError, match=rf"{option} has been removed"):
         if from_connection_string:
             client_module.CosmosClient.from_connection_string(
@@ -686,16 +604,20 @@ def test_removed_network_options_fail_before_startup_rust(
         else:
             client_module.CosmosClient("https://alpha-bank-account.invalid", "ZmFrZQ==", **kwargs)
     connection.assert_not_called()
-    backend_factory.assert_not_called()
+    sender_factory.assert_not_called()
 
 
-@pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("attribute", ["ProxyConfiguration", "SSLConfiguration", "DisableSSLVerification"])
 @pytest.mark.parametrize("value", [None, False, object()])
-def test_removed_policy_fields_fail_before_startup_rust(
-    client_module, monkeypatch, backend, from_connection_string, attribute, value,
+def test_removed_policy_fields_are_refused_rust(
+    client_module, monkeypatch, from_connection_string, attribute, value,
 ):
+    """A policy with ``ProxyConfiguration``, ``SSLConfiguration`` or ``DisableSSLVerification`` is refused.
+
+    It is refused with any value, even ``None``. The connection object must not
+    be created, and the caller's policy must keep its value.
+    """
     policy = ConnectionPolicy()
     setattr(policy, attribute, value)
     connection = MagicMock()
@@ -704,11 +626,11 @@ def test_removed_policy_fields_fail_before_startup_rust(
         if from_connection_string:
             client_module.CosmosClient.from_connection_string(
                 "AccountEndpoint=https://alpha-bank-account.invalid;AccountKey=ZmFrZQ==;",
-                connection_policy=policy, _backend=backend,
+                connection_policy=policy, _backend="rust",
             )
         else:
             client_module.CosmosClient(
-                "https://alpha-bank-account.invalid", "ZmFrZQ==", connection_policy=policy, _backend=backend,
+                "https://alpha-bank-account.invalid", "ZmFrZQ==", connection_policy=policy, _backend="rust",
             )
     connection.assert_not_called()
     assert getattr(policy, attribute) is value
@@ -719,26 +641,31 @@ def test_removed_policy_fields_fail_before_startup_rust(
     "option",
     ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport"],
 )
-def test_nested_removed_network_options_are_rejected_rust(nested, option):
+def test_removed_network_options_inside_option_dicts_are_refused_rust(nested, option):
+    """The removed network options are refused even inside ``request_options``, ``feed_options`` or ``options``.
+    """
     from azure.cosmos._backend.capabilities import reject_removed_options
 
     with pytest.raises(TypeError, match=rf"{option} has been removed"):
         reject_removed_options({nested: {option: None}})
 
 
-@pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("option", ["raw_request_hook", "raw_response_hook"])
 @pytest.mark.parametrize("value", [None, False, lambda _message: None])
-def test_removed_raw_hooks_fail_before_startup_rust(
-    client_module, monkeypatch, backend, from_connection_string, option, value,
+def test_removed_raw_hooks_are_refused_rust(
+    client_module, monkeypatch, from_connection_string, option, value,
 ):
+    """``raw_request_hook`` and ``raw_response_hook`` are refused with any value, even ``None``.
+
+    The error must come before the sender or the connection object is created.
+    """
     connection = MagicMock()
-    backend_factory = MagicMock()
+    sender_factory = MagicMock()
     monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
     factory_name = "make_async_backend" if client_module is async_client else "make_backend"
-    monkeypatch.setattr(client_module, factory_name, backend_factory)
-    kwargs = {"_backend": backend, option: value}
+    monkeypatch.setattr(client_module, factory_name, sender_factory)
+    kwargs = {"_backend": "rust", option: value}
     with pytest.raises(TypeError, match=rf"{option} has been removed"):
         if from_connection_string:
             client_module.CosmosClient.from_connection_string(
@@ -747,10 +674,14 @@ def test_removed_raw_hooks_fail_before_startup_rust(
         else:
             client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
     connection.assert_not_called()
-    backend_factory.assert_not_called()
+    sender_factory.assert_not_called()
 
 
 def test_removed_configuration_classes_are_not_exported_rust():
+    """``ProxyConfiguration`` and ``SSLConfiguration`` can no longer be imported.
+
+    Neither ``azure.cosmos`` nor ``azure.cosmos.documents`` has them.
+    """
     import azure.cosmos
     from azure.cosmos import documents
 
@@ -764,13 +695,24 @@ def test_removed_configuration_classes_are_not_exported_rust():
     ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport",
      "raw_request_hook", "raw_response_hook"],
 )
-def test_direct_connection_rejects_removed_options_rust(client_module, option):
+def test_connection_object_refuses_removed_options_rust(client_module, option):
+    """The connection object also refuses every removed option when it is created directly.
+
+    This test uses the real connection object, not a mock.
+    """
     with pytest.raises(TypeError, match=rf"{option} has been removed"):
         client_module.CosmosClientConnection("https://alpha-bank-account.invalid", None, **{option: None})
 
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
-def test_test_sender_uses_internal_pipeline_and_restores_factory_rust(client_module, from_connection_string):
+def test_transport_helper_sets_transport_and_restores_pipeline_rust(client_module, from_connection_string):
+    """The test helper ``create_client_with_transport`` gives the client's pipeline a custom transport.
+
+    To do this, it replaces the SDK's pipeline factory while the client is
+    created, and it must put the original factory back afterwards. The pipeline
+    must not include ``CustomHookPolicy``, the step that runs raw request and
+    response hooks. No request is sent.
+    """
     import importlib
     from azure.core.pipeline.policies import CustomHookPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
@@ -778,8 +720,8 @@ def test_test_sender_uses_internal_pipeline_and_restores_factory_rust(client_mod
 
     async_mode = client_module is async_client
     connection_module = importlib.import_module(client_module.CosmosClientConnection.__module__)
-    factory_name = "AsyncPipelineClient" if async_mode else "PipelineClient"
-    original_factory = getattr(connection_module, factory_name)
+    pipeline_factory_name = "AsyncPipelineClient" if async_mode else "PipelineClient"
+    original_pipeline_factory = getattr(connection_module, pipeline_factory_name)
     transport = MagicMock(spec=AsyncHttpTransport if async_mode else HttpTransport)
     if from_connection_string:
         client = create_client_with_transport(
@@ -798,7 +740,7 @@ def test_test_sender_uses_internal_pipeline_and_restores_factory_rust(client_mod
             isinstance(getattr(policy, "_policy", policy), CustomHookPolicy)
             for policy in client.client_connection.pipeline_client._pipeline._impl_policies
         )
-        assert getattr(connection_module, factory_name) is original_factory
+        assert getattr(connection_module, pipeline_factory_name) is original_pipeline_factory
         transport.send.assert_not_called()
     finally:
         result = client.close()
@@ -806,59 +748,44 @@ def test_test_sender_uses_internal_pipeline_and_restores_factory_rust(client_mod
             asyncio.run(result)
 
 
-def test_mutable_policy_settings_are_snapshotted_rust(construct_client):
-    """Changing the policy the client produced does not reach back into the caller's.
+def test_changing_built_policy_does_not_change_caller_policy_rust(construct_client):
+    """Changing the built policy after the client is created changes nothing else.
 
-    The earlier tests changed nothing after construction. This one attacks from the other
-    side: the client's own policy is changed afterwards, adding to one region list,
-    emptying the other, and lowering a retry count. All three are the kind of change
-    something inside the client might make while running.
-
-    None of it may show up in the caller's policy, and the Rust configuration is checked
-    too -- it took its own copy, so it must still hold the regions asked for rather than
-    the amended list.
+    The test adds a region to one list, empties the other and lowers the retry
+    count, all on the built policy. The caller's policy must keep its values, and
+    the compiled-module settings must keep the original regions.
     """
     policy = configured_policy()
-    client, legacy = construct_client(connection_policy=policy)
-    legacy.PreferredLocations.append("North Europe")
-    legacy.ExcludedLocations.clear()
-    legacy.RetryOptions._max_retry_attempt_count = 1
+    client, built_policy = construct_client(connection_policy=policy)
+    built_policy.PreferredLocations.append("North Europe")
+    built_policy.ExcludedLocations.clear()
+    built_policy.RetryOptions._max_retry_attempt_count = 1
     assert policy.PreferredLocations == ["West US", "East US"]
     assert policy.ExcludedLocations == ["Central US"]
     assert policy.RetryOptions.MaxRetryAttemptCount == 3
     assert client._adapter._client_config.preferred_locations == ("West US", "East US")
 
 
-def test_normalization_does_not_modify_input_and_is_idempotent_rust():
-    """Working out the settings changes nothing it was given, and doing it twice changes
-    nothing further.
+def test_resolving_settings_changes_nothing_and_repeats_same_result_rust():
+    """``resolve_connection_policy_kwargs`` turns policy fields and keywords into one set of settings.
 
-    The first half checks the arguments and the policy's retry settings are exactly as
-    they were. The second feeds the result back in: the answer must be identical.
-
-    Running twice is not hypothetical. Both construction routes call this, and the
-    connection string route can end up calling it on arguments that have already been
-    through it. If each pass promoted values a little further, the same options would
-    mean different things depending on how the client was built.
+    It must not change the keywords or the policy it is given, and running it
+    again on its own result must give the same result.
     """
     policy = configured_policy()
-    kwargs = {"connection_policy": policy, "retry_total": 0}
+    options = {"connection_policy": policy, "retry_total": 0}
     original = dict(vars(policy.RetryOptions))
-    resolved = resolve_connection_policy_kwargs(kwargs)
-    assert kwargs == {"connection_policy": policy, "retry_total": 0}
+    resolved = resolve_connection_policy_kwargs(options)
+    assert options == {"connection_policy": policy, "retry_total": 0}
     assert vars(policy.RetryOptions) == original
     assert resolve_connection_policy_kwargs(resolved) == resolved
 
 
-def test_invalid_policy_rejected_before_startup_rust(construct_client, client_module):
-    """Something that is not a policy object is refused, with the error naming the option.
+def test_value_that_is_not_a_policy_is_refused_rust(construct_client, client_module):
+    """A value that is not a ``ConnectionPolicy`` is refused, and the error names ``connection_policy``.
 
-    A plain dictionary is the natural mistake, and its keys even look right. Accepting it
-    would mean reading every setting off it as missing, so the client would be built with
-    none of what was asked for and no complaint anywhere.
-
-    The error names the option so the caller knows which argument to fix, and the older
-    connection object is checked never to have been built.
+    A plain dictionary is an easy mistake, so one is used here. The connection
+    object must not be created.
     """
     with pytest.raises(TypeError, match="connection_policy"):
         construct_client(connection_policy={"preferred_locations": ["West US"]})

@@ -48,7 +48,7 @@ from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
-from common.test_connection_free_items_unit import Backend, AsyncBackend
+from common.test_connection_free_items_unit import FakeSender, AsyncFakeSender
 from create_item.test_create_item_contract_unit import point_create
 from read_item.test_read_item_contract_unit import point_read
 
@@ -154,7 +154,7 @@ def test_rust_helper_never_repeats_public_create_preparation_rust(monkeypatch, a
         side_effect=AssertionError("helper repeated public preparation")
     )
     monkeypatch.setattr(_item_prep, "prepare_create_item_kwargs", forbidden)
-    backend = AsyncBackend() if async_mode else Backend()
+    backend = AsyncFakeSender() if async_mode else FakeSender()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
     finish(
         helper.create_item(
@@ -181,7 +181,7 @@ def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(asyn
     Finally the container is dropped while the helpers remain referenced.
     Confirming collection proves those helpers do not retain the container.
     """
-    backend = AsyncBackend() if async_mode else Backend()
+    backend = AsyncFakeSender() if async_mode else FakeSender()
     proxy_type = AsyncContainerProxy if async_mode else ContainerProxy
     helper_type = AsyncItemHelper if async_mode else ItemHelper
     construct = MagicMock(wraps=helper_type)
@@ -251,7 +251,7 @@ def test_cached_helper_keeps_concurrent_request_and_result_state_local_rust(asyn
     The helper is still the same object afterwards, so concurrency did not
     quietly disable the reuse.
     """
-    backend = AsyncBackend() if async_mode else Backend()
+    backend = AsyncFakeSender() if async_mode else FakeSender()
     barrier = threading.Barrier(2)
 
     def reply(prepared):
