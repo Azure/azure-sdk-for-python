@@ -3309,11 +3309,8 @@ async def read_item(
 **Related migration requirements**
 
 Read consistency and throttle-retry totals remain tracked in
-[gap 8](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-8) and
-[gap 29](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-29), not as approved API
-changes. See [migration status](V5/api-review/RUST_MIGRATION_STATUS.md#containerproxyread_item)
-for the remaining gaps and [live verification](V5/api-review/LIVE_VERIFICATION.md#containerproxyread_item)
-for comparison evidence.
+gap 8 and gap 29, not as approved API changes. See the migration status
+for the remaining gaps and the live verification results for comparison evidence.
 
 <a id="18---reading-known-items"></a>
 <a id="containerproxyread_items"></a>
