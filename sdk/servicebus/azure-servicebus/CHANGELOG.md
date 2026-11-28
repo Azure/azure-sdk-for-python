@@ -6,6 +6,10 @@
 
 - Added sync and async `ServiceBusReceiver.delete_messages()` and `purge_messages()` methods. Basic and Standard support up to 500 messages per request, Premium supports up to 4,000, and purge handles smaller batches caused by large messages.
 
+### Bugs Fixed
+
+- Fixed a race condition in the async `ServiceBusSender` where concurrent coroutines opening the same sender could raise `AttributeError: 'NoneType' object has no attribute 'client_ready_async'`. Opening the link is now serialized per sender, and the time a caller spends waiting for another caller's open counts toward its own timeout. ([#35618](https://github.com/Azure/azure-sdk-for-python/issues/35618))
+
 ## 7.15.1 (Unreleased)
 
 ### Features Added
