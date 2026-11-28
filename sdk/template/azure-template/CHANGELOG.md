@@ -2,6 +2,13 @@
 
 [comment]: # (Change log guidance: https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance)
 
+## 1.1.0 (2026-11-05)
+
+### Features Added
+
+- GA release (test)
+
+
 ## 1.0.0 (2026-09-03)
 
 ### Features Added
