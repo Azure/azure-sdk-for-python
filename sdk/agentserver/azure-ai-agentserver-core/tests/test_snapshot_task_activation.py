@@ -47,6 +47,9 @@ def isolate_runtime(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     _decorator._REGISTERED_DESCRIPTORS.clear()
     monkeypatch.setenv("FOUNDRY_AGENT_NAME", "snapshot-agent")
     monkeypatch.setenv("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", "0")
+    # Lifecycle routes are not registered outside hosted mode unless a token
+    # is configured or unauthenticated access is explicitly opted into.
+    monkeypatch.setenv("FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED", "true")
     for name in (
         "FOUNDRY_HOSTING_ENVIRONMENT",
         "FOUNDRY_AGENT_SESSION_ID",
