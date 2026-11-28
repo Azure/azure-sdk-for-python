@@ -219,12 +219,18 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     async def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
+        # Start the budget before queueing on the lock, so time spent waiting for another caller's
+        # open counts against this attempt rather than extending it.
+        deadline = get_link_ready_deadline(timeout)
         if self._open_lock is None:
             self._open_lock = asyncio.Lock()
-        async with self._open_lock:
+        open_lock = self._open_lock
+        await await_with_deadline(
+            open_lock.acquire(), deadline, "Timed out waiting for a concurrent open of the AMQP link to finish."
+        )
+        try:
             if self._running:
                 return
-            deadline = get_link_ready_deadline(timeout)
             if self._handler:
                 await close_handler_with_deadline(self._handler, deadline)
 
@@ -268,6 +274,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             except:
                 await close_handler_for_cleanup(self._close_handler(), deadline)
                 raise
+        finally:
+            open_lock.release()
 
     async def _send(
         self,
